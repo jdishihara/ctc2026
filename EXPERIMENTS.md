@@ -27,6 +27,7 @@ python3 scripts/eval_forecast.py 25 50       # forecast skill
 | 2026-10-22 | ladder fill model + liquidity-aware limits, hold through convergence | 5047 (27% losing, min -17k) | | tail is the problem now |
 | 2026-10-22 | exchange tick: limit prices rounded to 0.01 in bot and sim (testnet rejected 119/121 orders) | 5012 (p10 -4628) | 2515 (p10 -6878) | new baseline; verify numbers barely move |
 | 2026-10-22 | prelim report combined with the nowcast (final = a + b*prelim + c*nowcast, scripts/fit_prelim.py) instead of taken as truth; loss-estimate sd added to model_sd | 5159 (p10 -4339, min -13.5k) | 3108 (p10 -6582, min -15.3k) | ACCEPTED. dissect.py: aftermath insurer fills lost 43k/75 seasons because fair_sd was 0 after the prelim; prelim rmse (PORT 9.3 pts, loss 97 $M) is worse than our nowcast (5.7, 64); combined 4.8 / 52 |
+| 2026-10-22 | per-symbol-per-round loss limit (stop adding after losing L in a cell; `--loss-limit`) | tune 451-525: L=1000 5878/3823 vs 6067/4044 off; L=2000 6086/4021 (thin p10 -6347 vs -6016); L=4000 never triggers | | REJECTED on the tune set, not run on verify. Losses come from fair being wrong, not from churn; a stop locks them in |
 
 ## Backlog (ordered by expected value)
 1. Passive quoting: rest orders inside the house spread instead of crossing; measure under thin regime.
