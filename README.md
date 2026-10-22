@@ -53,7 +53,50 @@ python3 bot/live.py --key BOT_KEY --dry-run          # default url https://corne
 zsh bot/run_live.sh                                  # keeps it running, logs to recordings/bot_live.log (pnl every 10 s, SEASON END lines)
 ```
 The bot runs the same FairValueTrader as the backtest (analog ensemble, passive 0.75, warm-up 20 s). Prices are
-rounded to the 0.01 tick (buys down, sells up). On the testnet the fictional year gives the season: season = 2027 - year.
+rounded to the 0.01 tick (buys down, sells up). On the testnet the fictional year gives the season: season = 2026 - year.
+`bot/preflight.py` checks everything that went wrong on the testnet before a start; `bot/stop.sh` is the kill switch.
+
+## Competition day runbook (Hurricane Season bot)
+
+Before the market opens (allow 15 minutes):
+
+```bash
+caffeinate -i -t 36000 &                       # keep the Mac awake for 10 h; it slept after the overnight caffeinate expired and the bot missed two seasons
+git pull && git status                         # clean tree on main
+echo COMPETITION_KEY > .botkey                 # git-ignored; never put the key in a tracked file or a commit
+python3 bot/preflight.py                       # must end with 0 failures; WARN on positions or open orders -> bot/stop.sh first
+nohup python3 data/starter_kit/record_feed.py --url wss://cornelltradingcompetition.org --key $(cat .botkey) \
+      --out recordings/competition.jsonl --symbols PORT,ISLE,AQUA,GRID,FERRY,RECON,MAT,GEN,HAVEN,REIN,ARCH,REBLD > /dev/null 2>&1 &
+nohup python3 scripts/record_books.py --key $(cat .botkey) --out recordings/competition_books.jsonl > /dev/null 2>&1 &
+nohup zsh bot/run_live.sh > /dev/null 2>&1 &  # reads .botkey, restarts the bot on a crash, logs to recordings/bot_live.log
+tail -f recordings/bot_live.log
+```
+
+While it runs, one person watches the log. Every 10 s it prints `t= … r<round> pnl <season pnl> SYM:mid/fair/position`.
+What to look for:
+
+- `strategy analog min_edge 0.02 edge_full 0.03 …` at start: the accepted configuration. Anything else, stop and check the flags.
+- `snapshot processed: warm-up before trading` and `market (re)opened: warm-up`: no orders for 20 s. Fair values in the
+  first line after a connect can be far from the mids (the model is still catching up); they should be sane by the second line.
+- Round opens: the house re-prices by about 7% from the previous close, stays quiet for 30 s, then moves about 3% over the
+  next five minutes. That move is where the season's PnL is made or lost; the bot trades it after the warm-up.
+- `HTTP 4xx …` lines: rejections. One or two around a halt are normal; a stream of them means the tick, the limits or the key.
+- `ANNOUNCEMENT <symbols>: <headline> -> pausing those symbols`: the bot stops trading them because the model has not seen
+  the announcement. A human reads the headline and decides; to resume, restart the bot (`bot/stop.sh` then `run_live.sh`).
+- `disconnected … reconnecting`: fine once; repeated every few seconds means the network or the host.
+- Order actions: the bot caps itself at 120 per minute; the team limit is 180, so nobody else trades on the bot's key.
+
+Stop or emergency:
+
+```bash
+bot/stop.sh              # kills wrapper and bot, cancels every resting order, prints positions
+bot/stop.sh --flatten    # the same, then closes every position three levels into the book
+```
+
+Failures seen on the testnet, all fixed, all covered by the preflight or the warm-up: prices not on the 0.01 tick (every order
+rejected); the bot running the nowcast instead of the analog ensemble (-14k in one season); full-size orders in all 12 symbols
+within a second of a round open or a reconnect (-4k to -16k); a crash on every reconnect once an advisory existed; the Mac
+sleeping with positions open.
 
 End-to-end test without the testnet (mock exchange replays season 451 at 25x):
 
@@ -100,24 +143,23 @@ the house re-quotes through it, for the size the house posts at or beyond our pr
 house does cross resting orders). 0.25 s latency; limits include resting orders; 300 order actions per minute (bot cap
 120); resting orders cleared at each close; ETF create/redeem at marks; 0.01 tick.
 
-Known gaps vs the testnet: no opening phase (the testnet opens a round with a thin book and the bot's first orders hit the
-backstop; the 20 s warm-up covers it), no instant round replays (the testnet replayed one round in a second), fill cost
-live measured at about 90 bp of notional against 30-60 bp implied by the ladder.
+Known gaps vs the testnet: no opening phase. Measured on 49 testnet opens (books.jsonl): the book is not thinner after an
+open (depth within 1% of mid 330-550 shares in the first minute against 285-410 later), but the opening mid sits 741 bp
+(median) from the previous close, is quiet for 30 s, then moves 298 bp (p90 1122 bp) over five minutes. The sim has no
+instant round replays either (the testnet replayed one round in a second). Live fill cost after the warm-up fix: 29 bp
+of notional (93 bp before it).
 
-## Results (verify seasons 526-600, default parameters, 2026-10-22 05:40)
+## Results (verify seasons 526-600, default parameters, 2026-10-22 15:00)
 
 | Regime | mean PnL | median | p10 | min | losing seasons | fills/season |
 |---|---|---|---|---|---|---|
-| deep (ladder, refill 10 s) | 6,353 | 6,082 | -3,078 | -11,264 | 17% | 362 |
-| thin (ladder at half size, refill 30 s) | 2,711 | 2,009 | -7,024 | -16,957 | 35% | 786 |
+| deep (ladder, refill 10 s) | 8,433 | 7,937 | -3,050 | -13,203 | 19% | 350 |
+| thin (ladder at half size, refill 30 s) | 5,073 | 4,595 | -6,355 | -14,495 | 24% | 854 |
 
-Deep regime by symbol: HAVEN +2364, ARCH +1195, PORT +855, RECON +515, GRID +440, FERRY +276, AQUA +260, REBLD +229,
-ISLE +106, MAT +78, REIN +42, GEN -7. By round: R1 +1654, R2 +2618, R3 +2082. Fill PnL by phase (thin regime, 75 seasons):
+Deep regime by symbol: HAVEN +2669, PORT +1300, ARCH +1181, FERRY +720, GRID +590, AQUA +537, RECON +540, REBLD +441,
+ISLE +241, MAT +100, GEN +68, REIN +47. By round: R1 +2649, R2 +3144, R3 +2639. Fill PnL by phase (thin regime, 75 seasons):
 the storm itself earns everything (+286k, of which +129k in the first 60 s of the storm); pre-storm, aftermath and
 post-report fills are flat to negative. The constant-velocity nowcast loses about 20k per season under the ladder.
-
-Testnet (analog bot, after the fixes of 2026-10-22): season 184 +4.9k vs sim +9.5k, 185 -16.3k vs +7.4k (round 1 was
-replayed instantly, the open was traded into the backstop), 186 -0.5k vs +6.3k, 187 +17.8k vs +19.6k.
 
 ## Forecast skill (holdout storms, RMSE of end-of-storm company damage in points, PORT/ISLE/AQUA/GRID/FERRY)
 
@@ -133,8 +175,10 @@ The ensemble is insensitive to sigma (15 to 40), k (50 to 100) and the position 
 
 ## Next
 
-1. Live fill cost (90 bp vs 30-60 bp in the sim): cap aggressive size per cycle, or stop walking into the 8% backstop
-   unless the edge is larger than the backstop distance plus the floor.
-2. ETF create/redeem arbitrage (measured: ARCH quote more than 0.9% from its basket 5% of the time; small, riskless).
-3. Round-3 rate limits: the bot sends up to 47 actions per minute in the sim against a 120 cap; prioritise by edge x limit.
-4. Live announcements: the bot pauses named symbols; a human must read the headline and decide.
+1. Freeze the parameters: the tuner is being re-run on the current simulator (out/tune/ledger.csv); re-verify its winner
+   against the accepted set before competition day.
+2. Live earns under half of the sim: the gap is the direction of the post-open move. Compare the bot's first trades after
+   each open with the sim's on the same seasons (scripts/dissect.py has the per-phase view) before changing anything.
+3. Exact rebuilder settlement rules with a 3% floor for RECON and MAT (needs its own tune run).
+4. ETF create/redeem arbitrage (measured: ARCH quote more than 0.9% from its basket 5% of the time; small, riskless).
+5. Live announcements: the bot pauses named symbols; a human must read the headline and decide.
