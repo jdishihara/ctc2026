@@ -41,6 +41,11 @@ def values_vec(cum: np.ndarray, outage: np.ndarray, loss: np.ndarray, case: dict
         v[k] = b[0] + b[1] * cum[:, j] + b[2] * cum[:, j] ** 2 + b[3] * outage[:, j]
     idx = {k: j for j, k in enumerate(PHYS)}
     for k in ("RECON", "MAT", "GEN"):
+        if _rp(k).get("kind") == "rebuild_w":
+            q = np.array(_rp(k)["params"])
+            e = cum @ q[2:7] + outage @ q[7:12]
+            v[k] = q[0] + q[1] * (1 - np.exp(-np.clip(e, 0, None)))
+            continue
         base, A, sc, o = P[k]["params"]
         if k == "RECON":
             D, O = cum[:, idx["PORT"]] + cum[:, idx["GRID"]] + cum[:, idx["FERRY"]], 0.0
@@ -59,22 +64,27 @@ def values_vec(cum: np.ndarray, outage: np.ndarray, loss: np.ndarray, case: dict
 
 
 def expected_values(cum: np.ndarray, outage: np.ndarray, loss: np.ndarray, n_future: int, case: dict[str, Any],
-                    mode: str = "sample") -> dict[str, np.ndarray]:
+                    mode: str = "sample", with_sd: bool = False):
     """Expected valuation with `n_future` storms still to come, for each of the N states given (cum (N,5), outage (N,5),
     loss (N,)). mode "sample": average over historical n-storm combinations; "point": the mean storm added n times."""
     prior = P["prior"]
-    if n_future <= 0:
-        return values_vec(cum, outage, loss, case)
-    if mode != "sample" or n_future not in FUTURE:
-        pd = np.array([prior["dmg"][k] for k in PHYS]); po = np.array([prior["outage"][k] for k in PHYS])
-        return values_vec(cum + n_future * pd, outage + n_future * po, loss + n_future * prior["loss"], case)
+    if n_future <= 0 or mode != "sample" or n_future not in FUTURE:
+        if n_future <= 0:
+            ev = values_vec(cum, outage, loss, case)
+        else:
+            pd = np.array([prior["dmg"][k] for k in PHYS]); po = np.array([prior["outage"][k] for k in PHYS])
+            ev = values_vec(cum + n_future * pd, outage + n_future * po, loss + n_future * prior["loss"], case)
+        return (ev, {k: np.zeros_like(a) for k, a in ev.items()}) if with_sd else ev
     sd, so, sl = FUTURE[n_future]
     N, M = len(loss), len(sl)
     c = (cum[:, None, :] + sd[None, :, :]).reshape(N * M, -1)
     o = (outage[:, None, :] + so[None, :, :]).reshape(N * M, -1)
     l = (loss[:, None] + sl[None, :]).reshape(N * M)
     v = values_vec(c, o, l, case)
-    return {k: a.reshape(N, M).mean(1) for k, a in v.items()}
+    ev = {k: a.reshape(N, M).mean(1) for k, a in v.items()}
+    if with_sd:
+        return ev, {k: a.reshape(N, M).std(1) for k, a in v.items()}
+    return ev
 
 
 def island_value(sym: str, cum: float, outage: float) -> float:
@@ -86,7 +96,18 @@ def storm_loss(dmg: dict[str, float]) -> float:
     return sum(l * dmg[k] for l, k in zip(P["loss"]["beta"], PHYS))
 
 
+EXACT_REBUILD = False     # use the exact weighted-saturation rules (scripts/fit_rebuilders.py); rejected on verify PnL, see EXPERIMENTS.md
+
+
+def _rp(sym: str) -> dict:
+    return P[sym + "_exact"] if EXACT_REBUILD and sym + "_exact" in P else P[sym]
+
+
 def rebuild_value(sym: str, cum: dict[str, float], outage: dict[str, float]) -> float:
+    if _rp(sym).get("kind") == "rebuild_w":       # exact rule: weighted damages and outages inside one saturation
+        q = _rp(sym)["params"]
+        e = sum(q[2 + i] * cum[k] + q[7 + i] * outage[k] for i, k in enumerate(PHYS))
+        return q[0] + q[1] * (1 - math.exp(-max(0.0, e)))
     base, A, s, o = P[sym]["params"]
     if sym == "RECON":
         D, O = cum["PORT"] + cum["GRID"] + cum["FERRY"], 0.0
@@ -139,6 +160,8 @@ class SeasonModel:
         self.reported_rounds: set[int] = set()              # rounds whose final report we applied
         self.prelim_seen = False                            # preliminary report of the current storm applied
         self.prior_mode = "sample"                          # future storms: "sample" of historical storms or "point" mean
+        self.future_sd_mult = 0.0                           # add this multiple of the future-storm valuation sd to fair_sd
+        self.future_sd: dict[str, float] = {}
 
     # ---- feed handling ----
     def on_message(self, m: dict[str, Any]) -> None:
@@ -259,9 +282,10 @@ class SeasonModel:
 
     def resid_sd(self, sym: str) -> float:
         """Std of the valuation residual for `sym` once all damage is known (fit residual); 0 if the symbol is exact."""
-        sd = P.get("resid_sd", {}).get(sym, 0.0)
+        tab = {**P.get("resid_sd", {}), **(P.get("resid_sd_exact", {}) if EXACT_REBUILD else {})}
+        sd = tab.get(sym, 0.0)
         if sym in ("ARCH", "REBLD"):
-            sd = sum(n * P.get("resid_sd", {}).get(s, 0.0) for s, n in self.case["etfs"][sym]["basket"].items())
+            sd = sum(n * tab.get(s, 0.0) for s, n in self.case["etfs"][sym]["basket"].items())
         return sd
 
     # ---- state ----
@@ -294,7 +318,8 @@ class SeasonModel:
         base_cum = {k: self.states[k].cum_damage() for k in PHYS}
         if not (self.storm_active and self.obs and self.ensemble is not None):
             f = self.fair(project=False)
-            self.fair_sd = self.model_sd(f)
+            msd = self.model_sd(f)
+            self.fair_sd = {k: math.hypot(msd[k], self.future_sd_mult * self.future_sd.get(k, 0.0)) for k in f}
             return f
         w = self.ensemble.weights(self.obs, self.official, self.wire)
         self.posterior = self.ensemble.pattern_posterior(w)
@@ -311,14 +336,15 @@ class SeasonModel:
             storm_dmg = {k: cum[k] - base_cum[k] for k in PHYS}
             loss_a[i] = self.loss_final + (self.current_loss_est or storm_loss(storm_dmg))
             cum_a[i] = [cum[k] for k in PHYS]; out_a[i] = [out[k] for k in PHYS]
-        ev = expected_values(cum_a, out_a, loss_a, n_future, self.case, self.prior_mode)
+        ev, fsd = expected_values(cum_a, out_a, loss_a, n_future, self.case, self.prior_mode, with_sd=True)
         keys = list(ev)
         arr = np.array([ev[k] for k in keys]).T                 # (K, n_symbols)
+        self.future_sd = {k: float((wsel * fsd[k]).sum()) for k in keys}
         mean = (wsel[:, None] * arr).sum(0)
         sd = np.sqrt((wsel[:, None] * (arr - mean) ** 2).sum(0))
         fair = dict(zip(keys, mean.tolist()))
         msd = self.model_sd(fair)
-        self.fair_sd = {k: float(np.hypot(v, msd[k])) for k, v in zip(keys, sd.tolist())}
+        self.fair_sd = {k: math.hypot(v, msd[k]) for k, v in zip(keys, sd.tolist())}   # future-storm sd only applies outside the storm
         return fair
 
     def fair(self, project: bool = True) -> dict[str, float]:
@@ -332,6 +358,7 @@ class SeasonModel:
         if not self.storm_reported and self.round >= 1:
             loss += storm_loss(cur) if not self.current_loss_est else self.current_loss_est
         n_future = self.storms_left_after_current() if self.round >= 1 else 3
-        ev = expected_values(np.array([[cum[k] for k in PHYS]]), np.array([[outage[k] for k in PHYS]]), np.array([loss]),
-                             n_future, self.case, self.prior_mode)
+        ev, fsd = expected_values(np.array([[cum[k] for k in PHYS]]), np.array([[outage[k] for k in PHYS]]), np.array([loss]),
+                                  n_future, self.case, self.prior_mode, with_sd=True)
+        self.future_sd = {k: float(v[0]) for k, v in fsd.items()}
         return {k: float(v[0]) for k, v in ev.items()}

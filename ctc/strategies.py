@@ -29,8 +29,9 @@ class FairValueTrader(Strategy):
     def __init__(self, min_edge: float = 0.01, edge_full: float = 0.05, rebalance_every: float = 15.0,
                  symbols: list[str] | None = None, project: bool = True, analog: bool = False,
                  sd_mult: float = 1.0, loss_limit: float | None = None, prior_mode: str = "sample",
-                 passive: float = 0.0, warmup: float = 0.0, **analog_kw):
+                 passive: float = 0.0, warmup: float = 0.0, future_sd: float = 0.0, **analog_kw):
         self.prior_mode = prior_mode
+        self.future_sd = future_sd      # multiple of the future-storm valuation sd added to the edge floor
         self.warmup = warmup            # seconds after a round opens during which we do not trade (opening prices settle)
         self.passive = passive          # >0: when the edge is below the floor, rest an order inside the spread at the
                                         # price where the edge equals passive * floor (a passive fill does not pay the spread)
@@ -44,6 +45,7 @@ class FairValueTrader(Strategy):
     def on_start(self, sim) -> None:
         self.model = SeasonModel(sim.case)
         self.model.prior_mode = self.prior_mode
+        self.model.future_sd_mult = self.future_sd
         if self.analog:
             self.model.ensemble = AnalogEnsemble(sim.case, **self.analog_kw)
         self.last_trade_t = -1e9
