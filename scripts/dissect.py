@@ -62,7 +62,7 @@ def main():
     for n in parse_seasons(a.seasons, len(man["seasons"])):
         meta = man["seasons"][n - 1]
         sim = Sim(root / "history" / meta["dir"], case, ladder=Ladder(refill_secs=a.refill, scale=a.ladder_scale))
-        st = Recorder(min_edge=a.min_edge, edge_full=a.edge_full, analog=True, sd_mult=a.sd_mult, sigma=a.sigma, k=a.k, passive=0.75, warmup=20)
+        st = Recorder(min_edge=a.min_edge, edge_full=a.edge_full, analog=True, sd_mult=a.sd_mult, sigma=a.sigma, k=a.k, passive=0.75, warmup=20, max_cross=0.02)
         pnl = sim.run(st)
         cell = {}
         prev = {s: 0.0 for s in SYMS}

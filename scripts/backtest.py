@@ -50,7 +50,7 @@ def main():
     ap.add_argument("--future-sd", type=float, default=0.0, help="multiple of the future-storm valuation sd added to the edge floor")
     ap.add_argument("--warmup", type=float, default=20.0, help="seconds after each round opens with no trading")
     ap.add_argument("--fair-jump", type=float, default=0.0, help="skip a symbol for one cycle when its fair moved by more than this fraction (0 = off)")
-    ap.add_argument("--max-cross", type=float, default=0.0, help="aggressive orders never pay more than this fraction through the touch (0 = off)")
+    ap.add_argument("--max-cross", type=float, default=0.02, help="aggressive orders never pay more than this fraction through the touch (0 = off; 0.02 accepted 2026-10-22)")
     ap.add_argument("--loss-limit", type=float, default=0.0, help="per symbol per round: stop adding after losing this much (0 = off)")
     ap.add_argument("--out", default="out")
     ap.add_argument("--exact-rebuild", action="store_true", help="exact RECON/MAT/GEN settlement rules (rejected on verify PnL)")

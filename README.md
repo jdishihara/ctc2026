@@ -42,7 +42,8 @@ python3 scripts/dissect.py --seasons 526-600 --refill 30 --ladder-scale 0.5 --wo
 python3 scripts/backtest.py --strategy nowcast --seasons 451-600                                  # constant-velocity baseline (bad under the ladder)
 ```
 Strategy flags (defaults are the accepted configuration): `--passive 0.75` (rest inside the spread when the edge is
-small), `--warmup 20` (no trading for 20 s after a round opens), `--prior sample|point`, `--future-sd`,
+small), `--warmup 20` (no trading for 20 s after a round opens), `--max-cross 0.02` (an aggressive order never pays
+more than 2% through the touch), `--prior sample|point`, `--future-sd`,
 `--loss-limit`, `--exact-rebuild` (the last three are rejected options kept for reference).
 
 Live bot (testnet or competition), dry run first:
@@ -52,7 +53,7 @@ pip install "websockets>=14"
 python3 bot/live.py --key BOT_KEY --dry-run          # default url https://cornelltradingcompetition.org
 zsh bot/run_live.sh                                  # keeps it running, logs to recordings/bot_live.log (pnl every 10 s, SEASON END lines)
 ```
-The bot runs the same FairValueTrader as the backtest (analog ensemble, passive 0.75, warm-up 20 s). Prices are
+The bot runs the same FairValueTrader as the backtest (analog ensemble, passive 0.75, warm-up 20 s, max-cross 2%). Prices are
 rounded to the 0.01 tick (buys down, sells up). On the testnet the fictional year gives the season: season = 2027 - year (verified by matching storm tracks). The
 `SEASON END` log line prints the fictional time of the NEXT season, so the season that just ended is 2026 - that year.
 `bot/preflight.py` checks everything that went wrong on the testnet before a start; `bot/stop.sh` is the kill switch.
@@ -150,12 +151,12 @@ open (depth within 1% of mid 330-550 shares in the first minute against 285-410 
 instant round replays either (the testnet replayed one round in a second). Live fill cost after the warm-up fix: 29 bp
 of notional (93 bp before it).
 
-## Results (verify seasons 526-600, default parameters, 2026-10-22 15:00)
+## Results (verify seasons 526-600, default parameters, 2026-10-22 16:05)
 
 | Regime | mean PnL | median | p10 | min | losing seasons | fills/season |
 |---|---|---|---|---|---|---|
-| deep (ladder, refill 10 s) | 8,433 | 7,937 | -3,050 | -13,203 | 19% | 350 |
-| thin (ladder at half size, refill 30 s) | 5,073 | 4,595 | -6,355 | -14,495 | 24% | 854 |
+| deep (ladder, refill 10 s) | 8,663 | 8,156 | -2,998 | -13,058 | 17% | 348 |
+| thin (ladder at half size, refill 30 s) | 5,301 | 4,838 | -4,364 | -14,186 | 21% | 866 |
 
 Deep regime by symbol: HAVEN +2669, PORT +1300, ARCH +1181, FERRY +720, GRID +590, AQUA +537, RECON +540, REBLD +441,
 ISLE +241, MAT +100, GEN +68, REIN +47. By round: R1 +2649, R2 +3144, R3 +2639. Fill PnL by phase (thin regime, 75 seasons):

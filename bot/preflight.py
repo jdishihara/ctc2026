@@ -98,8 +98,8 @@ def check_code() -> None:
 def check_strategy(args) -> None:
     try:
         from ctc.strategies import FairValueTrader
-        st = FairValueTrader(min_edge=0.02, edge_full=0.03, analog=True, sd_mult=0.7, sigma=15.0, k=100, passive=0.75, warmup=20.0)
-        report("PASS", "strategy constructs", f"analog={st.analog} min_edge={st.min_edge} edge_full={st.edge_full} sd_mult={st.sd_mult} passive={st.passive} warmup={st.warmup}")
+        st = FairValueTrader(min_edge=0.02, edge_full=0.03, analog=True, sd_mult=0.7, sigma=15.0, k=100, passive=0.75, warmup=20.0, max_cross=0.02)
+        report("PASS", "strategy constructs", f"analog={st.analog} min_edge={st.min_edge} edge_full={st.edge_full} sd_mult={st.sd_mult} passive={st.passive} warmup={st.warmup} max_cross={st.max_cross}")
     except Exception as exc:
         report("FAIL", "strategy constructs", repr(exc))
 
