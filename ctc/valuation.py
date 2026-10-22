@@ -91,10 +91,11 @@ class SeasonModel:
             self.storm_active, self.storm_reported, self.last_obs, self.current_loss_est = True, False, None, 0.0
             self.obs, self.official, self.wire, self.posterior, self.fair_sd = [], [], [], {}, {}
         elif t == "storm":
+            dt = m.get("_dt", 2.0)
             self.last_obs = m
             self.obs.append(m)
             for s in self.states.values():
-                s.observe(m)
+                s.observe(m, dt)
         elif t == "advisory":
             (self.official if m.get("source") == "official" else self.wire).append((m["age"], m["outlook"]))
         elif t == "storm_dissipated":
@@ -111,33 +112,43 @@ class SeasonModel:
 
     def on_snapshot(self, snap: dict[str, Any]) -> None:
         """After a late connection, rebuild from the snapshot: final reports of earlier rounds we missed, then the
-        current storm's track. Does nothing when we already hold every final report the snapshot lists."""
-        finals = [r for r in (snap.get("damage") or []) if r.get("stage") == "final"]
-        if {r["round"] for r in finals} <= self.reported_rounds:
+        current storm's track (sparse, so each point carries its age gap) and preliminary report if any."""
+        reports = [{**r, "type": "damage_report"} for r in (snap.get("damage") or [])]   # snapshot entries carry no type
+        finals = [r for r in reports if r.get("stage") == "final"]
+        phase = snap.get("phase")
+        need_rounds = not ({r["round"] for r in finals} <= self.reported_rounds)
+        need_storm = phase in ("storm", "aftermath") and not self.obs
+        if not (need_rounds or need_storm):
             return
-        cur_round, cur_obs, cur_official, cur_wire = self.round, list(self.obs), list(self.official), list(self.wire)
-        # reset damage state and replay the final reports in order
+        cur_obs, cur_official, cur_wire = list(self.obs), list(self.official), list(self.wire)
         self.states = {k: SiteState(self.case, k) for k in PHYS}
         self.loss_final, self.reported_rounds, self.round = 0.0, set(), 0
         for rep in sorted(finals, key=lambda r: r["round"]):
             self.on_message({"type": "storm_formed", "round": rep["round"]})
             self.on_message(rep)
         obs = snap.get("obs")
-        phase = snap.get("phase")
-        if obs and phase in ("storm", "aftermath"):
-            rnd = cur_round if cur_round > self.round else self.round + 1
+        rnd = snap.get("round") or self.round + 1
+        if obs and phase in ("storm", "aftermath") and rnd not in self.reported_rounds:
             self.on_message({"type": "storm_formed", "round": rnd})
-            replay = cur_obs if cur_obs else [
-                {"type": "storm", "round": rnd, "age": a, "x": x, "y": y, "radius": r, "intensity": obs.get("intensity", 1.0),
-                 "vx": obs.get("vx", 0), "vy": obs.get("vy", 0)} for a, x, y, r in (snap.get("track") or [])]
-            for o in replay:
-                self.on_message({**o, "type": "storm", "round": rnd})
-            if not cur_obs:
-                self.on_message({"type": "storm", "round": rnd, **{k: v for k, v in obs.items() if k != "type"}})
+            if cur_obs:
+                for o in cur_obs:
+                    self.on_message({**o, "type": "storm", "round": rnd})
+            else:
+                pts = snap.get("track") or []
+                prev_age = 0
+                for a, x, y, r in pts:
+                    inten = 1.0 if a < self.timing["storm"] - self.case["storm"]["dissipate"] else max(0.0, (self.timing["storm"] - a) / self.case["storm"]["dissipate"])
+                    self.on_message({"type": "storm", "round": rnd, "age": a, "x": x, "y": y, "radius": r, "intensity": inten,
+                                     "vx": obs.get("vx", 0), "vy": obs.get("vy", 0), "_dt": max(2.0, a - prev_age)})
+                    prev_age = a
+                self.on_message({"type": "storm", "round": rnd, **{k: v for k, v in obs.items() if k != "type"}, "_dt": max(2.0, obs.get("age", 0) - prev_age)})
             self.official, self.wire = cur_official, cur_wire
             adv = snap.get("advisory")
             if adv and not cur_official:
                 self.on_message(adv)
+            for rep in reports:
+                if rep.get("stage") == "preliminary" and rep.get("round") == rnd:
+                    self.on_message(rep)
             if phase == "aftermath":
                 self.on_message({"type": "storm_dissipated", "round": rnd})
 

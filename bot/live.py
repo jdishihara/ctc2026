@@ -180,6 +180,8 @@ async def run(args: argparse.Namespace) -> None:
                             last_round = ex.round = m["round"]
                         if m.get("type") == "snapshot":
                             strat.model.on_snapshot(m)
+                            strat.fair = strat.compute_fair()
+                            strat.last_trade_t = -1e9
                             continue
                         if m.get("type") == "announcement":
                             print(f"ANNOUNCEMENT {m.get('symbols')}: {m.get('headline')}  -> pausing those symbols", flush=True)

@@ -36,6 +36,8 @@ class SiteState:
             self.exposure[j] = 0.0
 
     def observe(self, obs: dict[str, Any], dt: float = 2.0) -> None:
+        """Integrate one observation; `dt` is the real seconds it stands for (2 s on the live feed, more for a
+        snapshot track replay)."""
         for j, s in enumerate(self.sites):
             w = wind_at(obs, s["x"], s["y"])
             self.exposure[j] += max(w - PARAMS["thr_dmg"], 0.0) ** PARAMS["p"] * dt
