@@ -102,7 +102,10 @@ class LiveExchange:
             return -1
         resp = self.send("POST", "/orders", order)
         if resp:
-            self.open_orders.append({**order, "remaining": qty, "id": resp.get("order_id", resp.get("id"))})
+            filled = int(resp.get("filled_quantity", resp.get("filled", 0)) or 0)
+            self.position[symbol] += sign * filled                     # apply what we know now; refresh() corrects later
+            if filled < qty:
+                self.open_orders.append({**order, "remaining": qty - filled, "id": resp.get("order_id", resp.get("id"))})
             return resp.get("order_id", resp.get("id"))
         return None
 
@@ -137,7 +140,7 @@ async def run(args: argparse.Namespace) -> None:
     strat = S.FairValueTrader(min_edge=args.min_edge, edge_full=args.edge_full, project=True)
     strat.on_start(ex)
     ex.refresh()
-    ws_url = ex.url.replace("https://", "wss://", 1).replace("http://", "ws://", 1) + "/ws/v1/market-data"
+    ws_url = (args.ws or ex.url.replace("https://", "wss://", 1).replace("http://", "ws://", 1)) + "/ws/v1/market-data"
     subscribe = {"action": "subscribe", "symbols": ex.symbols, "channels": ["news", "quotes"]}
     last_sync = last_log = 0.0
     seen_seq: set[int] = set()
@@ -194,6 +197,7 @@ def main() -> None:
     ap.add_argument("--min-edge", type=float, default=0.01)
     ap.add_argument("--edge-full", type=float, default=0.05)
     ap.add_argument("--sync", type=float, default=3.0, help="seconds between position/open-order polls")
+    ap.add_argument("--ws", default=None, help="override the market-data host, e.g. ws://localhost:8766 for the mock")
     asyncio.run(run(ap.parse_args()))
 
 
