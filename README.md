@@ -53,7 +53,8 @@ python3 bot/live.py --key BOT_KEY --dry-run          # default url https://corne
 zsh bot/run_live.sh                                  # keeps it running, logs to recordings/bot_live.log (pnl every 10 s, SEASON END lines)
 ```
 The bot runs the same FairValueTrader as the backtest (analog ensemble, passive 0.75, warm-up 20 s). Prices are
-rounded to the 0.01 tick (buys down, sells up). On the testnet the fictional year gives the season: season = 2026 - year.
+rounded to the 0.01 tick (buys down, sells up). On the testnet the fictional year gives the season: season = 2027 - year (verified by matching storm tracks). The
+`SEASON END` log line prints the fictional time of the NEXT season, so the season that just ended is 2026 - that year.
 `bot/preflight.py` checks everything that went wrong on the testnet before a start; `bot/stop.sh` is the kill switch.
 
 ## Competition day runbook (Hurricane Season bot)
