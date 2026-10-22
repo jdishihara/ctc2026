@@ -37,7 +37,7 @@ which matches the packet's example). If after race 1 the humans are all behind s
    that unless you know the racers.
 2. Race-winner markets are about the next race only: skill estimates from 1-2 races are weak (sd of the skill estimate
    is still about 0.6 after two races), so do not pay more than about 45 for a favourite after one win.
-3. The series-winner market is where the information is: a 10+ point lead after two races is a 75-85% favourite.
+3. The series-winner market is where the information is: after two races a 6-9 point lead is about an 85% favourite and 10+ about 95% (table below).
 4. #1 score and top-2 total are nearly linear in the leader's points: each race adds the leader's points; if the leader is
    averaging 13 per race, #1 settles near 52, and the sd of the remaining races is about 3 points per race left.
 5. Position limits: 100 race / 200 series / 1000 score contracts. Size the numeric contracts by edge in points, not %.
