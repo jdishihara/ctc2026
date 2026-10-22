@@ -9,7 +9,7 @@ Order API: sim.place(symbol, side, qty, price=None) -> order id | None; sim.canc
            sim.create(etf, qty); sim.redeem(etf, qty).
 """
 from __future__ import annotations
-import collections, csv, json
+import collections, csv, json, math
 from dataclasses import dataclass, field
 from datetime import datetime
 from pathlib import Path
@@ -107,6 +107,8 @@ class Sim:
         if qty <= 0:
             self.rejected += 1
             return None
+        if price is not None:                      # exchange tick is 0.01; buys round down, sells round up
+            price = round((math.floor(price * 100 + 1e-9) if side == "buy" else math.ceil(price * 100 - 1e-9)) / 100, 2)
         o = Order(self.next_id, symbol, side, qty, price, self.t, self.t + self.latency)
         self.next_id += 1
         self.pending.append(o)

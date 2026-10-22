@@ -28,8 +28,9 @@ class FairValueTrader(Strategy):
 
     def __init__(self, min_edge: float = 0.01, edge_full: float = 0.05, rebalance_every: float = 15.0,
                  symbols: list[str] | None = None, project: bool = True, analog: bool = False,
-                 sd_mult: float = 1.0, **analog_kw):
+                 sd_mult: float = 1.0, loss_limit: float | None = None, **analog_kw):
         self.min_edge, self.edge_full, self.every = min_edge, edge_full, rebalance_every
+        self.loss_limit = loss_limit                        # per symbol per round: stop adding once this much is lost
         self.symbols = symbols or SYMS
         self.project, self.analog, self.sd_mult, self.analog_kw = project, analog, sd_mult, analog_kw
         self.exit_slip = 0.01                               # how far through the book we go to exit a wrong position
@@ -42,6 +43,8 @@ class FairValueTrader(Strategy):
         self.last_trade_t = -1e9
         self.fair: dict[str, float] = {}
         self.paused = set()
+        self.cell_pnl: dict[tuple[str, int], float] = {}    # mark-to-mid pnl per (symbol, round), approximating fills at mid
+        self.last_mid: dict[str, float] = {}
 
     def pause(self, symbols: list[str]) -> None:
         """Stop trading symbols named in a live announcement until a human clears them (model has not seen announcements)."""
@@ -88,6 +91,12 @@ class FairValueTrader(Strategy):
             self.fair = self.compute_fair()
         if not self.fair:
             return
+        rnd = getattr(sim, "round", 1)
+        for s in self.symbols:
+            if s in sim.mid:
+                if s in self.last_mid:
+                    self.cell_pnl[(s, rnd)] = self.cell_pnl.get((s, rnd), 0.0) + sim.position[s] * (sim.mid[s] - self.last_mid[s])
+                self.last_mid[s] = sim.mid[s]
         conf = self.confidence(sim)
         if conf <= 0:
             return                      # no view: hold whatever we have
@@ -101,11 +110,14 @@ class FairValueTrader(Strategy):
             lim = sim.limits[s]
             floor = self.min_edge_for(sim, s)
             pos = sim.position[s]
+            stopped = self.loss_limit is not None and self.cell_pnl.get((s, rnd), 0.0) < -self.loss_limit
             if abs(edge) >= floor:
                 frac = min(1.0, (abs(edge) - floor) / max(1e-9, self.edge_full - floor))
                 target = int(round(lim * frac)) * (1 if edge > 0 else -1)
-                if (target > 0 > pos) or (target < 0 < pos):
-                    pass                                    # view flipped: go through zero to the new target
+                if stopped:                                 # this symbol has lost its budget this round: reduce only
+                    target = 0 if target * pos <= 0 else (min(target, pos) if pos > 0 else max(target, pos))
+                    if target == pos:
+                        continue
             elif pos and ((pos > 0 and edge < -floor * 0.5) or (pos < 0 and edge > floor * 0.5)):
                 target = 0                                  # we are now on the wrong side: get out
             else:

@@ -77,6 +77,7 @@ class SeasonModel:
         self.posterior: dict[str, float] = {}
         self.fair_sd: dict[str, float] = {}                 # ensemble spread of the fair value per symbol
         self.reported_rounds: set[int] = set()              # rounds whose final report we applied
+        self.prelim_seen = False                            # preliminary report of the current storm applied
 
     # ---- feed handling ----
     def on_message(self, m: dict[str, Any]) -> None:
@@ -89,6 +90,7 @@ class SeasonModel:
             for s in self.states.values():
                 s.new_storm()
             self.storm_active, self.storm_reported, self.last_obs, self.current_loss_est = True, False, None, 0.0
+            self.prelim_seen = False
             self.obs, self.official, self.wire, self.posterior, self.fair_sd = [], [], [], {}, {}
         elif t == "storm":
             dt = m.get("_dt", 2.0)
@@ -101,14 +103,26 @@ class SeasonModel:
         elif t == "storm_dissipated":
             self.storm_active = False
         elif t == "damage_report":
-            for k in PHYS:
-                self.states[k].set_from_report(m["damage_pct"][k])
             if m["stage"] == "final":
+                for k in PHYS:
+                    self.states[k].set_from_report(m["damage_pct"][k])
                 self.loss_final += m["industry_loss_musd"]
-                self.storm_reported, self.current_loss_est = True, 0.0
+                self.storm_reported, self.current_loss_est, self.prelim_seen = True, 0.0, False
                 self.reported_rounds.add(m["round"])
             else:
-                self.current_loss_est = m["industry_loss_musd"]
+                # the preliminary report is noisier than our own nowcast (rmse 9 vs 6 points for PORT): combine them
+                # with the coefficients fitted in scripts/fit_prelim.py instead of taking the prelim as truth
+                q = P.get("prelim")
+                now = {k: self.states[k].storm_damage() for k in PHYS}
+                if q:
+                    comb = {k: max(0.0, q["dmg"][k][0] + q["dmg"][k][1] * m["damage_pct"][k] + q["dmg"][k][2] * now[k]) for k in PHYS}
+                    a, b, c = q["loss"]
+                    self.current_loss_est = max(1e-6, a + b * m["industry_loss_musd"] + c * storm_loss(now))
+                else:
+                    comb = dict(m["damage_pct"]); self.current_loss_est = m["industry_loss_musd"]
+                for k in PHYS:
+                    self.states[k].set_from_report(comb[k])
+                self.prelim_seen = True
 
     def on_snapshot(self, snap: dict[str, Any]) -> None:
         """After a late connection, rebuild from the snapshot: final reports of earlier rounds we missed, then the
@@ -167,11 +181,17 @@ class SeasonModel:
         loss = self.loss_final + (self.current_loss_est or storm_loss(cur)) + n_future * prior["loss"]
         base = values(cum, outage, loss, self.case)
         acc = {k: 0.0 for k in base}
-        for c, rmse in self.DAMAGE_RMSE.items():
+        q = P.get("prelim") if self.prelim_seen else None
+        rmses = q["dmg_sd"] if q else self.DAMAGE_RMSE
+        for c, rmse in rmses.items():
             cum2 = dict(cum); cum2[c] += rmse
             d = dict(cur); d[c] += rmse
             loss2 = loss + (storm_loss(d) - storm_loss(cur)) if not self.current_loss_est else loss
             v2 = values(cum2, outage, loss2, self.case)
+            for k in base:
+                acc[k] += (v2[k] - base[k]) ** 2
+        if self.current_loss_est:                            # the loss estimate (prelim-based) has its own error
+            v2 = values(cum, outage, loss + (q["loss_sd"] if q else 60.0), self.case)
             for k in base:
                 acc[k] += (v2[k] - base[k]) ** 2
         return {k: v ** 0.5 for k, v in acc.items()}

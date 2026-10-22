@@ -8,7 +8,7 @@ unchanged. Reads the news and quotes channels, keeps positions and open orders i
 mid for the operator every 10 s. Start with --dry-run: orders are printed, not sent.
 """
 from __future__ import annotations
-import argparse, asyncio, collections, json, sys, time, urllib.error, urllib.request
+import argparse, asyncio, collections, json, math, sys, time, urllib.error, urllib.request
 from pathlib import Path
 from typing import Any
 import websockets
@@ -17,6 +17,15 @@ from ctc import strategies as S
 from ctc.valuation import SYMS
 
 HEADERS = {"User-Agent": "ctc2026-bot/1.0"}
+TICK = 0.01   # exchange rejects prices that are not a multiple of 0.01
+
+
+def tick_price(price: float, side: str) -> float:
+    """Round a limit price to the tick, never past the limit: buys round down, sells round up."""
+    n = price / TICK
+    k = math.floor(n + 1e-9) if side == "buy" else math.ceil(n - 1e-9)
+    return round(k * TICK, 2)
+
 
 
 class LiveExchange:
@@ -105,7 +114,7 @@ class LiveExchange:
             return None
         order = {"symbol": symbol, "side": side, "order_type": "limit" if price is not None else "market", "quantity": qty}
         if price is not None:
-            order["price"] = round(price, 4)
+            order["price"] = tick_price(price, side)
         if self.dry_run:
             print(f"[dry-run] would send {order}", flush=True)
             return -1
