@@ -13,6 +13,10 @@ Usage (interactive):
     > undo                    # drop the last race
 Non-interactive:
     python3 mario/pricer.py --races "1 2 5 9" "3 1 7 2"
+    python3 mario/pricer.py settle 49 42 34 28          # series settlement from four cumulative scores
+    python3 mario/pricer.py points 1 2 5 9              # points of one race from the humans' overall places
+    python3 mario/pricer.py calib                        # CPU-strength calibration table
+Model parameters (--cpu-skill, --cpu-sd, --noise): see mario/README.md for the calibration.
 """
 from __future__ import annotations
 import argparse, sys
@@ -24,9 +28,10 @@ HUMANS = ["A", "B", "C", "D"]
 
 class Pricer:
     def __init__(self, n_particles: int = 4000, n_sims: int = 2000, skill_sd: float = 1.0, noise_sd: float = 1.0,
-                 cpu_skill: float = -0.3, cpu_sd: float = 0.5, seed: int = 0):
+                 cpu_skill: float = -0.6, cpu_sd: float = 0.5, seed: int = 0):
         self.rng = np.random.default_rng(seed)
         self.P, self.S, self.noise = n_particles, n_sims, noise_sd
+        self.skill_sd, self.cpu_skill, self.cpu_sd = skill_sd, cpu_skill, cpu_sd
         # particles: human skills (P,4) and cpu skills (P,8)
         self.h = self.rng.normal(0, skill_sd, (n_particles, 4))
         self.c = self.rng.normal(cpu_skill, cpu_sd, (n_particles, 8))
@@ -62,7 +67,7 @@ class Pricer:
 
     def undo(self) -> None:
         races = self.races[:-1]
-        self.__init__(self.P, self.S, seed=int(self.rng.integers(1e9)))
+        self.__init__(self.P, self.S, self.skill_sd, self.noise, self.cpu_skill, self.cpu_sd, seed=int(self.rng.integers(1e9)))
         for r in races:
             self.add_race(r)
 
@@ -111,9 +116,54 @@ class Pricer:
         return "\n".join(out)
 
 
+def settle(scores: list[int]) -> str:
+    """Settlement of the seven series contracts from the four humans' cumulative series scores."""
+    sc = np.array(scores); top = sc.max(); tied = sc == top
+    win = [100.0 / 1 if (t and tied.sum() == 1) else (50.0 if t else 0.0) for t in tied]
+    srt = np.sort(sc)[::-1]
+    out = ["series settlement for scores " + "  ".join(f"{h} {v}" for h, v in zip(HUMANS, sc)),
+           "  series winner (binary): " + "  ".join(f"{h} {w:5.1f}" for h, w in zip(HUMANS, win)) + ("   (tie: 50 each)" if tied.sum() > 1 else ""),
+           f"  #1 score {srt[0]}   #2 score {srt[1]}   top-2 total {srt[0] + srt[1]}"]
+    return "\n".join(out)
+
+
+def race_points(places: list[int]) -> str:
+    pts = POINTS[np.array(places) - 1]; best = min(places)
+    return ("race points: " + "  ".join(f"{h} place {p:2d} -> {q:2d} pts" for h, p, q in zip(HUMANS, places, pts))
+            + "\n  race winner market: " + "  ".join(f"{h} {100 if p == best else 0}" for h, p in zip(HUMANS, places)))
+
+
+def calib(noise: float = 1.0, skill_sd: float = 1.0, n: int = 20000, seed: int = 0) -> str:
+    """How the CPU-strength prior maps to things we can sanity-check on the day: a human's median overall place,
+    how often a human wins outright, points per human per race, and the series-score spread."""
+    rng = np.random.default_rng(seed)
+    out = [f"noise sd {noise}, human skill sd {skill_sd}; per CPU-skill prior (mean, sd):",
+           "  cpu prior   P(human 1st overall)  median human place  mean pts/human/race  #1 series score mean (sd)  P(race-winner mkt | equal skill)"]
+    for cm, cs in ((-0.6, 0.5), (-0.3, 0.5), (0.0, 0.5), (0.3, 0.5), (0.6, 0.5), (0.0, 1.0)):
+        h = rng.normal(0, skill_sd, (n, 4)); c = rng.normal(cm, cs, (n, 8))
+        perf = np.concatenate([h, c], 1)[:, None, :] + rng.normal(0, noise, (n, 4, 12))      # 4 races per sample
+        place = np.argsort(np.argsort(-perf, axis=2), axis=2) + 1
+        hp = place[:, :, :4]
+        pts = POINTS[hp - 1].sum(1)                                                            # series points (n, 4)
+        s1 = np.sort(pts, 1)[:, -1]
+        out.append(f"  ({cm:+.1f}, {cs})     {(hp.min(2) == 1).mean():.0%}                 {np.median(hp):.0f}                  {POINTS[hp - 1].mean():.1f}               {s1.mean():.1f} ({s1.std():.1f})              25% by symmetry")
+    return "\n".join(out)
+
+
 def main():
-    ap = argparse.ArgumentParser(); ap.add_argument("--races", nargs="*", default=[])
-    a = ap.parse_args(); pr = Pricer()
+    ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    ap.add_argument("cmd", nargs="*", default=[], help="settle S1 S2 S3 S4 | points P1 P2 P3 P4 | calib | (nothing: interactive)")
+    ap.add_argument("--races", nargs="*", default=[])
+    ap.add_argument("--cpu-skill", type=float, default=-0.6, help="CPU skill prior mean relative to the human prior (-0.6: humans usually top-5, see README)")
+    ap.add_argument("--cpu-sd", type=float, default=0.5); ap.add_argument("--noise", type=float, default=1.0); ap.add_argument("--skill-sd", type=float, default=1.0)
+    a = ap.parse_args()
+    if a.cmd and a.cmd[0] == "settle":
+        print(settle([int(x) for x in a.cmd[1:5]])); return
+    if a.cmd and a.cmd[0] == "points":
+        print(race_points([int(x) for x in a.cmd[1:5]])); return
+    if a.cmd and a.cmd[0] == "calib":
+        print(calib(a.noise, a.skill_sd)); return
+    pr = Pricer(skill_sd=a.skill_sd, noise_sd=a.noise, cpu_skill=a.cpu_skill, cpu_sd=a.cpu_sd)
     for r in a.races:
         pr.add_race([int(x) for x in r.split()])
     print(pr.fair())
