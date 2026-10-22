@@ -16,6 +16,66 @@ import numpy as np
 P = json.loads((Path(__file__).parent / "valuation_params.json").read_text())
 SYMS = ["PORT", "ISLE", "AQUA", "GRID", "FERRY", "RECON", "MAT", "GEN", "HAVEN", "REIN", "ARCH", "REBLD"]
 
+# Sample of historical storms (scripts/build_storm_sample.py, seasons 1-450) for the future-storm prior: the fair value
+# with n storms still to come is the average of the valuation over n-storm combinations, not the valuation at the
+# mean storm (insurers and rebuilders are convex / concave in the loss).
+_SP = Path(__file__).parent / "storm_sample.npz"
+_SAMPLE_M = 400
+FUTURE: dict[int, tuple[np.ndarray, np.ndarray, np.ndarray]] = {}
+if _SP.exists():
+    _d = np.load(_SP); _rng = np.random.default_rng(0)
+    _n = len(_d["loss"])
+    _i1 = _rng.choice(_n, _SAMPLE_M, replace=False)
+    FUTURE[1] = (_d["dmg"][_i1], _d["outage"][_i1], _d["loss"][_i1])
+    _i2a, _i2b = _rng.integers(0, _n, _SAMPLE_M), _rng.integers(0, _n, _SAMPLE_M)
+    FUTURE[2] = (_d["dmg"][_i2a] + _d["dmg"][_i2b], _d["outage"][_i2a] + _d["outage"][_i2b], _d["loss"][_i2a] + _d["loss"][_i2b])
+    _i3 = [_rng.integers(0, _n, _SAMPLE_M) for _ in range(3)]
+    FUTURE[3] = (sum(_d["dmg"][i] for i in _i3), sum(_d["outage"][i] for i in _i3), sum(_d["loss"][i] for i in _i3))
+
+
+def values_vec(cum: np.ndarray, outage: np.ndarray, loss: np.ndarray, case: dict[str, Any]) -> dict[str, np.ndarray]:
+    """Vectorised `values`: cum, outage are (N, 5) in PHYS order, loss is (N,). Returns symbol -> (N,) array."""
+    v = {}
+    for j, k in enumerate(PHYS):
+        b = P[k]["beta"]
+        v[k] = b[0] + b[1] * cum[:, j] + b[2] * cum[:, j] ** 2 + b[3] * outage[:, j]
+    idx = {k: j for j, k in enumerate(PHYS)}
+    for k in ("RECON", "MAT", "GEN"):
+        base, A, sc, o = P[k]["params"]
+        if k == "RECON":
+            D, O = cum[:, idx["PORT"]] + cum[:, idx["GRID"]] + cum[:, idx["FERRY"]], 0.0
+        elif k == "MAT":
+            D, O = cum.sum(1), 0.0
+        else:
+            D, O = cum[:, idx["GRID"]], outage[:, idx["GRID"]]
+        v[k] = base + A * (1 - np.exp(-D / sc)) + o * O
+    q = P["HAVEN"]; L0, L1 = q["params"]
+    v["HAVEN"] = q["top"] - (q["top"] - q["floor"]) * np.clip((loss - L0) / (L1 - L0), 0.0, 1.0)
+    q = P["REIN"]; L1, slope = q["params"]
+    v["REIN"] = q["top"] - slope * np.clip(loss - L1, 0.0, None)
+    for etf, spec in case["etfs"].items():
+        v[etf] = sum(n * v[s_] for s_, n in spec["basket"].items())
+    return v
+
+
+def expected_values(cum: np.ndarray, outage: np.ndarray, loss: np.ndarray, n_future: int, case: dict[str, Any],
+                    mode: str = "sample") -> dict[str, np.ndarray]:
+    """Expected valuation with `n_future` storms still to come, for each of the N states given (cum (N,5), outage (N,5),
+    loss (N,)). mode "sample": average over historical n-storm combinations; "point": the mean storm added n times."""
+    prior = P["prior"]
+    if n_future <= 0:
+        return values_vec(cum, outage, loss, case)
+    if mode != "sample" or n_future not in FUTURE:
+        pd = np.array([prior["dmg"][k] for k in PHYS]); po = np.array([prior["outage"][k] for k in PHYS])
+        return values_vec(cum + n_future * pd, outage + n_future * po, loss + n_future * prior["loss"], case)
+    sd, so, sl = FUTURE[n_future]
+    N, M = len(loss), len(sl)
+    c = (cum[:, None, :] + sd[None, :, :]).reshape(N * M, -1)
+    o = (outage[:, None, :] + so[None, :, :]).reshape(N * M, -1)
+    l = (loss[:, None] + sl[None, :]).reshape(N * M)
+    v = values_vec(c, o, l, case)
+    return {k: a.reshape(N, M).mean(1) for k, a in v.items()}
+
 
 def island_value(sym: str, cum: float, outage: float) -> float:
     b = P[sym]["beta"]
@@ -78,6 +138,7 @@ class SeasonModel:
         self.fair_sd: dict[str, float] = {}                 # ensemble spread of the fair value per symbol
         self.reported_rounds: set[int] = set()              # rounds whose final report we applied
         self.prelim_seen = False                            # preliminary report of the current storm applied
+        self.prior_mode = "sample"                          # future storms: "sample" of historical storms or "point" mean
 
     # ---- feed handling ----
     def on_message(self, m: dict[str, Any]) -> None:
@@ -239,21 +300,20 @@ class SeasonModel:
         self.posterior = self.ensemble.pattern_posterior(w)
         E, O, sel = self.ensemble.future_exposure(self.obs, w)
         wsel = w[sel]
-        vals = []
-        for i in range(len(sel)):
+        K = len(sel)
+        cum_a, out_a, loss_a = np.zeros((K, len(PHYS))), np.zeros((K, len(PHYS))), np.zeros(K)
+        for i in range(K):
             cum, out = {}, {}
             for k, st in self.states.items():
                 extra = list(E[k][i])
                 cum[k] = base_cum[k] + st.storm_damage(extra)
                 out[k] = st.weighted_outage() + float((O[k][i] * np.array([x["weight"] for x in st.sites])).sum())
             storm_dmg = {k: cum[k] - base_cum[k] for k in PHYS}
-            loss = self.loss_final + (self.current_loss_est or storm_loss(storm_dmg))
-            for k in PHYS:
-                cum[k] += n_future * prior["dmg"][k]; out[k] += n_future * prior["outage"][k]
-            loss += n_future * prior["loss"]
-            vals.append(values(cum, out, loss, self.case))
-        keys = list(vals[0])
-        arr = np.array([[v[k] for k in keys] for v in vals])
+            loss_a[i] = self.loss_final + (self.current_loss_est or storm_loss(storm_dmg))
+            cum_a[i] = [cum[k] for k in PHYS]; out_a[i] = [out[k] for k in PHYS]
+        ev = expected_values(cum_a, out_a, loss_a, n_future, self.case, self.prior_mode)
+        keys = list(ev)
+        arr = np.array([ev[k] for k in keys]).T                 # (K, n_symbols)
         mean = (wsel[:, None] * arr).sum(0)
         sd = np.sqrt((wsel[:, None] * (arr - mean) ** 2).sum(0))
         fair = dict(zip(keys, mean.tolist()))
@@ -272,8 +332,6 @@ class SeasonModel:
         if not self.storm_reported and self.round >= 1:
             loss += storm_loss(cur) if not self.current_loss_est else self.current_loss_est
         n_future = self.storms_left_after_current() if self.round >= 1 else 3
-        for k in PHYS:
-            cum[k] += n_future * prior["dmg"][k]
-            outage[k] += n_future * prior["outage"][k]
-        loss += n_future * prior["loss"]
-        return values(cum, outage, loss, self.case)
+        ev = expected_values(np.array([[cum[k] for k in PHYS]]), np.array([[outage[k] for k in PHYS]]), np.array([loss]),
+                             n_future, self.case, self.prior_mode)
+        return {k: float(v[0]) for k, v in ev.items()}

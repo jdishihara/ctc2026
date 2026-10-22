@@ -45,6 +45,7 @@ class LiveExchange:
         self.round = 0
         self.competition_id = None
         self.last_positions: Any = None
+        self.pnl_now = 0.0
 
     @property
     def t(self) -> float:
@@ -88,8 +89,12 @@ class LiveExchange:
                 self.position = {s: 0 for s in self.symbols}
             self.competition_id = cid
             pos = self.get("/positions")
-            self.last_positions = pos
             items = pos.get("positions", pos) if isinstance(pos, dict) else pos
+            if items:
+                self.last_positions = {"realized": round(sum(p.get("realized_pnl", 0) for p in items)),
+                                       "unrealized": round(sum(p.get("unrealized_pnl", 0) for p in items)),
+                                       "positions": {p["symbol"]: p.get("quantity") for p in items}}
+                self.pnl_now = self.last_positions["realized"] + self.last_positions["unrealized"]
             for p in items if isinstance(items, list) else []:
                 sym = p.get("symbol"); q = p.get("quantity", p.get("position"))
                 if sym in self.position and q is not None:
@@ -211,7 +216,7 @@ async def run(args: argparse.Namespace) -> None:
                     if len(ex.quotes) >= len(ex.symbols) // 2:
                         strat.on_quotes(ex)
                     if now - last_log > 10 and strat.fair:
-                        print(f"t={now:7.0f} r{strat.model.round} " + " ".join(
+                        print(f"t={now:7.0f} r{strat.model.round} pnl {ex.pnl_now:+.0f} " + " ".join(
                             f"{s}:{ex.mid.get(s, 0):.2f}/{strat.fair.get(s, 0):.2f}/{ex.position[s]:+d}" for s in SYMS), flush=True)
                         last_log = now
         except (OSError, websockets.WebSocketException) as exc:

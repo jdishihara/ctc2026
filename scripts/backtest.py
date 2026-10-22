@@ -16,7 +16,7 @@ STRATS = {
     "nowcast": lambda a: S.FairValueTrader(min_edge=a.min_edge, edge_full=a.edge_full, project=True),
     "noproject": lambda a: S.FairValueTrader(min_edge=a.min_edge, edge_full=a.edge_full, project=False),
     "analog": lambda a: S.FairValueTrader(min_edge=a.min_edge, edge_full=a.edge_full, analog=True, sd_mult=a.sd_mult,
-                                          sigma=a.sigma, k=a.k, shift=not a.noshift, loss_limit=a.loss_limit or None),
+                                          sigma=a.sigma, k=a.k, shift=not a.noshift, loss_limit=a.loss_limit or None, prior_mode=a.prior),
 }
 
 def parse_seasons(spec, n):
@@ -45,6 +45,7 @@ def main():
     ap.add_argument("--sigma", type=float, default=25.0)
     ap.add_argument("--k", type=int, default=50)
     ap.add_argument("--noshift", action="store_true")
+    ap.add_argument("--prior", default="sample", choices=["sample", "point"], help="future storms: historical sample or point mean")
     ap.add_argument("--loss-limit", type=float, default=0.0, help="per symbol per round: stop adding after losing this much (0 = off)")
     ap.add_argument("--out", default="out")
     a = ap.parse_args()

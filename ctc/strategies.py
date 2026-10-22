@@ -28,7 +28,8 @@ class FairValueTrader(Strategy):
 
     def __init__(self, min_edge: float = 0.01, edge_full: float = 0.05, rebalance_every: float = 15.0,
                  symbols: list[str] | None = None, project: bool = True, analog: bool = False,
-                 sd_mult: float = 1.0, loss_limit: float | None = None, **analog_kw):
+                 sd_mult: float = 1.0, loss_limit: float | None = None, prior_mode: str = "sample", **analog_kw):
+        self.prior_mode = prior_mode
         self.min_edge, self.edge_full, self.every = min_edge, edge_full, rebalance_every
         self.loss_limit = loss_limit                        # per symbol per round: stop adding once this much is lost
         self.symbols = symbols or SYMS
@@ -38,6 +39,7 @@ class FairValueTrader(Strategy):
 
     def on_start(self, sim) -> None:
         self.model = SeasonModel(sim.case)
+        self.model.prior_mode = self.prior_mode
         if self.analog:
             self.model.ensemble = AnalogEnsemble(sim.case, **self.analog_kw)
         self.last_trade_t = -1e9
