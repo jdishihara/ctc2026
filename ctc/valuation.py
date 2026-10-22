@@ -243,7 +243,8 @@ class SeasonModel:
             self.official, self.wire = cur_official, cur_wire
             adv = snap.get("advisory")
             if adv and not cur_official:
-                self.on_message(adv)
+                # the snapshot's advisory record carries no "type" field; the live bot crashed on it at each reconnect
+                self.on_message({"type": "advisory", **adv})
             for rep in reports:
                 if rep.get("stage") == "preliminary" and rep.get("round") == rnd:
                     self.on_message(rep)

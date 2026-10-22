@@ -207,6 +207,10 @@ async def run(args: argparse.Namespace) -> None:
                             strat.model.on_snapshot(m)
                             strat.fair = strat.compute_fair()
                             strat.last_trade_t = -1e9
+                            # fair values right after a snapshot can be far off until live messages arrive
+                            # (14:10 reconnect: PORT fair 99.9 vs mid 81, full-size orders, -4k in 30 s); warm up as at a round open
+                            print("snapshot processed: warm-up before trading", flush=True)
+                            strat.on_round(ex)
                             continue
                         if m.get("type") == "announcement":
                             print(f"ANNOUNCEMENT {m.get('symbols')}: {m.get('headline')}  -> pausing those symbols", flush=True)
