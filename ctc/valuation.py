@@ -76,10 +76,14 @@ class SeasonModel:
         self.ensemble = None                                # AnalogEnsemble, attached by the strategy
         self.posterior: dict[str, float] = {}
         self.fair_sd: dict[str, float] = {}                 # ensemble spread of the fair value per symbol
+        self.reported_rounds: set[int] = set()              # rounds whose final report we applied
 
     # ---- feed handling ----
     def on_message(self, m: dict[str, Any]) -> None:
         t = m["type"]
+        if m.get("round") and t in ("storm", "track", "advisory", "impact") and m["round"] != self.round:
+            # joined mid-storm without storm_formed: open the storm now (snapshot fills in earlier rounds)
+            self.on_message({"type": "storm_formed", "round": m["round"]})
         if t == "storm_formed":
             self.round = m["round"]
             for s in self.states.values():
@@ -101,31 +105,41 @@ class SeasonModel:
             if m["stage"] == "final":
                 self.loss_final += m["industry_loss_musd"]
                 self.storm_reported, self.current_loss_est = True, 0.0
+                self.reported_rounds.add(m["round"])
             else:
                 self.current_loss_est = m["industry_loss_musd"]
 
     def on_snapshot(self, snap: dict[str, Any]) -> None:
-        """Rebuild the state from a snapshot after a late connection: damage reports of all rounds, then the track."""
-        if self.obs or self.loss_final:
-            return                                          # we have been listening; nothing to rebuild
-        reports = snap.get("damage") or []
-        for rep in reports:
-            if rep.get("stage") == "final":
-                self.on_message({"type": "storm_formed", "round": rep["round"]})
-                self.on_message(rep)
+        """After a late connection, rebuild from the snapshot: final reports of earlier rounds we missed, then the
+        current storm's track. Does nothing when we already hold every final report the snapshot lists."""
+        finals = [r for r in (snap.get("damage") or []) if r.get("stage") == "final"]
+        if {r["round"] for r in finals} <= self.reported_rounds:
+            return
+        cur_round, cur_obs, cur_official, cur_wire = self.round, list(self.obs), list(self.official), list(self.wire)
+        # reset damage state and replay the final reports in order
+        self.states = {k: SiteState(self.case, k) for k in PHYS}
+        self.loss_final, self.reported_rounds, self.round = 0.0, set(), 0
+        for rep in sorted(finals, key=lambda r: r["round"]):
+            self.on_message({"type": "storm_formed", "round": rep["round"]})
+            self.on_message(rep)
         obs = snap.get("obs")
-        if obs and snap.get("phase") in ("storm", "aftermath"):
-            rnd = snap.get("round") or self.round + 1
+        phase = snap.get("phase")
+        if obs and phase in ("storm", "aftermath"):
+            rnd = cur_round if cur_round > self.round else self.round + 1
             self.on_message({"type": "storm_formed", "round": rnd})
-            for age, x, y, r in snap.get("track") or []:
-                self.on_message({"type": "storm", "round": rnd, "age": age, "x": x, "y": y, "radius": r,
-                                 "intensity": obs.get("intensity", 1.0), "vx": obs.get("vx", 0), "vy": obs.get("vy", 0)})
-            self.on_message({"type": "storm", "round": rnd, **obs})
-            if snap.get("phase") == "aftermath":
-                self.on_message({"type": "storm_dissipated", "round": rnd})
+            replay = cur_obs if cur_obs else [
+                {"type": "storm", "round": rnd, "age": a, "x": x, "y": y, "radius": r, "intensity": obs.get("intensity", 1.0),
+                 "vx": obs.get("vx", 0), "vy": obs.get("vy", 0)} for a, x, y, r in (snap.get("track") or [])]
+            for o in replay:
+                self.on_message({**o, "type": "storm", "round": rnd})
+            if not cur_obs:
+                self.on_message({"type": "storm", "round": rnd, **{k: v for k, v in obs.items() if k != "type"}})
+            self.official, self.wire = cur_official, cur_wire
             adv = snap.get("advisory")
-            if adv:
+            if adv and not cur_official:
                 self.on_message(adv)
+            if phase == "aftermath":
+                self.on_message({"type": "storm_dissipated", "round": rnd})
 
     # ---- uncertainty ----
     DAMAGE_RMSE = {"PORT": 6.3, "ISLE": 3.2, "AQUA": 3.6, "GRID": 3.6, "FERRY": 3.8}   # holdout rmse of the damage model, points

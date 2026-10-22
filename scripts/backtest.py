@@ -7,6 +7,7 @@ from pathlib import Path
 import numpy as np
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from ctc.sim import Sim
+from ctc.ladder import Ladder
 from ctc import strategies as S
 
 STRATS = {
@@ -34,6 +35,9 @@ def main():
     ap.add_argument("--half-spread", type=float, default=0.0015)
     ap.add_argument("--latency", type=float, default=0.25)
     ap.add_argument("--depth", type=int, default=0, help="max fill per order per 2 s tick (0 = unlimited)")
+    ap.add_argument("--liquidity", default="ladder", choices=["ladder", "spread"], help="ladder = measured testnet book; spread = flat half-spread model")
+    ap.add_argument("--refill", type=float, default=10.0, help="ladder: seconds for consumed depth to regenerate")
+    ap.add_argument("--ladder-scale", type=float, default=1.0, help="ladder: multiply all sizes")
     ap.add_argument("--min-edge", type=float, default=0.01)
     ap.add_argument("--edge-full", type=float, default=0.05)
     ap.add_argument("--verbose", action="store_true")
@@ -50,7 +54,8 @@ def main():
     rows = []; t0 = time.time(); by_sym = {}; by_round = {1: [], 2: [], 3: []}
     for n in seasons:
         meta = man["seasons"][n - 1]
-        sim = Sim(root / "history" / meta["dir"], case, half_spread=a.half_spread, latency=a.latency, depth=a.depth or None, verbose=a.verbose)
+        lad = Ladder(refill_secs=a.refill, scale=a.ladder_scale) if a.liquidity == "ladder" else None
+        sim = Sim(root / "history" / meta["dir"], case, half_spread=a.half_spread, latency=a.latency, depth=a.depth or None, verbose=a.verbose, ladder=lad)
         pnl = sim.run(STRATS[a.strategy](a))
         traded = sum(f.qty * f.price for f in sim.fills)
         for s_, v in sim.pnl_by_symbol().items():

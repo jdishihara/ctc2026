@@ -83,7 +83,8 @@ class LiveExchange:
             print(f"refresh failed: {exc}", flush=True)
 
     def resting(self, symbol: str, side: str) -> int:
-        return sum(int(o.get("remaining", o.get("quantity", 0))) for o in self.open_orders if o.get("symbol") == symbol and o.get("side") == side)
+        return sum(int(o.get("quantity", 0)) - int(o.get("filled_quantity", 0)) for o in self.open_orders
+                   if o.get("symbol") == symbol and o.get("side") == side)
 
     # ---- orders (same signatures as Sim) ----
     def place(self, symbol: str, side: str, qty: int, price: float | None = None) -> int | None:
@@ -105,7 +106,7 @@ class LiveExchange:
             filled = int(resp.get("filled_quantity", resp.get("filled", 0)) or 0)
             self.position[symbol] += sign * filled                     # apply what we know now; refresh() corrects later
             if filled < qty:
-                self.open_orders.append({**order, "remaining": qty - filled, "id": resp.get("order_id", resp.get("id"))})
+                self.open_orders.append({**order, "filled_quantity": filled, "order_id": resp.get("order_id", resp.get("id"))})
             return resp.get("order_id", resp.get("id"))
         return None
 
@@ -191,7 +192,7 @@ async def run(args: argparse.Namespace) -> None:
 
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("--url", default="https://hurricane.cornelltradingcompetition.org")
+    ap.add_argument("--url", default="https://cornelltradingcompetition.org")
     ap.add_argument("--key", required=True)
     ap.add_argument("--dry-run", action="store_true")
     ap.add_argument("--min-edge", type=float, default=0.01)

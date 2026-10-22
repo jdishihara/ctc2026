@@ -14,6 +14,7 @@ from dataclasses import dataclass, field
 from datetime import datetime
 from pathlib import Path
 from typing import Any
+from .ladder import Ladder
 
 ROUND_SECS = 780.0
 CLOCK = 30.0
@@ -50,8 +51,9 @@ class Fill:
 
 class Sim:
     def __init__(self, folder: Path, case: dict[str, Any], half_spread: float = 0.0015, latency: float = 0.25,
-                 depth: int | None = None, rate_limit: int = 300, verbose: bool = False):
+                 depth: int | None = None, rate_limit: int = 300, verbose: bool = False, ladder: Ladder | None = None):
         self.folder, self.case = Path(folder), case
+        self.ladder = ladder
         self.half_spread, self.latency, self.depth, self.rate_limit, self.verbose = half_spread, latency, depth, rate_limit, verbose
         self.limits = case["limits"]
         self.symbols = list(self.limits)
@@ -165,6 +167,15 @@ class Sim:
             return
         bid, ask = self.quotes[o.symbol]
         remaining = o.qty - o.filled
+        if self.ladder is not None and self.ladder.has(o.symbol):
+            if passive:
+                # resting order: fills when the house's best quote crosses it (house re-quoted through our price)
+                if (o.side == "buy" and o.price >= ask) or (o.side == "sell" and o.price <= bid):
+                    self._fill(o, remaining, o.price, True)
+                return
+            for q, px in self.ladder.fill(o.symbol, o.side, remaining, self.mid[o.symbol], self.t, o.price):
+                self._fill(o, q, px, False)
+            return
         if self.depth:
             remaining = min(remaining, self.depth)
         if o.side == "buy" and (o.price is None or o.price >= ask):
@@ -185,7 +196,11 @@ class Sim:
 
     def _on_price(self, prices: dict[str, float]) -> None:
         self.mid = prices
-        self.quotes = {s: (p * (1 - self.half_spread), p * (1 + self.half_spread)) for s, p in prices.items()}
+        if self.ladder is not None:
+            self.quotes = {s: (self.ladder.best(s, "sell", p), self.ladder.best(s, "buy", p)) if self.ladder.has(s)
+                           else (p * (1 - self.half_spread), p * (1 + self.half_spread)) for s, p in prices.items()}
+        else:
+            self.quotes = {s: (p * (1 - self.half_spread), p * (1 + self.half_spread)) for s, p in prices.items()}
         for oid in list(self.orders):
             o = self.orders[oid]
             self._try_match(o, passive=True)
