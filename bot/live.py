@@ -20,7 +20,7 @@ HEADERS = {"User-Agent": "ctc2026-bot/1.0"}
 
 
 class LiveExchange:
-    def __init__(self, url: str, key: str, dry_run: bool, rate_limit: int = 280):
+    def __init__(self, url: str, key: str, dry_run: bool, rate_limit: int = 120):
         self.url, self.key, self.dry_run = url.rstrip("/"), key, dry_run
         self.case = self.get("/cases/hurricane.json", api=False)
         self.limits = self.case["limits"]; self.symbols = list(self.limits)
@@ -34,6 +34,8 @@ class LiveExchange:
         self.rate_limit = rate_limit
         self.rejected = 0
         self.round = 0
+        self.competition_id = None
+        self.last_positions: Any = None
 
     @property
     def t(self) -> float:
@@ -71,7 +73,13 @@ class LiveExchange:
         try:
             tm = self.get("/competitions/time")
             self.market_open = tm.get("state") == "running"
+            cid = tm.get("competition_id")
+            if self.competition_id and cid != self.competition_id:
+                print(f"SEASON END competition {self.competition_id} ({tm.get('fictional_time')}): last positions {json.dumps(self.last_positions)}", flush=True)
+                self.position = {s: 0 for s in self.symbols}
+            self.competition_id = cid
             pos = self.get("/positions")
+            self.last_positions = pos
             items = pos.get("positions", pos) if isinstance(pos, dict) else pos
             for p in items if isinstance(items, list) else []:
                 sym = p.get("symbol"); q = p.get("quantity", p.get("position"))
@@ -102,6 +110,7 @@ class LiveExchange:
             print(f"[dry-run] would send {order}", flush=True)
             return -1
         resp = self.send("POST", "/orders", order)
+        print(f"ORDER {order} -> {resp}", flush=True)
         if resp:
             filled = int(resp.get("filled_quantity", resp.get("filled", 0)) or 0)
             self.position[symbol] += sign * filled                     # apply what we know now; refresh() corrects later
@@ -137,7 +146,7 @@ def quote_from_frame(d: dict[str, Any]) -> tuple[str, float, float] | None:
 
 
 async def run(args: argparse.Namespace) -> None:
-    ex = LiveExchange(args.url, args.key, args.dry_run)
+    ex = LiveExchange(args.url, args.key, args.dry_run, rate_limit=args.rate)
     strat = S.FairValueTrader(min_edge=args.min_edge, edge_full=args.edge_full, project=True)
     strat.on_start(ex)
     ex.refresh()
@@ -178,7 +187,11 @@ async def run(args: argparse.Namespace) -> None:
                         strat.on_news(ex, m)
                     now = ex.t
                     if now - last_sync > args.sync:
+                        cid_before = ex.competition_id
                         ex.refresh(); last_sync = now
+                        if cid_before and ex.competition_id != cid_before:
+                            print("new competition id: resetting model", flush=True)
+                            strat.on_start(ex); seen_seq.clear(); last_round = 0
                     if len(ex.quotes) >= len(ex.symbols) // 2:
                         strat.on_quotes(ex)
                     if now - last_log > 10 and strat.fair:
@@ -199,6 +212,7 @@ def main() -> None:
     ap.add_argument("--edge-full", type=float, default=0.05)
     ap.add_argument("--sync", type=float, default=3.0, help="seconds between position/open-order polls")
     ap.add_argument("--ws", default=None, help="override the market-data host, e.g. ws://localhost:8766 for the mock")
+    ap.add_argument("--rate", type=int, default=120, help="max order actions per minute for this bot (team limit is 180)")
     asyncio.run(run(ap.parse_args()))
 
 
