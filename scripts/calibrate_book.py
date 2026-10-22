@@ -13,7 +13,7 @@ ap.add_argument("path", nargs="?", default="recordings/books.jsonl")
 ap.add_argument("--before", type=float, default=None); ap.add_argument("--after", type=float, default=None)
 ap.add_argument("--out", default="ctc/ladder.json"); ap.add_argument("--stat", default="median", choices=["median", "p25"])
 a = ap.parse_args()
-BANDS = [0.0025, 0.005, 0.01, 0.02, 0.03, 0.05, 0.08, 0.12]
+BANDS = [0.0025, 0.005, 0.01, 0.02, 0.03, 0.05, 0.06, 0.07, 0.08, 0.09, 0.10, 0.12]
 rows = [json.loads(l) for l in open(a.path)]
 by = {}
 for r in rows:

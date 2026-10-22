@@ -156,7 +156,12 @@ def quote_from_frame(d: dict[str, Any]) -> tuple[str, float, float] | None:
 
 async def run(args: argparse.Namespace) -> None:
     ex = LiveExchange(args.url, args.key, args.dry_run, rate_limit=args.rate)
-    strat = S.FairValueTrader(min_edge=args.min_edge, edge_full=args.edge_full, project=True)
+    if args.nowcast:
+        strat = S.FairValueTrader(min_edge=args.min_edge, edge_full=args.edge_full, project=True)
+    else:   # the analog ensemble, same parameters as scripts/backtest.py --strategy analog
+        strat = S.FairValueTrader(min_edge=args.min_edge, edge_full=args.edge_full, analog=True, sd_mult=args.sd_mult,
+                                  sigma=args.sigma, k=args.k)
+    print(f"strategy {'nowcast' if args.nowcast else 'analog'} min_edge {args.min_edge} edge_full {args.edge_full} sd_mult {args.sd_mult} sigma {args.sigma} k {args.k}", flush=True)
     strat.on_start(ex)
     ex.refresh()
     ws_url = (args.ws or ex.url.replace("https://", "wss://", 1).replace("http://", "ws://", 1)) + "/ws/v1/market-data"
@@ -224,6 +229,10 @@ def main() -> None:
     ap.add_argument("--sync", type=float, default=3.0, help="seconds between position/open-order polls")
     ap.add_argument("--ws", default=None, help="override the market-data host, e.g. ws://localhost:8766 for the mock")
     ap.add_argument("--rate", type=int, default=120, help="max order actions per minute for this bot (team limit is 180)")
+    ap.add_argument("--nowcast", action="store_true", help="constant-velocity nowcast instead of the analog ensemble (debug only)")
+    ap.add_argument("--sd-mult", type=float, default=1.0)
+    ap.add_argument("--sigma", type=float, default=25.0)
+    ap.add_argument("--k", type=int, default=50)
     asyncio.run(run(ap.parse_args()))
 
 
