@@ -14,13 +14,13 @@ OUT = ROOT / "out" / "tune"; OUT.mkdir(parents=True, exist_ok=True)
 LEDGER, BEST = OUT / "ledger.csv", OUT / "best.json"
 TUNE, VERIFY = "451-525", "526-600"
 SPACE = {
-    "min_edge": [0.003, 0.005, 0.0075, 0.01, 0.015],
-    "edge_full": [0.02, 0.03, 0.04, 0.05, 0.08],
-    "sd_mult": [0.25, 0.4, 0.5, 0.7, 1.0, 1.5],
+    "min_edge": [0.005, 0.01, 0.015, 0.02, 0.03],
+    "edge_full": [0.03, 0.05, 0.08, 0.12],
+    "sd_mult": [0.5, 0.7, 1.0, 1.5, 2.0, 3.0],
     "sigma": [15, 25, 40],
     "k": [30, 50, 100],
 }
-REGIMES = [("deep", ["--half-spread", "0.0015"]), ("thin", ["--half-spread", "0.003", "--depth", "100"])]
+REGIMES = [("deep", ["--liquidity", "ladder", "--refill", "10"]), ("thin", ["--liquidity", "ladder", "--refill", "30", "--ladder-scale", "0.5"])]
 
 
 def run(params: dict, seasons: str, regime_args: list[str]) -> dict:
@@ -52,6 +52,8 @@ def main():
         params = {k: rng.choice(v) for k, v in SPACE.items()}
         if n == 0 and not rows:
             params = {"min_edge": 0.01, "edge_full": 0.05, "sd_mult": 1.0, "sigma": 25, "k": 50}   # baseline first
+        if (ROOT / "scripts" / "tune_space.json").exists():
+            SPACE.update(json.loads((ROOT / "scripts" / "tune_space.json").read_text()))
         key = json.dumps(params, sort_keys=True)
         if key in seen:
             continue

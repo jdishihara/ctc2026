@@ -5,8 +5,9 @@ Goal: raise holdout PnL of the Hurricane Season strategy without fooling ourselv
 ## Fixed evaluation
 - Fit anything (damage model, valuation, analog library) on seasons 1-450 only.
 - Tune parameters on 451-525. Verify on 526-600. Report 526-600 numbers as "the" result.
-- Always report two liquidity regimes: deep (half spread 0.15%, unlimited depth) and thin (0.3%, 100 shares/tick).
-  Until the testnet is measured, a change must help in both.
+- Liquidity: the simulator uses the ladder measured on the testnet (ctc/ladder.json, from recordings/books.jsonl via
+  scripts/calibrate_book.py). Report two regimes: deep (ladder, refill 10 s) and thin (ladder at half size, refill 30 s).
+  Re-run scripts/calibrate_book.py when more book snapshots exist; the ladder also contains other teams' orders.
 - Accept a change if verify-set mean PnL rises in both regimes and the thin-regime p10 does not fall by more than 10%.
 - Every accepted change: commit with the numbers in the message, and add a line to the ledger below.
 - Never edit data/. Never force-push or rewrite history. Keep runs under out/ (gitignored).
@@ -22,7 +23,8 @@ python3 scripts/eval_forecast.py 25 50       # forecast skill
 ## Ledger (verify seasons 526-600, mean PnL deep / thin, losing %)
 | date | change | deep | thin | notes |
 |---|---|---|---|---|
-| 2026-10-22 | analog ensemble baseline (min_edge .01, edge_full .05, sd_mult 1) | see tune/best.json | | first unattended run |
+| 2026-10-22 | analog ensemble, flat-spread model (obsolete) | 10168 | | before the ladder was measured |
+| 2026-10-22 | ladder fill model + liquidity-aware limits, hold through convergence | 5047 (27% losing, min -17k) | | tail is the problem now |
 
 ## Backlog (ordered by expected value)
 1. Passive quoting: rest orders inside the house spread instead of crossing; measure under thin regime.

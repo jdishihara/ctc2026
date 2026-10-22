@@ -26,12 +26,13 @@ class FairValueTrader(Strategy):
     The edge is scaled by `confidence` in [0, 1], which rises as the storm resolves.
     """
 
-    def __init__(self, min_edge: float = 0.01, edge_full: float = 0.05, rebalance_every: float = 10.0,
+    def __init__(self, min_edge: float = 0.01, edge_full: float = 0.05, rebalance_every: float = 15.0,
                  symbols: list[str] | None = None, project: bool = True, analog: bool = False,
                  sd_mult: float = 1.0, **analog_kw):
         self.min_edge, self.edge_full, self.every = min_edge, edge_full, rebalance_every
         self.symbols = symbols or SYMS
         self.project, self.analog, self.sd_mult, self.analog_kw = project, analog, sd_mult, analog_kw
+        self.exit_slip = 0.01                               # how far through the book we go to exit a wrong position
         self.paused: set[str] = set()
 
     def on_start(self, sim) -> None:
@@ -99,25 +100,37 @@ class FairValueTrader(Strategy):
             edge = (f - mid) / mid * conf
             lim = sim.limits[s]
             floor = self.min_edge_for(sim, s)
+            pos = sim.position[s]
             if abs(edge) >= floor:
                 frac = min(1.0, (abs(edge) - floor) / max(1e-9, self.edge_full - floor))
                 target = int(round(lim * frac)) * (1 if edge > 0 else -1)
-            elif abs(edge) < floor * 0.5:
-                target = 0              # fair has converged to the market: take profit
+                if (target > 0 > pos) or (target < 0 < pos):
+                    pass                                    # view flipped: go through zero to the new target
+            elif pos and ((pos > 0 and edge < -floor * 0.5) or (pos < 0 and edge > floor * 0.5)):
+                target = 0                                  # we are now on the wrong side: get out
             else:
-                continue                # in between: hold
+                continue                                    # small edge: hold; settlement converges for free
             resting_net = sim.resting(s, "buy") - sim.resting(s, "sell")
-            delta = target - sim.position[s] - resting_net
+            delta = target - pos - resting_net
             if delta == 0:
                 continue
             if resting_net != 0:
-                # resting orders are stale (fair or price moved): replace them rather than stack more
-                sim.cancel_all(s)
-                delta = target - sim.position[s]
+                sim.cancel_all(s)                           # replace stale resting orders rather than stack more
+                delta = target - pos
                 if delta == 0:
                     continue
-            if target == 0 or (delta > 0 and f > ask) or (delta < 0 and f < bid):
-                sim.place(s, "buy" if delta > 0 else "sell", abs(delta), ask if delta > 0 else bid)
+            # pay up to the price at which the remaining edge equals the floor (liquidity-aware limit)
+            keep = floor / max(conf, 1e-9)
+            if delta > 0:
+                limit = max(ask, f / (1 + keep)) if target != 0 else ask * (1 + self.exit_slip)
+                if limit < ask and target != 0:
+                    continue
+                sim.place(s, "buy", delta, limit)
+            else:
+                limit = min(bid, f / (1 - keep)) if target != 0 else bid * (1 - self.exit_slip)
+                if limit > bid and target != 0:
+                    continue
+                sim.place(s, "sell", -delta, limit)
 
 
 class FinalReportOnly(FairValueTrader):
