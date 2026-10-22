@@ -177,8 +177,9 @@ The ensemble is insensitive to sigma (15 to 40), k (50 to 100) and the position 
 
 1. Freeze the parameters: the tuner is being re-run on the current simulator (out/tune/ledger.csv); re-verify its winner
    against the accepted set before competition day.
-2. Live earns under half of the sim: the gap is the direction of the post-open move. Compare the bot's first trades after
-   each open with the sim's on the same seasons (scripts/dissect.py has the per-phase view) before changing anything.
+2. Live earns about 70% of the sim on the same seasons with the sign right every time since the warm-up fix; the
+   remaining gap is concentrated in the big winning seasons (190: +15k live vs +33k sim). Compare the bot's fills in those
+   seasons with the sim's (scripts/dissect.py --json) before changing anything.
 3. Exact rebuilder settlement rules with a 3% floor for RECON and MAT (needs its own tune run).
 4. ETF create/redeem arbitrage (measured: ARCH quote more than 0.9% from its basket 5% of the time; small, riskless).
 5. Live announcements: the bot pauses named symbols; a human must read the headline and decide.
