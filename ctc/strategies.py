@@ -1,7 +1,9 @@
 """Strategies for the offline simulator and (later) the live bot. Each keeps a SeasonModel and trades fair vs quotes."""
 from __future__ import annotations
+import math
 from typing import Any
 from .valuation import SeasonModel, SYMS
+from .analog import AnalogEnsemble
 
 
 class Strategy:
@@ -25,27 +27,42 @@ class FairValueTrader(Strategy):
     """
 
     def __init__(self, min_edge: float = 0.01, edge_full: float = 0.05, rebalance_every: float = 10.0,
-                 symbols: list[str] | None = None, project: bool = True):
+                 symbols: list[str] | None = None, project: bool = True, analog: bool = False,
+                 sd_mult: float = 1.0, **analog_kw):
         self.min_edge, self.edge_full, self.every = min_edge, edge_full, rebalance_every
         self.symbols = symbols or SYMS
-        self.project = project
+        self.project, self.analog, self.sd_mult, self.analog_kw = project, analog, sd_mult, analog_kw
+        self.paused: set[str] = set()
 
     def on_start(self, sim) -> None:
         self.model = SeasonModel(sim.case)
+        if self.analog:
+            self.model.ensemble = AnalogEnsemble(sim.case, **self.analog_kw)
         self.last_trade_t = -1e9
         self.fair: dict[str, float] = {}
+        self.paused = set()
+
+    def pause(self, symbols: list[str]) -> None:
+        """Stop trading symbols named in a live announcement until a human clears them (model has not seen announcements)."""
+        self.paused |= set(symbols)
+
+    def compute_fair(self) -> dict[str, float]:
+        return self.model.fair_analog() if self.analog else self.model.fair(self.project)
 
     def on_news(self, sim, m: dict[str, Any]) -> None:
         self.model.on_message(m)
         if m["type"] in ("damage_report", "advisory", "storm_formed", "storm_dissipated"):
-            self.fair = self.model.fair(self.project)
+            self.fair = self.compute_fair()
             self.last_trade_t = -1e9   # react immediately
 
     def confidence(self, sim) -> float:
-        """How much of the fair-mid gap to believe. 1 after the final report; decays with storm uncertainty before."""
+        """How much of the fair-mid gap to believe. 1 after the final report; decays with storm uncertainty before.
+        With the analog ensemble the uncertainty is in the edge floor instead, so confidence is 1 once a storm exists."""
         md = self.model
         if md.round == 0:
             return 0.0
+        if self.analog:
+            return 1.0 if md.last_obs is not None or md.storm_reported else 0.0
         if md.storm_reported:
             return 1.0 if md.round == 3 else 0.7
         if not md.storm_active and md.last_obs is not None:
@@ -58,6 +75,8 @@ class FairValueTrader(Strategy):
     def min_edge_for(self, sim, s: str) -> float:
         """Per-symbol edge floor: the global floor, or twice the model's residual sd for symbols still uncertain."""
         sd = self.model.resid_sd(s)
+        if self.analog:
+            sd = math.hypot(sd, self.sd_mult * self.model.fair_sd.get(s, 0.0))
         return max(self.min_edge, 2.0 * sd / max(1e-9, sim.mid[s]))
 
     def on_quotes(self, sim) -> None:
@@ -65,13 +84,15 @@ class FairValueTrader(Strategy):
             return
         self.last_trade_t = sim.t
         if self.model.storm_active:
-            self.fair = self.model.fair(self.project)
+            self.fair = self.compute_fair()
         if not self.fair:
             return
         conf = self.confidence(sim)
         if conf <= 0:
             return                      # no view: hold whatever we have
         for s in self.symbols:
+            if s in self.paused or s not in sim.quotes:
+                continue
             bid, ask = sim.quotes[s]
             mid = sim.mid[s]
             f = self.fair[s]

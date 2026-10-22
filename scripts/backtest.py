@@ -14,6 +14,8 @@ STRATS = {
     "final": lambda a: S.FinalReportOnly(min_edge=a.min_edge, edge_full=a.edge_full),
     "nowcast": lambda a: S.FairValueTrader(min_edge=a.min_edge, edge_full=a.edge_full, project=True),
     "noproject": lambda a: S.FairValueTrader(min_edge=a.min_edge, edge_full=a.edge_full, project=False),
+    "analog": lambda a: S.FairValueTrader(min_edge=a.min_edge, edge_full=a.edge_full, analog=True, sd_mult=a.sd_mult,
+                                          sigma=a.sigma, k=a.k, shift=not a.noshift),
 }
 
 def parse_seasons(spec, n):
@@ -35,6 +37,10 @@ def main():
     ap.add_argument("--min-edge", type=float, default=0.01)
     ap.add_argument("--edge-full", type=float, default=0.05)
     ap.add_argument("--verbose", action="store_true")
+    ap.add_argument("--sd-mult", type=float, default=1.0)
+    ap.add_argument("--sigma", type=float, default=25.0)
+    ap.add_argument("--k", type=int, default=50)
+    ap.add_argument("--noshift", action="store_true")
     ap.add_argument("--out", default="out")
     a = ap.parse_args()
     root = Path(__file__).resolve().parents[1] / "data"
