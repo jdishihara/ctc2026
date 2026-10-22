@@ -9,7 +9,12 @@ ctc/history.py   the organisers' loader (unchanged)
 ctc/wind.py      wind field + per-site damage/outage model, parameters in damage_params.json
 ctc/valuation.py fair-value rules for all 12 symbols + SeasonModel (feed -> state -> fair), valuation_params.json
 ctc/sim.py       offline replay simulator: feed + house prices on the real-time axis, synthetic house quotes, fills, limits
-ctc/strategies.py FairValueTrader (nowcast) and FinalReportOnly
+ctc/analog.py    analog track ensemble (library of training storms, advisory confusion matrices), analog_library.npz
+ctc/strategies.py FairValueTrader (constant-velocity nowcast or analog ensemble) and FinalReportOnly
+bot/live.py      live bot: wraps the exchange API in the Sim interface and runs FairValueTrader
+scripts/build_library.py  rebuilds ctc/analog_library.npz from seasons 1-450
+scripts/eval_forecast.py  forecast skill at several storm ages, constant velocity vs ensemble
+scripts/mock_exchange.py  replays a season over the exchange's HTTP + WebSocket API, for bot tests without the testnet
 scripts/fit_damage.py     refits the damage model (writes ctc/damage_params.json)
 scripts/fit_valuation.py  refits the settlement rules (writes ctc/valuation_params.json)
 scripts/eval_valuation.py residual sd per symbol on holdout (adds resid_sd to valuation_params.json)
@@ -21,8 +26,27 @@ scripts/backtest.py       runs a strategy over seasons
 ```bash
 python3 scripts/backtest.py --strategy nowcast --seasons 451-600          # holdout
 python3 scripts/backtest.py --strategy final   --seasons 451-600          # round-3 final report only
+python3 scripts/backtest.py --strategy analog  --seasons 451-600          # analog ensemble (current best)
 python3 scripts/backtest.py --strategy nowcast --seasons 7 --verbose      # every fill of one season
+python3 scripts/backtest.py --strategy analog --seasons 451-600 --depth 100 --half-spread 0.003   # liquidity what-if
 ```
+
+Live bot (testnet or competition), dry run first:
+
+```bash
+pip install "websockets>=14"
+python3 bot/live.py --url https://hurricane.cornelltradingcompetition.org --key BOT_KEY --dry-run
+```
+
+End-to-end test without the testnet (mock exchange replays season 451 at 25x):
+
+```bash
+python3 scripts/mock_exchange.py --season 451 --speed 25 --port 8765 &
+python3 bot/live.py --url http://localhost:8765 --ws ws://localhost:8766 --key test
+```
+
+The mock's response shapes (positions, open orders, order acks, quote frames) are guesses; fix `bot/live.py`
+after the first testnet session if the real API differs.
 
 Seasons 1 to 450 were used for fitting; report results on 451 to 600.
 
@@ -64,9 +88,21 @@ Replace half_spread and depth with numbers measured on the testnet (quotes chann
 
 Most PnL comes from HAVEN, PORT and ARCH during the storm. Rounds contribute about equally.
 
+## Forecast skill (holdout storms, RMSE of end-of-storm company damage in points, PORT/ISLE/AQUA/GRID/FERRY)
+
+| Storm age | Constant velocity | Analog ensemble | Pattern top-1 |
+|---|---|---|---|
+| 30 s | 24.7 / 11.2 / 14.9 / 11.3 / 10.8 | 18.7 / 9.1 / 10.9 / 7.4 / 7.3 | 71% |
+| 90 s | 23.2 / 10.1 / 14.1 / 10.9 / 10.2 | 15.2 / 6.0 / 7.2 / 6.2 / 6.4 | 87% |
+| 150 s | 22.1 / 8.3 / 9.1 / 9.7 / 8.1 | 12.0 / 4.7 / 5.9 / 5.4 / 5.4 | 93% |
+| 240 s | 13.3 / 4.5 / 5.3 / 5.8 / 5.1 | 9.8 / 3.5 / 4.0 / 4.5 / 4.1 | 95% |
+
+Official advisories name the true pattern 69% of the time; the ensemble passes that by the second advisory.
+The ensemble is insensitive to sigma (15 to 40), k (50 to 100) and the position shift.
+
 ## Next
 
-1. Pattern posterior (advisory + wire + track features) and an analog track ensemble in place of constant velocity.
-2. Calibrate half_spread / depth from a testnet recording; add passive quoting.
-3. Live bot: reuse SeasonModel + FairValueTrader on the exchange API (starter kit example_bot.py has the plumbing).
-4. Rebuilders: RECON/MAT residuals (1 pt) are the loosest part of the valuation.
+1. Measure house depth, spread and inventory skew on the testnet (record the quotes channel); set the simulator to match.
+2. Passive quoting inside the house spread once depth is known.
+3. Rebuilders: RECON/MAT residuals (1 pt) are the loosest part of the valuation.
+4. Live announcements: the bot pauses named symbols; a human must read the headline and decide.
