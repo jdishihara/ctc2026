@@ -26,6 +26,7 @@ scripts/fit_damage.py, fit_valuation.py, eval_valuation.py, eval_forecast.py   m
 scripts/mock_exchange.py  replays a season over the exchange's HTTP + WebSocket API, for bot tests without the testnet
 mario/pricer.py, mario/README.md   Mario Markets Monte Carlo pricer and drill sheet
 derivs/bs.py, derivs/build_sheet.py -> derivs/desk.xlsx   Derivatives calculator and the desk workbook
+derivs/drill.py                    Timed event rehearsal for the derivatives desk (news t, S moves t+1 min, makers snap t+2 min)
 ```
 
 EXPERIMENTS.md holds the evaluation protocol and the ledger of every accepted and rejected change; OVERNIGHT.md the
