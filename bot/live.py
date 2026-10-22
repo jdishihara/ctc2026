@@ -47,6 +47,8 @@ class LiveExchange:
         self.last_positions: Any = None
         self.pnl_now = 0.0
         self.reopened = False
+        self.trade_cursor = None        # /trades pagination cursor; our fills are logged as FILL lines
+        self.fill_cost = [0.0, 0.0]     # (sum of signed slippage vs mid in $, notional) since start, for the FILL lines
 
     @property
     def t(self) -> float:
@@ -93,7 +95,9 @@ class LiveExchange:
             if self.competition_id and cid != self.competition_id:
                 print(f"SEASON END competition {self.competition_id} ({tm.get('fictional_time')}): last positions {json.dumps(self.last_positions)}", flush=True)
                 self.position = {s: 0 for s in self.symbols}
+                self.trade_cursor = None
             self.competition_id = cid
+            self.poll_trades()
             pos = self.get("/positions")
             items = pos.get("positions", pos) if isinstance(pos, dict) else pos
             if items:
@@ -109,6 +113,33 @@ class LiveExchange:
             self.open_orders = oo.get("orders", oo) if isinstance(oo, dict) else oo
         except Exception as exc:  # keep trading on stale state rather than crash
             print(f"refresh failed: {exc}", flush=True)
+
+    def poll_trades(self) -> None:
+        """Log every fill the exchange reports for this key (price, size, mid at the time, slippage in bp) so the live
+        fill cost can be audited against the simulator's ladder; the per-10 s pnl line is not enough for that."""
+        try:
+            q = f"?cursor={self.trade_cursor}" if self.trade_cursor else ""
+            d = self.get("/trades" + q)
+        except Exception as exc:
+            print(f"trades poll failed: {exc}", flush=True)
+            return
+        trades = d.get("trades", []) if isinstance(d, dict) else d
+        if isinstance(d, dict) and d.get("cursor"):
+            self.trade_cursor = d["cursor"]
+        for tr in trades or []:
+            sym, px, qty = tr.get("symbol"), tr.get("price"), tr.get("quantity")
+            side = tr.get("side") or tr.get("aggressor_side") or ("buy" if (tr.get("buyer_is_me") or tr.get("is_buyer")) else "?")
+            if sym is None or px is None or qty is None:
+                print(f"FILL raw {json.dumps(tr)[:200]}", flush=True)
+                continue
+            mid = self.mid.get(sym)
+            slip = ""
+            if mid:
+                sgn = 1 if side == "buy" else -1 if side == "sell" else 0
+                cost = sgn * (float(px) - mid) * float(qty)
+                self.fill_cost[0] += cost; self.fill_cost[1] += float(px) * float(qty)
+                slip = f" mid {mid:.2f} slip {cost / max(1e-9, float(px) * float(qty)) * 1e4:+.0f} bp (cum {self.fill_cost[0] / max(1e-9, self.fill_cost[1]) * 1e4:+.0f} bp)"
+            print(f"FILL {sym} {side} {qty} @ {px}{slip} id {str(tr.get('trade_id', tr.get('id', '')))[:8]} t {tr.get('timestamp', tr.get('time', ''))}", flush=True)
 
     def resting(self, symbol: str, side: str) -> int:
         return sum(int(o.get("quantity", 0)) - int(o.get("filled_quantity", 0)) for o in self.open_orders

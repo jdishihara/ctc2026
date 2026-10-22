@@ -29,8 +29,10 @@ class FairValueTrader(Strategy):
     def __init__(self, min_edge: float = 0.01, edge_full: float = 0.05, rebalance_every: float = 15.0,
                  symbols: list[str] | None = None, project: bool = True, analog: bool = False,
                  sd_mult: float = 1.0, loss_limit: float | None = None, prior_mode: str = "sample",
-                 passive: float = 0.0, warmup: float = 0.0, future_sd: float = 0.0, fair_jump: float = 0.0, **analog_kw):
+                 passive: float = 0.0, warmup: float = 0.0, future_sd: float = 0.0, fair_jump: float = 0.0, max_cross: float = 0.0, **analog_kw):
         self.prior_mode = prior_mode
+        self.max_cross = max_cross      # >0: an aggressive order never pays more than this fraction through the touch
+                                        # (live, the house's book empties for a few seconds while it re-prices after a report)
         self.fair_jump = fair_jump      # >0: do not trade a symbol in a cycle where its fair moved by more than this
                                         # fraction since the previous cycle (model still catching up after a (re)connect)
         self.future_sd = future_sd      # multiple of the future-storm valuation sd added to the edge floor
@@ -164,11 +166,15 @@ class FairValueTrader(Strategy):
                 limit = max(ask, f / (1 + keep)) if target != 0 else ask * (1 + self.exit_slip)
                 if limit < ask and target != 0:
                     continue
+                if self.max_cross > 0:
+                    limit = min(limit, ask * (1 + self.max_cross))
                 sim.place(s, "buy", delta, limit)
             else:
                 limit = min(bid, f / (1 - keep)) if target != 0 else bid * (1 - self.exit_slip)
                 if limit > bid and target != 0:
                     continue
+                if self.max_cross > 0:
+                    limit = max(limit, bid * (1 - self.max_cross))
                 sim.place(s, "sell", -delta, limit)
 
 
