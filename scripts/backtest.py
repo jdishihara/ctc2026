@@ -31,6 +31,7 @@ def main():
     ap.add_argument("--seasons", default="451-600")
     ap.add_argument("--half-spread", type=float, default=0.0015)
     ap.add_argument("--latency", type=float, default=0.25)
+    ap.add_argument("--depth", type=int, default=0, help="max fill per order per 2 s tick (0 = unlimited)")
     ap.add_argument("--min-edge", type=float, default=0.01)
     ap.add_argument("--edge-full", type=float, default=0.05)
     ap.add_argument("--verbose", action="store_true")
@@ -43,7 +44,7 @@ def main():
     rows = []; t0 = time.time(); by_sym = {}; by_round = {1: [], 2: [], 3: []}
     for n in seasons:
         meta = man["seasons"][n - 1]
-        sim = Sim(root / "history" / meta["dir"], case, half_spread=a.half_spread, latency=a.latency, verbose=a.verbose)
+        sim = Sim(root / "history" / meta["dir"], case, half_spread=a.half_spread, latency=a.latency, depth=a.depth or None, verbose=a.verbose)
         pnl = sim.run(STRATS[a.strategy](a))
         traded = sum(f.qty * f.price for f in sim.fills)
         for s_, v in sim.pnl_by_symbol().items():

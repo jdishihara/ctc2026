@@ -24,7 +24,7 @@ class FairValueTrader(Strategy):
     The edge is scaled by `confidence` in [0, 1], which rises as the storm resolves.
     """
 
-    def __init__(self, min_edge: float = 0.01, edge_full: float = 0.05, rebalance_every: float = 6.0,
+    def __init__(self, min_edge: float = 0.01, edge_full: float = 0.05, rebalance_every: float = 10.0,
                  symbols: list[str] | None = None, project: bool = True):
         self.min_edge, self.edge_full, self.every = min_edge, edge_full, rebalance_every
         self.symbols = symbols or SYMS
@@ -85,9 +85,16 @@ class FairValueTrader(Strategy):
                 target = 0              # fair has converged to the market: take profit
             else:
                 continue                # in between: hold
-            delta = target - sim.position[s]
+            resting_net = sim.resting(s, "buy") - sim.resting(s, "sell")
+            delta = target - sim.position[s] - resting_net
             if delta == 0:
                 continue
+            if resting_net != 0:
+                # resting orders are stale (fair or price moved): replace them rather than stack more
+                sim.cancel_all(s)
+                delta = target - sim.position[s]
+                if delta == 0:
+                    continue
             if target == 0 or (delta > 0 and f > ask) or (delta < 0 and f < bid):
                 sim.place(s, "buy" if delta > 0 else "sell", abs(delta), ask if delta > 0 else bid)
 
