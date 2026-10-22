@@ -171,9 +171,12 @@ class Sim:
         remaining = o.qty - o.filled
         if self.ladder is not None and self.ladder.has(o.symbol):
             if passive:
-                # resting order: fills when the house's best quote crosses it (house re-quoted through our price)
+                # resting order: fills when the house re-quotes through our price, for the size the house posts at or
+                # beyond our price (ladder walk with our price as the limit), at our price
                 if (o.side == "buy" and o.price >= ask) or (o.side == "sell" and o.price <= bid):
-                    self._fill(o, remaining, o.price, True)
+                    got = sum(q for q, _ in self.ladder.fill(o.symbol, o.side, remaining, self.mid[o.symbol], self.t, o.price))
+                    if got > 0:
+                        self._fill(o, got, o.price, True)
                 return
             for q, px in self.ladder.fill(o.symbol, o.side, remaining, self.mid[o.symbol], self.t, o.price):
                 self._fill(o, q, px, False)

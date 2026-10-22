@@ -28,8 +28,11 @@ class FairValueTrader(Strategy):
 
     def __init__(self, min_edge: float = 0.01, edge_full: float = 0.05, rebalance_every: float = 15.0,
                  symbols: list[str] | None = None, project: bool = True, analog: bool = False,
-                 sd_mult: float = 1.0, loss_limit: float | None = None, prior_mode: str = "sample", **analog_kw):
+                 sd_mult: float = 1.0, loss_limit: float | None = None, prior_mode: str = "sample",
+                 passive: float = 0.0, **analog_kw):
         self.prior_mode = prior_mode
+        self.passive = passive          # >0: when the edge is below the floor, rest an order inside the spread at the
+                                        # price where the edge equals passive * floor (a passive fill does not pay the spread)
         self.min_edge, self.edge_full, self.every = min_edge, edge_full, rebalance_every
         self.loss_limit = loss_limit                        # per symbol per round: stop adding once this much is lost
         self.symbols = symbols or SYMS
@@ -47,6 +50,7 @@ class FairValueTrader(Strategy):
         self.paused = set()
         self.cell_pnl: dict[tuple[str, int], float] = {}    # mark-to-mid pnl per (symbol, round), approximating fills at mid
         self.last_mid: dict[str, float] = {}
+        self.passive_order: dict[str, tuple[str, float, float]] = {}   # symbol -> (side, price, t) of our resting quote
 
     def pause(self, symbols: list[str]) -> None:
         """Stop trading symbols named in a live announcement until a human clears them (model has not seen announcements)."""
@@ -123,7 +127,10 @@ class FairValueTrader(Strategy):
             elif pos and ((pos > 0 and edge < -floor * 0.5) or (pos < 0 and edge > floor * 0.5)):
                 target = 0                                  # we are now on the wrong side: get out
             else:
+                if self.passive > 0:
+                    self.quote_passive(sim, s, f, bid, ask, conf, floor, lim, pos)
                 continue                                    # small edge: hold; settlement converges for free
+            self.passive_order.pop(s, None)
             resting_net = sim.resting(s, "buy") - sim.resting(s, "sell")
             delta = target - pos - resting_net
             if delta == 0:
@@ -145,6 +152,45 @@ class FairValueTrader(Strategy):
                 if limit > bid and target != 0:
                     continue
                 sim.place(s, "sell", -delta, limit)
+
+
+    def quote_passive(self, sim, s: str, f: float, bid: float, ask: float, conf: float, floor: float, lim: int, pos: int) -> None:
+        """Rest one order inside the spread where the edge (after confidence) equals passive * floor; replace it only when
+        the price moves. Fills come from the house re-quoting through us or other participants crossing."""
+        keep = self.passive * floor / max(conf, 1e-9)
+        tick = 0.01
+        if f > bid:                                   # fair above the bid: bid inside the spread
+            side, px = "buy", min(f / (1 + keep), ask - tick)
+            if px <= bid:
+                side = None
+        elif f < ask:
+            side, px = "sell", max(f / (1 - keep), bid + tick)
+            if px >= ask:
+                side = None
+        else:
+            side = None
+        if side is None:
+            if s in self.passive_order:
+                sim.cancel_all(s); self.passive_order.pop(s, None)
+            return
+        px = round(px, 2)
+        edge_at = abs(f - px) / px * conf
+        frac = min(1.0, (edge_at - self.passive * floor) / max(1e-9, self.edge_full - self.passive * floor))
+        target = int(round(lim * frac)) * (1 if side == "buy" else -1)
+        qty = (target - pos) if side == "buy" else (pos - target)
+        if qty <= 0:
+            if s in self.passive_order:
+                sim.cancel_all(s); self.passive_order.pop(s, None)
+            return
+        old = self.passive_order.get(s)
+        if old and old[0] == side and abs(old[1] - px) / px < 0.001 and sim.t - old[2] < 120:
+            return                                    # our quote is still where we want it
+        if old or sim.resting(s, "buy") or sim.resting(s, "sell"):
+            sim.cancel_all(s)
+        if sim.place(s, side, qty, px) is not None:
+            self.passive_order[s] = (side, px, sim.t)
+        else:
+            self.passive_order.pop(s, None)
 
 
 class FinalReportOnly(FairValueTrader):

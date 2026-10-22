@@ -165,8 +165,8 @@ async def run(args: argparse.Namespace) -> None:
         strat = S.FairValueTrader(min_edge=args.min_edge, edge_full=args.edge_full, project=True)
     else:   # the analog ensemble, same parameters as scripts/backtest.py --strategy analog
         strat = S.FairValueTrader(min_edge=args.min_edge, edge_full=args.edge_full, analog=True, sd_mult=args.sd_mult,
-                                  sigma=args.sigma, k=args.k)
-    print(f"strategy {'nowcast' if args.nowcast else 'analog'} min_edge {args.min_edge} edge_full {args.edge_full} sd_mult {args.sd_mult} sigma {args.sigma} k {args.k}", flush=True)
+                                  sigma=args.sigma, k=args.k, passive=args.passive)
+    print(f"strategy {'nowcast' if args.nowcast else 'analog'} min_edge {args.min_edge} edge_full {args.edge_full} sd_mult {args.sd_mult} sigma {args.sigma} k {args.k} passive {args.passive}", flush=True)
     strat.on_start(ex)
     ex.refresh()
     ws_url = (args.ws or ex.url.replace("https://", "wss://", 1).replace("http://", "ws://", 1)) + "/ws/v1/market-data"
@@ -238,6 +238,7 @@ def main() -> None:
     ap.add_argument("--sd-mult", type=float, default=1.0)
     ap.add_argument("--sigma", type=float, default=25.0)
     ap.add_argument("--k", type=int, default=50)
+    ap.add_argument("--passive", type=float, default=0.75, help="rest orders inside the spread at edge = passive*floor (0 = off)")
     asyncio.run(run(ap.parse_args()))
 
 
