@@ -93,46 +93,46 @@ iv["A16"] = "Four Newton steps from the IV in use; accurate to <0.1 vol point fo
 
 # ---------------- Analysts ----------------
 an = wb.create_sheet("Analysts")
-an.append(["Event", "Underlying", "Analyst 1", "Analyst 2", "Analyst 3", "Truth (market IV after snap)", "Err 1 (vol pts)", "Err 2", "Err 3", "Note"])
+an.append(["Event", "Underlying", "Analyst 1", "Analyst 2", "Analyst 3", "Truth (market IV after snap)", "Err 1 (vol pts)", "Err 2", "Err 3", "Note", "|Err 1|", "|Err 2|", "|Err 3|", "recent?"])
 for c in an[1]: c.font = BOLD; c.fill = HEAD; c.alignment = Alignment(wrap_text=True)
 r = 2
 for ev in range(1, 11):
     for u in ("OIL", "PLANE"):
-        an.append([ev, u, None, None, None, None]); 
+        an.append([ev, u, None, None, None, None])
         for col in "CDEF": an[f"{col}{r}"].fill = INPUT
         for k, col in enumerate("GHI"):
-            src = "CDE"[k]
+            src = "CDE"[k]; ab = "KLM"[k]
             an[f"{col}{r}"] = f'=IF(AND(ISNUMBER({src}{r}),ISNUMBER(F{r})),({src}{r}-F{r})*100,"")'
+            an[f"{ab}{r}"] = f'=IF(ISNUMBER({col}{r}),ABS({col}{r}),"")'
         r += 1
 R0, R1 = 2, r - 1
-an[f"A{r+1}"] = "Scorecard"; an[f"A{r+1}"].font = BOLD
-an.append([]); 
-labels = [("Mean abs error (vol pts)", "AVERAGE(IF(ISNUMBER({c}{a}:{c}{b}),ABS({c}{a}:{c}{b})))"),
-          ("Bias (vol pts)", "AVERAGE({c}{a}:{c}{b})"),
-          ("n events scored", "COUNT({c}{a}:{c}{b})"),
-          ("OIL mean abs error", 'AVERAGEIFS(OILABS,$B${a}:$B${b},"OIL")'),
-          ("PLANE mean abs error", 'AVERAGEIFS(OILABS,$B${a}:$B${b},"PLANE")')]
+# recent? = 1 for the rows of the last 3 scored events (6 rows with a Truth), else 0
+for i in range(R0, R1 + 1):
+    an[f"N{i}"] = f'=IF(ISNUMBER(F{i}),IF(COUNT(F{i}:F${R1})<=6,1,0),0)'
 base = r + 2
-an[f"A{base}"] = "Mean abs error (vol pts)"; an[f"A{base+1}"] = "Bias (vol pts)"; an[f"A{base+2}"] = "n scored"; an[f"A{base+3}"] = "Inverse-error weight"; an[f"A{base+4}"] = "Weight (last 3 events only)"
+an[f"A{r+1}"] = "Scorecard (vol points)"; an[f"A{r+1}"].font = BOLD
+labels = ["Mean abs error", "Bias", "n scored", "Inverse-error weight (all events)", "Mean abs error, last 3 events", "Inverse-error weight (last 3 events)"]
+for j, lab in enumerate(labels): an[f"A{base+j}"] = lab
 for k, col in enumerate("GHI"):
-    out = "CDE"[k]
-    an[f"{out}{base}"] = f'=IFERROR(SUMPRODUCT(ABS({col}{R0}:{col}{R1}))/COUNT({col}{R0}:{col}{R1}),"")'
+    out = "CDE"[k]; ab = "KLM"[k]
+    an[f"{out}{base}"] = f'=IFERROR(AVERAGE({ab}{R0}:{ab}{R1}),"")'
     an[f"{out}{base+1}"] = f'=IFERROR(AVERAGE({col}{R0}:{col}{R1}),"")'
     an[f"{out}{base+2}"] = f"=COUNT({col}{R0}:{col}{R1})"
-    an[f"{out}{base+3}"] = f'=IFERROR((1/MAX({out}{base},0.05))/((1/MAX(C{base},0.05))+(1/MAX(D{base},0.05))+(1/MAX(E{base},0.05))),"")'
-    an[f"{out}{base+4}"] = f'=IFERROR((1/MAX(SUMPRODUCT(ABS({col}{R1-5}:{col}{R1}))/COUNT({col}{R1-5}:{col}{R1}),0.05))/((1/MAX(SUMPRODUCT(ABS(G{R1-5}:G{R1}))/COUNT(G{R1-5}:G{R1}),0.05))+(1/MAX(SUMPRODUCT(ABS(H{R1-5}:H{R1}))/COUNT(H{R1-5}:H{R1}),0.05))+(1/MAX(SUMPRODUCT(ABS(I{R1-5}:I{R1}))/COUNT(I{R1-5}:I{R1}),0.05))),"")'
-an[f"A{base+6}"] = "Blend for the next event"; an[f"A{base+6}"].font = BOLD
-an[f"A{base+7}"] = "Underlying"; an[f"B{base+7}"] = "OIL"; an[f"B{base+7}"].fill = INPUT
-an[f"A{base+8}"] = "Analyst estimates (next event)"; an[f"C{base+8}"] = None; an[f"D{base+8}"] = None; an[f"E{base+8}"] = None
-for col in "CDE": an[f"{col}{base+8}"].fill = INPUT
-an[f"A{base+9}"] = "Weighted IV (all-history weights)"; an[f"B{base+9}"] = f'=IFERROR(SUMPRODUCT(C{base+8}:E{base+8},C{base+3}:E{base+3}),AVERAGE(C{base+8}:E{base+8}))'
-an[f"A{base+10}"] = "Weighted IV (recent weights)"; an[f"B{base+10}"] = f'=IFERROR(SUMPRODUCT(C{base+8}:E{base+8},C{base+4}:E{base+4}),AVERAGE(C{base+8}:E{base+8}))'
-an[f"A{base+11}"] = "Median of the three"; an[f"B{base+11}"] = f"=MEDIAN(C{base+8}:E{base+8})"
-an[f"A{base+13}"] = ("Round 1: IV is announced, so fill Truth directly and the analysts' columns stay empty. Round 2: fill the three estimates when published, "
+    an[f"{out}{base+3}"] = f'=IFERROR((1/MAX({out}{base},0.05))/((1/MAX($C${base},0.05))+(1/MAX($D${base},0.05))+(1/MAX($E${base},0.05))),"")'
+    an[f"{out}{base+4}"] = f'=IFERROR(AVERAGEIFS({ab}{R0}:{ab}{R1},$N${R0}:$N${R1},1),"")'
+    an[f"{out}{base+5}"] = f'=IFERROR((1/MAX({out}{base+4},0.05))/((1/MAX($C${base+4},0.05))+(1/MAX($D${base+4},0.05))+(1/MAX($E${base+4},0.05))),"")'
+blend = base + 7
+an[f"A{blend}"] = "Blend for the next event"; an[f"A{blend}"].font = BOLD
+an[f"A{blend+1}"] = "Analyst estimates (next event)"
+for col in "CDE": an[f"{col}{blend+1}"].fill = INPUT
+an[f"A{blend+2}"] = "Weighted IV (all-event weights)"; an[f"B{blend+2}"] = f'=IFERROR(SUMPRODUCT(C{blend+1}:E{blend+1},C{base+3}:E{base+3}),AVERAGE(C{blend+1}:E{blend+1}))'
+an[f"A{blend+3}"] = "Weighted IV (last-3-event weights)"; an[f"B{blend+3}"] = f'=IFERROR(SUMPRODUCT(C{blend+1}:E{blend+1},C{base+5}:E{base+5}),AVERAGE(C{blend+1}:E{blend+1}))'
+an[f"A{blend+4}"] = "Median of the three"; an[f"B{blend+4}"] = f"=MEDIAN(C{blend+1}:E{blend+1})"
+an[f"A{blend+6}"] = ("Round 1: IV is announced, so fill Truth directly and leave the analysts empty. Round 2: fill the three estimates when published, "
                      "then fill Truth from Contracts!R (market IV at the mid) two minutes after the news. Round 3: analysts give an IV-linked quantity; "
-                     "record it in the estimate columns anyway and regress it on Truth once two events are in.")
-an.column_dimensions["A"].width = 30; an.column_dimensions["F"].width = 16; an.column_dimensions["J"].width = 30
-for col in "BCDEGHI": an.column_dimensions[col].width = 11
+                     "record it in the estimate columns anyway and regress it on Truth once two events are in. Weights use 1/max(MAE, 0.05) so no analyst gets more than ~90%.")
+an.column_dimensions["A"].width = 34; an.column_dimensions["F"].width = 16; an.column_dimensions["J"].width = 24
+for col in "BCDEGHIKLM": an.column_dimensions[col].width = 11
 
 # ---------------- Timeline ----------------
 tl = wb.create_sheet("Timeline")
