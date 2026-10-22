@@ -29,8 +29,10 @@ class FairValueTrader(Strategy):
     def __init__(self, min_edge: float = 0.01, edge_full: float = 0.05, rebalance_every: float = 15.0,
                  symbols: list[str] | None = None, project: bool = True, analog: bool = False,
                  sd_mult: float = 1.0, loss_limit: float | None = None, prior_mode: str = "sample",
-                 passive: float = 0.0, warmup: float = 0.0, future_sd: float = 0.0, **analog_kw):
+                 passive: float = 0.0, warmup: float = 0.0, future_sd: float = 0.0, fair_jump: float = 0.0, **analog_kw):
         self.prior_mode = prior_mode
+        self.fair_jump = fair_jump      # >0: do not trade a symbol in a cycle where its fair moved by more than this
+                                        # fraction since the previous cycle (model still catching up after a (re)connect)
         self.future_sd = future_sd      # multiple of the future-storm valuation sd added to the edge floor
         self.warmup = warmup            # seconds after a round opens during which we do not trade (opening prices settle)
         self.passive = passive          # >0: when the edge is below the floor, rest an order inside the spread at the
@@ -53,6 +55,7 @@ class FairValueTrader(Strategy):
         self.paused = set()
         self.cell_pnl: dict[tuple[str, int], float] = {}    # mark-to-mid pnl per (symbol, round), approximating fills at mid
         self.last_mid: dict[str, float] = {}
+        self.prev_fair: dict[str, float] = {}
         self.passive_order: dict[str, tuple[str, float, float]] = {}   # symbol -> (side, price, t) of our resting quote
         self.round_open_t = -1e9
 
@@ -113,8 +116,16 @@ class FairValueTrader(Strategy):
         conf = self.confidence(sim)
         if conf <= 0:
             return                      # no view: hold whatever we have
+        unsettled: set[str] = set()
+        if self.fair_jump > 0:
+            for s in self.symbols:
+                f, pf = self.fair.get(s), self.prev_fair.get(s)
+                if f is not None and (pf is None or abs(f - pf) / max(1e-9, sim.mid.get(s, f)) > self.fair_jump):
+                    unsettled.add(s)
+                if f is not None:
+                    self.prev_fair[s] = f
         for s in self.symbols:
-            if s in self.paused or s not in sim.quotes:
+            if s in self.paused or s not in sim.quotes or s in unsettled:
                 continue
             bid, ask = sim.quotes[s]
             mid = sim.mid[s]
