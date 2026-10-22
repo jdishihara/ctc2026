@@ -10,33 +10,49 @@ ctc/wind.py      wind field + per-site damage/outage model, parameters in damage
 ctc/valuation.py fair-value rules for all 12 symbols + SeasonModel (feed -> state -> fair), valuation_params.json
 ctc/sim.py       offline replay simulator: feed + house prices on the real-time axis, synthetic house quotes, fills, limits
 ctc/analog.py    analog track ensemble (library of training storms, advisory confusion matrices), analog_library.npz
-ctc/strategies.py FairValueTrader (constant-velocity nowcast or analog ensemble) and FinalReportOnly
-bot/live.py      live bot: wraps the exchange API in the Sim interface and runs FairValueTrader
+ctc/ladder.py    liquidity ladder fill model (ctc/ladder.json, measured on the testnet by scripts/calibrate_book.py)
+ctc/strategies.py FairValueTrader (analog ensemble; passive quoting; warm-up) and FinalReportOnly
+ctc/storm_sample.npz  1350 historical storms (seasons 1-450) for the future-storm prior
+bot/live.py      live bot: wraps the exchange API in the Sim interface and runs FairValueTrader (bot/run_live.sh keeps it up)
+scripts/backtest.py       runs a strategy over seasons (the protocol's numbers come from here, see EXPERIMENTS.md)
+scripts/dissect.py        PnL per symbol x round, fill PnL by storm phase, what the ensemble believed in the worst seasons
+scripts/tune.py           unattended parameter search -> out/tune/ledger.csv
+scripts/calibrate_book.py order books (scripts/record_books.py) -> ctc/ladder.json
 scripts/build_library.py  rebuilds ctc/analog_library.npz from seasons 1-450
-scripts/eval_forecast.py  forecast skill at several storm ages, constant velocity vs ensemble
+scripts/build_storm_sample.py  rebuilds ctc/storm_sample.npz
+scripts/fit_prelim.py     preliminary-report + nowcast combination (valuation_params.json["prelim"])
+scripts/fit_rebuilders.py exact RECON/MAT/GEN settlement rules (kept behind --exact-rebuild, see the ledger)
+scripts/fit_damage.py, fit_valuation.py, eval_valuation.py, eval_forecast.py   model fits and diagnostics
 scripts/mock_exchange.py  replays a season over the exchange's HTTP + WebSocket API, for bot tests without the testnet
-scripts/fit_damage.py     refits the damage model (writes ctc/damage_params.json)
-scripts/fit_valuation.py  refits the settlement rules (writes ctc/valuation_params.json)
-scripts/eval_valuation.py residual sd per symbol on holdout (adds resid_sd to valuation_params.json)
-scripts/backtest.py       runs a strategy over seasons
+mario/pricer.py, mario/README.md   Mario Markets Monte Carlo pricer and drill sheet
+derivs/bs.py, derivs/build_sheet.py -> derivs/desk.xlsx   Derivatives calculator and the desk workbook
 ```
+
+EXPERIMENTS.md holds the evaluation protocol and the ledger of every accepted and rejected change; OVERNIGHT.md the
+unattended-session manual.
 
 ## Run
 
 ```bash
-python3 scripts/backtest.py --strategy nowcast --seasons 451-600          # holdout
-python3 scripts/backtest.py --strategy final   --seasons 451-600          # round-3 final report only
-python3 scripts/backtest.py --strategy analog  --seasons 451-600          # analog ensemble (current best)
-python3 scripts/backtest.py --strategy nowcast --seasons 7 --verbose      # every fill of one season
-python3 scripts/backtest.py --strategy analog --seasons 451-600 --depth 100 --half-spread 0.003   # liquidity what-if
+python3 scripts/backtest.py --strategy analog --seasons 526-600                                   # verify, deep regime
+python3 scripts/backtest.py --strategy analog --seasons 526-600 --refill 30 --ladder-scale 0.5    # verify, thin regime
+python3 scripts/backtest.py --strategy analog --seasons 540 --verbose                             # every fill of one season
+python3 scripts/dissect.py --seasons 526-600 --refill 30 --ladder-scale 0.5 --worst 8             # where the losses are
+python3 scripts/backtest.py --strategy nowcast --seasons 451-600                                  # constant-velocity baseline (bad under the ladder)
 ```
+Strategy flags (defaults are the accepted configuration): `--passive 0.75` (rest inside the spread when the edge is
+small), `--warmup 20` (no trading for 20 s after a round opens), `--prior sample|point`, `--future-sd`,
+`--loss-limit`, `--exact-rebuild` (the last three are rejected options kept for reference).
 
 Live bot (testnet or competition), dry run first:
 
 ```bash
 pip install "websockets>=14"
-python3 bot/live.py --url https://hurricane.cornelltradingcompetition.org --key BOT_KEY --dry-run
+python3 bot/live.py --key BOT_KEY --dry-run          # default url https://cornelltradingcompetition.org
+zsh bot/run_live.sh                                  # keeps it running, logs to recordings/bot_live.log (pnl every 10 s, SEASON END lines)
 ```
+The bot runs the same FairValueTrader as the backtest (analog ensemble, passive 0.75, warm-up 20 s). Prices are
+rounded to the 0.01 tick (buys down, sells up). On the testnet the fictional year gives the season: season = 2027 - year.
 
 End-to-end test without the testnet (mock exchange replays season 451 at 25x):
 
@@ -75,18 +91,32 @@ Settlement rules (all R² 1.00 unless noted):
 
 ## Simulator assumptions
 
-House bid/ask = consensus price * (1 -/+ half_spread), default 0.15%; unlimited depth; 0.25 s latency; position limits
-include resting orders; 300 order actions per minute; resting orders cleared at each close; ETF create/redeem at marks.
-Replace half_spread and depth with numbers measured on the testnet (quotes channel) as soon as we have a recording.
+Liquidity is the ladder measured on the testnet (ctc/ladder.json, 846 snapshots per symbol): touch spread 0.23-0.32%,
+20-80 shares at the touch, a few hundred within 1-3%, and the house's 600-lot backstop about 8% from its (lagging)
+centre. Aggressive orders walk the ladder up to their limit price; consumed depth regenerates linearly over `--refill`
+seconds (10 s deep, 30 s thin; `--ladder-scale 0.5` halves every size in the thin regime). A resting order fills when
+the house re-quotes through it, for the size the house posts at or beyond our price, at our price (measured live: the
+house does cross resting orders). 0.25 s latency; limits include resting orders; 300 order actions per minute (bot cap
+120); resting orders cleared at each close; ETF create/redeem at marks; 0.01 tick.
 
-## Results so far (seasons 451-600, default parameters)
+Known gaps vs the testnet: no opening phase (the testnet opens a round with a thin book and the bot's first orders hit the
+backstop; the 20 s warm-up covers it), no instant round replays (the testnet replayed one round in a second), fill cost
+live measured at about 90 bp of notional against 30-60 bp implied by the ladder.
 
-| Strategy | mean PnL | median | p10 | losing seasons |
-|---|---|---|---|---|
-| final (round-3 final report only) | 576 | 85 | 0 | 5% |
-| nowcast (constant-velocity projection, no pattern model) | 9,333 | 9,698 | 2,088 | 5% |
+## Results (verify seasons 526-600, default parameters, 2026-10-22 05:40)
 
-Most PnL comes from HAVEN, PORT and ARCH during the storm. Rounds contribute about equally.
+| Regime | mean PnL | median | p10 | min | losing seasons | fills/season |
+|---|---|---|---|---|---|---|
+| deep (ladder, refill 10 s) | 6,353 | 6,082 | -3,078 | -11,264 | 17% | 362 |
+| thin (ladder at half size, refill 30 s) | 2,711 | 2,009 | -7,024 | -16,957 | 35% | 786 |
+
+Deep regime by symbol: HAVEN +2364, ARCH +1195, PORT +855, RECON +515, GRID +440, FERRY +276, AQUA +260, REBLD +229,
+ISLE +106, MAT +78, REIN +42, GEN -7. By round: R1 +1654, R2 +2618, R3 +2082. Fill PnL by phase (thin regime, 75 seasons):
+the storm itself earns everything (+286k, of which +129k in the first 60 s of the storm); pre-storm, aftermath and
+post-report fills are flat to negative. The constant-velocity nowcast loses about 20k per season under the ladder.
+
+Testnet (analog bot, after the fixes of 2026-10-22): season 184 +4.9k vs sim +9.5k, 185 -16.3k vs +7.4k (round 1 was
+replayed instantly, the open was traded into the backstop), 186 -0.5k vs +6.3k, 187 +17.8k vs +19.6k.
 
 ## Forecast skill (holdout storms, RMSE of end-of-storm company damage in points, PORT/ISLE/AQUA/GRID/FERRY)
 
@@ -102,7 +132,8 @@ The ensemble is insensitive to sigma (15 to 40), k (50 to 100) and the position 
 
 ## Next
 
-1. Measure house depth, spread and inventory skew on the testnet (record the quotes channel); set the simulator to match.
-2. Passive quoting inside the house spread once depth is known.
-3. Rebuilders: RECON/MAT residuals (1 pt) are the loosest part of the valuation.
+1. Live fill cost (90 bp vs 30-60 bp in the sim): cap aggressive size per cycle, or stop walking into the 8% backstop
+   unless the edge is larger than the backstop distance plus the floor.
+2. ETF create/redeem arbitrage (measured: ARCH quote more than 0.9% from its basket 5% of the time; small, riskless).
+3. Round-3 rate limits: the bot sends up to 47 actions per minute in the sim against a 120 cap; prioritise by edge x limit.
 4. Live announcements: the bot pauses named symbols; a human must read the headline and decide.
