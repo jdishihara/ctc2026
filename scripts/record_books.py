@@ -16,9 +16,14 @@ with open(a.out, "a") as f:
         t0 = time.time()
         try:
             tm = get("/api/v1/competitions/time")
+            try:                                   # our own resting orders, so the calibration can subtract them
+                oo = get("/api/v1/orders/open"); ours = oo.get("orders", oo) if isinstance(oo, dict) else oo
+            except Exception:
+                ours = []
             for s in syms:
                 b = get(f"/api/v1/orderbook/{s}")
-                f.write(json.dumps({"t": t0, "time": tm.get("fictional_time"), "state": tm.get("state"), **b}) + "\n")
+                mine = [o for o in (ours or []) if o.get("symbol") == s]
+                f.write(json.dumps({"t": t0, "time": tm.get("fictional_time"), "state": tm.get("state"), "ours": mine, **b}) + "\n")
             f.flush()
         except Exception as exc:
             print("error", exc, flush=True)
