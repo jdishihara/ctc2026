@@ -46,6 +46,7 @@ class LiveExchange:
         self.competition_id = None
         self.last_positions: Any = None
         self.pnl_now = 0.0
+        self.reopened = False
 
     @property
     def t(self) -> float:
@@ -66,7 +67,10 @@ class LiveExchange:
                 return json.load(r)
         except urllib.error.HTTPError as exc:
             self.rejected += 1
-            print(f"HTTP {exc.code} {method} {path} {body}: {exc.read().decode()[:200]}", flush=True)
+            detail = exc.read().decode()[:200]
+            print(f"HTTP {exc.code} {method} {path} {body}: {detail}", flush=True)
+            if exc.code == 403 and "halted" in detail:
+                self.market_open = False                     # stop sending until the next time poll says running
             return None
 
     def _action_ok(self) -> bool:
@@ -82,7 +86,9 @@ class LiveExchange:
     def refresh(self) -> None:
         try:
             tm = self.get("/competitions/time")
+            was_open = self.market_open
             self.market_open = tm.get("state") == "running"
+            self.reopened = self.market_open and not was_open
             cid = tm.get("competition_id")
             if self.competition_id and cid != self.competition_id:
                 print(f"SEASON END competition {self.competition_id} ({tm.get('fictional_time')}): last positions {json.dumps(self.last_positions)}", flush=True)
@@ -165,7 +171,7 @@ async def run(args: argparse.Namespace) -> None:
         strat = S.FairValueTrader(min_edge=args.min_edge, edge_full=args.edge_full, project=True)
     else:   # the analog ensemble, same parameters as scripts/backtest.py --strategy analog
         strat = S.FairValueTrader(min_edge=args.min_edge, edge_full=args.edge_full, analog=True, sd_mult=args.sd_mult,
-                                  sigma=args.sigma, k=args.k, passive=args.passive)
+                                  sigma=args.sigma, k=args.k, passive=args.passive, warmup=args.warmup)
     print(f"strategy {'nowcast' if args.nowcast else 'analog'} min_edge {args.min_edge} edge_full {args.edge_full} sd_mult {args.sd_mult} sigma {args.sigma} k {args.k} passive {args.passive}", flush=True)
     strat.on_start(ex)
     ex.refresh()
@@ -213,6 +219,9 @@ async def run(args: argparse.Namespace) -> None:
                         if cid_before and ex.competition_id != cid_before:
                             print("new competition id: resetting model", flush=True)
                             strat.on_start(ex); seen_seq.clear(); last_round = 0
+                        if ex.reopened:
+                            print("market (re)opened: warm-up", flush=True)
+                            strat.on_round(ex); ex.reopened = False
                     if len(ex.quotes) >= len(ex.symbols) // 2:
                         strat.on_quotes(ex)
                     if now - last_log > 10 and strat.fair:
@@ -239,6 +248,7 @@ def main() -> None:
     ap.add_argument("--sigma", type=float, default=25.0)
     ap.add_argument("--k", type=int, default=50)
     ap.add_argument("--passive", type=float, default=0.75, help="rest orders inside the spread at edge = passive*floor (0 = off)")
+    ap.add_argument("--warmup", type=float, default=20.0, help="seconds after the market opens with no trading")
     asyncio.run(run(ap.parse_args()))
 
 

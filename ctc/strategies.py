@@ -29,8 +29,9 @@ class FairValueTrader(Strategy):
     def __init__(self, min_edge: float = 0.01, edge_full: float = 0.05, rebalance_every: float = 15.0,
                  symbols: list[str] | None = None, project: bool = True, analog: bool = False,
                  sd_mult: float = 1.0, loss_limit: float | None = None, prior_mode: str = "sample",
-                 passive: float = 0.0, **analog_kw):
+                 passive: float = 0.0, warmup: float = 0.0, **analog_kw):
         self.prior_mode = prior_mode
+        self.warmup = warmup            # seconds after a round opens during which we do not trade (opening prices settle)
         self.passive = passive          # >0: when the edge is below the floor, rest an order inside the spread at the
                                         # price where the edge equals passive * floor (a passive fill does not pay the spread)
         self.min_edge, self.edge_full, self.every = min_edge, edge_full, rebalance_every
@@ -51,6 +52,10 @@ class FairValueTrader(Strategy):
         self.cell_pnl: dict[tuple[str, int], float] = {}    # mark-to-mid pnl per (symbol, round), approximating fills at mid
         self.last_mid: dict[str, float] = {}
         self.passive_order: dict[str, tuple[str, float, float]] = {}   # symbol -> (side, price, t) of our resting quote
+        self.round_open_t = -1e9
+
+    def on_round(self, sim) -> None:
+        self.round_open_t = sim.t
 
     def pause(self, symbols: list[str]) -> None:
         """Stop trading symbols named in a live announcement until a human clears them (model has not seen announcements)."""
@@ -90,7 +95,7 @@ class FairValueTrader(Strategy):
         return max(self.min_edge, 2.0 * sd / max(1e-9, sim.mid[s]))
 
     def on_quotes(self, sim) -> None:
-        if sim.t - self.last_trade_t < self.every:
+        if sim.t - self.last_trade_t < self.every or sim.t - self.round_open_t < self.warmup:
             return
         self.last_trade_t = sim.t
         if self.model.storm_active:
