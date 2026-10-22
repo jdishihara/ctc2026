@@ -52,8 +52,8 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--seasons", default="526-600"); ap.add_argument("--refill", type=float, default=10.0)
     ap.add_argument("--ladder-scale", type=float, default=1.0); ap.add_argument("--worst", type=int, default=6)
-    ap.add_argument("--min-edge", type=float, default=0.01); ap.add_argument("--edge-full", type=float, default=0.05)
-    ap.add_argument("--sd-mult", type=float, default=1.0); ap.add_argument("--sigma", type=float, default=25.0); ap.add_argument("--k", type=int, default=50)
+    ap.add_argument("--min-edge", type=float, default=0.02); ap.add_argument("--edge-full", type=float, default=0.03)
+    ap.add_argument("--sd-mult", type=float, default=0.7); ap.add_argument("--sigma", type=float, default=15.0); ap.add_argument("--k", type=int, default=100)
     ap.add_argument("--json", default=None, help="write per-season detail here")
     a = ap.parse_args()
     root = Path(__file__).resolve().parents[1] / "data"
@@ -62,7 +62,7 @@ def main():
     for n in parse_seasons(a.seasons, len(man["seasons"])):
         meta = man["seasons"][n - 1]
         sim = Sim(root / "history" / meta["dir"], case, ladder=Ladder(refill_secs=a.refill, scale=a.ladder_scale))
-        st = Recorder(min_edge=a.min_edge, edge_full=a.edge_full, analog=True, sd_mult=a.sd_mult, sigma=a.sigma, k=a.k)
+        st = Recorder(min_edge=a.min_edge, edge_full=a.edge_full, analog=True, sd_mult=a.sd_mult, sigma=a.sigma, k=a.k, passive=0.75, warmup=20)
         pnl = sim.run(st)
         cell = {}
         prev = {s: 0.0 for s in SYMS}

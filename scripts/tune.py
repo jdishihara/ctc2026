@@ -51,7 +51,7 @@ def main():
     while time.time() < t_end:
         params = {k: rng.choice(v) for k, v in SPACE.items()}
         if n == 0 and not rows:
-            params = {"min_edge": 0.01, "edge_full": 0.05, "sd_mult": 1.0, "sigma": 25, "k": 50}   # baseline first
+            params = {"min_edge": 0.02, "edge_full": 0.03, "sd_mult": 0.7, "sigma": 15, "k": 100}   # baseline first (defaults since 2026-10-22 07:00)
         if (ROOT / "scripts" / "tune_space.json").exists():
             SPACE.update(json.loads((ROOT / "scripts" / "tune_space.json").read_text()))
         key = json.dumps(params, sort_keys=True)

@@ -1,3 +1,58 @@
+# Overnight report 2026-10-22 (session 01:00-07:10, 28 commits, all pushed)
+
+## What improved (verify seasons 526-600, deep / thin regime, mean PnL and p10)
+
+| step | deep | thin |
+|---|---|---|
+| start of night (old 22-snapshot ladder) | 5012 / -4628 | 2515 / -6878 |
+| prelim report combined with our nowcast | 5159 / -4339 | 3108 / -6582 |
+| ladder refit from 846 overnight snapshots (new baseline, not a strategy change) | 4917 / -4519 | 3004 / -6780 |
+| future-storm prior = sample of 1350 historical storms (convexity) | 5957 / -2517 | 3943 / -5044 |
+| SIM FIX: passive fills capped by the house size that crosses us (lowers the baseline) | 5130 / -3529 | 1691 / -6794 |
+| passive quoting inside the spread at 0.75 x floor | 6320 / -2986 | 2681 / -6992 |
+| 20 s warm-up after each round opens | 6353 / -3078 | 2711 / -7024 |
+| tuner's parameter set (min_edge 0.02, edge_full 0.03, sd_mult 0.7, sigma 15, k 100) | **8433 / -3050** | **5073 / -6355** |
+
+Like for like (same simulator), the strategy went from 5130 / 1691 to 8433 / 5073; losing seasons 25% -> 19% deep, 40% -> 24% thin.
+
+## Rejected (details in the ledger)
+Per-symbol-per-round loss limit; future-storm valuation sd in the edge floor (everywhere or outside the storm);
+exact rebuilder settlement rules (found: RECON, MAT and GEN settle to exact weighted saturations, holdout rmse 0.003,
+but using them lowers PnL by about 110/season because the rebuilders then trade at 1% edges; kept behind
+`--exact-rebuild`); house inventory skew (measured, not material); ETF create/redeem arbitrage (measured, small, not built).
+
+## Live bot: three bugs fixed, then compared with the backtest
+1. Every order was rejected: prices were not multiples of the 0.01 tick (119 of 121 orders before 01:03).
+2. The bot ran the constant-velocity NOWCAST, not the analog ensemble (missing flag): season 182 lost 14k while flipping PORT 31 times in 16 minutes; the sim agrees the nowcast loses 23k on that season.
+3. At each round open it fired full-size orders in all 12 symbols into a thin book and spammed rejected orders during halts; now a 20 s warm-up and halt handling. Live fill cost fell from 93 bp to 29 bp of notional.
+
+Testnet vs sim (season = 2027 - fictional year; sim is the deep regime with the defaults of the time):
+
+| season | testnet | sim | note |
+|---|---|---|---|
+| 184 | +4.9k | +9.5k | first clean analog season |
+| 185 | -16.3k | +7.4k | testnet replayed round 1 in one second, bot traded the round-2 open into the 8% backstop |
+| 186 | -0.5k | +6.3k | |
+| 187 | +17.8k | +19.6k | after warm-up fix |
+| 188 | +4.9k | +7.3k | |
+| 189 | +3.0k | +8.8k | |
+
+Sign agrees in 5 of 6; the testnet runs 3-6k per season below the sim. The sim has no opening phase and the house's
+book is thinner at the open than the ladder median; passive fills happen live (our resting orders get lifted).
+
+## Deliverables
+- scripts/dissect.py (where the losses are), scripts/fit_prelim.py, scripts/build_storm_sample.py, scripts/fit_rebuilders.py, calibrate_book.py with band and own-order handling.
+- mario/pricer.py: settle / points / calib commands, CPU prior -0.6; mario/README.md drill sheet with the series-win-by-lead and score tables.
+- derivs/desk.xlsx (derivs/build_sheet.py): 12 contracts with live Black-Scholes formulas, market IV, analyst scorecard with inverse-error weights, event timeline; formulas verified against bs.py.
+- README refreshed. Bot logs season PnL every 10 s and at SEASON END.
+
+## Top three decisions for Jayden
+1. **Parameters for competition day.** The accepted set (min_edge 0.02, edge_full 0.03, sd_mult 0.7, sigma 15, k 100) was selected by the tuner under an older fill model and verified once under the current one. Run `python3 scripts/tune.py --hours 4` on the current simulator today and re-verify the winner; if it does not reproduce, fall back to the previous defaults (0.01 / 0.05 / 1.0 / 25 / 50), which gave 6353 / 2711.
+2. **Exact rebuilder rules.** They are the true settlement formulas (rmse 0.003) but cost about 110/season in the sim because RECON/MAT then trade at 1% edges. Either accept the tiny PnL cost for a correct model, or add a 3% floor for RECON/MAT only (needs a tune run); decide before the strategy is frozen.
+3. **Round opens on the day.** The testnet opens rounds with a thin book and sometimes replays a round instantly; the 20 s warm-up covers the first case. Decide whether a human watches the first minute of each round, and whether the bot should cap aggressive size per cycle at the open instead of trusting the liquidity-aware limit (which walked into the 8% backstop twice tonight).
+
+Still running at 07:10: feed recorder, book recorder, live bot (restarted 07:08 on the new defaults), tuner (ends 07:40), caffeinate (until 10:30). Nothing deleted, no history rewritten, key not in the repo.
+
 # Experiment protocol
 
 Goal: raise holdout PnL of the Hurricane Season strategy without fooling ourselves, so that work can run unattended.
@@ -45,6 +100,7 @@ python3 scripts/eval_forecast.py 25 50       # forecast skill
 | 2026-10-22 05:15 | house quote skew vs our inventory (item 10): 23,855 book snapshots joined with the bot's positions. The house keeps a 600-lot backstop 8% either side of a centre that lags the touch by up to 1.3%. Touch-mid minus centre regressed on our position / limit: pooled corr +0.05, slope +0.07% per full limit (with us, not against us; MAT +0.64%, GRID -0.11%, insurers 0). Spreads 0.02-0.10% wider when |pos| > half the limit, confounded with storm phases | | | NOT MATERIAL: no inventory skew added to the ladder. The house's centre lagging the touch is the thing to exploit (it is where the 8% backstop sits), not skew |
 | 2026-10-22 05:40 | tuner (out/tune/ledger.csv, 45 rows since 03:45 under the current defaults; tune set at defaults: deep 6973 p10 -4312, thin 3260 p10 -5782): best scores k=100/sd_mult 0.7 combinations lift the deep mean by 100-600 but all cut thin p10 by 20-28%; min_edge 0.005 lifts deep +391 and lowers thin -78. No row passes the acceptance rule on the tune set, so nothing went to verify | | | NO CHANGE: defaults (min_edge 0.01, edge_full 0.05, sd_mult 1.0, sigma 25, k 50) stay. The tail rule is what rejects the higher-mean sets |
 | 2026-10-22 06:05 | live fill cost re-measured after the warm-up and halt fixes (389 fills, 05:20-06:04): +29 bp of notional (was +93 bp at 03:42-03:48); 43% of shares filled passively, 3% at the backstop (was 27% deep or backstop). No rejected orders since 03:44 (15 warm-ups observed). Testnet season 187 +17.8k vs sim +19.6k; 188 at +5.0k in round 3 vs sim +7.3k | | | MEASURED: live fill cost is now inside the sim's 30-60 bp range |
+| 2026-10-22 07:05 | tuner's best set (out/tune/best.json, selected on 451-525 at 02:38) re-verified under the current simulator: min_edge 0.02, edge_full 0.03, sd_mult 0.7, sigma 15, k 100 | 8433 (p10 -3050, min -13.2k, 19% losing) vs 6353 | 5073 (p10 -6355, min -14.5k, 24% losing) vs 2711 | ACCEPTED (+2080 / +2362, thin p10 better). Now the defaults in backtest.py, bot/live.py, dissect.py and the tuner baseline. Caveat: the set was selected on the tune seasons under an older fill model, so re-run the tuner on the current simulator before competition day |
 
 ## Backlog (ordered by expected value)
 1. Passive quoting: rest orders inside the house spread instead of crossing; measure under thin regime.
