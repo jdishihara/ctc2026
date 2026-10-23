@@ -49,6 +49,7 @@ from the page returns the full book; the same call without a session returns 401
 pip install playwright                                # once; it drives the installed Google Chrome, no download
 python3 mario/desk.py                                 # starts its own Chrome (remote debugging, profile ~/.ctc_mario_chrome): LOG IN THERE once with Google
 open http://localhost:8787                            # the dashboard, on a second screen next to the exchange tab
+                                                      # --host 0.0.0.0 shares it with teammates' laptops at http://<this laptop's IP>:8787 (ipconfig getifaddr en0)
 > map                                                 # check every symbol's role; fix mario/contracts.json and restart if any is wrong or UNMAPPED
 > race 1 2 5 9                                        # after each race: overall places of BIRDO DAISY PEACH YOSHI (alphabetical), from the stream
 > undo | cpu -0.3                                     # typo, or re-centre the CPU strength prior (see the calibration table below)

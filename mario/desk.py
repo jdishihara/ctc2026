@@ -214,7 +214,7 @@ setInterval(tick,700);tick();
 </script></body></html>"""
 
 
-def serve(desk: Desk, port: int) -> None:
+def serve(desk: Desk, port: int, host: str = "127.0.0.1") -> None:
     class H(BaseHTTPRequestHandler):
         def log_message(self, *a): pass
 
@@ -231,7 +231,7 @@ def serve(desk: Desk, port: int) -> None:
             out = desk.command(line); desk.say(f"> {line}: {out.splitlines()[0] if out else ''}")
             self._send(out.encode(), "text/plain; charset=utf-8")
 
-    srv = ThreadingHTTPServer(("127.0.0.1", port), H)
+    srv = ThreadingHTTPServer((host, port), H)
     threading.Thread(target=srv.serve_forever, daemon=True).start()
 
 
@@ -242,6 +242,7 @@ def main():
     ap.add_argument("--tap", choices=["browser", "http"], default=None)
     ap.add_argument("--key", default=None, help="API key for the HTTP tap, if the organisers give one")
     ap.add_argument("--port", type=int, default=8787); ap.add_argument("--interval", type=float, default=1.0)
+    ap.add_argument("--host", default="127.0.0.1", help="0.0.0.0 lets teammates on the same Wi-Fi open the dashboard at http://<this laptop's IP>:8787")
     ap.add_argument("--auto-results", action="store_true", help="mock only: read race results from /mock/results instead of typing them")
     ap.add_argument("--no-prefill", dest="prefill", action="store_false", help="disable 'prepare N' (typing an order into the UI's form; the organisers allowed it on 2026-10-23)")
     ap.add_argument("--headless", action="store_true")
@@ -255,8 +256,8 @@ def main():
     if a.tap is None:
         a.tap = "http" if a.mock else "browser"
     desk = Desk(a)
-    serve(desk, a.port)
-    desk.say(f"dashboard on http://localhost:{a.port}  exchange {a.url} via {a.tap} tap")
+    serve(desk, a.port, a.host)
+    desk.say(f"dashboard on http://localhost:{a.port}" + (f" (and http://<this laptop IP>:{a.port} for teammates)" if a.host == "0.0.0.0" else "") + f"  exchange {a.url} via {a.tap} tap")
     threading.Thread(target=desk.run_tap, daemon=True).start()
     if a.no_repl or not sys.stdin.isatty():
         try:
