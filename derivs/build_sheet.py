@@ -111,7 +111,7 @@ for i in range(R0, R1 + 1):
     an[f"N{i}"] = f'=IF(ISNUMBER(F{i}),IF(COUNT(F{i}:F${R1})<=6,1,0),0)'
 base = r + 2
 an[f"A{r+1}"] = "Scorecard (vol points)"; an[f"A{r+1}"].font = BOLD
-labels = ["Mean abs error", "Bias", "n scored", "Inverse-error weight (all events)", "Mean abs error, last 3 events", "Inverse-error weight (last 3 events)"]
+labels = ["Mean abs error", "Bias", "n scored", "Inverse-error weight (all events)", "Mean abs error, last 3 events", "Inverse-error weight (last 3 events)", "Bias-corrected inverse-variance weight"]
 for j, lab in enumerate(labels): an[f"A{base+j}"] = lab
 for k, col in enumerate("GHI"):
     out = "CDE"[k]; ab = "KLM"[k]
@@ -121,6 +121,10 @@ for k, col in enumerate("GHI"):
     an[f"{out}{base+3}"] = f'=IFERROR((1/MAX({out}{base},0.05))/((1/MAX($C${base},0.05))+(1/MAX($D${base},0.05))+(1/MAX($E${base},0.05))),"")'
     an[f"{out}{base+4}"] = f'=IFERROR(AVERAGEIFS({ab}{R0}:{ab}{R1},$N${R0}:$N${R1},1),"")'
     an[f"{out}{base+5}"] = f'=IFERROR((1/MAX({out}{base+4},0.05))/((1/MAX($C${base+4},0.05))+(1/MAX($D${base+4},0.05))+(1/MAX($E${base+4},0.05))),"")'
+    # residual variance after removing the analyst's bias, shrunk toward a 3-vol-point prior by 1/(n+1); weight = 1/variance
+    def invvar(o, c):
+        return f"(1/(VAR.P({c}{R0}:{c}{R1})*{o}{base+2}/({o}{base+2}+1)+9/({o}{base+2}+1)))"
+    an[f"{out}{base+6}"] = f'=IFERROR({invvar(out, col)}/({invvar("$C", "$G")}+{invvar("$D", "$H")}+{invvar("$E", "$I")}),"")'
 blend = base + 7
 an[f"A{blend}"] = "Blend for the next event"; an[f"A{blend}"].font = BOLD
 an[f"A{blend+1}"] = "Analyst estimates (next event)"
@@ -128,9 +132,13 @@ for col in "CDE": an[f"{col}{blend+1}"].fill = INPUT
 an[f"A{blend+2}"] = "Weighted IV (all-event weights)"; an[f"B{blend+2}"] = f'=IFERROR(SUMPRODUCT(C{blend+1}:E{blend+1},C{base+3}:E{base+3}),AVERAGE(C{blend+1}:E{blend+1}))'
 an[f"A{blend+3}"] = "Weighted IV (last-3-event weights)"; an[f"B{blend+3}"] = f'=IFERROR(SUMPRODUCT(C{blend+1}:E{blend+1},C{base+5}:E{base+5}),AVERAGE(C{blend+1}:E{blend+1}))'
 an[f"A{blend+4}"] = "Median of the three"; an[f"B{blend+4}"] = f"=MEDIAN(C{blend+1}:E{blend+1})"
+# bias-corrected blend: each estimate minus the analyst's bias (vol pts -> IV, shrunk by n/(n+1)), weighted by inverse residual variance
+terms = "+".join(f"{c}{base+6}*({c}{blend+1}-{c}{base+1}/100*{c}{base+2}/({c}{base+2}+1))" for c in "CDE")
+an[f"A{blend+5}"] = "Weighted IV, bias-corrected (use once 2+ truths are scored)"; an[f"B{blend+5}"] = f'=IFERROR({terms},AVERAGE(C{blend+1}:E{blend+1}))'
 an[f"A{blend+6}"] = ("Round 1: IV is announced, so fill Truth directly and leave the analysts empty. Round 2: fill the three estimates when published, "
                      "then fill Truth from Contracts!R (market IV at the mid) two minutes after the news. Round 3: analysts give an IV-linked quantity; "
-                     "record it in the estimate columns anyway and regress it on Truth once two events are in. Weights use 1/max(MAE, 0.05) so no analyst gets more than ~90%.")
+                     "convert it on the Round3 sheet and record the IV here. Weights use 1/max(MAE, 0.05) so no analyst gets more than ~90%. Stress test (EXPERIMENTS.md 2026-10-23): "
+                     "the bias-corrected blend has the lowest error when analysts are persistently biased (2.15 vs 2.30 vol pts), equal weights are as good as anything with fewer than two truths, and following the single best analyst is the worst choice (3.4).")
 an.column_dimensions["A"].width = 34; an.column_dimensions["F"].width = 16; an.column_dimensions["J"].width = 24
 for col in "BCDEGHIKLM": an.column_dimensions[col].width = 11
 
