@@ -30,7 +30,19 @@ class FairValueTrader(Strategy):
                  symbols: list[str] | None = None, project: bool = True, analog: bool = False,
                  sd_mult: float = 1.0, loss_limit: float | None = None, prior_mode: str = "sample",
                  passive: float = 0.0, warmup: float = 0.0, future_sd: float = 0.0, fair_jump: float = 0.0, max_cross: float = 0.0,
-                 carry: float = 1.0, ent_cut: float = 0.0, rebuild_min_edge: float = 0.0, late_cut: float = 0.0, **analog_kw):
+                 carry: float = 1.0, ent_cut: float = 0.0, rebuild_min_edge: float = 0.0, late_cut: float = 0.0,
+                 edge_ramp: float = 0.0, final_exact: bool = False, final_edge: float = 0.0,
+                 final_edge_full: float = 0.0, **analog_kw):
+        if not math.isfinite(edge_ramp) or edge_ramp < 0:
+            raise ValueError("edge_ramp must be finite and nonnegative")
+        self.edge_ramp = edge_ramp      # minimum excess edge from the floor to full size (0 preserves the old rule)
+        self.final_exact = final_exact
+        if not math.isfinite(final_edge) or final_edge < 0:
+            raise ValueError("final_edge must be finite and nonnegative")
+        self.final_edge = final_edge  # optional entry floor only after all final reports and exact valuations
+        if not math.isfinite(final_edge_full) or final_edge_full < 0:
+            raise ValueError("final_edge_full must be finite and nonnegative")
+        self.final_edge_full = final_edge_full
         self.prior_mode = prior_mode
         self.carry = carry              # <1: between storms (after a final report, before the next storm forms) the position
                                         # limit is carry x the exchange limit, so less rides on the next storm's path
@@ -53,7 +65,7 @@ class FairValueTrader(Strategy):
         self.paused: set[str] = set()
 
     def on_start(self, sim) -> None:
-        self.model = SeasonModel(sim.case)
+        self.model = SeasonModel(sim.case, final_exact=self.final_exact)
         self.model.prior_mode = self.prior_mode
         self.model.future_sd_mult = self.future_sd
         if self.analog:
@@ -108,10 +120,14 @@ class FairValueTrader(Strategy):
         sd = self.model.resid_sd(s)
         if self.analog:
             sd = math.hypot(sd, self.sd_mult * self.model.fair_sd.get(s, 0.0))
-        floor = max(self.min_edge, 2.0 * sd / max(1e-9, sim.mid[s]))
+        entry = self.final_edge if self.final_edge and self.model.final_exact_ready else self.min_edge
+        floor = max(entry, 2.0 * sd / max(1e-9, sim.mid[s]))
         if self.rebuild_min_edge > 0 and s in ("RECON", "MAT", "GEN"):
             floor = max(floor, self.rebuild_min_edge)
         return floor
+
+    def full_edge_for_phase(self) -> float:
+        return self.final_edge_full if self.final_edge_full and self.model.final_exact_ready else self.edge_full
 
     def on_quotes(self, sim) -> None:
         # Pausing additions alone leaves old quotes executable at obsolete fair
@@ -166,7 +182,7 @@ class FairValueTrader(Strategy):
             stopped = self.loss_limit is not None and self.cell_pnl.get((s, rnd), 0.0) < -self.loss_limit
             reduce = False
             if abs(edge) >= floor:
-                frac = min(1.0, (abs(edge) - floor) / max(1e-9, self.edge_full - floor))
+                frac = min(1.0, (abs(edge) - floor) / max(1e-9, self.edge_ramp, self.full_edge_for_phase() - floor))
                 target = int(round(lim * frac)) * (1 if edge > 0 else -1)
                 if self.ent_cut > 0 and self.model.storm_active and ent > self.ent_cut and abs(target) > abs(pos) and target * pos >= 0:
                     continue                                # pattern still ambiguous: do not add
@@ -238,7 +254,7 @@ class FairValueTrader(Strategy):
             return
         px = round(px, 2)
         edge_at = abs(f - px) / px * conf
-        frac = min(1.0, (edge_at - self.passive * floor) / max(1e-9, self.edge_full - self.passive * floor))
+        frac = min(1.0, (edge_at - self.passive * floor) / max(1e-9, self.edge_ramp, self.full_edge_for_phase() - self.passive * floor))
         target = int(round(lim * frac)) * (1 if side == "buy" else -1)
         qty = (target - pos) if side == "buy" else (pos - target)
         if qty <= 0:

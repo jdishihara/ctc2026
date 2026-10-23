@@ -64,17 +64,37 @@ class SiteState:
             self.outage[j] += seconds
 
     def set_from_report(self, company_damage_pct: float) -> None:
-        """After a final damage report, rescale this storm's per-site damage so the company total matches the report."""
-        model = self.storm_damage()
-        if model <= 1e-9:
-            # model saw nothing but the report says damage: spread it by weight
-            for j, s in enumerate(self.sites):
-                self.exposure[j] = -math.log(max(1e-12, 1 - min(99.9, company_damage_pct) / 100.0)) / self.c if company_damage_pct > 0 else 0.0
-            return
-        scale = company_damage_pct / model
+        """Match reported company damage, redistributing excess from saturated sites.
+
+        Preserve predicted site ratios wherever capacity allows. If the track
+        omitted damaged sites, distribute the remainder across their capacity.
+        """
+        remaining = [max(0.0, 100.0 - c) for c in self.cum]
+        weights = [s["weight"] for s in self.sites]
+        raw = [self.storm_damage_site(j) for j in range(len(self.sites))]
+        target = [0.0] * len(self.sites)
+        capacity = sum(w * r for w, r in zip(weights, remaining))
+        needed = min(capacity, max(0.0, company_damage_pct))
+        active = {j for j in range(len(self.sites)) if raw[j] > 1e-12 and weights[j] > 0}
+        while active and needed > 1e-12:
+            scale = needed / sum(weights[j] * raw[j] for j in active)
+            saturated = {j for j in active if scale * raw[j] >= remaining[j]}
+            if not saturated:
+                for j in active:
+                    target[j] = scale * raw[j]
+                needed = 0.0
+                break
+            for j in saturated:
+                target[j] = remaining[j]
+                needed -= weights[j] * target[j]
+            active -= saturated
+        if needed > 1e-12:
+            available = sum(w * (r - d) for w, r, d in zip(weights, remaining, target))
+            if available > 0:
+                for j in range(len(target)):
+                    target[j] += (remaining[j] - target[j]) * min(1.0, needed / available)
         for j in range(len(self.sites)):
-            target = min(100.0 - self.cum[j] - 1e-6, self.storm_damage_site(j) * scale)
-            frac = target / max(1e-9, 100.0 - self.cum[j])
+            frac = target[j] / max(1e-12, remaining[j])
             self.exposure[j] = -math.log(max(1e-12, 1 - frac)) / self.c
 
 

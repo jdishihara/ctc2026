@@ -6,7 +6,7 @@ import numpy as np
 import pytest
 
 from ctc.analog import AnalogEnsemble, GRID_AGES
-from ctc.valuation import SeasonModel, expected_values, storm_loss
+from ctc.valuation import SeasonModel, expected_values, storm_loss, P
 from ctc.wind import PARAMS, PHYS
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -87,6 +87,33 @@ def test_terminal_observation_has_no_future_exposure(ensemble):
     assert all(a.sum() == 0 for a in o.values())
 
 
+@pytest.mark.parametrize("varying", [True, False])
+def test_wind_conditioning_uses_current_strength_without_changing_library(tmp_path, varying):
+    tracks = np.zeros((3, len(GRID_AGES), 4))
+    tracks[:, :, 0] = 100
+    strength = np.array([0.5, 1, 1.5] if varying else [1, 1, 1])
+    tracks[:, :, 2] = 100 * strength[:, None]
+    tracks[:, :, 3] = strength[:, None]
+    path = tmp_path / "wind-library.npz"
+    np.savez(path, tracks=tracks, pattern=np.arange(3), flip=np.full(3, -1),
+             C_off=np.full((6, 6), 1 / 6), C_wire=np.full((6, 6), 1 / 6))
+    case = {"islands": {"test": {}}, "companies": {
+        sym: {"sites": [{"x": 0, "y": 0, "weight": 1, "island": "test"}]}
+        for sym in PHYS}}
+    model = AnalogEnsemble(case, lib=path, k=0, shift=False, wind_condition=1)
+    obs = [{"age": 478, "x": 100, "y": 0, "radius": 200, "intensity": 2}]
+    exposure, outage, _ = model.future_exposure(obs, np.full(3, 1 / 3))
+    # Perfect persistence has slope 1; a zero-variance library supplies no evidence
+    # for a response and must leave the historical values finite and unchanged.
+    radius, intensity = (200, 2) if varying else (100, 1)
+    wind = intensity * math.exp(-PARAMS["k"] * 100 / radius)
+    expected = 2 * max(wind - PARAMS["thr_dmg"], 0)**PARAMS["p"]
+    for sym in PHYS:
+        np.testing.assert_allclose(exposure[sym], np.full((3, 1), expected))
+        np.testing.assert_allclose(outage[sym], np.full((3, 1), 2 * (wind > PARAMS["thr_close"])))
+    np.testing.assert_array_equal(model.tracks, tracks)
+
+
 def test_vectorized_damage_preserves_scalar_valuation():
     case = json.loads((ROOT / "data/case.json").read_text())
     model = SeasonModel(case)
@@ -124,3 +151,40 @@ def test_vectorized_damage_preserves_scalar_valuation():
         variance = sum(w * (v - expected[sym])**2 for w, v in zip((0.25, 0.75), ev[sym]))
         assert model.fair_sd[sym] == pytest.approx(math.sqrt(variance + msd[sym]**2), rel=1e-11, abs=1e-11)
         assert model.future_sd[sym] == pytest.approx(0.25 * fsd[sym][0] + 0.75 * fsd[sym][1], rel=1e-11, abs=1e-11)
+
+
+def test_exact_rebuilders_activate_only_after_all_final_reports():
+    case = json.loads((ROOT / "data/case.json").read_text())
+    candidate = SeasonModel(case, final_exact=True)
+    baseline = SeasonModel(case)
+    for model in (candidate, baseline):
+        for i, state in enumerate(model.states.values()):
+            state.cum = [20.0 + i] * len(state.sites)
+            state.outage = [10.0] * len(state.sites)
+        model.round = 3
+        model.storm_reported = True
+        model.reported_rounds = {1, 3}  # The missing round is not silently treated as known.
+    assert candidate.fair() == baseline.fair()
+    assert candidate.resid_sd("RECON") == baseline.resid_sd("RECON")
+    candidate.reported_rounds.add(2)
+    actual = candidate.fair()
+    q = P["RECON_exact"]["params"]
+    exposure = sum(q[2 + i] * (20 + i) + q[7 + i] * 10 for i in range(5))
+    expected = q[0] + q[1] * (1 - math.exp(-exposure))
+    assert actual["RECON"] == pytest.approx(expected)
+    assert actual["RECON"] != pytest.approx(baseline.fair()["RECON"])
+    assert candidate.resid_sd("RECON") == P["resid_sd_exact"]["RECON"]
+    assert actual["REBLD"] == pytest.approx(sum(
+        n * actual[s] for s, n in case["etfs"]["REBLD"]["basket"].items()))
+
+
+def test_exact_final_setting_does_not_leak_to_other_models():
+    case = json.loads((ROOT / "data/case.json").read_text())
+    baseline = SeasonModel(case)
+    expected = baseline.fair()
+    candidate = SeasonModel(case, final_exact=True)
+    candidate.round = 3
+    candidate.storm_reported = True
+    candidate.reported_rounds = {1, 2, 3}
+    candidate.fair()
+    assert baseline.fair() == expected

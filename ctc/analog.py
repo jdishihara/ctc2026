@@ -7,6 +7,7 @@ The ensemble gives a distribution of end-of-storm damage and outage per company,
 """
 from __future__ import annotations
 import json, math
+from functools import lru_cache
 import numpy as np
 from pathlib import Path
 from typing import Any
@@ -16,6 +17,24 @@ OUTLOOKS = ["direct", "chain", "recurve", "stall", "eyewall", "erratic"]
 OIDX = {o: i for i, o in enumerate(OUTLOOKS)}
 GRID_AGES = np.arange(0, 482, 2)      # 241 observations per storm
 LIB = Path(__file__).parent / "analog_library.npz"
+
+
+@lru_cache(maxsize=4)
+def _strength_response(path: str, modified_ns: int) -> np.ndarray:
+    """Training-only linear response of future radius/intensity to current values.
+
+    Cache identity includes the library's modification time. Rows are current
+    ages, columns future ages; zero-variance current ages get zero response.
+    """
+    with np.load(path) as data:
+        strength = data["tracks"][:, :, 2:4]
+    responses = []
+    for channel in range(2):
+        centered = strength[:, :, channel] - strength[:, :, channel].mean(0)
+        covariance = centered.T @ centered
+        variance = np.diag(covariance)[:, None]
+        responses.append(np.divide(covariance, variance, out=np.zeros_like(covariance), where=variance > 1e-9))
+    return np.stack(responses)
 
 
 def build_library(root: Path, seasons: list[dict[str, Any]], out: Path = LIB) -> None:
@@ -49,7 +68,13 @@ def build_library(root: Path, seasons: list[dict[str, Any]], out: Path = LIB) ->
 
 class AnalogEnsemble:
     def __init__(self, case: dict[str, Any], sigma: float = 25.0, tau_wire: float = 0.5, k: int = 50,
-                 shift: bool = True, lib: Path = LIB, cone_w: float = 0.0, isl_w: float = 0.0, cone_s0: float = 10.0, cone_nu: float = 0.0, vel_w: float = 0.0, vel_sd: float = 0.3, cone_all: bool = False):
+                 shift: bool = True, lib: Path = LIB, cone_w: float = 0.0, isl_w: float = 0.0, cone_s0: float = 10.0, cone_nu: float = 0.0, vel_w: float = 0.0, vel_sd: float = 0.3, cone_all: bool = False,
+                 wind_condition: float = 0.0):
+        if not 0 <= wind_condition <= 1:
+            raise ValueError("wind_condition must be between zero and one")
+        self.wind_condition = wind_condition
+        self.strength_response = (_strength_response(str(lib.resolve()), lib.stat().st_mtime_ns)
+                                  if wind_condition else None)
         with np.load(lib) as d:
             self.tracks, self.pattern, self.flip = d["tracks"], d["pattern"], d["flip"]
             self.C_off, self.C_wire = d["C_off"], d["C_wire"]
@@ -164,6 +189,19 @@ class AnalogEnsemble:
             positions = self._positions_at(np.array([obs[-1]["age"]]))[sel, 0, :]
             off = np.array([obs[-1]["x"], obs[-1]["y"]]) - positions
             fut = fut.copy(); fut[:, :, :2] += off[:, None, :]
+        if self.strength_response is not None:
+            # Remove the mismatch between this storm's observed strength and
+            # each analog's strength, using only training-library responses.
+            next_idx = min(idx + 1, len(GRID_AGES) - 1)
+            fraction = float(np.clip(obs[-1]["age"] / 2 - idx, 0, 1))
+            current = ((1 - fraction) * self.tracks[sel, idx, 2:4]
+                       + fraction * self.tracks[sel, next_idx, 2:4])
+            response = ((1 - fraction) * self.strength_response[:, idx, idx + 1:]
+                        + fraction * self.strength_response[:, next_idx, idx + 1:]).T
+            observed = np.array([obs[-1]["radius"], obs[-1]["intensity"]])
+            fut[:, :, 2:4] += self.wind_condition * (observed - current)[:, None, :] * response[None, :, :]
+            fut[:, :, 2] = np.maximum(fut[:, :, 2], 1e-6)
+            fut[:, :, 3] = np.maximum(fut[:, :, 3], 0)
         E, O = {}, {}
         for sym, sites in self.sites.items():
             dist = np.hypot(fut[:, :, 0][:, :, None] - sites[:, 0], fut[:, :, 1][:, :, None] - sites[:, 1])   # (K, F, S)

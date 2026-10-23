@@ -33,7 +33,8 @@ if _SP.exists():
     FUTURE[3] = (sum(_d["dmg"][i] for i in _i3), sum(_d["outage"][i] for i in _i3), sum(_d["loss"][i] for i in _i3))
 
 
-def values_vec(cum: np.ndarray, outage: np.ndarray, loss: np.ndarray, case: dict[str, Any]) -> dict[str, np.ndarray]:
+def values_vec(cum: np.ndarray, outage: np.ndarray, loss: np.ndarray, case: dict[str, Any],
+               exact_rebuild: bool | None = None) -> dict[str, np.ndarray]:
     """Vectorised `values`: cum, outage are (N, 5) in PHYS order, loss is (N,). Returns symbol -> (N,) array."""
     v = {}
     for j, k in enumerate(PHYS):
@@ -41,8 +42,8 @@ def values_vec(cum: np.ndarray, outage: np.ndarray, loss: np.ndarray, case: dict
         v[k] = b[0] + b[1] * cum[:, j] + b[2] * cum[:, j] ** 2 + b[3] * outage[:, j]
     idx = {k: j for j, k in enumerate(PHYS)}
     for k in ("RECON", "MAT", "GEN"):
-        if _rp(k).get("kind") == "rebuild_w":
-            q = np.array(_rp(k)["params"])
+        if _rp(k, exact_rebuild).get("kind") == "rebuild_w":
+            q = np.array(_rp(k, exact_rebuild)["params"])
             e = cum @ q[2:7] + outage @ q[7:12]
             v[k] = q[0] + q[1] * (1 - np.exp(-np.clip(e, 0, None)))
             continue
@@ -64,23 +65,23 @@ def values_vec(cum: np.ndarray, outage: np.ndarray, loss: np.ndarray, case: dict
 
 
 def expected_values(cum: np.ndarray, outage: np.ndarray, loss: np.ndarray, n_future: int, case: dict[str, Any],
-                    mode: str = "sample", with_sd: bool = False):
+                    mode: str = "sample", with_sd: bool = False, exact_rebuild: bool | None = None):
     """Expected valuation with `n_future` storms still to come, for each of the N states given (cum (N,5), outage (N,5),
     loss (N,)). mode "sample": average over historical n-storm combinations; "point": the mean storm added n times."""
     prior = P["prior"]
     if n_future <= 0 or mode != "sample" or n_future not in FUTURE:
         if n_future <= 0:
-            ev = values_vec(cum, outage, loss, case)
+            ev = values_vec(cum, outage, loss, case, exact_rebuild)
         else:
             pd = np.array([prior["dmg"][k] for k in PHYS]); po = np.array([prior["outage"][k] for k in PHYS])
-            ev = values_vec(cum + n_future * pd, outage + n_future * po, loss + n_future * prior["loss"], case)
+            ev = values_vec(cum + n_future * pd, outage + n_future * po, loss + n_future * prior["loss"], case, exact_rebuild)
         return (ev, {k: np.zeros_like(a) for k, a in ev.items()}) if with_sd else ev
     sd, so, sl = FUTURE[n_future]
     N, M = len(loss), len(sl)
     c = (cum[:, None, :] + sd[None, :, :]).reshape(N * M, -1)
     o = (outage[:, None, :] + so[None, :, :]).reshape(N * M, -1)
     l = (loss[:, None] + sl[None, :]).reshape(N * M)
-    v = values_vec(c, o, l, case)
+    v = values_vec(c, o, l, case, exact_rebuild)
     ev = {k: a.reshape(N, M).mean(1) for k, a in v.items()}
     if with_sd:
         return ev, {k: a.reshape(N, M).std(1) for k, a in v.items()}
@@ -99,8 +100,9 @@ def storm_loss(dmg: dict[str, float]) -> float:
 EXACT_REBUILD = False     # use the exact weighted-saturation rules (scripts/fit_rebuilders.py); rejected on verify PnL, see EXPERIMENTS.md
 
 
-def _rp(sym: str) -> dict:
-    return P[sym + "_exact"] if EXACT_REBUILD and sym + "_exact" in P else P[sym]
+def _rp(sym: str, exact: bool | None = None) -> dict:
+    enabled = EXACT_REBUILD if exact is None else exact
+    return P[sym + "_exact"] if enabled and sym + "_exact" in P else P[sym]
 
 
 def rebuild_value(sym: str, cum: dict[str, float], outage: dict[str, float]) -> float:
@@ -146,7 +148,8 @@ OUTAGE_PER_DMG = {"PORT": 1.70, "ISLE": 2.27, "AQUA": 1.98, "GRID": 1.67, "FERRY
 class SeasonModel:
     """Tracks the season state from the feed and produces fair values under simple assumptions about the future."""
 
-    def __init__(self, case: dict[str, Any]):
+    def __init__(self, case: dict[str, Any], final_exact: bool = False):
+        self.final_exact = final_exact
         self.case = case
         self.states = {k: SiteState(case, k) for k in PHYS}
         self.loss_final = 0.0           # insured losses from final reports of finished storms
@@ -169,6 +172,11 @@ class SeasonModel:
         self.prior_mode = "sample"                          # future storms: "sample" of historical storms or "point" mean
         self.future_sd_mult = 0.0                           # add this multiple of the future-storm valuation sd to fair_sd
         self.future_sd: dict[str, float] = {}
+
+    @property
+    def final_exact_ready(self) -> bool:
+        return (self.final_exact and self.round == 3 and self.storm_reported
+                and {1, 2, 3} <= self.reported_rounds)
 
     # ---- feed handling ----
     def on_message(self, m: dict[str, Any]) -> None:
@@ -309,7 +317,7 @@ class SeasonModel:
 
     def resid_sd(self, sym: str) -> float:
         """Std of the valuation residual for `sym` once all damage is known (fit residual); 0 if the symbol is exact."""
-        tab = {**P.get("resid_sd", {}), **(P.get("resid_sd_exact", {}) if EXACT_REBUILD else {})}
+        tab = {**P.get("resid_sd", {}), **(P.get("resid_sd_exact", {}) if EXACT_REBUILD or self.final_exact_ready else {})}
         sd = tab.get(sym, 0.0)
         if sym in ("ARCH", "REBLD"):
             sd = sum(n * tab.get(s, 0.0) for s, n in self.case["etfs"][sym]["basket"].items())
@@ -388,6 +396,7 @@ class SeasonModel:
             loss += storm_loss(cur) if not self.current_loss_est else self.current_loss_est
         n_future = self.storms_left_after_current() if self.round >= 1 else 3
         ev, fsd = expected_values(np.array([[cum[k] for k in PHYS]]), np.array([[outage[k] for k in PHYS]]), np.array([loss]),
-                                  n_future, self.case, self.prior_mode, with_sd=True)
+                                  n_future, self.case, self.prior_mode, with_sd=True,
+                                  exact_rebuild=True if self.final_exact_ready else None)
         self.future_sd = {k: float(v[0]) for k, v in fsd.items()}
         return {k: float(v[0]) for k, v in ev.items()}
