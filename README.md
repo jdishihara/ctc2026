@@ -70,7 +70,7 @@ python3 bot/preflight.py                       # must end with 0 failures; WARN 
 nohup python3 data/starter_kit/record_feed.py --url wss://cornelltradingcompetition.org --key $(cat .botkey) \
       --out recordings/competition.jsonl --symbols PORT,ISLE,AQUA,GRID,FERRY,RECON,MAT,GEN,HAVEN,REIN,ARCH,REBLD > /dev/null 2>&1 &
 nohup python3 scripts/record_books.py --key $(cat .botkey) --out recordings/competition_books.jsonl > /dev/null 2>&1 &
-nohup zsh bot/run_live.sh > /dev/null 2>&1 &  # reads .botkey, restarts the bot on a crash, logs to recordings/bot_live.log
+FEED_LOG=recordings/competition.jsonl nohup zsh bot/run_live.sh > /dev/null 2>&1 &  # reads .botkey, restarts on a crash, rebuilds the season from the recorder's file on each start, logs to recordings/bot_live.log
 tail -f recordings/bot_live.log
 ```
 

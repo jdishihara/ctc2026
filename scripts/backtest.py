@@ -16,7 +16,7 @@ STRATS = {
     "nowcast": lambda a: S.FairValueTrader(min_edge=a.min_edge, edge_full=a.edge_full, project=True),
     "noproject": lambda a: S.FairValueTrader(min_edge=a.min_edge, edge_full=a.edge_full, project=False),
     "analog": lambda a: S.FairValueTrader(min_edge=a.min_edge, edge_full=a.edge_full, analog=True, sd_mult=a.sd_mult,
-                                          sigma=a.sigma, k=a.k, shift=not a.noshift, loss_limit=a.loss_limit or None, prior_mode=a.prior, passive=a.passive, warmup=a.warmup, future_sd=a.future_sd, fair_jump=a.fair_jump, max_cross=a.max_cross, carry=a.carry, ent_cut=a.ent_cut),
+                                          sigma=a.sigma, k=a.k, shift=not a.noshift, cone_w=a.cone_w, isl_w=a.isl_w, cone_s0=a.cone_s0, loss_limit=a.loss_limit or None, prior_mode=a.prior, passive=a.passive, warmup=a.warmup, future_sd=a.future_sd, fair_jump=a.fair_jump, max_cross=a.max_cross, carry=a.carry, ent_cut=a.ent_cut),
 }
 
 def parse_seasons(spec, n):
@@ -45,6 +45,9 @@ def main():
     ap.add_argument("--sigma", type=float, default=15.0)
     ap.add_argument("--k", type=int, default=100)
     ap.add_argument("--noshift", action="store_true")
+    ap.add_argument("--cone-w", type=float, default=0.0, help="analog likelihood power for the official advisory cone (0 = off)")
+    ap.add_argument("--cone-s0", type=float, default=10.0, help="spread floor (map units) added in quadrature to the cone spread")
+    ap.add_argument("--isl-w", type=float, default=0.0, help="analog likelihood power for the advisory island probabilities (0 = off)")
     ap.add_argument("--prior", default="sample", choices=["sample", "point"], help="future storms: historical sample or point mean")
     ap.add_argument("--passive", type=float, default=0.75, help="rest orders inside the spread at edge = passive*floor (0 = off)")
     ap.add_argument("--future-sd", type=float, default=0.0, help="multiple of the future-storm valuation sd added to the edge floor")

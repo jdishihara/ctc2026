@@ -138,6 +138,11 @@ def values(cum: dict[str, float], outage: dict[str, float], loss: float, case: d
     return v
 
 
+# closure seconds per damage point (least squares through the origin on ctc/storm_sample.npz, seasons 1-450; corr 0.7-0.8):
+# used only when a model is rebuilt from a snapshot and the wind history of earlier storms is gone
+OUTAGE_PER_DMG = {"PORT": 1.70, "ISLE": 2.27, "AQUA": 1.98, "GRID": 1.67, "FERRY": 2.14}
+
+
 class SeasonModel:
     """Tracks the season state from the feed and produces fair values under simple assumptions about the future."""
 
@@ -154,6 +159,7 @@ class SeasonModel:
         self.obs: list[dict[str, Any]] = []                 # observations of the current storm
         self.official: list[tuple[int, str]] = []           # (age, outlook) of the current storm
         self.wire: list[tuple[int, str]] = []
+        self.adv: dict[str, Any] | None = None             # latest official advisory of the current storm (cone, island probabilities)
         self.ensemble = None                                # AnalogEnsemble, attached by the strategy
         self.posterior: dict[str, float] = {}
         self.fair_sd: dict[str, float] = {}                 # ensemble spread of the fair value per symbol
@@ -176,6 +182,7 @@ class SeasonModel:
             self.storm_active, self.storm_reported, self.last_obs, self.current_loss_est = True, False, None, 0.0
             self.prelim_seen = False
             self.obs, self.official, self.wire, self.posterior, self.fair_sd = [], [], [], {}, {}
+            self.adv = None
         elif t == "storm":
             dt = m.get("_dt", 2.0)
             self.last_obs = m
@@ -184,6 +191,8 @@ class SeasonModel:
                 s.observe(m, dt)
         elif t == "advisory":
             (self.official if m.get("source") == "official" else self.wire).append((m["age"], m["outlook"]))
+            if m.get("source") == "official":
+                self.adv = m
         elif t == "storm_dissipated":
             self.storm_active = False
         elif t == "damage_report":
@@ -218,12 +227,16 @@ class SeasonModel:
         need_storm = phase in ("storm", "aftermath") and not self.obs
         if not (need_rounds or need_storm):
             return
-        cur_obs, cur_official, cur_wire = list(self.obs), list(self.official), list(self.wire)
+        cur_obs, cur_official, cur_wire, cur_adv = list(self.obs), list(self.official), list(self.wire), self.adv
         self.states = {k: SiteState(self.case, k) for k in PHYS}
         self.loss_final, self.reported_rounds, self.round = 0.0, set(), 0
         for rep in sorted(finals, key=lambda r: r["round"]):
             self.on_message({"type": "storm_formed", "round": rep["round"]})
             self.on_message(rep)
+            # the report gives damage, not closure seconds; without them PORT/GRID/FERRY/GEN fair values sit 2-5 points
+            # too high for the rest of the season (measured 2026-10-23). Book the historical ratio of outage to damage.
+            for k in PHYS:
+                self.states[k].add_outage_estimate(OUTAGE_PER_DMG[k] * rep["damage_pct"][k])
         obs = snap.get("obs")
         rnd = snap.get("round") or self.round + 1
         if obs and phase in ("storm", "aftermath") and rnd not in self.reported_rounds:
@@ -233,14 +246,26 @@ class SeasonModel:
                     self.on_message({**o, "type": "storm", "round": rnd})
             else:
                 pts = snap.get("track") or []
-                prev_age = 0
-                for a, x, y, r in pts:
-                    inten = 1.0 if a < self.timing["storm"] - self.case["storm"]["dissipate"] else max(0.0, (self.timing["storm"] - a) / self.case["storm"]["dissipate"])
-                    self.on_message({"type": "storm", "round": rnd, "age": a, "x": x, "y": y, "radius": r, "intensity": inten,
-                                     "vx": obs.get("vx", 0), "vy": obs.get("vy", 0), "_dt": max(2.0, a - prev_age)})
-                    prev_age = a
-                self.on_message({"type": "storm", "round": rnd, **{k: v for k, v in obs.items() if k != "type"}, "_dt": max(2.0, obs.get("age", 0) - prev_age)})
-            self.official, self.wire = cur_official, cur_wire
+                # the snapshot track is subsampled (about 40 points): interpolate it to the 2 s observation grid and use the
+                # storm's own intensity (not 1.0) so the exposure integral matches a model that saw every observation
+                T, D = self.timing["storm"], self.case["storm"]["dissipate"]
+                def fade(a):
+                    return 1.0 if a < T - D else max(0.0, (T - a) / D)
+                a_obs = obs.get("age", 0)
+                i0 = min(1.5, max(0.5, obs.get("intensity", 1.0) / max(0.1, fade(a_obs))))
+                ages = np.arange(0, a_obs + 1e-9, 2.0)
+                prev_age = -2.0
+                if len(pts) >= 2:
+                    arr = np.array(pts, dtype=float)
+                    xs, ys, rs = (np.interp(ages, arr[:, 0], arr[:, c]) for c in (1, 2, 3))
+                    for a, x, y, r in zip(ages, xs, ys, rs):
+                        if a >= a_obs:
+                            break
+                        self.on_message({"type": "storm", "round": rnd, "age": float(a), "x": float(x), "y": float(y), "radius": float(r),
+                                         "intensity": i0 * fade(a), "vx": obs.get("vx", 0), "vy": obs.get("vy", 0), "_dt": 2.0})
+                        prev_age = a
+                self.on_message({"type": "storm", "round": rnd, **{k: v for k, v in obs.items() if k != "type"}, "_dt": max(2.0, a_obs - prev_age)})
+            self.official, self.wire, self.adv = cur_official, cur_wire, cur_adv
             adv = snap.get("advisory")
             if adv and not cur_official:
                 # the snapshot's advisory record carries no "type" field; the live bot crashed on it at each reconnect
@@ -322,7 +347,7 @@ class SeasonModel:
             msd = self.model_sd(f)
             self.fair_sd = {k: math.hypot(msd[k], self.future_sd_mult * self.future_sd.get(k, 0.0)) for k in f}
             return f
-        w = self.ensemble.weights(self.obs, self.official, self.wire)
+        w = self.ensemble.weights(self.obs, self.official, self.wire, self.adv)
         self.posterior = self.ensemble.pattern_posterior(w)
         E, O, sel = self.ensemble.future_exposure(self.obs, w)
         wsel = w[sel]

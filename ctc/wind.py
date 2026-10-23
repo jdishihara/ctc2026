@@ -57,6 +57,12 @@ class SiteState:
     def weighted_outage(self) -> float:
         return sum(s["weight"] * self.outage[j] for j, s in enumerate(self.sites))
 
+    def add_outage_estimate(self, seconds: float) -> None:
+        """No wind history for this storm (model rebuilt from a snapshot): book the same closure seconds at every site,
+        so weighted_outage() rises by `seconds`."""
+        for j in range(len(self.sites)):
+            self.outage[j] += seconds
+
     def set_from_report(self, company_damage_pct: float) -> None:
         """After a final damage report, rescale this storm's per-site damage so the company total matches the report."""
         model = self.storm_damage()

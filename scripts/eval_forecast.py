@@ -8,7 +8,7 @@ from ctc.analog import AnalogEnsemble
 from ctc.wind import PHYS
 root=Path('data'); case=json.load(open(root/'case.json')); man=json.load(open(root/'history/manifest.json'))
 AGES=[30,90,150,240,360]
-args=dict(sigma=float(sys.argv[1]) if len(sys.argv)>1 else 25.0, k=int(sys.argv[2]) if len(sys.argv)>2 else 50, shift=(sys.argv[3]!='noshift') if len(sys.argv)>3 else True)
+args=dict(sigma=float(sys.argv[1]) if len(sys.argv)>1 else 25.0, k=int(sys.argv[2]) if len(sys.argv)>2 else 50, shift=(sys.argv[3]!='noshift') if len(sys.argv)>3 else True, cone_w=float(sys.argv[4]) if len(sys.argv)>4 else 0.0, isl_w=float(sys.argv[5]) if len(sys.argv)>5 else 0.0)
 err={('cv',a):[] for a in AGES}; err.update({('an',a):[] for a in AGES}); hit={a:[] for a in AGES}; sdcal={a:[] for a in AGES}
 for s in man['seasons'][450:530]:
     feed=[json.loads(l) for l in open(root/'history'/s['dir']/'feed.jsonl')]
@@ -23,7 +23,7 @@ for s in man['seasons'][450:530]:
                 base={k: md.states[k].cum_damage() for k in PHYS}
                 cv,_=md.current_storm_damage(case['timing']['storm'])
                 err[('cv',a)].append(np.array([cv[k] for k in PHYS])-truth)
-                w=md.ensemble.weights(md.obs, md.official, md.wire); E,O,sel=md.ensemble.future_exposure(md.obs,w)
+                w=md.ensemble.weights(md.obs, md.official, md.wire, md.adv); E,O,sel=md.ensemble.future_exposure(md.obs,w)
                 preds=np.array([[md.states[k].storm_damage(list(E[k][i])) for k in PHYS] for i in range(len(sel))])
                 mean=(w[sel][:,None]*preds).sum(0); sd=np.sqrt((w[sel][:,None]*(preds-mean)**2).sum(0))
                 err[('an',a)].append(mean-truth); sdcal[a].append((np.abs(mean-truth)/(sd+1e-6)))
