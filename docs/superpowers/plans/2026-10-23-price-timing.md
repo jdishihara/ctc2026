@@ -86,11 +86,11 @@ carry rule and all other accepted parameters.
 
 **Interfaces:** `PriceSignal(path=..., max_lag=120)` exposes `reset()`, `observe(t, prices)`, `predict(symbol, t, elapsed) -> float | None`. The artifact records training range, horizon, lags, feature normalization, phase boundary and coefficient arrays.
 
-- [ ] Write failing tests with a synthetic linear-price sequence and known coefficients: exact lag lookup, no future sample, missing history, reset, invalid price, out-of-range elapsed time.
-- [ ] Implement the history and predictor; run the tests.
-- [ ] Implement the fit script using the fixed specification. Refuse training ranges above 450 and reserve a fresh output path.
-- [ ] Fit the model, store the coefficients with provenance, and verify internal validation metrics reproduce the exploration.
-- [ ] Commit model, fit script and evidence.
+- [x] Write failing tests with a synthetic linear-price sequence and known coefficients: exact lag lookup, no future sample, missing history, reset, invalid price, out-of-range elapsed time.
+- [x] Implement the history and predictor; run the tests.
+- [x] Implement the fit script using the fixed specification. Refuse training ranges above 450 and reserve a fresh output path.
+- [x] Fit the model, store the coefficients with provenance, and verify internal validation metrics reproduce the exploration.
+- [x] Commit model, fit script and evidence.
 
 ### Task 2: Strategy integration and bounded evaluation
 
@@ -98,9 +98,9 @@ carry rule and all other accepted parameters.
 
 **Interfaces:** `FairValueTrader(..., price_gate=0.0, price_drift=0.0)` loads `PriceSignal` only when enabled, updates it with public quotes and resets it on round open. A pure target-filter helper may be used to enforce the reduction/flip behavior.
 
-- [ ] Write failing behavioral tests for blocked additions, permitted reductions, blocked flips ending at zero, no signal compatibility, exact-final bypass and nonaccumulating fair adjustment.
-- [ ] Implement disabled-by-default integration; run focused tests and full suite.
-- [ ] Reproduce accepted tune PnL and evaluate the three predeclared alternatives on all 75 tune seasons, both regimes.
+- [x] Write failing behavioral tests for blocked additions, permitted reductions, blocked flips ending at zero, no signal compatibility, exact-final bypass and nonaccumulating fair adjustment.
+- [x] Implement disabled-by-default integration; run focused tests and full suite.
+- [x] Reproduce accepted tune PnL and evaluate the three predeclared alternatives on all 75 tune seasons, both regimes.
 - [ ] If eligible, freeze the single best candidate, then confirm it against accepted on verification. Stress it at 2s latency and at refill 60s/quarter depth on tune.
 - [ ] Promote defaults only if gates pass. Otherwise record rejection and continue from the next evidence-supported lead without searching verification.
 - [ ] Get one fresh independent review, fix important findings with failing tests first, publish results and update PR.
@@ -113,3 +113,22 @@ Ruling: preserve native execution and the existing feature branch; the user's
 instruction to keep working supplies authorization for these bounded experiments.
 Cost if wrong: time spent on a signal that may not survive fill costs; promotion
 gates prevent it from replacing the accepted strategy without evidence.
+
+2026-10-23, Codex: implementation `693cd17`; full suite 121 passed. Task 1
+complete. Task 2 integration was committed with Task 1 because the runtime
+model and its disabled strategy consumer share the new tests; no work repeated.
+Tune baseline exactly reproduced `aa51985` in both regimes. Outcomes:
+
+| Candidate | Deep mean | Thin mean | Thin p10 | Tune score | Decision |
+|---|---:|---:|---:|---:|---|
+| baseline | 8643.98 | 5176.69 | -3729.45 | 5045.61 | Reference |
+| timing05 | 8750.20 | 5378.12 | -3595.89 | 5266.22 | Freeze |
+| timing10 | 8811.26 | 5358.49 | -3694.88 | 5237.44 | Lower eligible score |
+| drift1 | 8838.25 | 5306.73 | -5661.16 | 4241.91 | Reject: thin tail |
+
+Ruling: freeze `timing05` (`price_gate=0.005`, `price_drift=0`) before any
+price-model verification run. It has the highest predeclared eligible tune
+score; all other accepted parameters remain fixed. Confirmation is baseline
+versus this candidate only. Stress uses the same pair on all tune seasons at
+2s latency, and separately refill 60s / depth 0.25 / normal 0.25s latency.
+Source outputs: `out/price-timing-tune/`, revision `693cd17`, clean tree.
