@@ -104,7 +104,7 @@ carry rule and all other accepted parameters.
 - [x] Freeze timing05, confirm against accepted and run both specified stresses.
 - [x] Reject timing05 after failed confirmation means; preserve disabled defaults.
 - [x] Get one fresh independent review and fix important findings with failing tests first.
-- [ ] Publish final results and update the existing draft PR.
+- [x] Publish final results and update the existing draft PR.
 
 ## Progress and rulings
 
@@ -248,4 +248,7 @@ optional passive gate now cancels an oversized same-price order and handles
 racing fills in either direction. The price/cone defaults remain disabled;
 no rejected PnL candidate was reopened. Every review ruling, including the
 limits of live/accounting claims, is in docs/research-continuation.md. No
-Critical or deferred Minor findings. Final publication is the remaining step.
+Critical or deferred Minor findings. Code and evidence are published on
+`arjun/ctc-efficiency` and the existing draft PR #1 is updated. The durable
+checkout and all research outputs are retained; only this plan's temporary
+execution workspace is removed after its decisions are preserved here.

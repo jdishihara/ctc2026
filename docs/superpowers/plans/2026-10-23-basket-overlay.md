@@ -64,7 +64,7 @@ captured targets until a refreshed account proves the cycle is complete.
 - [x] Freeze basket10, confirm/stress, and reject after its failed severe gate.
 - [x] Keep fixed-lot defaults disabled; depth-capped promotion is handled in Task 2.
 - [x] One independent review over both plans; fix all five Important findings RED→GREEN.
-- [ ] Publish final evidence and update the existing draft PR.
+- [x] Publish final evidence and update the existing draft PR.
 
 ## Review focus
 
@@ -192,5 +192,13 @@ Nine clean post-fix comparisons replayed 675 seasons, exactly matching every
 frozen row and summary in confirmation, normal tune and 3s deep/thin/severe
 stress. All selected parameters remain fixed. Review decisions and all
 declined-to-judge rulings are preserved in docs/research-continuation.md and
-docs/review-verification.json. No second reviewer was requested. Publication
-to the existing draft PR is the remaining step.
+docs/review-verification.json. No second reviewer was requested. Post-fix live
+CLI rehearsal completed all three localhost rounds with 31 fills logged once,
+no HTTP/reconciliation errors and clean server exit. Mock PnL is not a benchmark.
+
+2026-10-23, Codex: code and evidence pushed to `arjun/ctc-efficiency`, existing
+draft PR #1 updated and confirmed open/mergeable. No hosted checks are configured;
+local verification is the 180-test suite, exact replay parity and localhost
+rehearsal above. No merge or remote trading. The checkout, data and outputs are
+retained; only the two owned temporary execution workspaces are removed after
+their decisions and evidence are preserved in the durable reports/plans.
