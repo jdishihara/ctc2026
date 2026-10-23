@@ -33,11 +33,12 @@ class FairValueTrader(Strategy):
                  carry: float = 1.0, ent_cut: float = 0.0, rebuild_min_edge: float = 0.0, late_cut: float = 0.0,
                  edge_ramp: float = 0.0, final_exact: bool = False, final_edge: float = 0.0,
                  final_edge_full: float = 0.0, price_gate: float = 0.0,
-                 price_drift: float = 0.0, **analog_kw):
-        for name, value in (("price_gate", price_gate), ("price_drift", price_drift)):
+                 price_drift: float = 0.0, basket_edge: float = 0.0, **analog_kw):
+        for name, value in (("price_gate", price_gate), ("price_drift", price_drift), ("basket_edge", basket_edge)):
             if not math.isfinite(value) or value < 0:
                 raise ValueError(f"{name} must be finite and nonnegative")
         self.price_gate, self.price_drift = price_gate, price_drift
+        self.basket_edge = basket_edge
         if not math.isfinite(edge_ramp) or edge_ramp < 0:
             raise ValueError("edge_ramp must be finite and nonnegative")
         self.edge_ramp = edge_ramp      # minimum excess edge from the floor to full size (0 preserves the old rule)
@@ -70,6 +71,10 @@ class FairValueTrader(Strategy):
         self.paused: set[str] = set()
 
     def on_start(self, sim) -> None:
+        self.basket = None
+        if self.basket_edge:
+            from .basket import BasketOverlay
+            self.basket = BasketOverlay(self.basket_edge)
         self.price_signal = None
         if self.price_gate or self.price_drift:
             from .price_signal import PriceSignal
@@ -94,6 +99,8 @@ class FairValueTrader(Strategy):
 
     def on_round(self, sim) -> None:
         self.round_open_t = sim.t
+        if self.basket is not None:
+            self.basket.on_round(sim)
         self._price_round_start = None
         self._price_round = getattr(sim, 'round', 0)
         if self.price_signal is not None:
@@ -108,6 +115,8 @@ class FairValueTrader(Strategy):
         return self.model.fair_analog() if self.analog else self.model.fair(self.project)
 
     def on_news(self, sim, m: dict[str, Any]) -> None:
+        if self.basket is not None:
+            self.basket.on_news(sim, m)
         if self.price_signal is not None and m['type'] in ('storm', 'storm_formed'):
             if self._price_round != m['round']:
                 self.price_signal.reset()
@@ -184,6 +193,9 @@ class FairValueTrader(Strategy):
                     self.passive_order.pop(s, None)
         if not getattr(sim, "state_ready", True):
             return
+        if self.basket is not None and (self.basket.targets is not None or sim.t - self.round_open_t >= self.warmup):
+            if self.basket.on_quotes(sim, self.paused):
+                return
         if sim.t - self.last_trade_t < self.every or sim.t - self.round_open_t < self.warmup:
             return
         self.last_trade_t = sim.t

@@ -213,3 +213,40 @@ symbol from other symbols' traffic, and renewing it from cached midpoints.
 Fixed with an explicit unknown clock until storm age arrives, per-symbol
 freshness, and observed quote timestamps. A storm-age test confirms reanchoring.
 These are correctness fixes, not a reason to revisit the rejected PnL decision.
+
+### Task 5: Bound the basket-arbitrage opportunity
+
+A training-only price screen (1–300) found ARCH and REBLD differ from their
+component mids by over 0.5% in 14.8% and 6.8% of observations. This is not an
+executable profit result. The earlier neutral-inventory conversion screen did
+not assess deliberately opening an arbitrage basket.
+
+Before any production work, run one offline-only probe on internal seasons
+301–450: 10 ETF units maximum, full touch-size capacity on every leg, 0.5% net
+quoted edge, 0.1% extra limit-price room per leg, 15s attempt spacing. Conversion
+opens an economically offsetting basket; closing legs may fill separately.
+Cancel/unwind incomplete cycles after 10s. Test deep liquidity / .25s latency,
+and quarter depth / 60s refill / 3s latency. Do not combine with fundamental
+trading or deploy this prototype. Record the partial-fill/time-out cost and
+decide whether production work has a demonstrated basis.
+
+- [ ] Run the fixed internal probe and record both regimes.
+- [ ] If it has material stressed PnL, define a separate tested implementation
+  plan before any live integration. Otherwise reject the execution premise.
+
+Ruling: training price dislocations justify an execution-aware probe beyond the
+earlier inventory-only conversion test. Cost if wrong is this bounded offline
+screen; midpoint gaps alone will never be presented as earned PnL.
+
+2026-10-23, Codex: Cone centering rejected on tune. Fraction 0.5 means
+8648.26 / 5153.31, thin p10 -4400.78; fraction 1.0 means 8607.39 / 5110.89,
+thin p10 -4579.51. Baseline remains 8643.98 / 5176.69, thin p10 -3729.45.
+Both fail; neither inspected on verification. Production and research cone
+implementations match exactly on all 20,250 internal squared-error comparisons.
+
+Basket probe: deep mean 1144.89, p10 751.98, minimum 448.02, 0/150 losing;
+severe+3s mean 127.73, p10 -23.41, minimum -178.22, 22/150 losing and 3689
+timeout retries. Fixed average 30.02 cycles/season. Both have zero rejected
+actions. Define coordinated production tests in
+`docs/superpowers/plans/2026-10-23-basket-overlay.md`; standalone profits will
+not be added to the baseline. Final independent review covers both plans.

@@ -64,18 +64,23 @@ def evaluate(name, regime, seasons, latency, parameters=None, regime_spec=None):
         folder = ROOT / "data/history" / manifest["seasons"][n - 1]["dir"]
         sim = AuditedSim(folder, case, rate_limit=120, latency=latency,
                          ladder=Ladder(refill_secs=refill, scale=scale))
-        pnl = sim.run(FairValueTrader(**params))
+        strategy = FairValueTrader(**params)
+        pnl = sim.run(strategy)
         rows.append(dict(season=n, pnl=pnl, fills=len(sim.fills), rejected=sim.rejected,
                          notional=sum(f.qty * f.price for f in sim.fills),
                          peak_actions=sim.peak_actions, actions=sim.total_actions,
-                         rate_blocks=sim.rate_blocks, by_symbol=sim.pnl_by_symbol()))
+                         rate_blocks=sim.rate_blocks, by_symbol=sim.pnl_by_symbol(),
+                         basket_cycles=strategy.basket.cycles if strategy.basket else 0,
+                         basket_timeouts=strategy.basket.timeouts if strategy.basket else 0))
     p = np.array([r["pnl"] for r in rows])
     summary = dict(mean=float(p.mean()), median=float(np.median(p)),
                    p10=float(np.percentile(p, 10)), minimum=float(p.min()),
                    losing=int((p < 0).sum()), fills=float(np.mean([r["fills"] for r in rows])),
                    peak_actions=max(r["peak_actions"] for r in rows),
                    rate_blocks=sum(r["rate_blocks"] for r in rows),
-                   rejected=sum(r["rejected"] for r in rows))
+                   rejected=sum(r["rejected"] for r in rows),
+                   basket_cycles=float(np.mean([r['basket_cycles'] for r in rows])),
+                   basket_timeouts=sum(r['basket_timeouts'] for r in rows))
     return dict(config=name, regime=regime, parameters=params, rate_limit=120,
                 latency=latency, elapsed_seconds=time.monotonic() - start,
                 summary=summary, rows=rows)
