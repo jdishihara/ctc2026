@@ -1,6 +1,6 @@
 """Build derivs/desk.xlsx: a live-formula Black-Scholes desk sheet for the Derivatives case (no bots allowed, so
 the humans trade from this). Sheets: Inputs, Contracts (12 contracts with fair, greeks, edge, market IV by Newton
-steps), Analysts (scorecard and inverse-error weights), Timeline (10 events), Notes.
+steps), Analysts (scorecard and inverse-error weights), Timeline (10 events), Round3 (IV-linked quantity -> IV), Notes.
 
     python3 derivs/build_sheet.py            # writes derivs/desk.xlsx
 """
@@ -148,6 +148,51 @@ for ev, rd, n, u, s in sched:
     tl.append([ev, rd, n, u, s, "news t, underlying t+1:00, snap t+2:00, event ends t+2:30 (real time)", todo if ev in (1, 4, 7) else ""])
 tl.column_dimensions["C"].width = 18; tl.column_dimensions["D"].width = 18; tl.column_dimensions["E"].width = 18; tl.column_dimensions["F"].width = 40; tl.column_dimensions["G"].width = 100
 for row in tl.iter_rows(min_row=2): 
+    for c in row: c.alignment = Alignment(wrap_text=True, vertical="top")
+
+# ---------------- Round3: IV-linked quantity -> IV ----------------
+r3 = wb.create_sheet("Round3")
+r3.append(["Quantity the analysts publish", "Value (type here)", "Implied IV (annual)", "Daily vol", "1-day 1-sd move $ (S from Inputs)", "How it converts"])
+for c in r3[1]: c.font = BOLD; c.fill = HEAD; c.alignment = Alignment(wrap_text=True)
+r3["G1"] = "S used here (OIL by default; =Inputs!$B$4 for PLANE)"; r3["G2"] = f"={names['S_OIL']}"; r3["G2"].fill = INPUT
+S_, T_ = "$G$2", names["T"]
+rows3 = [
+    ("Annual variance (sigma^2)", 0.16, "=SQRT(B{r})", "IV = sqrt(variance)"),
+    ("Daily variance", 0.000635, "=SQRT(B{r}*252)", "IV = sqrt(252 x daily variance)"),
+    ("Daily vol, fraction (sd of the 1-day return)", 0.0252, "=B{r}*SQRT(252)", "IV = daily vol x sqrt(252)"),
+    ("Daily vol, percent", 2.52, "=B{r}/100*SQRT(252)", "IV = daily vol% / 100 x sqrt(252)"),
+    ("Expected 1-day move, percent of spot (1 sd)", 2.52, "=B{r}/100*SQRT(252)", "IV = move% / 100 / sqrt(1/252)"),
+    ("Expected 1-day move, dollars (1 sd)", 2.02, f"=B{{r}}/{S_}*SQRT(252)", "IV = move / S / sqrt(1/252)"),
+    ("Expected move to expiry, percent of spot (1 sd)", 11.3, f"=B{{r}}/100/SQRT({T_})", "IV = move% / 100 / sqrt(T)"),
+    ("ATM straddle price, dollars (contract expiry)", 6.82, None, "IV from 4 Newton steps on the straddle (2 x vega per step), start 0.4"),
+    ("Weekly vol, percent (5-day sd)", 5.6, "=B{r}/100*SQRT(252/5)", "IV = weekly% / 100 x sqrt(252/5)"),
+]
+def straddle_formula(ivc):
+    d1 = f"((LN(1)+({names['R']}+{ivc}^2/2)*{T_})/({ivc}*SQRT({T_})))"
+    d2 = f"({d1}-{ivc}*SQRT({T_}))"
+    call = f"({S_}*NORM.S.DIST({d1},TRUE)-{S_}*EXP(-{names['R']}*{T_})*NORM.S.DIST({d2},TRUE))"
+    put = f"({S_}*EXP(-{names['R']}*{T_})*NORM.S.DIST(-{d2},TRUE)-{S_}*NORM.S.DIST(-{d1},TRUE))"
+    veg = f"(2*{S_}*NORM.S.DIST({d1},FALSE)*SQRT({T_}))"
+    return f"({call}+{put})", veg
+for i, (label, example, f, how) in enumerate(rows3, start=2):
+    r3[f"A{i}"] = label; r3[f"B{i}"] = example; r3[f"B{i}"].fill = INPUT
+    if f is None:   # Newton steps in helper columns H..K
+        prev = "0.4"
+        for j, col in enumerate("HIJK"):
+            st, vg = straddle_formula(prev)
+            r3[f"{col}{i}"] = f"=MAX(0.01,MIN(3,{prev}-({st}-B{i})/MAX({vg},0.0001)))"
+            prev = f"{col}{i}"
+        r3[f"C{i}"] = f"=K{i}"
+        r3["H1"] = "Newton 1"; r3["I1"] = "Newton 2"; r3["J1"] = "Newton 3"; r3["K1"] = "Newton 4"
+    else:
+        r3[f"C{i}"] = f.format(r=i)
+    r3[f"D{i}"] = f"=C{i}/SQRT(252)"; r3[f"E{i}"] = f"={S_}*C{i}/SQRT(252)"; r3[f"F{i}"] = how
+n3 = len(rows3) + 3
+r3[f"A{n3}"] = "Round 3: the analysts stop publishing IV and publish 'a quantity linked to IV'. Type each analyst's number in the matching yellow cell: column C is the IV to put in Inputs (then weight analysts as in round 2)."
+r3[f"A{n3+1}"] = "Check the first event against the makers' snap (market IV on the Contracts sheet 2 minutes after the news) to confirm which conversion the quantity follows; keep the row that matches. T and S come from Inputs."
+r3[f"A{n3+2}"] = "python3 derivs/bs.py convert move_pct 2.52 --S 80 --T 18 does the same from the terminal (kinds: variance var_daily daily_vol daily_vol_pct move move_pct straddle straddle_pct vega_price)."
+for col, w in zip("ABCDEFG", [46, 14, 16, 10, 22, 60, 16]): r3.column_dimensions[col].width = w
+for row in r3.iter_rows(min_row=2):
     for c in row: c.alignment = Alignment(wrap_text=True, vertical="top")
 
 # ---------------- Notes ----------------
