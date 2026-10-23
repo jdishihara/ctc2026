@@ -52,6 +52,7 @@ open http://localhost:8787                            # the dashboard, on a seco
 > map                                                 # check every symbol's role; fix mario/contracts.json and restart if any is wrong or UNMAPPED
 > race 1 2 5 9                                        # after each race: overall places of BIRDO DAISY PEACH YOSHI (alphabetical), from the stream
 > undo | cpu -0.3                                     # typo, or re-centre the CPU strength prior (see the calibration table below)
+> type PORT sell 1 99                                 # checks the form pre-fill on the live UI (nothing is sent until you click); verified on the testnet 2026-10-23
 ```
 The dashboard refreshes every 0.7 s: actions best first (profit in contract points = PnL at settlement if the fair is
 right; riskless arbs on an orange background), then every contract with bid/ask, fair, sd, edge, hard bounds, position,

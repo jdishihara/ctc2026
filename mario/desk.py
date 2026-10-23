@@ -9,7 +9,7 @@ result (four overall places) and click the orders in the exchange UI; the packet
 
 Commands (terminal prompt or the dashboard box): race P1 P2 P3 P4  (overall places of BIRDO DAISY PEACH YOSHI, in
 that order) | undo | cpu -0.3 (CPU strength prior; see mario/README.md) | map (symbols and roles) | prepare N
-(type action N, leg L, into the Chrome window's order form) | fill SYM buy|sell QTY PX (mock only: sends the order) | q.
+(type action N, leg L, into the Chrome window's order form) | type SYM buy|sell QTY PX (the same by hand) | fill SYM buy|sell QTY PX (mock only: sends the order) | q.
 Every snapshot and every command is appended to recordings/mario_desk.jsonl.
 """
 from __future__ import annotations
@@ -90,6 +90,10 @@ class Desk:
                 if not 0 <= leg < len(acts[i].legs):
                     return "no such leg"
                 self.pending_prefill = acts[i].legs[leg]; return f"preparing leg {leg + 1}/{len(acts[i].legs)}: {self.pending_prefill} ..."
+            if parts[0] == "type":                 # manual prefill, for checking the form on the day: type SYM buy|sell QTY PX
+                if not isinstance(self.tap, BrowserTap):
+                    return "type needs the browser tap"
+                self.pending_prefill = (parts[1], parts[2], int(parts[3]), float(parts[4])); return f"preparing {self.pending_prefill} ..."
             if parts[0] == "fill":
                 if not isinstance(self.tap, HttpTap):
                     return "fill only works against the mock (HTTP tap)"
@@ -98,7 +102,7 @@ class Desk:
                 return f"mock fill: {r}"
             if parts[0] in ("q", "quit"):
                 self.stop = True; return "stopping"
-            return "commands: race P1 P2 P3 P4 | undo | cpu X | map | prepare N [leg] | fill SYM buy QTY PX | q"
+            return "commands: race P1 P2 P3 P4 | undo | cpu X | map | prepare N [leg] | type SYM buy|sell QTY PX | fill SYM buy QTY PX | q"
         except Exception as exc:
             return f"error: {exc}"
 
@@ -191,7 +195,7 @@ button{background:#2563eb;color:#fff;border:0;border-radius:4px;padding:4px 10px
 <div><div class="box"><h3>Status <span id="status"></span></h3>
 <div>Races: <span id="races"></span></div><div>Skill: <span id="skill"></span></div><div>Points: <span id="points"></span></div>
 <form onsubmit="return send()"><input id="cmd" size="34" placeholder="race 1 2 5 9  (Birdo Daisy Peach Yoshi)"> <button>send</button></form>
-<div class="dim">race P1 P2 P3 P4 · undo · cpu -0.3 · map · prepare N</div></div>
+<div class="dim">race P1 P2 P3 P4 · undo · cpu -0.3 · map · prepare N · type SYM buy QTY PX</div></div>
 <div class="box"><h3>Log</h3><pre id="log"></pre></div></div></div>
 <script>
 async function send(){const c=document.getElementById('cmd');const r=await fetch('/cmd',{method:'POST',body:c.value});document.getElementById('log').textContent=(await r.text())+"\n"+document.getElementById('log').textContent;c.value='';return false}
