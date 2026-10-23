@@ -353,16 +353,18 @@ class SeasonModel:
         E, O, sel = self.ensemble.future_exposure(self.obs, w)
         wsel = w[sel]
         K = len(sel)
-        cum_a, out_a, loss_a = np.zeros((K, len(PHYS))), np.zeros((K, len(PHYS))), np.zeros(K)
-        for i in range(K):
-            cum, out = {}, {}
-            for k, st in self.states.items():
-                extra = list(E[k][i])
-                cum[k] = base_cum[k] + st.storm_damage(extra)
-                out[k] = st.weighted_outage() + float((O[k][i] * np.array([x["weight"] for x in st.sites])).sum())
-            storm_dmg = {k: cum[k] - base_cum[k] for k in PHYS}
-            loss_a[i] = self.loss_final + (self.current_loss_est or storm_loss(storm_dmg))
-            cum_a[i] = [cum[k] for k in PHYS]; out_a[i] = [out[k] for k in PHYS]
+        cum_a, out_a = np.empty((K, len(PHYS))), np.empty((K, len(PHYS)))
+        loss_a = np.full(K, self.loss_final, dtype=float)
+        for j, k in enumerate(PHYS):
+            st = self.states[k]
+            site_weights = np.array([site["weight"] for site in st.sites])
+            damage = (100.0 - np.asarray(st.cum)) * (1.0 - np.exp(-st.c * (np.asarray(st.exposure) + E[k])))
+            cum_a[:, j] = base_cum[k] + (damage * site_weights).sum(1)
+            out_a[:, j] = st.weighted_outage() + (O[k] * site_weights).sum(1)
+            if not self.current_loss_est:
+                loss_a += P["loss"]["beta"][j] * (cum_a[:, j] - base_cum[k])
+        if self.current_loss_est:
+            loss_a += self.current_loss_est
         ev, fsd = expected_values(cum_a, out_a, loss_a, n_future, self.case, self.prior_mode, with_sd=True)
         keys = list(ev)
         arr = np.array([ev[k] for k in keys]).T                 # (K, n_symbols)
