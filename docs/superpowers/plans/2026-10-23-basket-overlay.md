@@ -60,7 +60,7 @@ captured targets until a refreshed account proves the cycle is complete.
   temporary inventory limits, stale quotes, partial fills, cancellation races,
   unknown conversion outcome, bounded unwind and normal-strategy suspension.
 - [x] Implement disabled overlay; run tests and full suite.
-- [ ] Compare two fixed thresholds with baseline on all tune seasons/regimes.
+- [x] Compare two fixed thresholds with baseline on all tune seasons/regimes.
 - [ ] Freeze one eligible candidate, confirm and stress it; reject if gates fail.
 - [ ] Promote live/backtest/preflight/diagnostic defaults consistently only if
   accepted; expose an explicit disable switch.
@@ -82,3 +82,31 @@ Ruling: test a small coordinated overlay because standalone basket PnL is
 positive in both internal regimes. The stress collapse argues for fixed small
 lots and explicit cancellation/restore handling. Cost if wrong is a rejected
 offline experiment; no live setting changes without the recorded gates.
+
+## Tune selection frozen before confirmation
+
+2026-10-23, Codex: source `369c2a9`, clean invocation, all 75 tune seasons.
+
+| Candidate | Deep mean | Thin mean | Thin p10 | Score | Decision |
+|---|---:|---:|---:|---:|---|
+| baseline | 8643.98 | 5176.69 | -3729.45 | 5045.61 | Reference |
+| basket05 | 9270.13 | 5709.93 | -4291.16 | 5344.45 | Reject: thin p10 down 15.1% |
+| basket10 | 9215.25 | 5736.06 | -3054.46 | 5948.43 | Freeze |
+
+All have zero rejected orders/rate blocks. `basket10` peaks at 62/69 actions per
+minute, versus the 120 cap; 8.17/8.47 cycles per season, 17/192 timeout restores
+over 75 seasons. Freeze `basket_edge=0.01`, lot 10 and all other fixed settings.
+Confirm only baseline/basket10 on 526–600. Stress the same pair on tune at 3s
+latency in deep/thin, and separately severe liquidity also at 3s latency.
+
+Ruling: freeze the only eligible candidate before inspecting confirmation;
+the 0.5% threshold's higher deep mean does not override its failed tail gate.
+Cost if wrong is rejecting some profitable opportunities; protects the stated
+selection rule from hindsight.
+
+A local HTTP test exposed the mock's conversion route as a no-op. Implemented
+atomic inventory changes and limit checks. The live adapter now completes a
+real localhost conversion/refresh/three-order cycle and restores its starting
+positions with each fill logged once. This is an API integration test, not
+evidence about the competition server's actual schema or timing. Full suite:
+148 passed. This mock-only fix does not change replay strategy results.

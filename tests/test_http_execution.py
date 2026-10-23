@@ -101,3 +101,42 @@ def test_replay_mock_reports_own_fills_once(monkeypatch, capsys):
         server.shutdown()
         server.server_close()
         worker.join(timeout=2)
+
+
+def test_http_basket_conversion_refresh_and_closing_legs(monkeypatch):
+    from ctc.basket import BasketOverlay
+    from scripts import mock_exchange
+    case = {'limits': {'A': 100, 'B': 100, 'ETF': 100},
+            'etfs': {'ETF': {'basket': {'A': 1, 'B': 2}}}, 'timing': {'pre_storm': 60}}
+    starting = {'A': 7, 'B': -9, 'ETF': 3}
+    prices = {'A': 10, 'B': 20, 'ETF': 60}
+    state = {'mid': prices, 'half_spread': .0015, 'position': starting.copy(),
+             'cash': 0., 'fills': 0, 'trades': [], 'open': True,
+             'lock': threading.Lock(), 'case': case}
+    monkeypatch.setattr(mock_exchange, 'STATE', state)
+    server = ThreadingHTTPServer(('127.0.0.1', 0), mock_exchange.H)
+    worker = threading.Thread(target=server.serve_forever, daemon=True)
+    worker.start()
+    try:
+        exchange = LiveExchange(f'http://127.0.0.1:{server.server_port}', 'local-test-key', False)
+        exchange.refresh()
+        exchange.mid = prices
+        exchange.quotes = {s: (p * .9985, p * 1.0015) for s, p in prices.items()}
+        exchange.quote_times = {s: exchange.t for s in prices}
+        overlay = BasketOverlay(.005)
+        overlay.on_news(exchange, {'type': 'storm', 'age': 60})
+        assert overlay.on_quotes(exchange)
+        assert not overlay.on_quotes(exchange)
+        exchange.refresh()
+        assert state['position'] == starting == exchange.position
+        assert state['fills'] == 3 and state['cash'] > 90
+        assert exchange.seen_trades == {1, 2, 3}
+        # A temporary conversion limit failure must be atomic across all legs.
+        state['position']['ETF'] = 99
+        unchanged = state['position'].copy()
+        assert not exchange.create('ETF', 2)
+        assert state['position'] == unchanged
+    finally:
+        server.shutdown()
+        server.server_close()
+        worker.join(timeout=2)

@@ -64,8 +64,24 @@ class H(BaseHTTPRequestHandler):
                     "quantity": qty, "price": px, "sequence": STATE["fills"],
                     "executed_at": datetime.now(timezone.utc).isoformat()})
                 return self._json({"order_id": STATE["fills"], "status": "filled", "filled_quantity": qty, "price": px})
-        if "/etf/" in self.path:
-            return self._json({"status": "ok"})
+        if self.path.startswith('/api/v1/etf/'):
+            etf, action = self.path.rsplit('/', 2)[-2:]
+            quantity = body.get('quantity')
+            if (etf not in STATE['case']['etfs'] or action not in ('create', 'redeem')
+                    or type(quantity) is not int or quantity <= 0):
+                return self._json({'error': 'invalid conversion'}, 400)
+            sign = 1 if action == 'create' else -1
+            changes = {etf: sign * quantity, **{
+                symbol: -sign * quantity * units
+                for symbol, units in STATE['case']['etfs'][etf]['basket'].items()}}
+            with STATE['lock']:
+                if not STATE['open']:
+                    return self._json({'error': 'market closed'}, 403)
+                positions = {s: STATE['position'].get(s, 0) + q for s, q in changes.items()}
+                if any(abs(q) > STATE['case']['limits'][s] for s, q in positions.items()):
+                    return self._json({'error': 'position limit'}, 400)
+                STATE['position'].update(positions)
+            return self._json({'status': 'ok'})
         self._json({"error": "not found"}, 404)
 
     def do_DELETE(self):
