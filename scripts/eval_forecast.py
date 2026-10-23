@@ -8,7 +8,7 @@ from ctc.analog import AnalogEnsemble
 from ctc.wind import PHYS
 root=Path('data'); case=json.load(open(root/'case.json')); man=json.load(open(root/'history/manifest.json'))
 AGES=[30,90,150,240,360]
-args=dict(sigma=float(sys.argv[1]) if len(sys.argv)>1 else 25.0, k=int(sys.argv[2]) if len(sys.argv)>2 else 50, shift=(sys.argv[3]!='noshift') if len(sys.argv)>3 else True, cone_w=float(sys.argv[4]) if len(sys.argv)>4 else 0.0, isl_w=float(sys.argv[5]) if len(sys.argv)>5 else 0.0, cone_s0=float(sys.argv[6]) if len(sys.argv)>6 else 10.0, vel_w=float(sys.argv[7]) if len(sys.argv)>7 else 0.0, vel_sd=float(sys.argv[8]) if len(sys.argv)>8 else 0.3)
+args=dict(sigma=float(sys.argv[1]) if len(sys.argv)>1 else 25.0, k=int(sys.argv[2]) if len(sys.argv)>2 else 50, shift=(sys.argv[3]!='noshift') if len(sys.argv)>3 else True, cone_w=float(sys.argv[4]) if len(sys.argv)>4 else 0.0, isl_w=float(sys.argv[5]) if len(sys.argv)>5 else 0.0, cone_s0=float(sys.argv[6]) if len(sys.argv)>6 else 10.0, vel_w=float(sys.argv[7]) if len(sys.argv)>7 else 0.0, vel_sd=float(sys.argv[8]) if len(sys.argv)>8 else 0.3, cone_all=(sys.argv[9]=='all') if len(sys.argv)>9 else False)
 err={('cv',a):[] for a in AGES}; err.update({('an',a):[] for a in AGES}); hit={a:[] for a in AGES}; sdcal={a:[] for a in AGES}
 for s in man['seasons'][450:530]:
     feed=[json.loads(l) for l in open(root/'history'/s['dir']/'feed.jsonl')]

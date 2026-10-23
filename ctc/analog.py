@@ -49,7 +49,7 @@ def build_library(root: Path, seasons: list[dict[str, Any]], out: Path = LIB) ->
 
 class AnalogEnsemble:
     def __init__(self, case: dict[str, Any], sigma: float = 25.0, tau_wire: float = 0.5, k: int = 50,
-                 shift: bool = True, lib: Path = LIB, cone_w: float = 0.0, isl_w: float = 0.0, cone_s0: float = 10.0, cone_nu: float = 0.0, vel_w: float = 0.0, vel_sd: float = 0.3):
+                 shift: bool = True, lib: Path = LIB, cone_w: float = 0.0, isl_w: float = 0.0, cone_s0: float = 10.0, cone_nu: float = 0.0, vel_w: float = 0.0, vel_sd: float = 0.3, cone_all: bool = False):
         d = np.load(lib)
         self.tracks, self.pattern, self.flip = d["tracks"], d["pattern"], d["flip"]
         self.C_off, self.C_wire = d["C_off"], d["C_wire"]
@@ -59,6 +59,7 @@ class AnalogEnsemble:
         self.cone_w, self.isl_w, self.cone_s0 = cone_w, isl_w, cone_s0     # tempering powers; cone_s0 = spread floor (map units)
         self.cone_nu = cone_nu          # >0: Student-t cone likelihood with this many degrees of freedom (a wrong cone does not zero out the right analogs)
         self.vel_w, self.vel_sd = vel_w, vel_sd    # >0: kernel on the current velocity vs the analog's velocity at the same age (map units / s)
+        self.cone_all = cone_all        # use the cones of all official advisories so far, not only the latest
         self.vel = np.gradient(self.tracks[:, :, :2], 2.0, axis=1)       # (N, T, 2) analog velocities from the 2 s grid
         self.case = case
         self.sites = {sym: np.array([[s["x"], s["y"], s["weight"]] for s in case["companies"][sym]["sites"]]) for sym in PHYS}
@@ -100,7 +101,8 @@ class AnalogEnsemble:
             age_now = obs[-1]["age"]
             off = (np.array([obs[-1]["x"], obs[-1]["y"]]) - self.tracks[:, idx, :2]) if self.shift else 0.0
             if self.cone_w > 0:
-                for cp in adv.get("cone") or []:
+                cones = [cp for a in (adv.get("_all") or [adv]) for cp in (a.get("cone") or [])] if self.cone_all else (adv.get("cone") or [])
+                for cp in cones:
                     j = int(cp["age"] // 2)
                     if cp["age"] <= age_now or j >= len(GRID_AGES):
                         continue

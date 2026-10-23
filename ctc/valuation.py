@@ -160,6 +160,7 @@ class SeasonModel:
         self.official: list[tuple[int, str]] = []           # (age, outlook) of the current storm
         self.wire: list[tuple[int, str]] = []
         self.adv: dict[str, Any] | None = None             # latest official advisory of the current storm (cone, island probabilities)
+        self.adv_prev: dict[str, Any] | None = None
         self.ensemble = None                                # AnalogEnsemble, attached by the strategy
         self.posterior: dict[str, float] = {}
         self.fair_sd: dict[str, float] = {}                 # ensemble spread of the fair value per symbol
@@ -182,7 +183,7 @@ class SeasonModel:
             self.storm_active, self.storm_reported, self.last_obs, self.current_loss_est = True, False, None, 0.0
             self.prelim_seen = False
             self.obs, self.official, self.wire, self.posterior, self.fair_sd = [], [], [], {}, {}
-            self.adv = None
+            self.adv = None; self.adv_prev = None
         elif t == "storm":
             dt = m.get("_dt", 2.0)
             self.last_obs = m
@@ -192,7 +193,7 @@ class SeasonModel:
         elif t == "advisory":
             (self.official if m.get("source") == "official" else self.wire).append((m["age"], m["outlook"]))
             if m.get("source") == "official":
-                self.adv = m
+                self.adv = dict(m); self.adv["_all"] = ((self.adv_prev or {}).get("_all") or []) + [m]; self.adv_prev = self.adv
         elif t == "storm_dissipated":
             self.storm_active = False
         elif t == "damage_report":
