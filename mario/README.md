@@ -1,7 +1,12 @@
-# Mario Markets drill sheet (CTC 2026, 20% of the overall score)
+# Mario Markets desk (CTC 2026, 20% of the overall score)
 
-Manual trading only (no bots). Four humans (A-D, identical characters and karts) and eight CPUs race; two series of four
+Four humans (Birdo, Daisy, Peach, Yoshi: identical characters and karts) and eight CPUs race; two series of four
 races. Only humans have contracts. Points by overall place among all 12: 15 12 10 9 8 7 6 5 4 3 2 1.
+
+The updated packet (2026-10-23) allows bots for this case but gives no API key: "Trading will be done manually through
+the UI", "a bot would have to find another way ... (maybe monitor a chrome window or something similar)". The desk below
+does exactly that: it reads the exchange through the trading UI's own browser session, prices every contract, ranks the
+trades, and a human clicks them in the UI.
 
 ## Contracts and settlement
 
@@ -14,9 +19,76 @@ races. Only humans have contracts. Points by overall place among all 12: 15 12 1
 Examples from the packet: scores 49/42/34/28 settle the winner at 100, #1 = 49, #2 = 42, top-2 = 91.
 Scores 45/45/34/28: both leaders settle at 50, #1 = #2 = 45, top-2 = 90.
 
-Race-winner contracts settle after each race; series contracts after race 4 and race 8. Anything unsettled trades.
+Race-winner contracts settle after each race; series contracts after race 4 and race 8. Anything unsettled trades,
+including race 5-8 winners and the series 2 contracts during series 1.
 
-## Pricer
+## The desk (bot)
+
+```
+mario/desk.py          the program: tap thread + pricer + engine + dashboard on http://localhost:8787 + a command prompt
+mario/tap.py           BrowserTap: its own Chrome window (Playwright), you log in once; polls /api/v1/symbols, orderbook/{sym},
+                       positions, orders/open, trades inside that page, so the session cookie authenticates (no API key).
+                       HttpTap: plain HTTP for the mock (or an API key if one appears). prefill() types an order into the UI's form.
+mario/engine.py        fairs + books + positions -> ranked actions: model-free arbs (set of 4 binaries vs 100, top-2 = #1 + #2,
+                       hard bounds from banked points) and model edges (fair +- margin, sized to the book and the limits)
+mario/pricer.py        Monte Carlo fair values; particle filter over racer skill; `fairs()` values all 46 contracts
+mario/contracts.py     symbol -> role (race/series/score, racer) parser; mario/contracts.json overrides it
+mario/mock_exchange.py a fake exchange with 46 contracts, a biased house, races every N seconds, settlements: the drill
+```
+
+How the UI talks to the exchange (checked 2026-10-23 in Chrome on the testnet): the Next.js app calls the same
+`/api/v1/...` endpoints the bot API uses (orderbook, positions, orders, trades, symbols, competitions/current) and the
+`/ws/v1/market-data` stream, authenticated by the login cookie. `fetch('/api/v1/orderbook/PORT', {credentials:'include'})`
+from the page returns the full book; the same call without a session returns 401. The order form is `#order-qty`,
+`#order-price`, buttons BUY / SELL / Limit / Market, and a submit button "Buy 20 PORT"; symbols are tab buttons.
+
+### Competition day
+
+```bash
+pip install playwright                                # once; it drives the installed Google Chrome, no download
+python3 mario/desk.py                                 # opens a Chrome window on the exchange: LOG IN THERE (once; the profile is kept in ~/.ctc_mario_chrome)
+open http://localhost:8787                            # the dashboard, on a second screen next to the exchange tab
+> map                                                 # check every symbol's role; fix mario/contracts.json and restart if any is wrong or UNMAPPED
+> race 1 2 5 9                                        # after each race: overall places of BIRDO DAISY PEACH YOSHI (alphabetical), from the stream
+> undo | cpu -0.3                                     # typo, or re-centre the CPU strength prior (see the calibration table below)
+```
+The dashboard refreshes every 0.7 s: actions best first (profit in contract points = PnL at settlement if the fair is
+right; riskless arbs on an orange background), then every contract with bid/ask, fair, sd, edge, hard bounds, position,
+and the log. One person watches the race and types the result; one person clicks orders in the UI from the action list
+(limit orders at the listed price and size; the size already respects the position limit and what is in the book).
+
+`--prefill` adds a "prepare" button per action that selects the symbol tab, side, Limit, and types qty and price into
+the UI; the human still clicks the submit button. Off by default: ask in #questions whether a bot filling the form is
+within "trading manually through the UI" before using it.
+
+Flags: `--interval 1.0` (poll period; 46 book requests per poll, use 2 if the exchange rate-limits), `--clip 50` (max
+size per action), `--risk 1500` (score contracts: size x sd <= risk), `--min-profit 5`, `--cpu-skill -0.6`.
+
+### Drill (no exchange needed)
+
+```bash
+python3 mario/mock_exchange.py --race-every 60 --seed 3     # a tournament: a race every minute, a biased house, settlements
+python3 mario/desk.py --mock                                # type the results the mock prints ("RACE 1 finished: places ...")
+python3 mario/desk.py --mock --auto-results                 # or let the desk read them
+> fill S1_WIN_PEACH buy 30 36.7                             # in mock mode the desk sends the order (stands in for the click)
+```
+Measured 2026-10-23: taking the top three actions every 3 s against the mock (house bias sd 4 points) over six races
+made +6.5k in the mock's own marks (+2.5k realized at settlements); the browser tap works against the mock page too
+(`--tap browser --headless`). The mock's house is a guess; the real counterparties are the other teams and whatever
+market maker the organisers run.
+
+### What the engine does with the book
+
+1. Model-free, riskless at settlement, checked every poll: the four race-winner (or series-winner) contracts of one race
+   (series) settle to exactly 100 in total, so sum of asks < 100 is a buy of all four, sum of bids > 100 a sale;
+   top-2 total settles to #1 + #2 exactly; #1 >= the leader's banked points and <= banked + 15 x races left, #2 and
+   the total likewise. A binary whose racer can no longer win is a free sale.
+2. Model edges: buy when ask <= fair - margin, sell when bid >= fair + margin. Binaries: margin 6 / 4 / 3 / 2.5 points
+   by races completed in that series (the skill posterior is weak early); score contracts: max(2 points, 0.35 sd).
+   Size = what the book offers at acceptable prices, capped by the position limit, `--clip`, and the risk budget.
+3. PnL marked to fair (position x (fair - average price) + exchange realized) next to the exchange's own number.
+
+## Pricer (stand-alone)
 
 ```
 python3 mario/pricer.py                       # interactive: "race 1 2 5 9" (overall places of A B C D), "fair", "undo"
@@ -29,7 +101,7 @@ python3 mario/pricer.py calib                 # CPU prior sensitivity table
 Model: performance = skill + noise per race; human skills share a flat prior (sd 1) and are updated from finishing
 places with a particle filter; CPUs have a prior mean of -0.6 (humans usually finish top-5, #1 series score about 48,
 which matches the packet's example). If after race 1 the humans are all behind several CPUs, rerun with
-`--cpu-skill 0` or `+0.3`; if a human wins outright and the others are top-4, keep -0.6.
+`--cpu-skill 0` or `+0.3` (desk: `cpu 0`); if a human wins outright and the others are top-4, keep -0.6.
 
 ## Calibration (2026-10-23)
 

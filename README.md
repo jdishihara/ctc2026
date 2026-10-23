@@ -24,7 +24,7 @@ scripts/fit_prelim.py     preliminary-report + nowcast combination (valuation_pa
 scripts/fit_rebuilders.py exact RECON/MAT/GEN settlement rules (kept behind --exact-rebuild, see the ledger)
 scripts/fit_damage.py, fit_valuation.py, eval_valuation.py, eval_forecast.py   model fits and diagnostics
 scripts/mock_exchange.py  replays a season over the exchange's HTTP + WebSocket API, for bot tests without the testnet
-mario/pricer.py, mario/README.md   Mario Markets Monte Carlo pricer and drill sheet
+mario/desk.py, tap.py, engine.py, pricer.py, contracts.py, mock_exchange.py   Mario Markets desk: reads the exchange through the UI's browser session, prices and ranks every contract (mario/README.md)
 derivs/bs.py, derivs/build_sheet.py -> derivs/desk.xlsx   Derivatives calculator and the desk workbook
 derivs/drill.py                    Timed event rehearsal for the derivatives desk (news t, S moves t+1 min, makers snap t+2 min)
 ```

@@ -94,6 +94,38 @@ class Pricer:
                 "score1": srt[:, 0].mean(), "score2": srt[:, 1].mean(), "top2": (srt[:, 0] + srt[:, 1]).mean(),
                 "score1_sd": srt[:, 0].std(), "score2_sd": srt[:, 1].std(), "top2_sd": (srt[:, 0] + srt[:, 1]).std()}
 
+    # ---- every contract of the tournament, keyed by role, for the desk (mario/engine.py) ----
+    def fairs(self, n_series: int = 2) -> dict:
+        """Fair values of every contract that can exist: ('race', r) -> four race-winner probabilities (0-1) for race r
+        (1-based, over the whole tournament), ('swin', s) -> four series-winner fairs (0-100), ('s1', s), ('s2', s),
+        ('top2', s) -> (mean, sd) of the score contracts of series s. Settled contracts carry their settlement."""
+        out = {}
+        n = len(self.races)
+        for s in range(1, n_series + 1):
+            lo, hi = (s - 1) * self.series_len, s * self.series_len
+            done = self.races[lo:min(n, hi)]
+            remaining = self.series_len - len(done)
+            if remaining == 0:                                   # settled series
+                pts = sum((POINTS[np.array(x) - 1] for x in done), np.zeros(4))
+                top = pts.max(); tied = pts == top
+                out[("swin", s)] = np.where(tied, 100.0 if tied.sum() == 1 else 50.0, 0.0)
+                srt = np.sort(pts)[::-1]
+                out[("s1", s)] = (float(srt[0]), 0.0); out[("s2", s)] = (float(srt[1]), 0.0); out[("top2", s)] = (float(srt[0] + srt[1]), 0.0)
+            else:
+                r = self.simulate(done, remaining)
+                out[("swin", s)] = r["series_winner"]
+                out[("s1", s)] = (r["score1"], r["score1_sd"]); out[("s2", s)] = (r["score2"], r["score2_sd"]); out[("top2", s)] = (r["top2"], r["top2_sd"])
+            for k in range(self.series_len):
+                race_no = lo + k + 1
+                if race_no <= n:                                  # settled race
+                    places = np.array(self.races[race_no - 1]); out[("race", race_no)] = (places == places.min()).astype(float)
+                elif remaining:
+                    out[("race", race_no)] = r["race_winner"]       # skills persist: every unraced race has the same odds
+        out["skill"] = (self.w[:, None] * self.h).sum(0)
+        out["skill_sd"] = np.sqrt((self.w[:, None] * self.h ** 2).sum(0) - out["skill"] ** 2)
+        out["points"] = [sum((POINTS[np.array(x) - 1] for x in self.races[(s - 1) * 4:s * 4]), np.zeros(4)) for s in range(1, n_series + 1)]
+        return out
+
     def fair(self) -> str:
         n = len(self.races)
         series = n // self.series_len + 1 if n < 8 else 2
