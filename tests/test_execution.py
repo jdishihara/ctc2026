@@ -52,7 +52,7 @@ def test_live_liquidity_subtracts_our_resting_size_and_respects_limit(exchange):
     assert exchange.liquidity('PORT', 'sell', 98) == 40
 
 
-@pytest.mark.parametrize('book', [OSError('offline'), {'asks': [{'price': 100, 'quantity': float('nan')}]},
+@pytest.mark.parametrize('book', [OSError('offline'), IncompleteRead(b'partial', 100), {'asks': [{'price': 100, 'quantity': float('nan')}]},
                                   {'asks': [{'price': 100, 'quantity': -1}]}, {'asks': []}])
 def test_live_missing_or_invalid_depth_never_manufactures_capacity(exchange, book):
     exchange.responses['/orderbook/PORT'] = book

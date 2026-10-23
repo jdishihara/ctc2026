@@ -273,7 +273,7 @@ class LiveExchange:
                 if (side == 'buy' and price <= limit) or (side == 'sell' and price >= limit):
                     total += max(0, int(quantity) - own)
             return total
-        except (OSError, ValueError, TypeError, KeyError):
+        except (OSError, HTTPException, ValueError, TypeError, KeyError):
             return None
 
     def create(self, etf: str, qty: int) -> bool:

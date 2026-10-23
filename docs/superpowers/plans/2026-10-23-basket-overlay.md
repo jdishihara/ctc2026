@@ -150,3 +150,22 @@ evidence, not the candidate's already-inspected confirmation outcomes. One
 fixed 50% participation cap is a conservative design choice, not a parameter
 search. Cost if wrong is smaller captured profits or another rejected offline
 candidate; the fixed-lot overlay remains unpromoted.
+
+2026-10-23, Codex: depth candidate passes every tuning/stress gate. Source
+`aa54469`, clean invocation; 75 seasons per comparison. No rejection/rate block
+in any regime. The fixed half-depth cap is frozen before its first confirmation.
+
+| Regime | Baseline mean | Candidate mean | Baseline p10 | Candidate p10 | Peak actions |
+|---|---:|---:|---:|---:|---:|
+| Deep, .25s | 8643.98 | 9144.20 | -1577.25 | -1127.16 | 52 |
+| Thin, .25s | 5176.69 | 5603.77 | -3729.45 | -3443.49 | 54 |
+| Deep, 3s | 6836.01 | 6883.22 | -3914.40 | -4087.52 | 58 |
+| Thin, 3s | 4034.64 | 4065.70 | -5280.18 | -5078.85 | 59 |
+| Severe, 3s | 987.59 | 1285.44 | -8287.64 | -7953.12 | 58 |
+
+Normal tune has no timeout restorations; delayed deep/thin/severe have
+408/374/333 across 75 seasons. The normal tune score is 5652.24 versus
+5045.61. Freeze `basket_edge=.01`, `basket_participation=.5`, max lot 10.
+Only baseline/basket_depth will be inspected on confirmation. A truncated
+HTTP book response was also reproduced with a failing test and now returns
+unknown depth, skipping a cycle; this live error-path fix does not alter replay.
