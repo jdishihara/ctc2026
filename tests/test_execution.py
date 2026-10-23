@@ -1,4 +1,5 @@
 import json
+from http.client import IncompleteRead
 from pathlib import Path
 from unittest.mock import patch
 
@@ -51,6 +52,7 @@ def test_failed_cancel_preserves_reservation(exchange):
 
 def test_successful_empty_cancel_ack_clears_only_requested_symbol(exchange):
     exchange.open_orders = [order(), {**order(), "symbol": "GRID"}]
+    exchange.responses["/orders/open"] = {"orders": [{**order(), "symbol": "GRID"}]}
     with patch.object(exchange, "send", return_value={}):
         assert exchange.cancel_all("PORT") is True
     assert exchange.resting("PORT", "buy") == 0
@@ -191,3 +193,91 @@ def test_malformed_position_response_blocks_new_orders(exchange, response):
     with patch.object(exchange, "send", return_value={"order_id": "wrong", "filled_quantity": 1}):
         assert exchange.place("PORT", "buy", 1, 90) is None
     assert exchange.position["PORT"] == 10
+
+
+@pytest.mark.parametrize("ack", [{}, [], {"filled_quantity": 0},
+    {"order_id": "a", "filled_quantity": -1}, {"order_id": "a", "filled_quantity": 6},
+    {"order_id": "a", "quantity": True}, {"order_id": "a", "quantity": 2.5},
+    {"order_id": "a", "filled_quantity": True}, {"order_id": "a", "status": "rejected"},
+    {"order_id": "a", "status": "filled"}])
+def test_uncertain_order_ack_blocks_further_submissions(exchange, ack):
+    with patch.object(exchange, "send", return_value=ack):
+        assert exchange.place("PORT", "buy", 5, 90) is None
+    with patch.object(exchange, "send", return_value={"order_id": "second", "filled_quantity": 5}):
+        assert exchange.place("PORT", "buy", 5, 90) is None
+    assert exchange.position["PORT"] == 10
+
+
+def test_truncated_order_response_blocks_trading(exchange):
+    with patch("bot.live.urllib.request.urlopen", side_effect=IncompleteRead(b'{"order_id":')):
+        assert exchange.place("PORT", "buy", 5, 90) is None
+    with patch.object(exchange, "send", return_value={"order_id": "second", "filled_quantity": 5}):
+        assert exchange.place("PORT", "buy", 5, 90) is None
+
+
+def test_refresh_captures_fill_between_account_requests(exchange):
+    original_get = exchange.get
+    server_position = 10
+
+    def get(path, api=True):
+        nonlocal server_position
+        if path == "/orders/open":
+            server_position = 110  # Existing order filled just before this response.
+            return {"orders": []}
+        if path == "/positions":
+            return {"positions": [{"symbol": "PORT", "quantity": server_position}]}
+        return original_get(path, api)
+
+    with patch.object(exchange, "get", side_effect=get):
+        exchange.refresh()
+    assert exchange.position["PORT"] == 110
+
+
+def test_successful_cancel_reconciles_fills_that_won_the_race(exchange):
+    exchange.open_orders = [order("buy", 100)]
+    exchange.responses["/positions"]["positions"][0]["quantity"] = 110
+    with patch.object(exchange, "send", return_value={"cancelled": 0}):
+        assert exchange.cancel_all("PORT") is True
+    assert exchange.position["PORT"] == 110
+
+
+def test_replacement_uses_position_after_cancel_reconciliation(exchange):
+    strategy = trader(exchange)
+    strategy.fair = {"PORT": 90}
+    exchange.open_orders = [order("buy", 100)]
+    exchange.responses["/positions"]["positions"][0]["quantity"] = 110
+    server_position = 110
+
+    def send(method, path, body=None):
+        nonlocal server_position
+        if method == "DELETE":
+            return {"cancelled": 0}
+        server_position -= body["quantity"]
+        return {"order_id": "replacement", "filled_quantity": body["quantity"]}
+
+    with patch.object(exchange, "send", side_effect=send):
+        strategy.on_quotes(exchange)
+    assert exchange.position["PORT"] == -200
+    assert server_position == -200
+
+
+def test_passive_replacement_rechecks_position_after_cancel(exchange):
+    strategy = trader(exchange)
+    strategy.passive = 0.75
+    exchange.open_orders = [order("buy", 100)]
+    exchange.responses["/positions"]["positions"][0]["quantity"] = 110
+    with patch.object(exchange, "send", return_value={"cancelled": 0}):
+        strategy.quote_passive(exchange, "PORT", 103, 100, 101, 1, 0.025, 200, 10)
+    assert exchange.position["PORT"] == 110
+    assert exchange.resting("PORT", "buy") == 0
+    assert len(exchange.actions) == 1
+
+
+def test_pausing_cancels_even_when_acknowledgement_was_lost(exchange):
+    strategy = trader(exchange)
+    exchange.open_orders = []
+    exchange.state_ready = False
+    strategy.pause(["PORT"])
+    with patch.object(exchange, "send", return_value={"cancelled": 1}):
+        strategy.on_quotes(exchange)
+    assert len(exchange.actions) == 1

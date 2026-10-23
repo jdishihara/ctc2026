@@ -67,6 +67,7 @@ class FairValueTrader(Strategy):
         self.passive_order: dict[str, tuple[str, float, float]] = {}   # symbol -> (side, price, t) of our resting quote
         self.round_open_t = -1e9
         self.pause_cancel_t: dict[str, float] = {}
+        self.pause_pending: set[str] = set()
 
     def on_round(self, sim) -> None:
         self.round_open_t = sim.t
@@ -74,6 +75,7 @@ class FairValueTrader(Strategy):
     def pause(self, symbols: list[str]) -> None:
         """Stop trading symbols named in a live announcement until a human clears them (model has not seen announcements)."""
         self.paused |= set(symbols)
+        self.pause_pending.update(symbols)
 
     def compute_fair(self) -> dict[str, float]:
         return self.model.fair_analog() if self.analog else self.model.fair(self.project)
@@ -115,9 +117,10 @@ class FairValueTrader(Strategy):
         # Pausing additions alone leaves old quotes executable at obsolete fair
         # values. Cancel immediately, even during warm-up; retry at most once/s.
         for s in self.paused:
-            if (sim.resting(s, "buy") or sim.resting(s, "sell")) and sim.t - self.pause_cancel_t.get(s, -1e9) >= 1:
+            if (s in self.pause_pending or sim.resting(s, "buy") or sim.resting(s, "sell")) and sim.t - self.pause_cancel_t.get(s, -1e9) >= 1:
                 self.pause_cancel_t[s] = sim.t
                 if sim.cancel_all(s):
+                    self.pause_pending.discard(s)
                     self.passive_order.pop(s, None)
         if not getattr(sim, "state_ready", True):
             return
@@ -191,6 +194,7 @@ class FairValueTrader(Strategy):
             if resting_net != 0:
                 if not sim.cancel_all(s):                   # never replace an unconfirmed cancellation
                     continue
+                pos = sim.position[s]                      # fills may have beaten the cancellation
                 delta = target - pos
                 if delta == 0:
                     continue
@@ -247,6 +251,11 @@ class FairValueTrader(Strategy):
             return                                    # our quote is still where we want it
         if sim.resting(s, "buy") or sim.resting(s, "sell"):
             if not sim.cancel_all(s):
+                return
+            pos = sim.position[s]
+            qty = (target - pos) if side == "buy" else (pos - target)
+            if qty <= 0:
+                self.passive_order.pop(s, None)
                 return
         if sim.place(s, side, qty, px) is not None:
             self.passive_order[s] = (side, px, sim.t)

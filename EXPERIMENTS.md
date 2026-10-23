@@ -206,6 +206,27 @@ python3 scripts/eval_forecast.py 25 50       # forecast skill
 | 2026-10-23 06:05 | grid 4 (cone_w 0.75 / 1.0 / 1.25 / 1.5 x cone_s0 15 / 20 / 30 at the accepted set, tune 451-525): (1.0, 20) keeps the top score 5014; (1.5, 30) 4873 verifies at 9487 / 6013 (p10 +489 / -2037, min -16.7k / -18.1k) vs 9344 / 5925; (0.75, 15) 4840; (1.0, 15) 4815; (1.5, 20) 4798 | | | NO CHANGE by the protocol (selection on the tune set); (1.5, 30) is a near-equivalent alternative |
 | 2026-10-23 06:25 | EXCHANGE PnL vs FILLS (seasons 217, 218): the bot's deduped FILL lines reproduce the exchange's positions exactly and the unrealized leg within 70, but the exchange's REALIZED PnL is below an average-cost replay of the same trades: 217 +6053 vs +9364 (-3.3k, -81 bp of notional), 218 +3775 vs +5731 (-2.0k, -34 bp). Fills marked at settlement: 217 +10.6k, 218 +4.7k vs exchange totals +7.3k, +2.7k. Live rounds 1-2 sum to 65% of the sim (29.4k vs 44.9k over 215-218) and live round 3 loses 11.8k vs the sim's -3.3k; the exchange-side gap is of the same size as the round-3 shortfall | | | OPEN. Not fees (not proportional), not missing fills, not the mark. The bot now logs per-symbol realized and average price at SEASON END; scratch script realized_check.py compares per symbol mid-season. Suspect: how the exchange books position flips |
 
+## 2026-10-23 — Codex / Arjun: forecast efficiency and execution reconciliation
+
+Reference `f4eb4dd`. Complete forecasts: 1,419 calls per version, tune seasons
+451/470/500, three repeats, 8,235.53 -> 4,817.48 ms (**1.71x**), maximum fair/SD
+difference 1.14e-13. Age-aligned matching, verified-prefix caching, tie-preserving
+partition and vectorized damage; no fitted parameters or strategy defaults changed.
+
+Cancellation success is explicit and reconciles racing fills before replacement;
+uncertain accounts block orders; paused symbols cancel/retry; pending simulated
+orders reserve capacity; fully filled passive quotes can be replenished. Tune
+451–525 mean deep/thin: 8,572.12 / 5,154.10 -> 8,577.71 / 5,155.03. Verify 526–600:
+**9,343.72 / 5,924.82 -> 9,345.51 / 5,927.40**. Verify p10 deep/thin:
+-144.98 / -2,680.86 -> -147.60 / -2,682.24; thin p10 worsens **0.052%**, within
+the 10% bound. Both means rise, satisfying the repository's acceptance rule;
+the changes are too small to claim a material new trading advantage.
+
+40 regression/integration tests pass. Independent review's four important findings
+were reproduced and fixed. Minor fractional-age exposure-duration issue deferred
+(the supplied dense history has two-second steps). No remote orders or deployment.
+Full measurements, tails, review rulings and commands: [efficiency results](docs/efficiency-results.md).
+
 ## Backlog (ordered by expected value)
 1. Passive quoting: rest orders inside the house spread instead of crossing; measure under thin regime.
 2. Insurer convexity: HAVEN/REIN fair should use the loss distribution over analogs (already) plus prior-storm uncertainty for rounds 1-2 (currently a point prior). Replace the point prior for future storms with a sample of historical storms.

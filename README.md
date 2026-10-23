@@ -34,6 +34,9 @@ unattended-session manual.
 
 ## Run
 
+Install the runtime dependencies with `python3 -m pip install -r requirements.txt`.
+For the regression suite, install `requirements-dev.txt` and run `python3 -m pytest -q`.
+
 ```bash
 python3 scripts/backtest.py --strategy analog --seasons 526-600                                   # verify, deep regime
 python3 scripts/backtest.py --strategy analog --seasons 526-600 --refill 30 --ladder-scale 0.5    # verify, thin regime
@@ -49,7 +52,7 @@ more than 2% through the touch), `--cone-w 1.0 --cone-s0 20` (the official advis
 Live bot (testnet or competition), dry run first:
 
 ```bash
-pip install "websockets>=14"
+pip install -r requirements.txt
 python3 bot/live.py --key BOT_KEY --dry-run          # default url https://cornelltradingcompetition.org
 zsh bot/run_live.sh                                  # keeps it running, logs to recordings/bot_live.log (pnl every 10 s, SEASON END lines)
 ```
@@ -111,7 +114,26 @@ python3 bot/live.py --url http://localhost:8765 --ws ws://localhost:8766 --key t
 The mock's response shapes (positions, open orders, order acks, quote frames) are guesses; fix `bot/live.py`
 after the first testnet session if the real API differs.
 
-Seasons 1 to 450 were used for fitting; report results on 451 to 600.
+Seasons 1–450 are for fitting, 451–525 for tuning, and 526–600 for verification.
+
+## Forecast efficiency and execution checks (2026-10-23)
+
+Complete analog forecasts are 1.71× faster on the measured three-season workload,
+with matching fair values and uncertainty to `1.14e-13` maximum absolute error.
+Track matching uses observation ages and caches verified prefixes; damage across
+analogs is vectorized. The default fitted strategy and parameters are unchanged.
+
+Order replacement now requires confirmed cancellation and refreshed positions.
+Failed refreshes, uncertain submissions and malformed acknowledgements block new
+orders until reconciliation. Paused symbols cancel existing orders and retry
+failures; filled passive quotes can be replenished immediately.
+
+The 40-test suite includes a local HTTP integration test. Verification mean PnL
+is 9,345.51 deep / 5,927.40 thin, versus 9,343.72 / 5,924.82 at `f4eb4dd`; this
+small difference is not evidence of a material new trading advantage. See
+[measurements, reproduction commands and remaining limitations](docs/efficiency-results.md).
+Remote exchange behavior still needs a supervised testnet check before deploying
+this branch.
 
 ## What is fitted (holdout numbers)
 

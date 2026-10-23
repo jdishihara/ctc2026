@@ -22,3 +22,16 @@ Plan: `docs/superpowers/plans/2026-10-23-efficiency.md`.
 - Initial execution regressions: all 10 failed against the old adapter/strategy/simulator. After cancellation, atomic refresh, timeout gating, paused-order cancellation, and pending-order reservation fixes, all 17 tests passed.
 - Added a passive-fill replenishment regression: failed before correction. Full suite now 23 passing, including cancellation retry, malformed snapshots, and passive replacement rejection.
 - Ruling: passive replenishment changes trading behavior; assess it on tune seasons before running verification. No new strategy parameters are fitted.
+
+## Execution review and final evidence — Codex
+
+- Tune means deep/thin: 8,572.12 / 5,154.10 -> 8,577.71 / 5,155.03. Both rose; proceeded with the fixed candidate to verification.
+- Verification means deep/thin: 9,343.72 / 5,924.82 -> 9,345.51 / 5,927.40. Thin p10 -2,680.858 -> -2,682.242 (0.052% worse), within the existing 10% acceptance bound. Zero simulated rejections in both versions and regimes.
+- One independent code review found four important defects: acknowledgements without usable IDs/quantities, truncated HTTP replies, fills racing with refresh/cancel, and paused orders hidden after a lost acknowledgement. Regressions reproduced the failures; all four are fixed.
+- Added two failing quantity-validation cases (boolean/fractional accepted quantities), then rejected those malformed acknowledgements. Complete suite: **40 passed in 0.59s**, including real local HTTP cancellation/recovery.
+- Ruling: cancellation is confirmed by refreshing the account and checking target orders are gone, not by guessing the response body's schema. Replacement sizes use the refreshed position.
+- Ruling: read open orders before positions to conservatively retain capacity for racing fills. Required reads must all succeed before publishing account state; the API still does not provide a transactional account snapshot.
+- Ruling: defer the review's minor fractional-duration exposure issue. Supplied dense history uses two-second steps; arbitrary fractional ages still need interval-weighted integration. This limitation is explicit in the results report.
+- Ruling: preserve fitted strategy/parameters; do not add unverified ETF arbitrage or claim reconstruction of missing historical damage. Keep the existing feed-log replay path. No competition/testnet orders or deployment.
+- Full results, reproducible commands, and limitations are in `docs/efficiency-results.md`; README and EXPERIMENTS link the evidence.
+- Post-review verification repeated all 75 seasons in each regime (49s deep / 50s thin); both output CSVs are byte-for-byte identical to the reported candidate results. Final full suite again: 40 passed in 0.59s. `git diff --check` passed; fetched origin/main has no new commits relative to the branch base.

@@ -29,28 +29,28 @@
 
 Files: `ctc/analog.py`, `ctc/valuation.py`, `tests/test_forecast.py`, `scripts/benchmark_forecast.py`.
 
-- [ ] Write independent sparse-observation fixtures with known analog weights/future exposure and compare real library forecasts against baseline values.
-- [ ] Run the tests and verify the sparse-observation failure in the original implementation.
-- [ ] Align library tracks by observation age; cache squared errors for unchanged prefixes; use partition for top-k selection with ties preserved.
-- [ ] Vectorize per-company damage/outage over analogs in `SeasonModel.fair_analog`.
-- [ ] Verify corrected/replaced/repeated prefixes, late storm, terminal age and original dense-feed output.
-- [ ] Benchmark representative full forecast calls and compare both full replay regimes against the baseline.
+- [x] Write independent sparse-observation fixtures with known analog weights/future exposure and compare real library forecasts against baseline values.
+- [x] Run the tests and verify the sparse-observation failure in the original implementation.
+- [x] Align library tracks by observation age; cache squared errors for unchanged prefixes; use partition for top-k selection with ties preserved.
+- [x] Vectorize per-company damage/outage over analogs in `SeasonModel.fair_analog`.
+- [x] Verify corrected/replaced/repeated prefixes, late storm, terminal age and original dense-feed output.
+- [x] Benchmark representative full forecast calls and compare both full replay regimes against the baseline.
 
 ### Task 2: Confirmed order and account state
 
 Files: `bot/live.py`, `ctc/strategies.py`, `ctc/sim.py`, `tests/test_execution.py`.
 
-- [ ] Reproduce rejected cancellation freeing capacity, stale refresh permitting orders, missing position rows retaining old quantities, and paused resting quotes remaining live.
-- [ ] Return explicit cancellation success from both adapters, retain reservations on failure, and gate replacement on success.
-- [ ] Commit account snapshots only after complete successful polls; suppress new orders after failures/uncertain submissions until reconciliation.
-- [ ] Cancel paused quotes and retry failed cancellation; count pending simulated orders in reserved capacity.
-- [ ] Run failure, recovery, limit and paused-order tests against real strategy/adapter logic with HTTP responses stubbed.
+- [x] Reproduce rejected cancellation freeing capacity, stale refresh permitting orders, missing position rows retaining old quantities, and paused resting quotes remaining live.
+- [x] Return explicit cancellation success from both adapters, retain reservations on failure, and gate replacement on success.
+- [x] Commit account snapshots only after complete successful polls; suppress new orders after failures/uncertain submissions until reconciliation.
+- [x] Cancel paused quotes and retry failed cancellation; count pending simulated orders in reserved capacity.
+- [x] Run failure, recovery, limit and paused-order tests against real strategy/adapter logic with HTTP responses stubbed.
 
 ### Task 3: Verification and handoff
 
 Files: `README.md`, `EXPERIMENTS.md`, dependency/test configuration, `docs/efficiency-results.md`.
 
-- [ ] Run the complete pytest suite and deterministic forecast benchmark.
-- [ ] Report 526–600 PnL, p10, minimum, fill counts and runtime for deep and thin; distinguish numerical performance from behavior corrections.
-- [ ] Obtain one independent code review, fix consequential findings with regression tests, and run the full suite.
+- [x] Run the complete pytest suite and deterministic forecast benchmark.
+- [x] Report 526–600 PnL, p10, minimum, fill counts and runtime for deep and thin; distinguish numerical performance from behavior corrections.
+- [x] Obtain one independent code review, fix consequential findings with regression tests, and run the full suite.
 - [ ] Commit and push a reviewable branch/PR with precise reproduction commands and limitations.

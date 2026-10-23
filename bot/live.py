@@ -9,6 +9,7 @@ mid for the operator every 10 s. Start with --dry-run: orders are printed, not s
 """
 from __future__ import annotations
 import argparse, asyncio, collections, json, math, sys, time, urllib.error, urllib.request
+from http.client import HTTPException
 from pathlib import Path
 from typing import Any
 import websockets
@@ -73,12 +74,15 @@ class LiveExchange:
         except urllib.error.HTTPError as exc:
             self.rejected += 1
             self.state_ready = False
-            detail = exc.read().decode()[:200]
+            try:
+                detail = exc.read().decode(errors="replace")[:200]
+            except (OSError, HTTPException):
+                detail = "unreadable error response"
             print(f"HTTP {exc.code} {method} {path} {body}: {detail}", flush=True)
             if exc.code == 403 and "halted" in detail:
                 self.market_open = False                     # stop sending until the next time poll says running
             return None
-        except (OSError, ValueError) as exc:
+        except (OSError, ValueError, HTTPException) as exc:
             # A timeout may have happened after the exchange accepted the action.
             # Do not retry or free capacity until positions/orders are reconciled.
             self.state_ready = False
@@ -100,10 +104,12 @@ class LiveExchange:
             tm = self.get("/competitions/time")
             was_open = self.market_open
             cid = tm.get("competition_id")
-            pos = self.get("/positions")
-            items = pos.get("positions", pos) if isinstance(pos, dict) else pos
+            # Orders first, positions second: a fill between the two reads is
+            # counted in the position without losing its reservation prematurely.
             oo = self.get("/orders/open")
             orders = oo.get("orders", oo) if isinstance(oo, dict) else oo
+            pos = self.get("/positions")
+            items = pos.get("positions", pos) if isinstance(pos, dict) else pos
             if not isinstance(items, list) or not isinstance(orders, list):
                 raise ValueError("positions and open orders must be lists")
             positions = {s: 0 for s in self.symbols}
@@ -196,24 +202,47 @@ class LiveExchange:
             return -1
         resp = self.send("POST", "/orders", order)
         print(f"ORDER {order} -> {resp}", flush=True)
-        if resp:
-            filled = int(resp.get("filled_quantity", resp.get("filled", 0)) or 0)
-            self.position[symbol] += sign * filled                     # apply what we know now; refresh() corrects later
-            if filled < qty:
-                self.open_orders.append({**order, "filled_quantity": filled, "order_id": resp.get("order_id", resp.get("id"))})
-            return resp.get("order_id", resp.get("id"))
-        return None
+        try:
+            if not isinstance(resp, dict):
+                raise ValueError("missing order acknowledgement")
+            oid = resp.get("order_id", resp.get("id"))
+            if isinstance(oid, bool) or not isinstance(oid, (str, int)) or oid == "":
+                raise ValueError("missing order id")
+            raw_filled = resp.get("filled_quantity", resp.get("filled", 0))
+            raw_accepted = resp.get("quantity", qty)
+            accepted, filled = int(raw_accepted), int(raw_filled)
+            if (isinstance(raw_accepted, bool) or accepted != raw_accepted
+                    or isinstance(raw_filled, bool) or filled != raw_filled
+                    or not 0 <= filled <= accepted <= qty or accepted <= 0):
+                raise ValueError("invalid acknowledged quantity")
+            status = resp.get("status")
+            if status is not None and status not in {"new", "pending", "accepted", "open", "resting", "partial", "partially_filled", "filled"}:
+                raise ValueError("unrecognized order status")
+            if status == "filled" and filled != accepted:
+                raise ValueError("filled acknowledgement lacks complete fill quantity")
+        except (TypeError, ValueError, OverflowError):
+            self.state_ready = False
+            print("uncertain order acknowledgement; waiting for account refresh", flush=True)
+            return None
+        self.position[symbol] += sign * filled  # refresh() reconciles later fills
+        if filled < accepted:
+            self.open_orders.append({**order, "quantity": accepted, "filled_quantity": filled, "order_id": oid})
+        return oid
 
     def cancel_all(self, symbol: str | None = None) -> bool:
         if not self._action_ok():
             return False
         if self.dry_run:
             print(f"[dry-run] would cancel all {symbol or ''}", flush=True)
+            self.open_orders = [o for o in self.open_orders if symbol is not None and o.get("symbol") != symbol]
+            return True
         else:
             if self.send("DELETE", "/orders/all" + (f"?symbol={symbol}" if symbol else "")) is None:
                 return False
-        self.open_orders = [o for o in self.open_orders if symbol is not None and o.get("symbol") != symbol]
-        return True
+        # A fill can beat the cancel. Reconcile its position before a caller
+        # calculates replacement quantity, and verify the targeted orders vanished.
+        self.refresh()
+        return self.state_ready and not any(symbol is None or o.get("symbol") == symbol for o in self.open_orders)
 
     def create(self, etf: str, qty: int) -> bool:
         return self._convert(etf, qty, "create")
