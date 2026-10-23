@@ -123,7 +123,7 @@ def test_http_basket_conversion_refresh_and_closing_legs(monkeypatch):
         exchange.mid = prices
         exchange.quotes = {s: (p * .9985, p * 1.0015) for s, p in prices.items()}
         exchange.quote_times = {s: exchange.t for s in prices}
-        overlay = BasketOverlay(.005)
+        overlay = BasketOverlay(.005, participation=.5)
         overlay.on_news(exchange, {'type': 'storm', 'age': 60})
         assert overlay.on_quotes(exchange)
         assert not overlay.on_quotes(exchange)

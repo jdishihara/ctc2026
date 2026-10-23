@@ -3,10 +3,13 @@ import math
 
 
 class BasketOverlay:
-    def __init__(self, edge, lot=10):
+    def __init__(self, edge, lot=10, participation=0):
         if not math.isfinite(edge) or edge < 0 or not isinstance(lot, int) or lot <= 0:
             raise ValueError('basket edge must be finite/nonnegative and lot a positive integer')
+        if not 0 <= participation <= 1:
+            raise ValueError('basket participation must be between zero and one')
         self.edge, self.lot = edge, lot
+        self.participation = participation
         self.targets = None
         self.round_start = None
         self.last_attempt = self.last_submit = self.last_cancel = -math.inf
@@ -86,9 +89,26 @@ class BasketOverlay:
             if not delta:
                 continue
             side = 'buy' if delta > 0 else 'sell'
-            limit = sim.quotes[symbol][1] * (1 + crossing) if delta > 0 else sim.quotes[symbol][0] * (1 - crossing)
+            limit = self._limit(sim, symbol, side, crossing)
             sim.place(symbol, side, abs(delta), limit)
         return True
+
+    @staticmethod
+    def _limit(sim, symbol, side, crossing):
+        price = sim.quotes[symbol][1] * (1 + crossing) if side == 'buy' else sim.quotes[symbol][0] * (1 - crossing)
+        ticks = math.floor(price * 100 + 1e-9) if side == 'buy' else math.ceil(price * 100 - 1e-9)
+        return round(ticks / 100, 2)
+
+    def _execution_size(self, sim, changes, size):
+        if not self.participation:
+            return size
+        for symbol, delta in changes.items():
+            side = 'sell' if delta > 0 else 'buy'  # Closing the converted inventory.
+            quantity = sim.liquidity(symbol, side, self._limit(sim, symbol, side, .001))
+            if quantity is None or not math.isfinite(quantity) or quantity < 0:
+                return 0
+            size = min(size, int(quantity * self.participation // abs(delta)))
+        return size
 
     def _size(self, sim, changes):
         size = self.lot
@@ -129,6 +149,7 @@ class BasketOverlay:
                 return False
             # Cancellations may race fills and perform blocking account refreshes.
             size = self._size(sim, changes)
+            size = self._execution_size(sim, changes, size)
             if not size or not self._fresh(sim, symbols) or self._opportunity(sim, etf, basket) != create:
                 return False
             self.targets = {s: sim.position[s] for s in symbols}

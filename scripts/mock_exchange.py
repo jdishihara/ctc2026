@@ -31,6 +31,16 @@ class H(BaseHTTPRequestHandler):
     def do_GET(self):
         if self.path == "/cases/hurricane.json":
             return self._json(STATE["case"])
+        if self.path.startswith('/api/v1/orderbook/'):
+            symbol = self.path.rsplit('/', 1)[-1]
+            with STATE['lock']:
+                mid = STATE['mid'].get(symbol)
+                if mid is None:
+                    return self._json({'error': 'no market'}, 404)
+                size = STATE.get('book_size', 100)
+                return self._json({'symbol': symbol,
+                    'bids': [{'price': mid * (1 - STATE['half_spread']), 'quantity': size}],
+                    'asks': [{'price': mid * (1 + STATE['half_spread']), 'quantity': size}]})
         if self.path.startswith("/api/v1/competitions/time"):
             return self._json({"state": "running" if STATE["open"] else "paused"})
         if self.path.startswith("/api/v1/positions"):

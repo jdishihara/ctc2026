@@ -110,3 +110,43 @@ real localhost conversion/refresh/three-order cycle and restores its starting
 positions with each fill logged once. This is an API integration test, not
 evidence about the competition server's actual schema or timing. Full suite:
 148 passed. This mock-only fix does not change replay strategy results.
+
+2026-10-23, Codex: frozen fixed-lot basket10 passes ordinary confirmation:
+means 10007.57/6507.57 vs 9452.36/5993.53; p10 540.38/-2220.72 vs
+-254.55/-2712.92. At 3s tune latency it also improves means, 6890.18/4255.48
+vs 6836.01/4034.64. However severe+3s mean falls 987.59 -> 914.35, so
+promotion is BLOCKED by the stress gate. No default change is justified yet.
+
+### Task 2: Bound basket size by observed executable depth
+
+**Cause under test:** A fixed 10-unit basket can exceed displayed liquidity in
+its doubled component legs, leading to delayed restorations. The prototype
+limited size to touch depth, while the coordinated implementation deliberately
+had no public depth interface. Add that interface before trusting the overlay.
+
+**Fixed candidate:** keep the frozen 1% threshold and maximum 10 units; cap each
+closing leg at half the displayed external quantity executable within its
+initial 0.1% limit. Size is the smallest leg capacity after dividing by basket
+units. Unknown/failed book reads skip the cycle. No midpoint-only depth estimate
+and no simulator-regime flag are allowed in the strategy.
+
+`Sim.liquidity(symbol, side, limit)` exposes remaining current book depth
+without consuming it. `LiveExchange.liquidity` reads the existing
+`GET /orderbook/{symbol}` route (already used by this repository's testnet
+recorder), validates levels, subtracts our same-price resting quantity, and
+returns None on unavailable/invalid data. Recheck quote freshness after all
+book reads. Calls use the same current limit prices used for closing orders.
+
+- [ ] RED→GREEN tests for non-consuming simulator depth, own-order subtraction,
+  unknown depth, per-component ratio sizing and freshness after blocking reads.
+- [ ] Test this one candidate on all tune seasons, normal deep/thin, 3s
+  deep/thin, and severe+3s. Require both normal means and thin p10 gate, both
+  delayed means, and severe mean improvement before freezing for confirmation.
+- [ ] Freeze parameters and confirm once; promote consistently only if the
+  confirmation gates pass. Include in the one final independent review.
+
+Ruling: fix the observed execution-capacity mismatch using only tuning stress
+evidence, not the candidate's already-inspected confirmation outcomes. One
+fixed 50% participation cap is a conservative design choice, not a parameter
+search. Cost if wrong is smaller captured profits or another rejected offline
+candidate; the fixed-lot overlay remains unpromoted.

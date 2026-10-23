@@ -33,12 +33,16 @@ class FairValueTrader(Strategy):
                  carry: float = 1.0, ent_cut: float = 0.0, rebuild_min_edge: float = 0.0, late_cut: float = 0.0,
                  edge_ramp: float = 0.0, final_exact: bool = False, final_edge: float = 0.0,
                  final_edge_full: float = 0.0, price_gate: float = 0.0,
-                 price_drift: float = 0.0, basket_edge: float = 0.0, **analog_kw):
+                 price_drift: float = 0.0, basket_edge: float = 0.0,
+                 basket_participation: float = 0.0, **analog_kw):
         for name, value in (("price_gate", price_gate), ("price_drift", price_drift), ("basket_edge", basket_edge)):
             if not math.isfinite(value) or value < 0:
                 raise ValueError(f"{name} must be finite and nonnegative")
         self.price_gate, self.price_drift = price_gate, price_drift
         self.basket_edge = basket_edge
+        if not 0 <= basket_participation <= 1:
+            raise ValueError('basket_participation must be between zero and one')
+        self.basket_participation = basket_participation
         if not math.isfinite(edge_ramp) or edge_ramp < 0:
             raise ValueError("edge_ramp must be finite and nonnegative")
         self.edge_ramp = edge_ramp      # minimum excess edge from the floor to full size (0 preserves the old rule)
@@ -74,7 +78,7 @@ class FairValueTrader(Strategy):
         self.basket = None
         if self.basket_edge:
             from .basket import BasketOverlay
-            self.basket = BasketOverlay(self.basket_edge)
+            self.basket = BasketOverlay(self.basket_edge, participation=self.basket_participation)
         self.price_signal = None
         if self.price_gate or self.price_drift:
             from .price_signal import PriceSignal

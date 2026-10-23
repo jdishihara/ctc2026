@@ -177,3 +177,42 @@ def test_strategy_drives_basket_before_fundamental_rebalance(tmp_path):
     sim.t = 121
     trader.on_quotes(sim)
     assert len(sim.pending) == len(basket) + 1
+
+
+def test_displayed_depth_limits_each_component_ratio(setup, monkeypatch):
+    overlay, sim = setup()
+    overlay.participation = .5
+    monkeypatch.setattr(sim, 'liquidity', lambda symbol, side, limit: {'A': 100, 'B': 14, 'ETF': 100}[symbol], raising=False)
+    assert overlay.on_quotes(sim)
+    assert [o.qty for o in sim.pending if o.symbol == 'ETF'] == [3]
+    assert [o.qty for o in sim.pending if o.symbol == 'B'] == [6]
+
+
+def test_unknown_or_stale_depth_skips_conversion(setup, monkeypatch):
+    overlay, sim = setup()
+    overlay.participation = .5
+    monkeypatch.setattr(sim, 'liquidity', lambda *args: None, raising=False)
+    assert not overlay.on_quotes(sim)
+    assert not any(sim.position.values())
+    overlay.last_attempt = -1e9
+    sim.quote_times = {s: sim.t for s in sim.quotes}
+    def slow_book(*args):
+        sim.t += 3
+        return 100
+    monkeypatch.setattr(sim, 'liquidity', slow_book)
+    assert not overlay.on_quotes(sim)
+    assert not any(sim.position.values())
+
+
+def test_simulator_depth_read_is_non_consuming_and_excludes_consumed_depth(setup):
+    from ctc.ladder import Ladder
+    _, sim = setup()
+    sim.ladder = Ladder(refill_secs=10, table={s: {'spread': .02, 'bands': [.01, .03],
+                                                'bid': [20, 40], 'ask': [20, 40]} for s in sim.symbols})
+    assert sim.liquidity('A', 'buy', 10.11) == 20
+    assert sim.liquidity('A', 'buy', 10.11) == 20
+    assert not sim.actions
+    sim.ladder.fill('A', 'buy', 7, 10, sim.t, 10.11)
+    assert sim.liquidity('A', 'buy', 10.11) == 13
+    sim.t += 2
+    assert sim.liquidity('A', 'buy', 10.11) == 17

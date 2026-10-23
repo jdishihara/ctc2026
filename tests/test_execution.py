@@ -43,6 +43,22 @@ def order(side="buy", qty=100):
             "filled_quantity": 0, "order_id": "old", "price": 100}
 
 
+def test_live_liquidity_subtracts_our_resting_size_and_respects_limit(exchange):
+    exchange.responses['/orderbook/PORT'] = {'asks': [{'price': 100, 'quantity': 20},
+        {'price': 101, 'quantity': 30}], 'bids': [{'price': 99, 'quantity': 40}]}
+    exchange.open_orders = [{**order('sell', 8), 'filled_quantity': 3}]
+    assert exchange.liquidity('PORT', 'buy', 100.5) == 15
+    assert exchange.liquidity('PORT', 'buy', 101) == 45
+    assert exchange.liquidity('PORT', 'sell', 98) == 40
+
+
+@pytest.mark.parametrize('book', [OSError('offline'), {'asks': [{'price': 100, 'quantity': float('nan')}]},
+                                  {'asks': [{'price': 100, 'quantity': -1}]}, {'asks': []}])
+def test_live_missing_or_invalid_depth_never_manufactures_capacity(exchange, book):
+    exchange.responses['/orderbook/PORT'] = book
+    assert not exchange.liquidity('PORT', 'buy', 100.5)
+
+
 def test_failed_cancel_preserves_reservation(exchange):
     exchange.open_orders = [order()]
     with patch.object(exchange, "send", return_value=None):

@@ -252,6 +252,30 @@ class LiveExchange:
         self.refresh()
         return self.state_ready and not any(symbol is None or o.get("symbol") == symbol for o in self.open_orders)
 
+    def liquidity(self, symbol: str, side: str, limit: float) -> int | None:
+        """Current external executable depth; unavailable books fail closed for baskets."""
+        if not self.state_ready:
+            return None
+        try:
+            book = self.get(f'/orderbook/{symbol}')
+            levels = book['asks' if side == 'buy' else 'bids']
+            resting_side = 'sell' if side == 'buy' else 'buy'
+            total = 0
+            for level in levels:
+                price, quantity = level['price'], level['quantity']
+                if (isinstance(price, bool) or isinstance(quantity, bool)
+                        or not math.isfinite(price) or price <= 0
+                        or not math.isfinite(quantity) or quantity < 0 or int(quantity) != quantity):
+                    return None
+                own = sum(int(o['quantity']) - int(o.get('filled_quantity', 0) or 0)
+                          for o in self.open_orders if o['symbol'] == symbol and o['side'] == resting_side
+                          and o.get('price') is not None and math.isclose(o['price'], price, rel_tol=0, abs_tol=1e-8))
+                if (side == 'buy' and price <= limit) or (side == 'sell' and price >= limit):
+                    total += max(0, int(quantity) - own)
+            return total
+        except (OSError, ValueError, TypeError, KeyError):
+            return None
+
     def create(self, etf: str, qty: int) -> bool:
         return self._convert(etf, qty, "create")
 
