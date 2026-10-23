@@ -30,11 +30,12 @@ class FairValueTrader(Strategy):
                  symbols: list[str] | None = None, project: bool = True, analog: bool = False,
                  sd_mult: float = 1.0, loss_limit: float | None = None, prior_mode: str = "sample",
                  passive: float = 0.0, warmup: float = 0.0, future_sd: float = 0.0, fair_jump: float = 0.0, max_cross: float = 0.0,
-                 carry: float = 1.0, ent_cut: float = 0.0, **analog_kw):
+                 carry: float = 1.0, ent_cut: float = 0.0, rebuild_min_edge: float = 0.0, **analog_kw):
         self.prior_mode = prior_mode
         self.carry = carry              # <1: between storms (after a final report, before the next storm forms) the position
                                         # limit is carry x the exchange limit, so less rides on the next storm's path
         self.ent_cut = ent_cut          # >0: do not add to a position while the pattern posterior's entropy exceeds this (nats)
+        self.rebuild_min_edge = rebuild_min_edge   # >0: edge floor for RECON/MAT/GEN (with the exact settlement rules their residual is ~0)
         self.max_cross = max_cross      # >0: an aggressive order never pays more than this fraction through the touch
                                         # (live, the house's book empties for a few seconds while it re-prices after a report)
         self.fair_jump = fair_jump      # >0: do not trade a symbol in a cycle where its fair moved by more than this
@@ -103,7 +104,10 @@ class FairValueTrader(Strategy):
         sd = self.model.resid_sd(s)
         if self.analog:
             sd = math.hypot(sd, self.sd_mult * self.model.fair_sd.get(s, 0.0))
-        return max(self.min_edge, 2.0 * sd / max(1e-9, sim.mid[s]))
+        floor = max(self.min_edge, 2.0 * sd / max(1e-9, sim.mid[s]))
+        if self.rebuild_min_edge > 0 and s in ("RECON", "MAT", "GEN"):
+            floor = max(floor, self.rebuild_min_edge)
+        return floor
 
     def on_quotes(self, sim) -> None:
         if sim.t - self.last_trade_t < self.every or sim.t - self.round_open_t < self.warmup:

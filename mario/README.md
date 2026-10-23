@@ -31,6 +31,13 @@ places with a particle filter; CPUs have a prior mean of -0.6 (humans usually fi
 which matches the packet's example). If after race 1 the humans are all behind several CPUs, rerun with
 `--cpu-skill 0` or `+0.3`; if a human wins outright and the others are top-4, keep -0.6.
 
+## Calibration (2026-10-23)
+
+300 series simulated from the pricer's own model: race-winner Brier score 0.69 / 0.65 / 0.64 after 1 / 2 / 3 races (0.75 for
+flat 25% quotes), series-winner Brier 0.50 / 0.34 / 0.21. Predicted race-winner probabilities of 0.15-0.25 came in at 0.22,
+0.25-0.35 at 0.30, 0.35-0.50 at 0.40 and 0.50+ at 0.60: slightly over-confident on favourites, so shade a 55% quote to 50-52.
+The likelihood temperature (the /8 in `_loglik`) changes the Brier by under 0.01 between 4 and 32.
+
 ## Trading rules of thumb
 
 1. Before race 1 every race-winner contract is worth 25 and every series-winner contract 25: fade anything far from
