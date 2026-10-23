@@ -61,7 +61,7 @@ and the log. One person watches the race and types the result; one person clicks
 the UI; the human still clicks the submit button. Off by default: ask in #questions whether a bot filling the form is
 within "trading manually through the UI" before using it.
 
-Flags: `--interval 1.0` (poll period; 46 book requests per poll, use 2 if the exchange rate-limits), `--clip 50` (max
+Flags: `--interval 1.0` (poll period; 46 book requests per poll, well inside the packet's 600 requests per second per team; the packet also caps the browser at 40 orders per minute, so the clicker has about one order every 1.5 s), `--clip 50` (max
 size per action), `--risk 1500` (score contracts: size x sd <= risk), `--min-profit 5`, `--cpu-skill -0.6`.
 
 ### Drill (no exchange needed)

@@ -1,5 +1,6 @@
 """Derivatives case toolkit: Black-Scholes prices and greeks, implied vol, a mispricing scanner for the 12 contracts,
-and an analyst scorecard. No bots are allowed in this case; this is a calculator for the humans at the desk.
+and an analyst scorecard. The 2026-10-23 packet allows bots here too but gives no API key (same situation as Mario:
+mario/tap.py can read the books through the UI's browser session); this is the calculator for the humans at the desk.
 
     python3 derivs/bs.py price --S 80 --K 85 --iv 0.35 --T 20
     python3 derivs/bs.py iv --S 80 --K 85 --T 20 --price 2.1 --type call
