@@ -58,6 +58,8 @@ def main():
     ap.add_argument("--final-exact", action=argparse.BooleanOptionalAction, default=True)
     ap.add_argument("--final-edge", type=float, default=0.005)
     ap.add_argument("--final-edge-full", type=float, default=0.005)
+    ap.add_argument('--basket-edge', type=float, default=0.01)
+    ap.add_argument('--basket-participation', type=float, default=0.5)
     ap.add_argument("--json", default=None, help="write per-season detail here")
     a = ap.parse_args()
     root = Path(__file__).resolve().parents[1] / "data"
@@ -67,6 +69,7 @@ def main():
         meta = man["seasons"][n - 1]
         sim = Sim(root / "history" / meta["dir"], case, rate_limit=120, ladder=Ladder(refill_secs=a.refill, scale=a.ladder_scale))
         st = Recorder(min_edge=a.min_edge, edge_full=a.edge_full, analog=True, sd_mult=a.sd_mult, sigma=a.sigma, k=a.k, passive=0.75, warmup=20, max_cross=0.02, ent_cut=1.2, carry=0.5, cone_w=1.0, cone_s0=20.0,
+                      basket_edge=a.basket_edge, basket_participation=a.basket_participation,
                       final_exact=a.final_exact, final_edge=a.final_edge, final_edge_full=a.final_edge_full)
         pnl = sim.run(st)
         cell = {}

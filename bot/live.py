@@ -347,12 +347,14 @@ async def run(args: argparse.Namespace) -> None:
         strat = S.FairValueTrader(min_edge=args.min_edge, edge_full=args.edge_full, project=True)
     else:   # the analog ensemble, same parameters as scripts/backtest.py --strategy analog
         strat = S.FairValueTrader(min_edge=args.min_edge, edge_full=args.edge_full, analog=True, sd_mult=args.sd_mult,
+                                  basket_edge=args.basket_edge, basket_participation=args.basket_participation,
                                   final_exact=args.final_exact, final_edge=args.final_edge, final_edge_full=args.final_edge_full,
                                   sigma=args.sigma, k=args.k, passive=args.passive, warmup=args.warmup, max_cross=args.max_cross,
                                   carry=args.carry, ent_cut=args.ent_cut, cone_w=args.cone_w, cone_s0=args.cone_s0, cone_nu=args.cone_nu, isl_w=args.isl_w)
     print(f"strategy {'nowcast' if args.nowcast else 'analog'} min_edge {args.min_edge} edge_full {args.edge_full} sd_mult {args.sd_mult} sigma {args.sigma} k {args.k} passive {args.passive} warmup {args.warmup} max_cross {args.max_cross} carry {args.carry} ent_cut {args.ent_cut} cone_w {args.cone_w} cone_s0 {args.cone_s0} cone_nu {args.cone_nu} isl_w {args.isl_w}", flush=True)
     strat.on_start(ex)
     print(f"final phase exact={strat.final_exact} entry={strat.final_edge} full={strat.final_edge_full}", flush=True)
+    print(f"basket edge={strat.basket_edge} participation={strat.basket_participation} max_lot=10", flush=True)
     ex.refresh()
     season_year = ""
     last_round = 0
@@ -446,6 +448,8 @@ def main() -> None:
     ap.add_argument("--dry-run", action="store_true")
     ap.add_argument("--min-edge", type=float, default=0.025)
     ap.add_argument("--edge-full", type=float, default=0.03)
+    ap.add_argument('--basket-edge', type=float, default=0.01, help='net quoted ETF/basket edge (0 disables the overlay)')
+    ap.add_argument('--basket-participation', type=float, default=0.5, help='maximum fraction of displayed external depth per closing leg')
     ap.add_argument("--final-exact", action=argparse.BooleanOptionalAction, default=True,
                     help="use exact final rules after three reports and complete recorded weather")
     ap.add_argument("--final-edge", type=float, default=0.005, help="entry floor in the exact final phase (0 = normal floor)")

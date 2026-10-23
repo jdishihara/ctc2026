@@ -5,7 +5,68 @@ This continuation tests independent sources of PnL beyond the accepted
 Seasons 526–600 have been inspected in earlier work and are **reused
 confirmation data**, not an untouched holdout. No remote orders were placed.
 
-## Basket overlay: frozen tune candidate
+## Accepted candidate: size against displayed depth
+
+The promoted candidate uses `--basket-edge 0.01 --basket-participation 0.5`:
+at most 10 ETF units, capped by half the displayed external quantity of every
+closing leg within its initial 0.1% limit. The weakest leg determines size.
+Unknown/invalid books and stale quotes skip entry. Own resting size is excluded.
+Use `--basket-edge 0` to return to the accepted pre-overlay strategy.
+
+| Confirmation metric | Deep baseline | Deep candidate | Thin baseline | Thin candidate |
+|---|---:|---:|---:|---:|
+| Mean PnL | 9452.36 | **9925.95** | 5993.53 | **6412.88** |
+| Median | 9381.40 | 9989.60 | 6205.64 | 6404.41 |
+| p10 | -254.55 | 512.72 | -2712.92 | -2459.40 |
+| Worst season | -15984.81 | -15710.93 | -17314.91 | -17076.71 |
+| Losing seasons | 8/75 | 7/75 | 13/75 | 13/75 |
+| Fills per season | 376.80 | 423.43 | 918.83 | 954.15 |
+| Peak actions/minute | 41 | 48 | 48 | 56 |
+
+Means improve **473.59 / 419.36 (5.01% / 7.00%)** versus `aa51985`.
+71/75 deep and 69/75 thin seasons improve. Paired mean-delta 95% bootstrap
+intervals are **[386.90,566.47] / [283.23,563.94]**, with 10,000 resamples and
+seed 20261023. These intervals condition on the historical sample and simulator;
+they exclude selection uncertainty, live schema/timing errors and competing
+teams. No candidate was selected by these confirmation numbers.
+
+All normal confirmation and tune runs have zero basket timeout restorations,
+zero rate blocks and zero rejected orders. The candidate was frozen at
+`2ec8d26` after tune and stress gates, before its confirmation run.
+
+| Tune execution regime | Baseline mean | Candidate mean | Baseline p10 | Candidate p10 |
+|---|---:|---:|---:|---:|
+| Deep, 0.25s | 8643.98 | 9144.20 | -1577.25 | -1127.16 |
+| Thin, 0.25s | 5176.69 | 5603.77 | -3729.45 | -3443.49 |
+| Deep, 3s | 6836.01 | 6883.22 | -3914.40 | -4087.52 |
+| Thin, 3s | 4034.64 | 4065.70 | -5280.18 | -5078.85 |
+| Severe, 3s | 987.59 | 1285.44 | -8287.64 | -7953.12 |
+
+Severe means quarter depth and 60s replenishment. Three-second delay sharply
+reduces absolute profit for both strategies. Its deep/thin incremental gains
+are only 47.21/31.06, with intervals [-287.12,340.42]/[-231.56,285.43]; the
+data do not establish a reliable gain at that delay. Severe incremental gain
+is 297.85, interval [111.97,482.21]. Delayed deep p10 is worse by 173.11.
+Delayed deep/thin/severe require 408/374/333 timeout restorations across 75
+seasons; peak actions remain 58/59/58 with no blocks or rejections.
+
+Live, backtest, preflight and diagnostic commands use the same promoted
+settings. The generic strategy constructor keeps the overlay disabled for
+explicit experiment compatibility. Final code review is in progress.
+
+[Machine-readable evidence](research-continuation.json) contains full invocation
+parameters, source revisions, file hashes, all 54 experiment summaries and
+per-season PnL, internal screens and paired confidence intervals.
+
+The full suite has 157 passing tests. The actual default backtest CLI reproduces
+frozen season 451 PnL 12007.83 and all 381 fills; the diagnostic script agrees.
+Preflight constructs the same configuration. The localhost HTTP integration
+exercises book reads, conversion, account refresh and three closing legs.
+A full 25x localhost replay reached all three rounds and produced 34 fills,
+each logged once, with no HTTP/reconciliation errors. Its compressed clock and
+flat spread make its PnL unsuitable as a performance benchmark.
+
+## Basket design and the rejected fixed-lot precursor
 
 The overlay trades a discrepancy between an ETF and its component basket.
 It cancels participating orders, captures reconciled starting positions,
@@ -31,8 +92,10 @@ The 1% candidate increases tune means 6.6% / 10.8% and improves thin p10 by
 Average cycles are 8.17/8.47 per season, with 17/192 timeout restorations across
 75 seasons. Selection was committed at `ae41076` before confirmation.
 
-Confirmation and stress results are recorded below when the frozen runs finish.
-Launch defaults remain unchanged until those gates and code review are complete.
+The fixed-lot version passed normal confirmation (means 10007.57/6507.57) and
+3s deep/thin stress (6890.18/4255.48). It failed the severe+3s mean gate,
+987.59 -> 914.35, and was not promoted. That tuning-stress failure motivated
+one fixed depth cap, not a new threshold search or tuning on confirmation.
 
 ## Rejected price timing
 
@@ -131,6 +194,10 @@ python scripts/experiment_basket.py --out out/basket-tune-new
 python scripts/experiment_basket.py --split verify --configs baseline,basket10 --out out/basket-verify-new
 python scripts/experiment_basket.py --configs baseline,basket10 --latency 3 --out out/basket-latency-new
 python scripts/experiment_basket.py --configs baseline,basket10 --regimes severe --latency 3 --out out/basket-severe-new
+python scripts/experiment_basket_depth.py --out out/basket-depth-tune-new
+python scripts/experiment_basket_depth.py --latency 3 --out out/basket-depth-latency-new
+python scripts/experiment_basket_depth.py --regimes severe --latency 3 --out out/basket-depth-severe-new
+python scripts/experiment_basket_depth.py --split verify --configs baseline,basket_depth --out out/basket-depth-verify-new
 python -m pytest -q
 ```
 

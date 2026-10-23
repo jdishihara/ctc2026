@@ -1,4 +1,21 @@
-# Competition continuation 2026-10-23 (Codex)
+# Basket continuation 2026-10-23 (Codex)
+
+Frozen at `2ec8d26`: 1% net quoted basket edge, maximum 10 ETF units, capped by
+50% of each closing leg's external executable depth. Same fundamental model.
+Confirmation means **9925.95 / 6412.88** versus 9452.36 / 5993.53; p10
+**512.72 / -2459.40** versus -254.55 / -2712.92. Worst seasons improve in
+both regimes; losing counts 7/75 and 13/75. Paired gain intervals
+[386.90,566.47] / [283.23,563.94]. Zero normal basket timeouts, rate blocks or
+rejections; peak actions 48/56. Three-second delay gains are small and uncertain;
+severe+3s mean improves 987.59 -> 1285.44. No live performance claim.
+
+Promoted consistently in launch commands after all PnL gates; final review in
+progress. Price timing, direct cone centering and fixed-lot basket precursors
+were rejected under the recorded gates. [Complete evidence and reproduction](docs/research-continuation.md).
+
+---
+
+# Earlier competition continuation 2026-10-23 (Codex)
 
 Frozen tune winner `final_limit` at `2ae7a02`: correct saturated-site report
 allocation, exact final valuation, 0.5% entry/full-size final thresholds. The

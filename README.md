@@ -53,6 +53,15 @@ They activate only after all three final reports with complete recorded weather;
 gaps or snapshot reconstruction keep the conservative settings. Per-symbol
 residual-error floors still apply. Use `--no-final-exact` to disable this phase.
 
+The accepted basket overlay uses `--basket-edge 0.01 --basket-participation 0.5`.
+It trades ETF/component discrepancies with at most 10 ETF units, sized to half
+the displayed external liquidity of each closing leg. It requires fresh books,
+reserves action capacity, and restores starting positions after partial fills.
+`--basket-edge 0` disables it. Confirmation mean PnL is **9,925.95 deep /
+6,412.88 thin**, versus 9,452.36 / 5,993.53 before the overlay. These are
+historical simulator results; delay substantially reduces the advantage.
+See [full results, stresses and rejected experiments](docs/research-continuation.md).
+
 Live bot (testnet or competition), dry run first:
 
 ```bash
@@ -88,6 +97,8 @@ What to look for:
 - `strategy analog min_edge 0.025 edge_full 0.03 … carry 0.5 … cone_w 1.0 cone_s0 20.0` at start, then `replayed N feed messages of season year Y`: the accepted configuration rebuilt from the recording. Anything else, stop and check the flags and FEED_LOG.
 - `final phase exact=True entry=0.005 full=0.005`: accepted final-phase settings;
   these require every weather observation and all three final reports.
+- `basket edge=0.01 participation=0.5 max_lot=10`: accepted basket settings;
+  missing or invalid order books skip basket entries. The core strategy continues.
 - `snapshot processed: warm-up before trading` and `market (re)opened: warm-up`: no orders for 20 s. Fair values in the
   first line after a connect can be far from the mids (the model is still catching up); they should be sane by the second line.
 - Round opens: the house re-prices by about 7% from the previous close, stays quiet for 30 s, then moves about 3% over the
@@ -142,13 +153,14 @@ small difference is not evidence of a material new trading advantage. See
 Remote exchange behavior still needs a supervised testnet check before deploying
 this branch.
 
-## Competition strategy continuation (2026-10-23)
+## Pre-overlay strategy reference (2026-10-23)
 
-The new accepted defaults achieve verification means **9,452.36 deep / 5,993.53
+The earlier accepted defaults achieved verification means **9,452.36 deep / 5,993.53
 thin**, increases of 106.85 / 66.13 over the efficiency patch. Thin p10 worsens
 1.14%, within the 10% acceptance limit; deep p10 and the worst season also worsen
 slightly. Losing-season counts are unchanged. Peak actions are 41/48 per minute,
-below the 120 cap, with zero simulated rejections. The suite now has 88 tests.
+below the 120 cap, with zero simulated rejections. That revision had 88 tests.
+The current overlay results are [documented separately](docs/research-continuation.md).
 
 Damage reports now redistribute saturated-site damage correctly. Final-round
 valuation and sizing use the reduced uncertainty after all reports, gated on

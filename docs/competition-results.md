@@ -1,5 +1,8 @@
 # Competition strategy continuation — 2026-10-23
 
+This report records the pre-overlay reference. The later accepted basket
+continuation and its execution stresses are in [the current report](research-continuation.md).
+
 ## Accepted configuration
 
 Candidate `final_limit` was selected on seasons 451–525 and frozen at `2ae7a02`

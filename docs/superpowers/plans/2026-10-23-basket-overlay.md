@@ -137,9 +137,9 @@ recorder), validates levels, subtracts our same-price resting quantity, and
 returns None on unavailable/invalid data. Recheck quote freshness after all
 book reads. Calls use the same current limit prices used for closing orders.
 
-- [ ] RED→GREEN tests for non-consuming simulator depth, own-order subtraction,
+- [x] RED→GREEN tests for non-consuming simulator depth, own-order subtraction,
   unknown depth, per-component ratio sizing and freshness after blocking reads.
-- [ ] Test this one candidate on all tune seasons, normal deep/thin, 3s
+- [x] Test this one candidate on all tune seasons, normal deep/thin, 3s
   deep/thin, and severe+3s. Require both normal means and thin p10 gate, both
   delayed means, and severe mean improvement before freezing for confirmation.
 - [ ] Freeze parameters and confirm once; promote consistently only if the
@@ -169,3 +169,15 @@ Normal tune has no timeout restorations; delayed deep/thin/severe have
 Only baseline/basket_depth will be inspected on confirmation. A truncated
 HTTP book response was also reproduced with a failing test and now returns
 unknown depth, skipping a cycle; this live error-path fix does not alter replay.
+
+2026-10-23, Codex: frozen depth candidate passes confirmation. Deep/thin means
+9925.95/6412.88 versus 9452.36/5993.53; p10 512.72/-2459.40 versus
+-254.55/-2712.92. Worst seasons improve in both regimes, losing counts 7/75
+and 13/75, zero normal timeout restorations, rate blocks and rejections.
+Launch defaults promoted consistently to basket edge .01 / participation .5,
+with edge 0 as the disable switch. Generic constructor remains disabled.
+
+Full suite 157 passed; actual default CLI and diagnostic reproduce season 451
+PnL 12007.83 and 381 fills. Local HTTP tests cover depth/convert/refresh/close.
+Full local mock replay completes three rounds, 34 fills logged once each, no
+HTTP/reconciliation errors. No remote orders. Independent final review remains.

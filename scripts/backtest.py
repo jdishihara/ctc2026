@@ -16,6 +16,7 @@ STRATS = {
     "nowcast": lambda a: S.FairValueTrader(min_edge=a.min_edge, edge_full=a.edge_full, project=True),
     "noproject": lambda a: S.FairValueTrader(min_edge=a.min_edge, edge_full=a.edge_full, project=False),
     "analog": lambda a: S.FairValueTrader(min_edge=a.min_edge, edge_full=a.edge_full, analog=True, sd_mult=a.sd_mult,
+                                          basket_edge=a.basket_edge, basket_participation=a.basket_participation,
                                           rebalance_every=a.rebalance_every, edge_ramp=a.edge_ramp,
                                           final_exact=a.final_exact, final_edge=a.final_edge, final_edge_full=a.final_edge_full,
                                           wind_condition=a.wind_condition,
@@ -43,6 +44,8 @@ def main():
     ap.add_argument("--ladder-scale", type=float, default=1.0, help="ladder: multiply all sizes")
     ap.add_argument("--min-edge", type=float, default=0.025)
     ap.add_argument("--edge-full", type=float, default=0.03)
+    ap.add_argument('--basket-edge', type=float, default=0.01, help='net quoted ETF/basket edge (0 disables the overlay)')
+    ap.add_argument('--basket-participation', type=float, default=0.5, help='maximum fraction of displayed external depth per closing leg')
     ap.add_argument("--rebalance-every", type=float, default=15.0, help="seconds between normal rebalances")
     ap.add_argument("--rate-limit", type=int, default=120, help="order actions/minute; matches the live bot")
     ap.add_argument("--edge-ramp", type=float, default=0.0, help="experimental minimum excess-edge sizing width (0 = original)")
