@@ -87,7 +87,8 @@ class Sim:
 
     # ---------- public API for strategies ----------
     def resting(self, symbol: str, side: str) -> int:
-        return sum(o.qty - o.filled for o in self.orders.values() if o.symbol == symbol and o.side == side)
+        return sum(o.qty - o.filled for o in (*self.orders.values(), *self.pending)
+                   if o.symbol == symbol and o.side == side)
 
     def _action_ok(self) -> bool:
         while self.actions and self.actions[0] < self.t - 60:
@@ -122,11 +123,12 @@ class Sim:
             self.pending = [p for p in self.pending if p.id != oid]
         return True
 
-    def cancel_all(self, symbol: str | None = None) -> None:
+    def cancel_all(self, symbol: str | None = None) -> bool:
         if not self._action_ok():
-            return
+            return False
         self.orders = {k: o for k, o in self.orders.items() if symbol is not None and o.symbol != symbol}
         self.pending = [p for p in self.pending if symbol is not None and p.symbol != symbol]
+        return True
 
     def create(self, etf: str, qty: int) -> bool:
         return self._etf(etf, qty, +1)

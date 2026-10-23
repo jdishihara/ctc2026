@@ -1,0 +1,193 @@
+import json
+from pathlib import Path
+from unittest.mock import patch
+
+import pytest
+
+from bot.live import LiveExchange
+from ctc.sim import Sim
+from ctc.strategies import FairValueTrader
+
+CASE = json.loads((Path(__file__).resolve().parents[1] / "data/case.json").read_text())
+
+
+class ScriptedExchange(LiveExchange):
+    """Replace only external HTTP; exercise real account/order/strategy logic."""
+    def __init__(self):
+        self.responses = {
+            "/cases/hurricane.json": CASE,
+            "/competitions/time": {"state": "running", "competition_id": "season-1"},
+            "/positions": {"positions": [{"symbol": "PORT", "quantity": 10,
+                "average_price": 100, "realized_pnl": 20, "unrealized_pnl": -10}]},
+            "/orders/open": {"orders": []},
+            "/trades": {"trades": []},
+        }
+        super().__init__("http://example.invalid", "test-only", False)
+        self.refresh()
+
+    def get(self, path, api=True):
+        value = self.responses[path]
+        if isinstance(value, Exception):
+            raise value
+        return value
+
+
+@pytest.fixture
+def exchange():
+    return ScriptedExchange()
+
+
+def order(side="buy", qty=100):
+    return {"symbol": "PORT", "side": side, "quantity": qty,
+            "filled_quantity": 0, "order_id": "old", "price": 100}
+
+
+def test_failed_cancel_preserves_reservation(exchange):
+    exchange.open_orders = [order()]
+    with patch.object(exchange, "send", return_value=None):
+        assert exchange.cancel_all("PORT") is False
+    assert exchange.resting("PORT", "buy") == 100
+
+
+def test_successful_empty_cancel_ack_clears_only_requested_symbol(exchange):
+    exchange.open_orders = [order(), {**order(), "symbol": "GRID"}]
+    with patch.object(exchange, "send", return_value={}):
+        assert exchange.cancel_all("PORT") is True
+    assert exchange.resting("PORT", "buy") == 0
+    assert exchange.resting("GRID", "buy") == 100
+
+
+def test_rate_limited_cancel_preserves_reservation(exchange):
+    exchange.open_orders = [order()]
+    exchange.rate_limit = 0
+    assert exchange.cancel_all("PORT") is False
+    assert exchange.resting("PORT", "buy") == 100
+
+
+def test_failed_refresh_blocks_trading_until_complete_reconciliation(exchange):
+    exchange.responses["/orders/open"] = TimeoutError("account unavailable")
+    exchange.responses["/positions"]["positions"][0]["quantity"] = 150
+    exchange.refresh()
+    assert exchange.position["PORT"] == 10  # A partial snapshot must not leak into live state.
+    with patch.object(exchange, "send", return_value={"order_id": "new", "filled_quantity": 1}):
+        assert exchange.place("PORT", "buy", 1, 90) is None
+        assert exchange.create("ARCH", 1) is False
+        assert exchange.redeem("ARCH", 1) is False
+    exchange.responses["/orders/open"] = {"orders": []}
+    exchange.refresh()
+    with patch.object(exchange, "send", return_value={"order_id": "new", "filled_quantity": 1}):
+        assert exchange.place("PORT", "buy", 1, 90) == "new"
+    assert exchange.position["PORT"] == 151
+
+
+def test_empty_positions_clear_previous_account_state(exchange):
+    exchange.responses["/positions"] = {"positions": []}
+    exchange.refresh()
+    assert exchange.position["PORT"] == 0
+    assert exchange.pnl_now == 0
+
+
+def test_order_timeout_requires_reconciliation_before_another_order(exchange):
+    with patch("bot.live.urllib.request.urlopen", side_effect=TimeoutError("unknown order outcome")):
+        assert exchange.place("PORT", "buy", 5, 90) is None
+    with patch.object(exchange, "send", return_value={"order_id": "duplicate", "filled_quantity": 5}):
+        assert exchange.place("PORT", "buy", 5, 90) is None
+
+
+def test_zero_capacity_does_not_spend_order_action(exchange):
+    exchange.position["PORT"] = CASE["limits"]["PORT"]
+    assert exchange.place("PORT", "buy", 1, 90) is None
+    assert len(exchange.actions) == 0
+
+
+def trader(exchange):
+    strategy = FairValueTrader(min_edge=0.025, edge_full=0.03, symbols=["PORT"])
+    strategy.on_start(exchange)
+    strategy.model.round = 3
+    strategy.model.storm_reported = True
+    strategy.fair = {"PORT": 120}
+    exchange.mid = {"PORT": 100}
+    exchange.quotes = {"PORT": (99, 101)}
+    return strategy
+
+
+def test_aggressive_replacement_waits_for_successful_cancel(exchange):
+    strategy = trader(exchange)
+    exchange.open_orders = [order("sell", 30)]
+    with patch.object(exchange, "cancel_all", return_value=False), \
+            patch.object(exchange, "send", return_value={"order_id": "wrong", "filled_quantity": 1}):
+        strategy.on_quotes(exchange)
+    # Failure left the existing order and position unchanged; no replacement was submitted.
+    assert exchange.position["PORT"] == 10
+    assert exchange.open_orders == [order("sell", 30)]
+    assert len(exchange.actions) == 0
+
+
+def test_paused_symbol_cancels_resting_quotes_even_during_warmup(exchange):
+    strategy = trader(exchange)
+    strategy.warmup = 20
+    strategy.on_round(exchange)
+    strategy.pause(["PORT"])
+    exchange.open_orders = [order()]
+    with patch.object(exchange, "send", return_value={"cancelled": 1}):
+        strategy.on_quotes(exchange)
+    assert exchange.resting("PORT", "buy") == 0
+
+
+def test_simulator_reserves_pending_orders(tmp_path):
+    # No market replay is required to exercise the order/latency boundary.
+    (tmp_path / "settlement.json").write_text(json.dumps({"PORT": 100}))
+    (tmp_path / "market.csv").write_text("time,round,PORT\n")
+    (tmp_path / "feed.jsonl").write_text("")
+    sim = Sim(tmp_path, {"limits": {"PORT": 200}})
+    sim.market_open = True
+    sim.place("PORT", "buy", 150, 100)
+    sim.place("PORT", "buy", 150, 100)
+    assert sum(o.qty for o in sim.pending) == 200
+    assert sim.resting("PORT", "buy") == 200
+    assert sim.cancel_all("PORT") is True
+    assert sim.resting("PORT", "buy") == 0
+
+
+def test_filled_passive_quote_is_replenished(exchange):
+    strategy = trader(exchange)
+    strategy.passive = 0.75
+    strategy.passive_order["PORT"] = ("buy", 100.99, exchange.t)
+    exchange.open_orders = []  # Previous order filled; cached quote metadata is stale.
+    with patch.object(exchange, "send", return_value={"order_id": "replacement", "filled_quantity": 0}):
+        strategy.quote_passive(exchange, "PORT", 103, 100, 101, 1, 0.025, 200, 10)
+    assert exchange.resting("PORT", "buy") > 0
+
+
+def test_passive_replacement_does_not_ignore_cancel_failure(exchange):
+    strategy = trader(exchange)
+    strategy.passive = 0.75
+    strategy.passive_order["PORT"] = ("sell", 99, exchange.t)
+    exchange.open_orders = [order("sell", 30)]
+    with patch.object(exchange, "cancel_all", return_value=False), \
+            patch.object(exchange, "send", return_value={"order_id": "wrong", "filled_quantity": 1}):
+        strategy.quote_passive(exchange, "PORT", 103, 100, 101, 1, 0.025, 200, 10)
+    assert exchange.position["PORT"] == 10
+    assert exchange.open_orders == [order("sell", 30)]
+
+
+def test_pause_retries_cancel_after_failure(exchange):
+    strategy = trader(exchange)
+    strategy.pause(["PORT"])
+    exchange.open_orders = [order()]
+    with patch.object(exchange, "send", return_value=None):
+        strategy.on_quotes(exchange)
+    assert exchange.resting("PORT", "buy") == 100
+    exchange.t0 -= 2
+    with patch.object(exchange, "send", return_value={"cancelled": 1}):
+        strategy.on_quotes(exchange)
+    assert exchange.resting("PORT", "buy") == 0
+
+
+@pytest.mark.parametrize("response", [None, {"error": "unavailable"}, {"positions": [{"symbol": "PORT"}]}])
+def test_malformed_position_response_blocks_new_orders(exchange, response):
+    exchange.responses["/positions"] = response
+    exchange.refresh()
+    with patch.object(exchange, "send", return_value={"order_id": "wrong", "filled_quantity": 1}):
+        assert exchange.place("PORT", "buy", 1, 90) is None
+    assert exchange.position["PORT"] == 10

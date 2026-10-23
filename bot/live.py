@@ -38,6 +38,7 @@ class LiveExchange:
         self.position: dict[str, int] = {s: 0 for s in self.symbols}
         self.open_orders: list[dict[str, Any]] = []
         self.market_open = False
+        self.state_ready = False  # complete account snapshot required before any new exposure
         self.t0 = time.time()
         self.actions: collections.deque[float] = collections.deque()
         self.rate_limit = rate_limit
@@ -67,13 +68,21 @@ class LiveExchange:
                                      headers={**HEADERS, "X-API-Key": self.key, "Content-Type": "application/json"})
         try:
             with urllib.request.urlopen(req, timeout=10) as r:
-                return json.load(r)
+                payload = r.read()
+                return json.loads(payload) if payload else {}
         except urllib.error.HTTPError as exc:
             self.rejected += 1
+            self.state_ready = False
             detail = exc.read().decode()[:200]
             print(f"HTTP {exc.code} {method} {path} {body}: {detail}", flush=True)
             if exc.code == 403 and "halted" in detail:
                 self.market_open = False                     # stop sending until the next time poll says running
+            return None
+        except (OSError, ValueError) as exc:
+            # A timeout may have happened after the exchange accepted the action.
+            # Do not retry or free capacity until positions/orders are reconciled.
+            self.state_ready = False
+            print(f"uncertain {method} {path}: {exc}; waiting for account refresh", flush=True)
             return None
 
     def _action_ok(self) -> bool:
@@ -90,31 +99,47 @@ class LiveExchange:
         try:
             tm = self.get("/competitions/time")
             was_open = self.market_open
-            self.market_open = tm.get("state") == "running"
-            self.reopened = self.market_open and not was_open
             cid = tm.get("competition_id")
-            if self.competition_id and cid != self.competition_id:
-                print(f"SEASON END competition {self.competition_id} ({tm.get('fictional_time')}): last positions {json.dumps(self.last_positions)}", flush=True)
-                self.position = {s: 0 for s in self.symbols}
-                self.trade_cursor = None
-            self.competition_id = cid
-            self.poll_trades()
             pos = self.get("/positions")
             items = pos.get("positions", pos) if isinstance(pos, dict) else pos
-            if items:
-                self.last_positions = {"realized": round(sum(p.get("realized_pnl", 0) for p in items)),
-                                       "unrealized": round(sum(p.get("unrealized_pnl", 0) for p in items)),
-                                       "positions": {p["symbol"]: p.get("quantity") for p in items},
-                                       "realized_by": {p["symbol"]: round(p.get("realized_pnl", 0)) for p in items},
-                                       "avg_price": {p["symbol"]: p.get("average_price") for p in items}}
-                self.pnl_now = self.last_positions["realized"] + self.last_positions["unrealized"]
-            for p in items if isinstance(items, list) else []:
-                sym = p.get("symbol"); q = p.get("quantity", p.get("position"))
-                if sym in self.position and q is not None:
-                    self.position[sym] = int(q)
             oo = self.get("/orders/open")
-            self.open_orders = oo.get("orders", oo) if isinstance(oo, dict) else oo
-        except Exception as exc:  # keep trading on stale state rather than crash
+            orders = oo.get("orders", oo) if isinstance(oo, dict) else oo
+            if not isinstance(items, list) or not isinstance(orders, list):
+                raise ValueError("positions and open orders must be lists")
+            positions = {s: 0 for s in self.symbols}
+            for p in items:
+                sym = p.get("symbol"); q = p.get("quantity", p.get("position"))
+                if sym in positions:
+                    if q is None:
+                        raise ValueError(f"missing position quantity for {sym}")
+                    positions[sym] = int(q)
+            for o in orders:
+                if o.get("symbol") not in self.limits or o.get("side") not in ("buy", "sell"):
+                    raise ValueError("invalid open order")
+                if int(o["quantity"]) < int(o.get("filled_quantity", 0)):
+                    raise ValueError("invalid remaining order quantity")
+            summary = {"realized": round(sum(p.get("realized_pnl", 0) for p in items)),
+                       "unrealized": round(sum(p.get("unrealized_pnl", 0) for p in items)),
+                       "positions": positions.copy(),
+                       "realized_by": {p["symbol"]: round(p.get("realized_pnl", 0)) for p in items},
+                       "avg_price": {p["symbol"]: p.get("average_price") for p in items}}
+            if self.competition_id and cid != self.competition_id:
+                print(f"SEASON END competition {self.competition_id} ({tm.get('fictional_time')}): last positions {json.dumps(self.last_positions)}", flush=True)
+                self.trade_cursor = None
+                self.quotes.clear(); self.mid.clear()
+            # Publish a complete snapshot only after every required request succeeds.
+            self.competition_id = cid
+            self.position, self.open_orders = positions, orders
+            self.last_positions = summary
+            self.pnl_now = summary["realized"] + summary["unrealized"]
+            self.market_open = tm.get("state") == "running"
+            self.reopened = self.market_open and not was_open
+            self.state_ready = True
+            self.poll_trades()
+        except Exception as exc:
+            self.state_ready = False
+            self.market_open = False
+            self.reopened = False
             print(f"refresh failed: {exc}", flush=True)
 
     def poll_trades(self) -> None:
@@ -154,12 +179,14 @@ class LiveExchange:
 
     # ---- orders (same signatures as Sim) ----
     def place(self, symbol: str, side: str, qty: int, price: float | None = None) -> int | None:
-        if not self.market_open or qty <= 0 or not self._action_ok():
+        if not self.market_open or not self.state_ready or qty <= 0:
             return None
         sign = 1 if side == "buy" else -1
         room = self.limits[symbol] - sign * self.position[symbol] - self.resting(symbol, side)
         qty = min(int(qty), room)
         if qty <= 0:
+            return None
+        if not self._action_ok():
             return None
         order = {"symbol": symbol, "side": side, "order_type": "limit" if price is not None else "market", "quantity": qty}
         if price is not None:
@@ -177,20 +204,33 @@ class LiveExchange:
             return resp.get("order_id", resp.get("id"))
         return None
 
-    def cancel_all(self, symbol: str | None = None) -> None:
+    def cancel_all(self, symbol: str | None = None) -> bool:
         if not self._action_ok():
-            return
+            return False
         if self.dry_run:
             print(f"[dry-run] would cancel all {symbol or ''}", flush=True)
         else:
-            self.send("DELETE", "/orders/all" + (f"?symbol={symbol}" if symbol else ""))
+            if self.send("DELETE", "/orders/all" + (f"?symbol={symbol}" if symbol else "")) is None:
+                return False
         self.open_orders = [o for o in self.open_orders if symbol is not None and o.get("symbol") != symbol]
+        return True
 
     def create(self, etf: str, qty: int) -> bool:
-        return bool(self._action_ok() and (self.dry_run or self.send("POST", f"/etf/{etf}/create", {"quantity": qty})))
+        return self._convert(etf, qty, "create")
 
     def redeem(self, etf: str, qty: int) -> bool:
-        return bool(self._action_ok() and (self.dry_run or self.send("POST", f"/etf/{etf}/redeem", {"quantity": qty})))
+        return self._convert(etf, qty, "redeem")
+
+    def _convert(self, etf: str, qty: int, action: str) -> bool:
+        if not self.market_open or not self.state_ready or qty <= 0 or not self._action_ok():
+            return False
+        if self.dry_run:
+            return True
+        response = self.send("POST", f"/etf/{etf}/{action}", {"quantity": qty})
+        # Conversion changes several positions. Reconcile the complete basket
+        # before a subsequent order can use any of its position capacity.
+        self.state_ready = False
+        return response is not None
 
 
 def replay_feed_log(path: str, ex: "LiveExchange", strat, seen_seq: set[int], tail_bytes: int = 150_000_000) -> tuple[str, int, int]:
