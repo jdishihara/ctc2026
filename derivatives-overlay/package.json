@@ -1,0 +1,36 @@
+{
+  "name": "derivatives-overlay",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Read-only Chrome overlay for the CTC 2026 Derivatives case (Newtonia vs Euleria)",
+  "type": "module",
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "build": "node scripts/build.mjs --prod",
+    "build:dev": "node scripts/build.mjs --dev",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run && npm run test:tz",
+    "test:watch": "vitest",
+    "test:e2e": "node scripts/build.mjs --dev && playwright test",
+    "mock": "node mock-exchange/server.mjs",
+    "package": "node scripts/build.mjs --prod && node scripts/package.mjs",
+    "verify-isolation": "node scripts/verify-isolation.mjs",
+    "test:tz": "TZ=UTC vitest run tests/unit/clock.test.ts tests/unit/tradingTime.test.ts tests/unit/schedule.test.ts && TZ=America/New_York vitest run tests/unit/clock.test.ts tests/unit/tradingTime.test.ts tests/unit/schedule.test.ts"
+  },
+  "dependencies": {
+    "preact": "^10.24.3"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.64.1",
+    "@types/chrome": "^0.0.287",
+    "@types/node": "^22.10.2",
+    "@types/ws": "^8.5.13",
+    "esbuild": "^0.24.0",
+    "jsdom": "^25.0.1",
+    "typescript": "^5.6.3",
+    "vitest": "^2.1.8",
+    "ws": "^8.18.0"
+  }
+}

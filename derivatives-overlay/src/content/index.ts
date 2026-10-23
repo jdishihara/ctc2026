@@ -1,0 +1,283 @@
+// Isolated-world entry: listens to the MAIN-world hooks, reads DOM fallbacks, runs the store and mounts the UI.
+import { BRIDGE_TAG, isBridgeMessage } from '../core/bus';
+import { cloneDefaults, Config, deepMerge, validateConfig } from '../core/config';
+import { findChain, readFairT, readHeaderClock, readLatest, readPositions, readSpot } from '../core/dom-readers';
+import { installHotkeys, HotkeyAction } from '../core/hotkeys';
+import * as storage from '../core/storage';
+import { compileSymbolRegex } from '../engine/chain';
+import { Ticket } from '../engine/tickets';
+import { defaultUi, Store, UiState } from '../state/store';
+import { prefillTicket } from '../ticket/prefill';
+import { mountApp } from '../ui/App';
+import { Controller, ticketText } from '../ui/controller';
+import css from '../ui/styles.css';
+
+export interface OverlayHandle {
+  store: Store;
+  host: HTMLElement;
+  shadow: ShadowRoot;
+  controller: Controller;
+  readDom: () => void;
+  stop: () => void;
+}
+
+export interface StartOpts {
+  /** skip the async storage load (tests) */
+  config?: Config;
+  tickMs?: number;
+}
+
+export async function startOverlay(win: Window & typeof globalThis = window, opts: StartOpts = {}): Promise<OverlayHandle> {
+  const doc = win.document;
+  let cfg: Config = opts.config ?? cloneDefaults();
+  if (!opts.config) {
+    const saved = await storage.load<unknown>('config', null);
+    if (saved) {
+      const v = validateConfig(saved);
+      cfg = v.config;
+    }
+  }
+  const store = new Store(cfg);
+  store.persist = (k, v) => void storage.save(k, v);
+  const savedUi = await storage.load<Partial<UiState> | null>('ui', null);
+  if (savedUi) store.s.ui = { ...defaultUi(), ...savedUi, focusField: null };
+
+  store.onCompetition = (id) => {
+    void storage.load<{ history?: unknown[]; timeline?: Record<string, unknown> } | null>(`history:${id}`, null).then((h) => {
+      if (h?.history && Array.isArray(h.history)) store.s.history = h.history as Store['s']['history'];
+      if (h?.timeline) store.s.timeline = { ...(h.timeline as Store['s']['timeline']), ...store.s.timeline };
+      store.changed(true);
+    });
+  };
+
+  // ---- bridge ----
+  const seen = new Set<number>();
+  const onMessage = (ev: MessageEvent) => {
+    if (!isBridgeMessage(ev, win)) return;
+    const m = ev.data;
+    if (m.kind === 'overlay-ready') return;
+    if (typeof m.n === 'number') {
+      if (seen.has(m.n)) return;
+      seen.add(m.n);
+      if (seen.size > 20000) seen.clear();
+    }
+    store.handleBridge(m.kind, m.payload ?? {});
+  };
+  win.addEventListener('message', onMessage);
+  win.postMessage({ [BRIDGE_TAG]: 1, kind: 'overlay-ready', payload: {} }, '*');
+
+  // ---- UI ----
+  const host = doc.createElement('div');
+  host.setAttribute('data-deriv-overlay', '');
+  const shadow = host.attachShadow({ mode: 'open' });
+  const style = doc.createElement('style');
+  style.textContent = typeof css === 'string' ? css : '';
+  shadow.appendChild(style);
+  const container = doc.createElement('div');
+  shadow.appendChild(container);
+  (doc.body ?? doc.documentElement).appendChild(host);
+  const skip = (el: Element) => el === host;
+
+  let uiSaveTimer: ReturnType<typeof setTimeout> | null = null;
+  let busy = false;
+  const controller: Controller = {
+    store,
+    loadNext(kind) {
+      const t = store.pickNext(kind);
+      if (t) this.loadTicket(t);
+    },
+    loadTicket(t: Ticket) {
+      if (!store.cfg.prefillEnabled) {
+        store.markLoaded(t, null, 'Prefill is off: copy the ticket and enter it yourself');
+        return;
+      }
+      if (busy) return;
+      busy = true;
+      store.markLoaded(t, null, 'prefilling…');
+      const re = compileSymbolRegex(store.cfg.symbolRegex);
+      prefillTicket(t, {
+        doc, hints: store.cfg.dom, symbolRe: re, skip,
+        visibleUnderlying: (strikes) => store.domChainUnderlying(strikes),
+        strikeOf: (sym) => {
+          const c = store.d.contracts[sym] ?? store.s.metas[sym];
+          return c ? { strike: c.strike, kind: c.kind } : null;
+        },
+      })
+        .then((r) => store.markLoaded(t, r.ok, r.message))
+        .catch((e) => store.markLoaded(t, false, `prefill error: ${e}`))
+        .finally(() => (busy = false));
+    },
+    downloadCapture() {
+      const name = store.capture.download(store.s.caseName ?? 'unknown', doc);
+      store.toast(`Saved ${name}`, 'info');
+    },
+    saveConfig(json: string) {
+      const v = validateConfig(json);
+      if (v.ok) {
+        store.setConfig(v.config);
+        void storage.save('config', v.config);
+      }
+      return v;
+    },
+    resetConfig() {
+      const d = cloneDefaults();
+      store.setConfig(d);
+      void storage.remove('config');
+    },
+    patchConfig(patch) {
+      const v = validateConfig(deepMerge(JSON.parse(JSON.stringify(store.cfg)), patch));
+      if (!v.ok) {
+        store.toast(v.errors.join('; '), 'error');
+        return;
+      }
+      store.setConfig(v.config);
+      void storage.save('config', v.config);
+    },
+    saveUi() {
+      if (uiSaveTimer) clearTimeout(uiSaveTimer);
+      uiSaveTimer = setTimeout(() => void storage.save('ui', { ...store.s.ui, focusField: null }), 300);
+    },
+    copy(text: string) {
+      try {
+        void win.navigator.clipboard?.writeText(text).then(() => store.toast('Copied', 'info'), () => fallbackCopy(doc, text));
+      } catch {
+        fallbackCopy(doc, text);
+      }
+    },
+  };
+  mountApp(controller, container);
+
+  // ---- DOM fallbacks ----
+  const readDom = () => {
+    try {
+      const hints = store.cfg.dom;
+      const deriv = store.d.mode === 'derivatives';
+      const r: Parameters<Store['handleDom']>[0] = { clockSec: readHeaderClock(doc.body ?? doc, hints, skip), latest: readLatest(doc.body ?? doc, hints, skip) };
+      if (deriv) {
+        r.spot = readSpot(doc.body ?? doc, hints, skip);
+        r.T = readFairT(doc.body ?? doc, hints, skip);
+        const ch = findChain(doc.body ?? doc, hints, skip);
+        if (ch) {
+          r.chain = ch.rows.flatMap((row) => (['C', 'P'] as const).map((k) => ({
+            strike: row.strike, kind: k, bid: row[k].bid.value, ask: row[k].ask.value, bidSize: row[k].bidSize.value, askSize: row[k].askSize.value,
+          })));
+        }
+        r.positions = readPositions(doc.body ?? doc, hints, compileSymbolRegex(store.cfg.symbolRegex), skip);
+      }
+      store.handleDom(r);
+    } catch (e) {
+      console.warn('[deriv-overlay] DOM read failed', e);
+    }
+  };
+  let domTimer: ReturnType<typeof setTimeout> | null = null;
+  const scheduleDom = () => {
+    if (domTimer) return;
+    domTimer = setTimeout(() => {
+      domTimer = null;
+      readDom();
+    }, 300);
+  };
+  const MO = (win as unknown as { MutationObserver?: typeof MutationObserver }).MutationObserver;
+  const mo = MO ? new MO((muts) => {
+    if (muts.every((m) => host.contains(m.target as Node) || m.target === host)) return;
+    scheduleDom();
+  }) : null;
+  mo?.observe(doc.body ?? doc.documentElement, { subtree: true, childList: true, characterData: true });
+  const domInterval = setInterval(readDom, 1000);
+
+  // ---- clock / phase tick ----
+  const tickInterval = setInterval(() => {
+    try {
+      store.tick();
+    } catch (e) {
+      console.warn('[deriv-overlay] tick failed', e);
+    }
+  }, opts.tickMs ?? 200);
+
+  // ---- hotkeys ----
+  const focusField = (field: 'spot' | 'vol') => {
+    const u = store.cfg.focus ?? store.s.ui.focusUnd ?? store.cfg.underlyings[0];
+    store.s.ui.tab = 'Edge';
+    store.s.ui.collapsed = false;
+    store.s.ui.hidden = false;
+    store.changed(true);
+    setTimeout(() => {
+      const el = shadow.querySelector<HTMLInputElement>(`[data-field="${field}-${u}"]`);
+      el?.focus();
+      el?.select();
+    }, 260);
+  };
+  const onHotkey = (a: HotkeyAction) => {
+    const ui = store.s.ui;
+    // on other cases' pages only the overlay toggle, the Capture tab and Esc are live
+    if (store.d.mode !== 'derivatives' && a !== 'toggle' && a !== 'capture' && a !== 'blur') return;
+    switch (a) {
+      case 'nextTicket': return controller.loadNext('edge');
+      case 'nextFlatten': return controller.loadNext('flatten');
+      case 'accept': return store.acceptSuggestions();
+      case 'focusOIL':
+      case 'focusPLANE': {
+        const u = store.cfg.underlyings[a === 'focusOIL' ? 0 : 1];
+        if (!u) return;
+        ui.focusUnd = u;
+        controller.patchConfig({ focus: store.cfg.focus === u ? null : u });
+        return;
+      }
+      case 'toggle':
+        ui.hidden = !ui.hidden;
+        controller.saveUi();
+        return store.changed(true);
+      case 'focusSpot': return focusField('spot');
+      case 'focusVol': return focusField('vol');
+      case 'capture':
+        ui.tab = 'Capture';
+        ui.hidden = false;
+        ui.collapsed = false;
+        ui.captureOpen = true;
+        return store.changed(true);
+      case 'blur': {
+        (shadow.activeElement as HTMLElement | null)?.blur?.();
+        return;
+      }
+    }
+  };
+  const removeHotkeys = installHotkeys(win, host, onHotkey);
+
+  store.changed(true);
+  readDom();
+
+  return {
+    store, host, shadow, controller, readDom,
+    stop() {
+      win.removeEventListener('message', onMessage);
+      clearInterval(domInterval);
+      clearInterval(tickInterval);
+      mo?.disconnect();
+      removeHotkeys();
+      host.remove();
+    },
+  };
+}
+
+function fallbackCopy(doc: Document, text: string) {
+  try {
+    const ta = doc.createElement('textarea');
+    ta.value = text;
+    ta.style.position = 'fixed';
+    ta.style.opacity = '0';
+    doc.body.appendChild(ta);
+    ta.select();
+    doc.execCommand('copy');
+    ta.remove();
+  } catch {
+    /* ignore */
+  }
+}
+
+// Auto-start in the extension (not under test runners).
+const underTest = typeof process !== 'undefined' && !!process.env?.VITEST;
+if (typeof window !== 'undefined' && window.top === window && !underTest) {
+  startOverlay().catch((e) => console.warn('[deriv-overlay] failed to start', e));
+}
+
+export { ticketText };

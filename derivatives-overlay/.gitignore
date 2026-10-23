@@ -1,0 +1,7 @@
+node_modules/
+dist/
+dist-dev/
+captures/
+test-results/
+playwright-report/
+*.zip
