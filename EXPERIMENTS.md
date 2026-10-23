@@ -40,6 +40,7 @@ off; max-cross 1% or 3%; velocity in the analog kernel; cones of all advisories;
 | 214 | +4.2k | n/a | not comparable: traded on the previous season's damage until 02:48, then on a snapshot-rebuilt model |
 | 215 | -0.7k (R1 +1.5k, R2 +3.3k, R3 -5.4k) | +2.6k (R1 +2.3k, R2 +4.9k, R3 -4.5k) | first clean season on the new package; shape agrees round by round |
 | 216 | +8.3k (R1 +3.8k, R2 +5.0k, R3 -0.5k) | +17.8k (R1 +12.2k, R2 +5.8k, R3 -0.3k) | bot restarted on min_edge 0.025 during round 1 (missed part of the storm) |
+| 217 | +7.3k | +7.7k (R1 +2.5k, R2 +4.2k, R3 +1.0k) | clean season, no restart |
 TESTNET_ROWS_PLACEHOLDER
 
 Live fill cost tonight: +29 bp of notional over 599 fills, 40% of notional at or better than mid (same as yesterday, inside the
