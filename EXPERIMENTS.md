@@ -44,6 +44,10 @@ off; max-cross 1% or 3%; velocity in the analog kernel; cones of all advisories;
 | 218 | +2.7k | +13.6k (R1 +3.4k, R2 +9.7k, R3 +0.5k) | clean season |
 TESTNET_ROWS_PLACEHOLDER
 
+**Open question (ledger 06:25):** the exchange's realized PnL runs 2-3k per season below an average-cost replay of its own
+trade list (positions and unrealized match exactly); that gap is the size of the live-vs-sim shortfall in round 3. Live
+rounds 1-2 earn 65% of the sim (29.4k vs 44.9k over seasons 215-218); live round 3 -11.8k vs sim -3.3k.
+
 Live fill cost tonight: +29 bp of notional over 599 fills, 40% of notional at or better than mid (same as yesterday, inside the
 simulator's 30-60 bp). Testnet round opens within a season gap only 50-90 bp from the previous close (yesterday's 741 bp
 figure mixed in season boundaries), so the simulator's no-gap assumption is close.
@@ -200,6 +204,7 @@ python3 scripts/eval_forecast.py 25 50       # forecast skill
 | 2026-10-23 04:40 | late-storm no-add (`--late-cut` s: do not add to a position once the storm is older than this; fills after 240 s earn about nothing): 300 s -> verify 9336 / 5887, tune 8572 / 5151; 360 s -> 9336 / 5914, tune 8579 / 5154 vs 9344 / 5925 and 8572 / 5154 | | | NO CHANGE (within +-40 everywhere): the late fills are cheap passive ones. Option kept, off |
 | 2026-10-23 05:05 | grid 3 (sigma 10 / 15 / 25 x k 50 / 100 / 200 at the accepted set, tune 451-525): sigma 15 / k 100 keeps the top score 5014; k 200 4894 (verify 9139 / 5871, p10 +32 / -2045); sigma 25 with k 200 4690, with k 100 3863 (thin p10 -6206); sigma 10 about 3840; k 50 3420. Under the cone the ensemble is no longer insensitive to sigma: 10 and 25 both lose about 1,100 points of score | | | NO CHANGE |
 | 2026-10-23 06:05 | grid 4 (cone_w 0.75 / 1.0 / 1.25 / 1.5 x cone_s0 15 / 20 / 30 at the accepted set, tune 451-525): (1.0, 20) keeps the top score 5014; (1.5, 30) 4873 verifies at 9487 / 6013 (p10 +489 / -2037, min -16.7k / -18.1k) vs 9344 / 5925; (0.75, 15) 4840; (1.0, 15) 4815; (1.5, 20) 4798 | | | NO CHANGE by the protocol (selection on the tune set); (1.5, 30) is a near-equivalent alternative |
+| 2026-10-23 06:25 | EXCHANGE PnL vs FILLS (seasons 217, 218): the bot's deduped FILL lines reproduce the exchange's positions exactly and the unrealized leg within 70, but the exchange's REALIZED PnL is below an average-cost replay of the same trades: 217 +6053 vs +9364 (-3.3k, -81 bp of notional), 218 +3775 vs +5731 (-2.0k, -34 bp). Fills marked at settlement: 217 +10.6k, 218 +4.7k vs exchange totals +7.3k, +2.7k. Live rounds 1-2 sum to 65% of the sim (29.4k vs 44.9k over 215-218) and live round 3 loses 11.8k vs the sim's -3.3k; the exchange-side gap is of the same size as the round-3 shortfall | | | OPEN. Not fees (not proportional), not missing fills, not the mark. The bot now logs per-symbol realized and average price at SEASON END; scratch script realized_check.py compares per symbol mid-season. Suspect: how the exchange books position flips |
 
 ## Backlog (ordered by expected value)
 1. Passive quoting: rest orders inside the house spread instead of crossing; measure under thin regime.

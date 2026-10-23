@@ -104,7 +104,9 @@ class LiveExchange:
             if items:
                 self.last_positions = {"realized": round(sum(p.get("realized_pnl", 0) for p in items)),
                                        "unrealized": round(sum(p.get("unrealized_pnl", 0) for p in items)),
-                                       "positions": {p["symbol"]: p.get("quantity") for p in items}}
+                                       "positions": {p["symbol"]: p.get("quantity") for p in items},
+                                       "realized_by": {p["symbol"]: round(p.get("realized_pnl", 0)) for p in items},
+                                       "avg_price": {p["symbol"]: p.get("average_price") for p in items}}
                 self.pnl_now = self.last_positions["realized"] + self.last_positions["unrealized"]
             for p in items if isinstance(items, list) else []:
                 sym = p.get("symbol"); q = p.get("quantity", p.get("position"))
