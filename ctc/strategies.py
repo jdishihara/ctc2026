@@ -29,8 +29,12 @@ class FairValueTrader(Strategy):
     def __init__(self, min_edge: float = 0.01, edge_full: float = 0.05, rebalance_every: float = 15.0,
                  symbols: list[str] | None = None, project: bool = True, analog: bool = False,
                  sd_mult: float = 1.0, loss_limit: float | None = None, prior_mode: str = "sample",
-                 passive: float = 0.0, warmup: float = 0.0, future_sd: float = 0.0, fair_jump: float = 0.0, max_cross: float = 0.0, **analog_kw):
+                 passive: float = 0.0, warmup: float = 0.0, future_sd: float = 0.0, fair_jump: float = 0.0, max_cross: float = 0.0,
+                 carry: float = 1.0, ent_cut: float = 0.0, **analog_kw):
         self.prior_mode = prior_mode
+        self.carry = carry              # <1: between storms (after a final report, before the next storm forms) the position
+                                        # limit is carry x the exchange limit, so less rides on the next storm's path
+        self.ent_cut = ent_cut          # >0: do not add to a position while the pattern posterior's entropy exceeds this (nats)
         self.max_cross = max_cross      # >0: an aggressive order never pays more than this fraction through the touch
                                         # (live, the house's book empties for a few seconds while it re-prices after a report)
         self.fair_jump = fair_jump      # >0: do not trade a symbol in a cycle where its fair moved by more than this
@@ -126,6 +130,9 @@ class FairValueTrader(Strategy):
                     unsettled.add(s)
                 if f is not None:
                     self.prev_fair[s] = f
+        between = self.model.storm_reported and self.model.round < 3    # no storm in the air: only future-storm risk
+        post = self.model.posterior
+        ent = -sum(p * math.log(p) for p in post.values() if p > 0) if post else 0.0
         for s in self.symbols:
             if s in self.paused or s not in sim.quotes or s in unsettled:
                 continue
@@ -134,18 +141,26 @@ class FairValueTrader(Strategy):
             f = self.fair[s]
             edge = (f - mid) / mid * conf
             lim = sim.limits[s]
+            if between and self.carry < 1.0:
+                lim = int(round(lim * self.carry))
             floor = self.min_edge_for(sim, s)
             pos = sim.position[s]
             stopped = self.loss_limit is not None and self.cell_pnl.get((s, rnd), 0.0) < -self.loss_limit
+            reduce = False
             if abs(edge) >= floor:
                 frac = min(1.0, (abs(edge) - floor) / max(1e-9, self.edge_full - floor))
                 target = int(round(lim * frac)) * (1 if edge > 0 else -1)
+                if self.ent_cut > 0 and self.model.storm_active and ent > self.ent_cut and abs(target) > abs(pos) and target * pos >= 0:
+                    continue                                # pattern still ambiguous: do not add
                 if stopped:                                 # this symbol has lost its budget this round: reduce only
                     target = 0 if target * pos <= 0 else (min(target, pos) if pos > 0 else max(target, pos))
                     if target == pos:
                         continue
             elif pos and ((pos > 0 and edge < -floor * 0.5) or (pos < 0 and edge > floor * 0.5)):
                 target = 0                                  # we are now on the wrong side: get out
+            elif abs(pos) > lim:
+                target = lim if pos > 0 else -lim           # over the between-storm cap: reduce, paying the spread
+                reduce = True
             else:
                 if self.passive > 0:
                     self.quote_passive(sim, s, f, bid, ask, conf, floor, lim, pos)
@@ -163,14 +178,14 @@ class FairValueTrader(Strategy):
             # pay up to the price at which the remaining edge equals the floor (liquidity-aware limit)
             keep = floor / max(conf, 1e-9)
             if delta > 0:
-                limit = max(ask, f / (1 + keep)) if target != 0 else ask * (1 + self.exit_slip)
+                limit = max(ask, f / (1 + keep)) if target != 0 and not reduce else ask * (1 + self.exit_slip)
                 if limit < ask and target != 0:
                     continue
                 if self.max_cross > 0:
                     limit = min(limit, ask * (1 + self.max_cross))
                 sim.place(s, "buy", delta, limit)
             else:
-                limit = min(bid, f / (1 - keep)) if target != 0 else bid * (1 - self.exit_slip)
+                limit = min(bid, f / (1 - keep)) if target != 0 and not reduce else bid * (1 - self.exit_slip)
                 if limit > bid and target != 0:
                     continue
                 if self.max_cross > 0:

@@ -202,8 +202,9 @@ async def run(args: argparse.Namespace) -> None:
         strat = S.FairValueTrader(min_edge=args.min_edge, edge_full=args.edge_full, project=True)
     else:   # the analog ensemble, same parameters as scripts/backtest.py --strategy analog
         strat = S.FairValueTrader(min_edge=args.min_edge, edge_full=args.edge_full, analog=True, sd_mult=args.sd_mult,
-                                  sigma=args.sigma, k=args.k, passive=args.passive, warmup=args.warmup, max_cross=args.max_cross)
-    print(f"strategy {'nowcast' if args.nowcast else 'analog'} min_edge {args.min_edge} edge_full {args.edge_full} sd_mult {args.sd_mult} sigma {args.sigma} k {args.k} passive {args.passive}", flush=True)
+                                  sigma=args.sigma, k=args.k, passive=args.passive, warmup=args.warmup, max_cross=args.max_cross,
+                                  carry=args.carry, ent_cut=args.ent_cut)
+    print(f"strategy {'nowcast' if args.nowcast else 'analog'} min_edge {args.min_edge} edge_full {args.edge_full} sd_mult {args.sd_mult} sigma {args.sigma} k {args.k} passive {args.passive} warmup {args.warmup} max_cross {args.max_cross} carry {args.carry} ent_cut {args.ent_cut}", flush=True)
     strat.on_start(ex)
     ex.refresh()
     ws_url = (args.ws or ex.url.replace("https://", "wss://", 1).replace("http://", "ws://", 1)) + "/ws/v1/market-data"
@@ -285,6 +286,8 @@ def main() -> None:
     ap.add_argument("--passive", type=float, default=0.75, help="rest orders inside the spread at edge = passive*floor (0 = off)")
     ap.add_argument("--warmup", type=float, default=20.0, help="seconds after the market opens with no trading")
     ap.add_argument("--max-cross", type=float, default=0.02, help="aggressive orders never pay more than this fraction through the touch (0 = off)")
+    ap.add_argument("--carry", type=float, default=1.0, help="between storms the position limit is carry x the exchange limit (1 = off; 0.5 halves the tail, see EXPERIMENTS.md 2026-10-23)")
+    ap.add_argument("--ent-cut", type=float, default=1.2, help="do not add while the pattern posterior entropy exceeds this, nats (0 = off)")
     asyncio.run(run(ap.parse_args()))
 
 

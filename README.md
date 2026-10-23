@@ -43,7 +43,7 @@ python3 scripts/backtest.py --strategy nowcast --seasons 451-600                
 ```
 Strategy flags (defaults are the accepted configuration): `--passive 0.75` (rest inside the spread when the edge is
 small), `--warmup 20` (no trading for 20 s after a round opens), `--max-cross 0.02` (an aggressive order never pays
-more than 2% through the touch), `--prior sample|point`, `--future-sd`,
+more than 2% through the touch), `--ent-cut 1.2` (do not add while the pattern posterior is near-uniform), `--carry 1.0` (between storms, position limit as a fraction of the exchange limit; 0.5 halves the tail at 3% of the mean, off by the protocol, see the ledger), `--prior sample|point`, `--future-sd`,
 `--loss-limit`, `--exact-rebuild` (the last three are rejected options kept for reference).
 
 Live bot (testnet or competition), dry run first:
@@ -151,12 +151,12 @@ open (depth within 1% of mid 330-550 shares in the first minute against 285-410 
 instant round replays either (the testnet replayed one round in a second). Live fill cost after the warm-up fix: 29 bp
 of notional (93 bp before it).
 
-## Results (verify seasons 526-600, default parameters, 2026-10-23 02:20, ladder refit)
+## Results (verify seasons 526-600, default parameters, 2026-10-23 03:05)
 
 | Regime | mean PnL | median | p10 | min | losing seasons | fills/season |
 |---|---|---|---|---|---|---|
-| deep (ladder, refill 10 s) | 8,718 | 8,324 | -3,127 | -12,774 | 17% | 348 |
-| thin (ladder at half size, refill 30 s) | 5,336 | 4,763 | -4,302 | -14,113 | 21% | 879 |
+| deep (ladder, refill 10 s) | 8,747 | 8,324 | -3,127 | -12,774 | 17% | 348 |
+| thin (ladder at half size, refill 30 s) | 5,348 | 4,763 | -4,297 | -14,113 | 20% | 879 |
 
 Deep regime by symbol: HAVEN +2669, PORT +1300, ARCH +1181, FERRY +720, GRID +590, AQUA +537, RECON +540, REBLD +441,
 ISLE +241, MAT +100, GEN +68, REIN +47. By round: R1 +2649, R2 +3144, R3 +2639. Fill PnL by phase (thin regime, 75 seasons):
