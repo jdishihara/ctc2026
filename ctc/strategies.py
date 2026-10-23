@@ -30,12 +30,13 @@ class FairValueTrader(Strategy):
                  symbols: list[str] | None = None, project: bool = True, analog: bool = False,
                  sd_mult: float = 1.0, loss_limit: float | None = None, prior_mode: str = "sample",
                  passive: float = 0.0, warmup: float = 0.0, future_sd: float = 0.0, fair_jump: float = 0.0, max_cross: float = 0.0,
-                 carry: float = 1.0, ent_cut: float = 0.0, rebuild_min_edge: float = 0.0, **analog_kw):
+                 carry: float = 1.0, ent_cut: float = 0.0, rebuild_min_edge: float = 0.0, late_cut: float = 0.0, **analog_kw):
         self.prior_mode = prior_mode
         self.carry = carry              # <1: between storms (after a final report, before the next storm forms) the position
                                         # limit is carry x the exchange limit, so less rides on the next storm's path
         self.ent_cut = ent_cut          # >0: do not add to a position while the pattern posterior's entropy exceeds this (nats)
         self.rebuild_min_edge = rebuild_min_edge   # >0: edge floor for RECON/MAT/GEN (with the exact settlement rules their residual is ~0)
+        self.late_cut = late_cut        # >0: do not add to a position once the storm is older than this many seconds (late fills earn nothing)
         self.max_cross = max_cross      # >0: an aggressive order never pays more than this fraction through the touch
                                         # (live, the house's book empties for a few seconds while it re-prices after a report)
         self.fair_jump = fair_jump      # >0: do not trade a symbol in a cycle where its fair moved by more than this
@@ -156,6 +157,9 @@ class FairValueTrader(Strategy):
                 target = int(round(lim * frac)) * (1 if edge > 0 else -1)
                 if self.ent_cut > 0 and self.model.storm_active and ent > self.ent_cut and abs(target) > abs(pos) and target * pos >= 0:
                     continue                                # pattern still ambiguous: do not add
+                if self.late_cut > 0 and self.model.storm_active and self.model.last_obs is not None and self.model.last_obs["age"] > self.late_cut \
+                        and abs(target) > abs(pos) and target * pos >= 0:
+                    continue                                # late in the storm: do not add
                 if stopped:                                 # this symbol has lost its budget this round: reduce only
                     target = 0 if target * pos <= 0 else (min(target, pos) if pos > 0 else max(target, pos))
                     if target == pos:

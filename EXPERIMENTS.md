@@ -1,3 +1,74 @@
+# Overnight report 2026-10-23 (session 02:05-07:00, Fable; all commits pushed)
+
+## What improved (verify seasons 526-600, deep / thin regime, mean PnL and p10)
+
+| step | deep | thin |
+|---|---|---|
+| start of night (ladder of 846 snapshots) | 8663 / -2998 | 5301 / -4364 |
+| ladder refit from 9,900 snapshots per symbol (new baseline, not a strategy change) | 8718 / -3127 | 5336 / -4302 |
+| entropy cut: no adds while the pattern posterior is near-uniform (1.2 nats) | 8747 / -3127 | 5348 / -4297 |
+| official advisory cone as a likelihood on the analogs (1.0, spread floor 20) + carry cap 0.5 between storms | 9287 / -271 | 5812 / -2839 |
+| min_edge 0.02 -> 0.025 (36-point grid on the tune seasons) | **9344 / -145** | **5925 / -2681** |
+
+Like for like (same simulator): 8718 / 5336 -> 9344 / 5925 (+7% / +11%); losing seasons 17% -> 11% deep, 21% -> 17% thin;
+p10 -3127 -> -145 deep, -4302 -> -2681 thin. Tune set 451-525 agrees: 7830 / 4315 -> 8572 / 5154. The single worst season is
+2-3k worse (-15.9k / -17.2k vs -12.8k / -14.1k). Every change passed the acceptance rule on the verify set.
+
+## Three findings behind the changes
+1. **The season tail is positions carried into the next storm, not bad fills.** In the worst 10 seasons the fills marked to
+   their round end sum to about zero while the seasons lose 64-78k. Carry PnL (position at a close x next close - close) has
+   a mean of about zero over 150 seasons and an sd of 8k; intra-round PnL has mean +7.8k and p10 -1k. Hence the carry cap.
+2. **The forecast office's cone is informative beyond its outlook label.** The label is right 69% of the time, but the cone
+   predicts the storm's position 30-40% better than our ensemble did 1-2 minutes ahead and its spread is calibrated. Used as
+   a Gaussian likelihood on the analogs: 30 s damage RMSE PORT 17.9 -> 16.7, pattern top-1 70% -> 78% (90 s: 88% -> 92%).
+3. **The live bot's model was wrong after every restart.** (a) It carried the previous season's damage across a season
+   change (fair values 5-7 points low all of season 214). (b) A snapshot rebuild has no closure history and integrated the
+   storm coarsely: fair values off by up to 20 points right after, 2-5 points for the rest of the season. Both fixed: the
+   season resets on a change of fictional year, and the bot rebuilds the season from the recorder's feed file on each start
+   (exact), with a repaired snapshot fallback (bias 1 point). Also fixed: the fill log repeated every fill ~180 times.
+
+## Rejected (ledger has the numbers)
+Cone without the carry cap (+350 more mean but thin p10 -5090, worst season -20k); island probabilities as a likelihood (fattens
+the tail in every setting); Student-t cone; wider cone floors; exact rebuilder settlement rules with a 3-4% RECON/MAT floor (+600-700
+mean, worse p10); carry 0.35 and 0.25; sd_mult other than 0.7 (sharp optimum); edge_full 0.04; warm-up 10 or 40 s; passive 0.5 or
+off; max-cross 1% or 3%; velocity in the analog kernel; cones of all advisories; late-storm no-add; entropy cut at 0.9.
+
+## Testnet vs sim (season = 2026 - the year printed on the SEASON END line; sim = deep regime, current defaults, at settlement)
+
+| season | testnet | sim | note |
+|---|---|---|---|
+| 214 | +4.2k | n/a | not comparable: traded on the previous season's damage until 02:48, then on a snapshot-rebuilt model |
+| 215 | -0.7k (R1 +1.5k, R2 +3.3k, R3 -5.4k) | +2.6k (R1 +2.3k, R2 +4.9k, R3 -4.5k) | first clean season on the new package; shape agrees round by round |
+| 216 | +8.3k (R1 +3.8k, R2 +5.0k, R3 -0.5k) | +17.8k (R1 +12.2k, R2 +5.8k, R3 -0.3k) | bot restarted on min_edge 0.025 during round 1 (missed part of the storm) |
+TESTNET_ROWS_PLACEHOLDER
+
+Live fill cost tonight: +29 bp of notional over 599 fills, 40% of notional at or better than mid (same as yesterday, inside the
+simulator's 30-60 bp). Testnet round opens within a season gap only 50-90 bp from the previous close (yesterday's 741 bp
+figure mixed in season boundaries), so the simulator's no-gap assumption is close.
+
+## Deliverables
+- scripts/grid.py (deterministic grid on the tune seasons, verifies the top configurations); bot/live.py `--feed-log` (run_live.sh
+  passes it; FEED_LOG=recordings/competition.jsonl on the day); preflight prints the full parameter set.
+- Derivatives: `derivs/bs.py convert` and a Round3 sheet in desk.xlsx (variance, daily/weekly vol, expected move, ATM straddle
+  -> IV); a bias-corrected inverse-variance analyst blend in the Analysts sheet (stress test: 2.15 vs 2.30 vol points RMSE
+  with biased analysts; following the single best analyst is the worst choice).
+- Mario: pricer calibration validated (race-winner Brier 0.65 vs 0.75 uniform after two races), note in mario/README.md.
+
+## Top three decisions for Jayden
+1. **How much to carry between storms.** Carry 0.5 is now the default (accepted as a package with the cone). Over 150 seasons
+   the carried positions earn about nothing and are all of the tail. Options: keep 0.5; 0.25 cuts the tail further at about
+   10% of the mean; 1.0 (no cap, cone alone) adds about 350/season of mean with p10 -5k and a -20k worst season. Pick by how
+   much a bad single season would cost the overall rank (Systematic Equities is 45% of it).
+2. **Exact rebuilder rules.** `--exact-rebuild --rebuild-min-edge 0.03` adds +700 deep / +475 thin of mean and improves the
+   worst season by 4k, but p10 falls (-871 / -3925 vs -145 / -2681). Rejected by the rule; a legitimate alternative if you
+   prefer mean over p10.
+3. **Competition-day start order.** Start record_feed.py BEFORE the bot (the runbook does), so that any restart rebuilds the
+   season from the recording; without the recording the bot falls back to the snapshot (1-point bias). Also decide who
+   watches the first minute of each round and the announcement pauses.
+
+Still running at 07:00: feed recorder, book recorder, live bot (defaults as above), caffeinate (until 12:07). Nothing deleted,
+no history rewritten, key not in the repo.
+
 # Overnight report 2026-10-22 (session 01:00-07:10, 28 commits, all pushed)
 
 ## What improved (verify seasons 526-600, deep / thin regime, mean PnL and p10)
@@ -124,6 +195,7 @@ python3 scripts/eval_forecast.py 25 50       # forecast skill
 | 2026-10-23 04:05 | grid 2 (27 combinations on 451-525 at the accepted set): passive 0.5 / 0.75 / 1.0 (off) x warm-up 10 / 20 / 40 s x max-cross 1 / 2 / 3%. Top score 5014 = the accepted set (passive 0.75, warm-up 20, max-cross 0.02); warm-up 40 s 4989 (verify 9264 / 5853 vs 9344 / 5925); warm-up 10 s 4862; max-cross 0.03 4808; 0.01 4732; every passive 0.5 or 1.0 row scores below 4660 | | | NO CHANGE: the accepted execution parameters are a local optimum under the new model |
 | 2026-10-23 04:08 | velocity in the analog kernel (`--vel-w`, `--vel-sd`: current vx, vy vs the analog's velocity at the same age; library speeds 1.8-1.9 units/s, sd of vx across analogs 0.6-0.9): forecast skill with the cone at age 30 s PORT / ISLE / AQUA RMSE 16.7 / 7.8 / 9.5 (w 0.5), 16.6 / 7.9 / 9.6 (w 1.0) vs 16.7 / 7.7 / 9.4 without; at 90 s 13.8 / 13.6 / 14.1 vs 13.5, pattern top-1 unchanged (77%) | | | REJECTED at the skill stage (no PnL run): the position kernel already carries the velocity. Option kept, default 0 |
 | 2026-10-23 04:30 | cones of ALL official advisories so far instead of the latest only (`--cone-all`): forecast skill at 90 s PORT 14.2 vs 13.5, pattern top-1 91% vs 92%; at 30 s unchanged | | | REJECTED at the skill stage: older cones are stale. Option kept, off |
+| 2026-10-23 04:40 | late-storm no-add (`--late-cut` s: do not add to a position once the storm is older than this; fills after 240 s earn about nothing): 300 s -> verify 9336 / 5887, tune 8572 / 5151; 360 s -> 9336 / 5914, tune 8579 / 5154 vs 9344 / 5925 and 8572 / 5154 | | | NO CHANGE (within +-40 everywhere): the late fills are cheap passive ones. Option kept, off |
 
 ## Backlog (ordered by expected value)
 1. Passive quoting: rest orders inside the house spread instead of crossing; measure under thin regime.

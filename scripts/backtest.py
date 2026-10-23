@@ -16,7 +16,7 @@ STRATS = {
     "nowcast": lambda a: S.FairValueTrader(min_edge=a.min_edge, edge_full=a.edge_full, project=True),
     "noproject": lambda a: S.FairValueTrader(min_edge=a.min_edge, edge_full=a.edge_full, project=False),
     "analog": lambda a: S.FairValueTrader(min_edge=a.min_edge, edge_full=a.edge_full, analog=True, sd_mult=a.sd_mult,
-                                          sigma=a.sigma, k=a.k, shift=not a.noshift, cone_w=a.cone_w, isl_w=a.isl_w, cone_s0=a.cone_s0, cone_nu=a.cone_nu, vel_w=a.vel_w, vel_sd=a.vel_sd, cone_all=a.cone_all, loss_limit=a.loss_limit or None, prior_mode=a.prior, passive=a.passive, warmup=a.warmup, future_sd=a.future_sd, fair_jump=a.fair_jump, max_cross=a.max_cross, carry=a.carry, ent_cut=a.ent_cut, rebuild_min_edge=a.rebuild_min_edge),
+                                          sigma=a.sigma, k=a.k, shift=not a.noshift, cone_w=a.cone_w, isl_w=a.isl_w, cone_s0=a.cone_s0, cone_nu=a.cone_nu, vel_w=a.vel_w, vel_sd=a.vel_sd, cone_all=a.cone_all, loss_limit=a.loss_limit or None, prior_mode=a.prior, passive=a.passive, warmup=a.warmup, future_sd=a.future_sd, fair_jump=a.fair_jump, max_cross=a.max_cross, carry=a.carry, ent_cut=a.ent_cut, rebuild_min_edge=a.rebuild_min_edge, late_cut=a.late_cut),
 }
 
 def parse_seasons(spec, n):
@@ -62,6 +62,7 @@ def main():
     ap.add_argument("--ent-cut", type=float, default=1.2, help="do not add while the pattern posterior entropy exceeds this, nats (0 = off)")
     ap.add_argument("--loss-limit", type=float, default=0.0, help="per symbol per round: stop adding after losing this much (0 = off)")
     ap.add_argument("--out", default="out")
+    ap.add_argument("--late-cut", type=float, default=0.0, help="do not add to a position once the storm is older than this (s; 0 = off)")
     ap.add_argument("--rebuild-min-edge", type=float, default=0.0, help="edge floor for RECON/MAT/GEN (0 = the global floor); for --exact-rebuild")
     ap.add_argument("--exact-rebuild", action="store_true", help="exact RECON/MAT/GEN settlement rules (rejected on verify PnL)")
     a = ap.parse_args()
