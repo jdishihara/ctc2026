@@ -11,13 +11,14 @@ testnet session.
 from __future__ import annotations
 import argparse, asyncio, json, sys, threading, time
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+from datetime import datetime, timezone
 from pathlib import Path
 import websockets
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from ctc.sim import Sim
 
 ROOT = Path(__file__).resolve().parents[1] / "data"
-STATE = {"mid": {}, "half_spread": 0.0015, "position": {}, "cash": 0.0, "fills": 0, "open": True, "lock": threading.Lock(), "case": None}
+STATE = {"mid": {}, "half_spread": 0.0015, "position": {}, "cash": 0.0, "fills": 0, "trades": [], "open": True, "lock": threading.Lock(), "case": None}
 
 
 class H(BaseHTTPRequestHandler):
@@ -37,6 +38,9 @@ class H(BaseHTTPRequestHandler):
                 return self._json({"positions": [{"symbol": s, "quantity": q} for s, q in STATE["position"].items()]})
         if self.path.startswith("/api/v1/orders/open"):
             return self._json({"orders": []})
+        if self.path.startswith("/api/v1/trades"):
+            with STATE["lock"]:
+                return self._json({"trades": list(reversed(STATE["trades"][-100:]))})
         self._json({"error": "not found"}, 404)
 
     def do_POST(self):
@@ -56,6 +60,9 @@ class H(BaseHTTPRequestHandler):
                 if qty <= 0:
                     return self._json({"error": "position limit"}, 400)
                 STATE["position"][sym] = pos + sign * qty; STATE["cash"] -= sign * qty * px; STATE["fills"] += 1
+                STATE["trades"].append({"trade_id": STATE["fills"], "symbol": sym, "side": side,
+                    "quantity": qty, "price": px, "sequence": STATE["fills"],
+                    "executed_at": datetime.now(timezone.utc).isoformat()})
                 return self._json({"order_id": STATE["fills"], "status": "filled", "filled_quantity": qty, "price": px})
         if "/etf/" in self.path:
             return self._json({"status": "ok"})

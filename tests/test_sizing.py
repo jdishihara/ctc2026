@@ -87,6 +87,36 @@ def test_final_phase_can_size_to_a_smaller_full_edge(market):
     assert market.pending[0].qty == CASE["limits"]["PORT"]
 
 
+def test_report_only_snapshot_retains_conservative_final_sizing(market):
+    trader = FairValueTrader(min_edge=0.025, edge_full=0.03, final_exact=True,
+                            final_edge=0.005, final_edge_full=0.005)
+    trader.on_start(market)
+    trader.model.on_snapshot({"round": 3, "phase": "aftermath", "damage": [
+        {"round": r, "stage": "final", "damage_pct": {k: 5 for k in trader.model.states},
+         "industry_loss_musd": 100} for r in (1, 2, 3)]})
+    assert not trader.model.final_exact_ready
+    assert trader.min_edge_for(market, "PORT") == pytest.approx(0.025)
+    assert trader.full_edge_for_phase() == pytest.approx(0.03)
+
+
+def test_diagnostic_recorder_preserves_round_open_warmup(market, monkeypatch):
+    monkeypatch.syspath_prepend(str(Path(__file__).resolve().parents[1] / "scripts"))
+    from dissect import Recorder
+
+    recorder = Recorder(min_edge=0.01, edge_full=0.03, warmup=20, symbols=["PORT"])
+    recorder.on_start(market)
+    recorder.model.round = 3
+    recorder.model.storm_reported = True
+    recorder.fair = {"PORT": 110}
+    market.t = 100
+    recorder.on_round(market)
+    recorder.on_quotes(market)
+    assert not market.pending
+    market.t = 120
+    recorder.on_quotes(market)
+    assert len(market.pending) == 1
+
+
 @pytest.mark.parametrize("edge", [-0.01, float("nan"), float("inf")])
 def test_invalid_final_edge_is_rejected(edge):
     with pytest.raises(ValueError, match="final_edge"):

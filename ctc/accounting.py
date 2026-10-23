@@ -75,11 +75,14 @@ def _fills(rows):
     ordered = []
     for _, group in groupby(fills, key=lambda f: (f["timestamp"], f["symbol"])):
         group = list(group)
-        if len({f["side"] for f in group}) > 1:
+        if len(group) > 1:
             seq = [f["sequence"] for f in group]
-            if None in seq or len(seq) != len(set(seq)):
+            if None not in seq and len(seq) == len(set(seq)):
+                group.sort(key=lambda f: f["sequence"])
+            elif len({(f["side"], f["price"]) for f in group}) > 1:
+                # Same-side fills at different prices can cross an opening
+                # position, so their order also changes cost basis and PnL.
                 raise ValueError("ambiguous fill order; equal timestamps need unique sequence numbers")
-            group.sort(key=lambda f: f["sequence"])
         ordered.extend(group)
     return ordered
 

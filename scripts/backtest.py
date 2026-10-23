@@ -47,10 +47,10 @@ def main():
     ap.add_argument("--rate-limit", type=int, default=120, help="order actions/minute; matches the live bot")
     ap.add_argument("--edge-ramp", type=float, default=0.0, help="experimental minimum excess-edge sizing width (0 = original)")
     ap.add_argument("--wind-condition", type=float, default=0.0, help="experimental training-derived strength response (0 = original)")
-    ap.add_argument("--final-exact", action=argparse.BooleanOptionalAction, default=False,
-                    help="use exact rebuilder rules only after all three final reports")
-    ap.add_argument("--final-edge", type=float, default=0.0, help="entry floor in the exact final phase (0 = normal floor)")
-    ap.add_argument("--final-edge-full", type=float, default=0.0, help="full-size edge in the exact final phase (0 = normal)")
+    ap.add_argument("--final-exact", action=argparse.BooleanOptionalAction, default=True,
+                    help="use exact final rules after three reports and complete recorded weather")
+    ap.add_argument("--final-edge", type=float, default=0.005, help="entry floor in the exact final phase (0 = normal floor)")
+    ap.add_argument("--final-edge-full", type=float, default=0.005, help="full-size edge in the exact final phase (0 = normal)")
     ap.add_argument("--verbose", action="store_true")
     ap.add_argument("--sd-mult", type=float, default=0.7)
     ap.add_argument("--sigma", type=float, default=15.0)

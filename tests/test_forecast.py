@@ -188,3 +188,25 @@ def test_exact_final_setting_does_not_leak_to_other_models():
     candidate.reported_rounds = {1, 2, 3}
     candidate.fair()
     assert baseline.fair() == expected
+
+
+@pytest.mark.parametrize("missing_age,ready", [(None, True), (4, False)])
+def test_final_confidence_requires_complete_observed_weather(missing_age, ready):
+    case = json.loads((ROOT / "data/case.json").read_text())
+    model = SeasonModel(case, final_exact=True)
+    reports = []
+    for rnd in (1, 2, 3):
+        model.on_message({"type": "storm_formed", "round": rnd})
+        for age in range(0, case["timing"]["storm"] + 1, case["timing"]["obs_every"]):
+            if rnd == 1 and age == missing_age:
+                continue
+            model.on_message({"type": "storm", "round": rnd, **observation(age)})
+        model.on_message({"type": "storm_dissipated", "round": rnd})
+        report = {"type": "damage_report", "round": rnd, "stage": "final",
+                  "damage_pct": {k: 0 for k in PHYS}, "industry_loss_musd": 0}
+        reports.append(report)
+        model.on_message(report)
+    assert model.final_exact_ready is ready
+    # A redundant snapshot must preserve trust in a fully replayed feed.
+    model.on_snapshot({"round": 3, "phase": "aftermath", "damage": reports})
+    assert model.final_exact_ready is ready

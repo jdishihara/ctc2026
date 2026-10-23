@@ -48,6 +48,10 @@ Strategy flags (defaults are the accepted configuration): `--passive 0.75` (rest
 small), `--warmup 20` (no trading for 20 s after a round opens), `--max-cross 0.02` (an aggressive order never pays
 more than 2% through the touch), `--cone-w 1.0 --cone-s0 20` (the official advisory's cone as a likelihood on the analogs; `--cone-nu` for a Student-t version, `--isl-w` for the island probabilities, rejected), `--carry 0.5` (between storms the position limit is half the exchange limit: the tail of the season PnL is positions carried into the next storm), `--ent-cut 1.2` (do not add while the pattern posterior is near-uniform), `--prior sample|point`, `--future-sd`,
 `--loss-limit`, `--exact-rebuild` (the last three are rejected options kept for reference).
+Final-phase defaults are `--final-exact --final-edge 0.005 --final-edge-full 0.005`.
+They activate only after all three final reports with complete recorded weather;
+gaps or snapshot reconstruction keep the conservative settings. Per-symbol
+residual-error floors still apply. Use `--no-final-exact` to disable this phase.
 
 Live bot (testnet or competition), dry run first:
 
@@ -82,6 +86,8 @@ While it runs, one person watches the log. Every 10 s it prints `t= … r<round>
 What to look for:
 
 - `strategy analog min_edge 0.025 edge_full 0.03 … carry 0.5 … cone_w 1.0 cone_s0 20.0` at start, then `replayed N feed messages of season year Y`: the accepted configuration rebuilt from the recording. Anything else, stop and check the flags and FEED_LOG.
+- `final phase exact=True entry=0.005 full=0.005`: accepted final-phase settings;
+  these require every weather observation and all three final reports.
 - `snapshot processed: warm-up before trading` and `market (re)opened: warm-up`: no orders for 20 s. Fair values in the
   first line after a connect can be far from the mids (the model is still catching up); they should be sane by the second line.
 - Round opens: the house re-prices by about 7% from the previous close, stays quiet for 30 s, then moves about 3% over the
@@ -118,22 +124,42 @@ Seasons 1–450 are for fitting, 451–525 for tuning, and 526–600 for verific
 
 ## Forecast efficiency and execution checks (2026-10-23)
 
-Complete analog forecasts are 1.71× faster on the measured three-season workload,
+The initial efficiency patch made complete analog forecasts 1.71× faster on the measured three-season workload,
 with matching fair values and uncertainty to `1.14e-13` maximum absolute error.
 Track matching uses observation ages and caches verified prefixes; damage across
-analogs is vectorized. The default fitted strategy and parameters are unchanged.
+analogs is vectorized. That patch preserved the fitted strategy and parameters;
+the continuation below intentionally changes report reconciliation and final trading.
 
 Order replacement now requires confirmed cancellation and refreshed positions.
 Failed refreshes, uncertain submissions and malformed acknowledgements block new
 orders until reconciliation. Paused symbols cancel existing orders and retry
 failures; filled passive quotes can be replenished immediately.
 
-The 40-test suite includes a local HTTP integration test. Verification mean PnL
-is 9,345.51 deep / 5,927.40 thin, versus 9,343.72 / 5,924.82 at `f4eb4dd`; this
+The initial 40-test suite included a local HTTP integration test. Its verification mean PnL
+was 9,345.51 deep / 5,927.40 thin, versus 9,343.72 / 5,924.82 at `f4eb4dd`; this
 small difference is not evidence of a material new trading advantage. See
 [measurements, reproduction commands and remaining limitations](docs/efficiency-results.md).
 Remote exchange behavior still needs a supervised testnet check before deploying
 this branch.
+
+## Competition strategy continuation (2026-10-23)
+
+The new accepted defaults achieve verification means **9,452.36 deep / 5,993.53
+thin**, increases of 106.85 / 66.13 over the efficiency patch. Thin p10 worsens
+1.14%, within the 10% acceptance limit; deep p10 and the worst season also worsen
+slightly. Losing-season counts are unchanged. Peak actions are 41/48 per minute,
+below the 120 cap, with zero simulated rejections. The suite now has 88 tests.
+
+Damage reports now redistribute saturated-site damage correctly. Final-round
+valuation and sizing use the reduced uncertainty after all reports, gated on
+complete weather history. Faster rebalance schedules, smoother sizing and wind
+strength conditioning were rejected on tune and remain disabled.
+
+See [full results, rejected experiments and reproduction](docs/competition-results.md)
+and [paired season evidence](docs/competition-verification.json). The live PnL
+discrepancy still requires actual recordings; use `scripts/audit_account.py` to
+reconcile complete own-trade and position exports. No remote orders were placed
+while developing this branch.
 
 ## What is fitted (holdout numbers)
 

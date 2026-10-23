@@ -164,14 +164,20 @@ class LiveExchange:
         for tr in reversed(new):
             self.seen_trades.add(tr.get("trade_id", tr.get("id")))
             sym, px, qty = tr.get("symbol"), tr.get("price"), tr.get("quantity")
-            side = tr.get("side") or tr.get("aggressor_side") or ("buy" if (tr.get("buyer_is_me") or tr.get("is_buyer")) else "?")
+            side = tr.get("side")
+            if side not in ("buy", "sell"):
+                side = "?"
+                for field in ("buyer_is_me", "is_buyer"):
+                    if isinstance(tr.get(field), bool):
+                        side = "buy" if tr[field] else "sell"
+                        break
             if sym is None or px is None or qty is None:
                 print(f"FILL raw {json.dumps(tr)[:200]}", flush=True)
                 continue
             mid = self.mid.get(sym)
             slip = ""
-            if mid:
-                sgn = 1 if side == "buy" else -1 if side == "sell" else 0
+            if mid and side in ("buy", "sell"):
+                sgn = 1 if side == "buy" else -1
                 cost = sgn * (float(px) - mid) * float(qty)
                 self.fill_cost[0] += cost; self.fill_cost[1] += float(px) * float(qty)
                 slip = f" mid {mid:.2f} slip {cost / max(1e-9, float(px) * float(qty)) * 1e4:+.0f} bp (cum {self.fill_cost[0] / max(1e-9, self.fill_cost[1]) * 1e4:+.0f} bp)"
@@ -413,10 +419,10 @@ def main() -> None:
     ap.add_argument("--dry-run", action="store_true")
     ap.add_argument("--min-edge", type=float, default=0.025)
     ap.add_argument("--edge-full", type=float, default=0.03)
-    ap.add_argument("--final-exact", action=argparse.BooleanOptionalAction, default=False,
-                    help="use exact rebuilder rules only after all three final reports")
-    ap.add_argument("--final-edge", type=float, default=0.0, help="entry floor in the exact final phase (0 = normal floor)")
-    ap.add_argument("--final-edge-full", type=float, default=0.0, help="full-size edge in the exact final phase (0 = normal)")
+    ap.add_argument("--final-exact", action=argparse.BooleanOptionalAction, default=True,
+                    help="use exact final rules after three reports and complete recorded weather")
+    ap.add_argument("--final-edge", type=float, default=0.005, help="entry floor in the exact final phase (0 = normal floor)")
+    ap.add_argument("--final-edge-full", type=float, default=0.005, help="full-size edge in the exact final phase (0 = normal)")
     ap.add_argument("--sync", type=float, default=3.0, help="seconds between position/open-order polls")
     ap.add_argument("--ws", default=None, help="override the market-data host, e.g. ws://localhost:8766 for the mock")
     ap.add_argument("--rate", type=int, default=120, help="max order actions per minute for this bot (team limit is 180)")

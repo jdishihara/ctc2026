@@ -33,17 +33,17 @@ on `arjun/ctc-efficiency`; preserve the existing draft PR and all evidence.
 
 ## Tasks
 
-- [ ] Add behavioral tests for continuous sizing, both signs, compatibility and
+- [x] Add behavioral tests for continuous sizing, both signs, compatibility and
   invalid parameters; implement the optional sizing width.
-- [ ] Build a deterministic tune experiment runner with real action-budget
+- [x] Build a deterministic tune experiment runner with real action-budget
   accounting; reproduce baseline output before interpreting alternatives.
-- [ ] Evaluate the predeclared candidates, inspect paired results, and freeze a
+- [x] Evaluate the predeclared candidates, inspect paired results, and freeze a
   single candidate without using verification outcomes to choose it.
-- [ ] Verify the frozen candidate and stress action/latency behavior. Promote
+- [x] Verify the frozen candidate and stress action/latency behavior. Promote
   defaults only if the predeclared acceptance rule passes.
-- [ ] Investigate the live accounting discrepancy if the requested logs arrive;
+- [x] Investigate the live accounting discrepancy if the requested logs arrive;
   otherwise add a reproducible trade/account audit utility for the missing data.
-- [ ] Review consequential changes, verify the complete suite, publish evidence
+- [x] Review consequential changes, verify the complete suite, publish evidence
   and update the existing PR. Continue with the next evidence-supported lead.
 
 ## Review focus
@@ -163,3 +163,48 @@ Actual testnet discrepancy still awaits the requested recordings.
 
 Current full suite: 78 passed. All new behavioral changes were exercised by
 failing tests before implementation. One independent final review remains.
+
+## Verification and review rulings
+
+Frozen candidate `2ae7a02` passes verification: mean 9452.3616 / 5993.5258 versus
+9345.5081 / 5927.3989 at `e8d4307`; thin p10 -2712.9176 versus -2682.2420,
+1.1437% deterioration. Deep p10 and both worst seasons deteriorate slightly;
+these are reported explicitly. Mean paired deltas 106.85 / 66.13; 95% bootstrap
+intervals [49.01,169.82] / [27.37,107.85]. No selection was made on verify.
+
+Ruling: promote the frozen final settings consistently in backtest, live and
+preflight. Keep generic strategy-constructor defaults compatible with other
+callers. Two-second tune latency preserves the mean improvement with no rate
+blocks or rejected orders. Actual CLI season 451 matches frozen PnL and fills.
+
+Independent review found no critical findings and three important findings:
+snapshot outage estimates incorrectly enabled final confidence; same-side
+equal-timestamp fills ignored sequence; experiment output directories could be
+reused. Regraded all three as important after reading the source and reproducing
+each failure. One RED-to-GREEN fix pass addressed them. Weather trust now also
+rejects missing observations. All 450 tune/verify grids are complete, so the
+gate preserves full-feed behavior. Full suite: 84 passing tests.
+
+Repeated verification solely to check these correctness fixes: all candidate
+and ablation rows and summaries exactly match the frozen run in both regimes.
+No new candidate was selected. Minor runner verify-guard restriction deferred
+under the single-review closure policy; the executed commands use only baseline/final_limit.
+
+Next lead screened: inventory-neutral ETF conversion could free limits without
+changing terminal exposure. A read-only probe of 451–462 in both regimes found
+zero rebalance cycles with a complete offsetting ETF/component basket. No
+conversion implementation or default change is justified by that screen.
+
+Evidence: `docs/competition-results.md`, `docs/competition-verification.json`.
+Actual live accounting recordings have not arrived; this remains unresolved.
+The local mock smoke reached all three rounds but initially lacked /trades.
+Readiness follow-up: reproduced and fixed that route and a live audit bug that
+used the aggressor's side instead of our side for passive fills. Unknown-side
+fills no longer contaminate slippage totals. Full suite is now 87 passing tests.
+A second full mock replay logged all 24 fills exactly once with no HTTP or
+reconciliation errors. Diagnostic defaults now match the accepted strategy.
+The diagnostic recorder also omitted its parent round-open handler and therefore
+disabled warm-up. A failing behavioral test reproduced the error. Restoring the
+handler makes its season 451 result match the actual backtest. Final suite:
+88 passing tests. Publish this evidence on the existing PR and retain a durable
+checkout under `~/Documents/ctc2026` for continuing with the actual recordings.

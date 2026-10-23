@@ -168,6 +168,7 @@ class SeasonModel:
         self.posterior: dict[str, float] = {}
         self.fair_sd: dict[str, float] = {}                 # ensemble spread of the fair value per symbol
         self.reported_rounds: set[int] = set()              # rounds whose final report we applied
+        self.outage_history_complete = True                # false after missing or reconstructed weather
         self.prelim_seen = False                            # preliminary report of the current storm applied
         self.prior_mode = "sample"                          # future storms: "sample" of historical storms or "point" mean
         self.future_sd_mult = 0.0                           # add this multiple of the future-storm valuation sd to fair_sd
@@ -176,7 +177,7 @@ class SeasonModel:
     @property
     def final_exact_ready(self) -> bool:
         return (self.final_exact and self.round == 3 and self.storm_reported
-                and {1, 2, 3} <= self.reported_rounds)
+                and {1, 2, 3} <= self.reported_rounds and self.outage_history_complete)
 
     # ---- feed handling ----
     def on_message(self, m: dict[str, Any]) -> None:
@@ -194,6 +195,10 @@ class SeasonModel:
             self.adv = None; self.adv_prev = None
         elif t == "storm":
             dt = m.get("_dt", 2.0)
+            expected_age = self.last_obs["age"] + self.timing["obs_every"] if self.last_obs else 0
+            if (not math.isclose(m["age"], expected_age, rel_tol=0, abs_tol=1e-9)
+                    or dt != self.timing["obs_every"]):
+                self.outage_history_complete = False
             self.last_obs = m
             self.obs.append(m)
             for s in self.states.values():
@@ -206,6 +211,8 @@ class SeasonModel:
             self.storm_active = False
         elif t == "damage_report":
             if m["stage"] == "final":
+                if not self.last_obs or self.last_obs["age"] != self.timing["storm"]:
+                    self.outage_history_complete = False
                 for k in PHYS:
                     self.states[k].set_from_report(m["damage_pct"][k])
                 self.loss_final += m["industry_loss_musd"]
@@ -236,6 +243,9 @@ class SeasonModel:
         need_storm = phase in ("storm", "aftermath") and not self.obs
         if not (need_rounds or need_storm):
             return
+        # Reconstructed tracks and outage/damage ratios do not support the low
+        # final-phase uncertainty floor, even once all damage reports are known.
+        self.outage_history_complete = False
         cur_obs, cur_official, cur_wire, cur_adv = list(self.obs), list(self.official), list(self.wire), self.adv
         self.states = {k: SiteState(self.case, k) for k in PHYS}
         self.loss_final, self.reported_rounds, self.round = 0.0, set(), 0

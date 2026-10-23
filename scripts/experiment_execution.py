@@ -98,8 +98,16 @@ def main():
     seasons = [int(n) for n in args.seasons.split(",")] if args.seasons else list(allowed)
     if not seasons or len(seasons) != len(set(seasons)) or any(n not in allowed for n in seasons):
         ap.error("seasons must be distinct members of the selected split")
-    out = Path(args.out) if args.out else ROOT / "out" / f"execution-{args.split}"
-    out.mkdir(parents=True, exist_ok=True)
+    out = Path(args.out) if args.out else ROOT / "out" / f"execution-{args.split}-{time.time_ns()}"
+    try:
+        out.mkdir(parents=True, exist_ok=False)
+    except FileExistsError:
+        ap.error(f"output directory already exists: {out}; choose a fresh run directory")
+    (out / "invocation.json").write_text(json.dumps(dict(
+        split=args.split, seasons=seasons, latency=args.latency, rate_limit=120,
+        configurations={name: {**BASE, **CONFIGS[name]} for name in names},
+        regimes=REGIMES), indent=2) + "\n")
+    print(f"output: {out}", flush=True)
     results = {}
     with ProcessPoolExecutor(max_workers=args.workers) as pool:
         futures = [pool.submit(evaluate, name, regime, seasons, args.latency)

@@ -89,6 +89,27 @@ def test_empty_positions_clear_previous_account_state(exchange):
     assert exchange.pnl_now == 0
 
 
+def test_fill_audit_uses_our_side_when_we_are_the_passive_seller(exchange, capsys):
+    exchange.mid["PORT"] = 100
+    exchange.responses["/trades"] = {"trades": [{"trade_id": "maker-fill",
+        "symbol": "PORT", "quantity": 10, "price": 99,
+        "aggressor_side": "buy", "buyer_is_me": False}]}
+    exchange.poll_trades()
+    assert "FILL PORT sell 10 @ 99" in capsys.readouterr().out
+    assert exchange.fill_cost == [10, 990]
+    exchange.poll_trades()
+    assert exchange.fill_cost == [10, 990]  # duplicate history does not double-count
+
+
+def test_unknown_own_side_does_not_pollute_slippage_audit(exchange, capsys):
+    exchange.mid["PORT"] = 100
+    exchange.responses["/trades"] = {"trades": [{"trade_id": "unknown-fill",
+        "symbol": "PORT", "quantity": 10, "price": 99, "aggressor_side": "buy"}]}
+    exchange.poll_trades()
+    assert "FILL PORT ? 10 @ 99" in capsys.readouterr().out
+    assert exchange.fill_cost == [0, 0]
+
+
 def test_order_timeout_requires_reconciliation_before_another_order(exchange):
     with patch("bot.live.urllib.request.urlopen", side_effect=TimeoutError("unknown order outcome")):
         assert exchange.place("PORT", "buy", 5, 90) is None

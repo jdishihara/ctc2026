@@ -63,6 +63,21 @@ def test_explicit_sequence_resolves_equal_timestamps():
         "quantity": -10, "average_price": 110.0, "realized_pnl": 100.0}
 
 
+def test_same_side_position_flip_honors_sequence_in_reversed_export():
+    opening = [{"symbol": "PORT", "quantity": 10, "average_price": 100}]
+    fills = [{**trade("b", "sell", 10, 120, 1), "sequence": 2},
+             {**trade("a", "sell", 5, 110, 1), "sequence": 1}]
+    assert accounting.replay(fills, opening)["PORT"] == {
+        "quantity": -5, "average_price": 120.0, "realized_pnl": 150.0}
+
+
+def test_same_side_position_flip_rejects_ambiguous_timestamps():
+    opening = [{"symbol": "PORT", "quantity": 10, "average_price": 100}]
+    with pytest.raises(ValueError, match="order"):
+        accounting.replay([trade("a", "sell", 5, 110, 1),
+                           trade("b", "sell", 10, 120, 1)], opening)
+
+
 @pytest.mark.parametrize("field,value", [("quantity", -2), ("quantity", 2.5),
     ("price", float("nan")), ("price", 0), ("quantity", True)])
 def test_invalid_trade_values_are_rejected(field, value):

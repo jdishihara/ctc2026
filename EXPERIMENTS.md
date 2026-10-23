@@ -1,3 +1,29 @@
+# Competition continuation 2026-10-23 (Codex)
+
+Frozen tune winner `final_limit` at `2ae7a02`: correct saturated-site report
+allocation, exact final valuation, 0.5% entry/full-size final thresholds. The
+final phase requires all three reports and complete observed weather; snapshots
+and gaps retain conservative settings. Earlier-phase parameters are unchanged.
+
+Verification 526–600 versus `e8d4307`: mean **9452.36 / 5993.53** versus
+9345.51 / 5927.40; p10 **-254.55 / -2712.92** versus -147.60 / -2682.24.
+Thin p10 deteriorates 1.14%, within the 10% rule. Worst seasons are slightly
+worse; losing counts remain 8/75 and 13/75. Paired mean-delta 95% bootstrap
+intervals are [49.01,169.82] / [27.37,107.85], conditional on this simulator.
+Peak actions 41/48 at the 120 cap, zero rate blocks/rejections.
+
+ACCEPTED as live/backtest/preflight defaults after verification. Faster cadence,
+smoother sizing and wind conditioning failed tune gates and remain disabled.
+Three important independent-review findings were reproduced with failing tests
+and fixed in one pass; the suite has 88 tests and post-review verification
+matches every frozen per-season result. The actual exchange accounting gap
+remains open pending the requested recordings.
+
+[Experiment table, review rulings, latency stress and reproduction](docs/competition-results.md)
+and [paired evidence](docs/competition-verification.json).
+
+---
+
 # Overnight report 2026-10-23 (session 02:05-07:00, Fable; all commits pushed)
 
 ## What improved (verify seasons 526-600, deep / thin regime, mean PnL and p10)

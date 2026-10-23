@@ -74,3 +74,30 @@ def test_http_cancel_rejection_then_empty_success_ack():
         server.shutdown()
         server.server_close()
         worker.join(timeout=2)
+
+
+def test_replay_mock_reports_own_fills_once(monkeypatch, capsys):
+    from scripts import mock_exchange
+
+    case = json.loads((Path(__file__).resolve().parents[1] / "data/case.json").read_text())
+    monkeypatch.setattr(mock_exchange, "STATE", {"mid": {"PORT": 100}, "half_spread": .0015,
+        "position": {}, "cash": 0., "fills": 0, "trades": [], "open": True,
+        "lock": threading.Lock(), "case": case})
+    server = ThreadingHTTPServer(("127.0.0.1", 0), mock_exchange.H)
+    worker = threading.Thread(target=server.serve_forever, daemon=True)
+    worker.start()
+    try:
+        exchange = LiveExchange(f"http://127.0.0.1:{server.server_port}", "local-test-key", False)
+        exchange.refresh()
+        assert exchange.place("PORT", "buy", 5) == 1
+        exchange.refresh()
+        exchange.refresh()
+        assert exchange.position["PORT"] == 5
+        assert exchange.seen_trades == {1}
+        output = capsys.readouterr().out
+        assert output.count("FILL PORT buy 5") == 1
+        assert "trades poll failed" not in output
+    finally:
+        server.shutdown()
+        server.server_close()
+        worker.join(timeout=2)
