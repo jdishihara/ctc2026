@@ -52,19 +52,68 @@ seasons; peak actions remain 58/59/58 with no blocks or rejections.
 
 Live, backtest, preflight and diagnostic commands use the same promoted
 settings. The generic strategy constructor keeps the overlay disabled for
-explicit experiment compatibility. Final code review is in progress.
+explicit experiment compatibility. The independent review is complete and all
+five Important findings were fixed in one pass at `73aed77`.
 
 [Machine-readable evidence](research-continuation.json) contains full invocation
 parameters, source revisions, file hashes, all 54 experiment summaries and
 per-season PnL, internal screens and paired confidence intervals.
 
-The full suite has 157 passing tests. The actual default backtest CLI reproduces
+The full suite has **180 passing tests**. The actual default backtest CLI reproduces
 frozen season 451 PnL 12007.83 and all 381 fills; the diagnostic script agrees.
 Preflight constructs the same configuration. The localhost HTTP integration
 exercises book reads, conversion, account refresh and three closing legs.
-A full 25x localhost replay reached all three rounds and produced 34 fills,
+A post-fix 25x localhost replay reached all three rounds and produced 31 fills,
 each logged once, with no HTTP/reconciliation errors. Its compressed clock and
 flat spread make its PnL unsuitable as a performance benchmark.
+
+## Final review and execution verification
+
+One fresh reviewer inspected `aa51985..ecd40a5`, independently passed the
+then-current 157 tests, recomputed all 54 experiment summaries, checked their
+raw result hashes and verified input-artifact hashes. It found no Critical or
+Minor issues and five Important issues. Each was accepted, reproduced, and
+fixed with focused regressions:
+
+| Finding | Fix |
+|---|---|
+| Stale quotes prevented timed-out leg cancellation | Cancel/reconcile without quotes or replacement budget; wait for fresh data before pricing replacements. |
+| Blocking HTTP invalidated quotes and season identity | Recheck readiness, quotes and competition after calls and before each leg; discard settled-season targets and stop old-fair orders after rollover. |
+| Buffered websocket frames appeared fresh when processed | Receive independently of HTTP/strategy work, retain monotonic arrival times, coalesce superseded quotes, preserve news order and reject stale frames. |
+| A paused symbol retained an already completed cycle | Check restored inventory and absence of orders before pause handling and after cancellation. |
+| Optional price gate reused oversized passive flips | Check remaining quantity against the gated target, cancel/reconcile and recalculate the permitted remainder. |
+
+A 250ms live heartbeat continues account/recovery work during quiet or
+reconnecting feeds. Account and strategy changes remain serialized in one
+worker; HTTP calls cannot stop market-data reception. A delayed-HTTP regression
+proves that buffered frames retain their original arrival times and cannot
+renew stale quotes. Tests also cover slow individual order acknowledgements,
+competition changes during cancellation, depth reads and conversion refresh,
+and racing fills in both directions of a gated passive flip.
+
+Post-fix source `73aed77` was clean for all reruns. **675 season replays** across
+nine comparisons exactly match every stored row and summary, including PnL,
+fills, action counts, rejects, basket cycles and timeouts: baseline/candidate
+confirmation in deep/thin, candidate normal tune, and candidate 3s stress in
+deep/thin/severe. No parameters were changed after the freeze. The
+[review verification artifact](review-verification.json) records rulings,
+source revision and before/after result hashes. No second review was requested.
+
+### Rulings on matters the reviewer declined to judge
+
+- **Actual competition accounting:** unresolved until authoritative fill and
+  position exports are available. Localhost cannot establish the source of
+  the earlier 2–3k discrepancy.
+- **Live profit and superiority to other teams:** not established. Reused
+  historical confirmation and an execution model cannot prove a win.
+- **Code before `aa51985`:** retain the earlier review evidence. Add integration
+  regressions where the current review exposed shared rollover behavior.
+- **Other model research:** the bounded screens and rejected candidates below
+  remain the evidence. Do not reopen tuning against reused confirmation.
+
+There are no deferred Minor findings from this review. The cost of the
+freshness fixes is skipped trading while data is stale; the simulated advantage
+survives unchanged, but actual execution quality still needs live recordings.
 
 ## Basket design and the rejected fixed-lot precursor
 

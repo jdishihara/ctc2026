@@ -61,11 +61,10 @@ captured targets until a refreshed account proves the cycle is complete.
   unknown conversion outcome, bounded unwind and normal-strategy suspension.
 - [x] Implement disabled overlay; run tests and full suite.
 - [x] Compare two fixed thresholds with baseline on all tune seasons/regimes.
-- [ ] Freeze one eligible candidate, confirm and stress it; reject if gates fail.
-- [ ] Promote live/backtest/preflight/diagnostic defaults consistently only if
-  accepted; expose an explicit disable switch.
-- [ ] One independent review over both plans; fix important findings RED→GREEN,
-  publish all positive and negative evidence, push the existing draft PR.
+- [x] Freeze basket10, confirm/stress, and reject after its failed severe gate.
+- [x] Keep fixed-lot defaults disabled; depth-capped promotion is handled in Task 2.
+- [x] One independent review over both plans; fix all five Important findings RED→GREEN.
+- [ ] Publish final evidence and update the existing draft PR.
 
 ## Review focus
 
@@ -142,7 +141,7 @@ book reads. Calls use the same current limit prices used for closing orders.
 - [x] Test this one candidate on all tune seasons, normal deep/thin, 3s
   deep/thin, and severe+3s. Require both normal means and thin p10 gate, both
   delayed means, and severe mean improvement before freezing for confirmation.
-- [ ] Freeze parameters and confirm once; promote consistently only if the
+- [x] Freeze parameters and confirm once; promote consistently only if the
   confirmation gates pass. Include in the one final independent review.
 
 Ruling: fix the observed execution-capacity mismatch using only tuning stress
@@ -181,3 +180,17 @@ Full suite 157 passed; actual default CLI and diagnostic reproduce season 451
 PnL 12007.83 and 381 fills. Local HTTP tests cover depth/convert/refresh/close.
 Full local mock replay completes three rounds, 34 fills logged once each, no
 HTTP/reconciliation errors. No remote orders. Independent final review remains.
+
+2026-10-23, Codex: final review completed over aa51985..ecd40a5. The reviewer
+independently verified 157 tests and all 54 archived result summaries/hashes.
+All five Important findings were reproduced and fixed in one pass at 73aed77:
+stale-timeout cancellation, freshness/competition checks after blocking calls,
+independent quote reception, paused completion and optional passive flip size.
+The suite now has 180 tests. No Critical or deferred Minor findings.
+
+Nine clean post-fix comparisons replayed 675 seasons, exactly matching every
+frozen row and summary in confirmation, normal tune and 3s deep/thin/severe
+stress. All selected parameters remain fixed. Review decisions and all
+declined-to-judge rulings are preserved in docs/research-continuation.md and
+docs/review-verification.json. No second reviewer was requested. Publication
+to the existing draft PR is the remaining step.

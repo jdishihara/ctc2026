@@ -9,8 +9,11 @@ both regimes; losing counts 7/75 and 13/75. Paired gain intervals
 rejections; peak actions 48/56. Three-second delay gains are small and uncertain;
 severe+3s mean improves 987.59 -> 1285.44. No live performance claim.
 
-Promoted consistently in launch commands after all PnL gates; final review in
-progress. Price timing, direct cone centering and fixed-lot basket precursors
+Promoted consistently in launch commands after all PnL gates. All five Important
+final-review findings fixed at `73aed77`; 180 tests pass. Nine post-fix comparisons
+(675 season replays) exactly reproduce every frozen result row and summary.
+There were no Critical or deferred Minor findings. Price timing, direct cone
+centering and fixed-lot basket precursors
 were rejected under the recorded gates. [Complete evidence and reproduction](docs/research-continuation.md).
 
 ---

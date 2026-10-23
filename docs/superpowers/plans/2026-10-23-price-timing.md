@@ -101,9 +101,10 @@ carry rule and all other accepted parameters.
 - [x] Write failing behavioral tests for blocked additions, permitted reductions, blocked flips ending at zero, no signal compatibility, exact-final bypass and nonaccumulating fair adjustment.
 - [x] Implement disabled-by-default integration; run focused tests and full suite.
 - [x] Reproduce accepted tune PnL and evaluate the three predeclared alternatives on all 75 tune seasons, both regimes.
-- [ ] If eligible, freeze the single best candidate, then confirm it against accepted on verification. Stress it at 2s latency and at refill 60s/quarter depth on tune.
-- [ ] Promote defaults only if gates pass. Otherwise record rejection and continue from the next evidence-supported lead without searching verification.
-- [ ] Get one fresh independent review, fix important findings with failing tests first, publish results and update PR.
+- [x] Freeze timing05, confirm against accepted and run both specified stresses.
+- [x] Reject timing05 after failed confirmation means; preserve disabled defaults.
+- [x] Get one fresh independent review and fix important findings with failing tests first.
+- [ ] Publish final results and update the existing draft PR.
 
 ## Progress and rulings
 
@@ -153,16 +154,10 @@ require at least 5% improvement and no increase in aggregate end-damage RMSE.
 Damage parameters were already fit on 1–450, so damage error is a shared
 secondary screen, not an independent held-out calibration claim.
 
-- [ ] Run this bounded internal screen and record every candidate.
-- [ ] If any pass, implement optional decayed position error with cache/reset
-  tests observed RED then GREEN. Equal-weight default must be unchanged.
-- [ ] Compare at most the two best eligible internal candidates on all tune
-  seasons against `aa51985`, using the same PnL gates and fixed score. Price
-  timing stays disabled. Freeze one winner before confirmation; never tune
-  half-life on verification.
-- [ ] Promote only after the frozen winner passes confirmation and the same
-  latency/liquidity stresses. Otherwise retain accepted defaults and publish
-  the negative evidence. Include this task in the single final branch review.
+- [x] Run the bounded internal screen and record every candidate.
+- [x] Reject all three half-lives; dependent runtime implementation, tune,
+  confirmation and promotion are inapplicable because no candidate passed.
+- [x] Preserve equal weighting and include negative evidence in the final review.
 
 Ruling: continue with an independently motivated storm-forecast experiment
 after the failed price candidate, as the user requested continued competitive
@@ -188,12 +183,9 @@ the current observation through future cone points; fade to zero over 60s after
 the last future cone point. Never use expired cone points. Preserve analog
 weights, radius/intensity, uncertainty floors and all trading settings.
 
-- [ ] Screen both fixed fractions; no runtime change unless eligible.
-- [ ] If eligible, implement with causal/no-cone/cache tests first, run the
-  eligible candidates on tune, freeze the best under the same gates, and
-  confirm/stress only that frozen candidate. Otherwise record rejection.
-- [ ] Finish with one independent review of the whole continuation and publish
-  all results, including rejected hypotheses; no claim of guaranteed wins.
+- [x] Screen both fixed fractions, then implement eligible candidates with tests.
+- [x] Run both on tune; reject both on PnL gates, with no confirmation/promotion.
+- [x] Include the whole continuation and negative results in one final review.
 
 Ruling: the recency screen supports looking beyond path weighting; the packet
 supplies official future cones as a distinct information source. Test direct
@@ -230,9 +222,8 @@ and quarter depth / 60s refill / 3s latency. Do not combine with fundamental
 trading or deploy this prototype. Record the partial-fill/time-out cost and
 decide whether production work has a demonstrated basis.
 
-- [ ] Run the fixed internal probe and record both regimes.
-- [ ] If it has material stressed PnL, define a separate tested implementation
-  plan before any live integration. Otherwise reject the execution premise.
+- [x] Run the fixed internal probe and record both regimes.
+- [x] Define the separate basket-overlay plan before live integration.
 
 Ruling: training price dislocations justify an execution-aware probe beyond the
 earlier inventory-only conversion test. Cost if wrong is this bounded offline
@@ -250,3 +241,11 @@ timeout retries. Fixed average 30.02 cycles/season. Both have zero rejected
 actions. Define coordinated production tests in
 `docs/superpowers/plans/2026-10-23-basket-overlay.md`; standalone profits will
 not be added to the baseline. Final independent review covers both plans.
+
+2026-10-23, Codex: final review completed over aa51985..ecd40a5. All five
+Important findings fixed with regressions at 73aed77; 180 tests pass. The
+optional passive gate now cancels an oversized same-price order and handles
+racing fills in either direction. The price/cone defaults remain disabled;
+no rejected PnL candidate was reopened. Every review ruling, including the
+limits of live/accounting claims, is in docs/research-continuation.md. No
+Critical or deferred Minor findings. Final publication is the remaining step.

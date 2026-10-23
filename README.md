@@ -61,6 +61,10 @@ reserves action capacity, and restores starting positions after partial fills.
 6,412.88 thin**, versus 9,452.36 / 5,993.53 before the overlay. These are
 historical simulator results; delay substantially reduces the advantage.
 See [full results, stresses and rejected experiments](docs/research-continuation.md).
+All five final-review execution findings are fixed; 180 tests pass and 675
+post-fix season replays exactly reproduce the frozen results. The live feed
+keeps receiving during HTTP work and preserves quote arrival times; timed-out
+basket orders are cancelled even when quotes stop arriving.
 
 Live bot (testnet or competition), dry run first:
 
