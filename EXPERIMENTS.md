@@ -41,6 +41,7 @@ off; max-cross 1% or 3%; velocity in the analog kernel; cones of all advisories;
 | 215 | -0.7k (R1 +1.5k, R2 +3.3k, R3 -5.4k) | +2.6k (R1 +2.3k, R2 +4.9k, R3 -4.5k) | first clean season on the new package; shape agrees round by round |
 | 216 | +8.3k (R1 +3.8k, R2 +5.0k, R3 -0.5k) | +17.8k (R1 +12.2k, R2 +5.8k, R3 -0.3k) | bot restarted on min_edge 0.025 during round 1 (missed part of the storm) |
 | 217 | +7.3k | +7.7k (R1 +2.5k, R2 +4.2k, R3 +1.0k) | clean season, no restart |
+| 218 | +2.7k | +13.6k (R1 +3.4k, R2 +9.7k, R3 +0.5k) | clean season |
 TESTNET_ROWS_PLACEHOLDER
 
 Live fill cost tonight: +29 bp of notional over 599 fills, 40% of notional at or better than mid (same as yesterday, inside the
@@ -198,6 +199,7 @@ python3 scripts/eval_forecast.py 25 50       # forecast skill
 | 2026-10-23 04:30 | cones of ALL official advisories so far instead of the latest only (`--cone-all`): forecast skill at 90 s PORT 14.2 vs 13.5, pattern top-1 91% vs 92%; at 30 s unchanged | | | REJECTED at the skill stage: older cones are stale. Option kept, off |
 | 2026-10-23 04:40 | late-storm no-add (`--late-cut` s: do not add to a position once the storm is older than this; fills after 240 s earn about nothing): 300 s -> verify 9336 / 5887, tune 8572 / 5151; 360 s -> 9336 / 5914, tune 8579 / 5154 vs 9344 / 5925 and 8572 / 5154 | | | NO CHANGE (within +-40 everywhere): the late fills are cheap passive ones. Option kept, off |
 | 2026-10-23 05:05 | grid 3 (sigma 10 / 15 / 25 x k 50 / 100 / 200 at the accepted set, tune 451-525): sigma 15 / k 100 keeps the top score 5014; k 200 4894 (verify 9139 / 5871, p10 +32 / -2045); sigma 25 with k 200 4690, with k 100 3863 (thin p10 -6206); sigma 10 about 3840; k 50 3420. Under the cone the ensemble is no longer insensitive to sigma: 10 and 25 both lose about 1,100 points of score | | | NO CHANGE |
+| 2026-10-23 06:05 | grid 4 (cone_w 0.75 / 1.0 / 1.25 / 1.5 x cone_s0 15 / 20 / 30 at the accepted set, tune 451-525): (1.0, 20) keeps the top score 5014; (1.5, 30) 4873 verifies at 9487 / 6013 (p10 +489 / -2037, min -16.7k / -18.1k) vs 9344 / 5925; (0.75, 15) 4840; (1.0, 15) 4815; (1.5, 20) 4798 | | | NO CHANGE by the protocol (selection on the tune set); (1.5, 30) is a near-equivalent alternative |
 
 ## Backlog (ordered by expected value)
 1. Passive quoting: rest orders inside the house spread instead of crossing; measure under thin regime.
