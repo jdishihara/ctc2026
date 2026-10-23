@@ -11,6 +11,7 @@ class BasketOverlay:
         self.edge, self.lot = edge, lot
         self.participation = participation
         self.targets = None
+        self.competition_id = None
         self.round_start = None
         self.last_attempt = self.last_submit = self.last_cancel = -math.inf
         self.submitted = False
@@ -50,32 +51,67 @@ class BasketOverlay:
     def _resting(sim, symbol):
         return sim.resting(symbol, 'buy') + sim.resting(symbol, 'sell')
 
-    def _cancel(self, sim, symbols):
+    def _same_competition(self, sim, competition_id):
+        if getattr(sim, 'competition_id', None) == competition_id:
+            return True
+        # A refreshed account can roll over inside any blocking operation.
+        # Inventory from the settled season must never become next season's target.
+        self.targets = None
+        self.round_start = None
+        self.submitted = False
+        self.last_attempt = self.last_submit = self.last_cancel = -math.inf
+        self.competition_id = getattr(sim, 'competition_id', None)
+        return False
+
+    def _cancel(self, sim, symbols, competition_id):
         for symbol in symbols:
-            if self._resting(sim, symbol) and not sim.cancel_all(symbol):
+            if not self._same_competition(sim, competition_id) or not self._ready(sim):
                 return False
-            if not self._ready(sim):
+            cancelled = not self._resting(sim, symbol) or sim.cancel_all(symbol)
+            if not self._same_competition(sim, competition_id) or not self._ready(sim):
+                return False
+            if not cancelled:
                 return False
         return not any(self._resting(sim, s) for s in symbols)
 
+    def _complete(self, sim):
+        if (all(sim.position[s] == target for s, target in self.targets.items())
+                and not any(self._resting(sim, s) for s in self.targets)):
+            self.targets = None
+            return True
+        return False
+
     def _drive(self, sim, paused):
+        competition_id = self.competition_id
+        if not self._same_competition(sim, competition_id):
+            return False
         symbols = list(self.targets)
         if not self._ready(sim):
             return True
+        if self._complete(sim):
+            return False
         if set(symbols) & set(paused):
             if sim.t - self.last_cancel >= 1 and self._headroom(sim, len(symbols)):
                 self.last_cancel = sim.t
-                self._cancel(sim, symbols)
+                if not self._cancel(sim, symbols, competition_id):
+                    return self.targets is not None
+                if self._complete(sim):
+                    return False
             return True
-        if (all(sim.position[s] == target for s, target in self.targets.items())
-                and not any(self._resting(sim, s) for s in symbols)):
-            self.targets = None
-            return False
         if self.submitted and sim.t - self.last_submit < 10:
             return True
-        if not self._fresh(sim, symbols) or not self._headroom(sim, 2 * len(symbols)):
-            return True
-        if not self._cancel(sim, symbols):
+        # Cancellation needs no quote. Remove expired legs even during a feed
+        # outage or when the remaining action budget cannot also replace them.
+        outstanding = sum(bool(self._resting(sim, s)) for s in symbols)
+        if outstanding:
+            if sim.t - self.last_cancel < 1 or not self._headroom(sim, outstanding):
+                return True
+            self.last_cancel = sim.t
+            if not self._cancel(sim, symbols, competition_id):
+                return self.targets is not None
+            if self._complete(sim):
+                return False
+        if not self._fresh(sim, symbols) or not self._headroom(sim, len(symbols)):
             return True
         crossing = .02 if self.submitted else .001
         if self.submitted:
@@ -83,7 +119,9 @@ class BasketOverlay:
         self.last_submit = sim.t
         self.submitted = True
         for symbol, target in self.targets.items():
-            if not self._ready(sim):
+            if not self._same_competition(sim, competition_id):
+                return False
+            if not self._ready(sim) or not self._fresh(sim, symbols):
                 break
             delta = target - sim.position[symbol]
             if not delta:
@@ -91,7 +129,7 @@ class BasketOverlay:
             side = 'buy' if delta > 0 else 'sell'
             limit = self._limit(sim, symbol, side, crossing)
             sim.place(symbol, side, abs(delta), limit)
-        return True
+        return self._same_competition(sim, competition_id)
 
     @staticmethod
     def _limit(sim, symbol, side, crossing):
@@ -99,12 +137,17 @@ class BasketOverlay:
         ticks = math.floor(price * 100 + 1e-9) if side == 'buy' else math.ceil(price * 100 - 1e-9)
         return round(ticks / 100, 2)
 
-    def _execution_size(self, sim, changes, size):
+    def _execution_size(self, sim, changes, size, competition_id):
         if not self.participation:
             return size
         for symbol, delta in changes.items():
+            if (not self._same_competition(sim, competition_id)
+                    or not self._ready(sim) or not self._fresh(sim, changes)):
+                return 0
             side = 'sell' if delta > 0 else 'buy'  # Closing the converted inventory.
             quantity = sim.liquidity(symbol, side, self._limit(sim, symbol, side, .001))
+            if not self._same_competition(sim, competition_id) or not self._ready(sim):
+                return 0
             if quantity is None or not math.isfinite(quantity) or quantity < 0:
                 return 0
             size = min(size, int(quantity * self.participation // abs(delta)))
@@ -132,6 +175,7 @@ class BasketOverlay:
                 or not 20 <= sim.t - self.round_start <= 740 or sim.t - self.last_attempt < 15):
             return False
         for etf, meta in sim.case['etfs'].items():
+            competition_id = getattr(sim, 'competition_id', None)
             basket = meta['basket']
             symbols = [etf, *basket]
             if (set(symbols) & set(paused) or not self._fresh(sim, symbols)
@@ -145,14 +189,20 @@ class BasketOverlay:
             if not self._size(sim, changes):
                 continue
             self.last_attempt = sim.t
-            if not self._cancel(sim, symbols):
+            if not self._cancel(sim, symbols, competition_id):
+                self._same_competition(sim, competition_id)
+                return False
+            if not self._fresh(sim, symbols):
                 return False
             # Cancellations may race fills and perform blocking account refreshes.
             size = self._size(sim, changes)
-            size = self._execution_size(sim, changes, size)
-            if not size or not self._fresh(sim, symbols) or self._opportunity(sim, etf, basket) != create:
+            size = self._execution_size(sim, changes, size, competition_id)
+            if (not self._same_competition(sim, competition_id) or not self._ready(sim)
+                    or not size or not self._fresh(sim, symbols)
+                    or self._opportunity(sim, etf, basket) != create):
                 return False
             self.targets = {s: sim.position[s] for s in symbols}
+            self.competition_id = competition_id
             self.submitted = False
             self.cycles += 1
             (sim.create if create else sim.redeem)(etf, size)

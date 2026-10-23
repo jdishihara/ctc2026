@@ -138,9 +138,148 @@ def test_completion_requires_no_outstanding_orders_and_pauses_cancel_legs(setup)
     overlay, sim = setup()
     assert overlay.on_quotes(sim)
     sim.position.update(overlay.targets)
+    assert not overlay.on_quotes(sim, paused={'A'})
+    assert not sim.pending
+    assert overlay.targets is None
+
+
+def test_completed_basket_releases_core_strategy_even_if_a_symbol_is_paused(setup):
+    overlay, sim = setup()
+    assert overlay.on_quotes(sim)
+    sim.t += 2
+    sim._activate_pending()
+    assert not overlay.on_quotes(sim, paused={'A'})
+    assert overlay.targets is None
+
+
+def test_paused_partial_basket_cancels_orders_but_retains_inventory_targets(setup):
+    overlay, sim = setup()
+    assert overlay.on_quotes(sim)
+    targets = overlay.targets.copy()
     assert overlay.on_quotes(sim, paused={'A'})
     assert not sim.pending
+    assert overlay.targets == targets
+    assert sim.position != targets
+
+
+def test_expired_legs_cancel_without_fresh_quotes_or_replacement_budget(setup):
+    overlay, sim = setup()
+    sim.quote_times = {s: sim.t for s in sim.quotes}
+    assert overlay.on_quotes(sim)
+    targets = overlay.targets.copy()
+    sim.t += 11
+    sim.rate_limit = len(sim.actions) + 3  # Enough to cancel, not cancel AND replace.
+    assert overlay.on_quotes(sim)
+    assert not sim.pending
+    assert overlay.targets == targets
+    sim.rate_limit = 120
+    sim.quote_times = {s: sim.t for s in sim.quotes}
+    assert overlay.on_quotes(sim)
+    assert len(sim.pending) == 3
+
+
+def test_slow_cancel_requires_new_quotes_before_replacement(setup, monkeypatch):
+    overlay, sim = setup()
+    assert overlay.on_quotes(sim)
+    sim.t += 10
+    sim.quote_times = {s: sim.t for s in sim.quotes}
+    cancel = sim.cancel_all
+    def slow_cancel(symbol):
+        sim.t += 6
+        return cancel(symbol)
+    monkeypatch.setattr(sim, 'cancel_all', slow_cancel)
+    assert overlay.on_quotes(sim)
+    assert not sim.pending
     assert overlay.targets is not None
+    sim.quote_times = {s: sim.t for s in sim.quotes}
+    assert overlay.on_quotes(sim)
+    assert len(sim.pending) == 3
+
+
+def test_slow_order_ack_cannot_price_later_legs_from_expired_quotes(setup, monkeypatch):
+    overlay, sim = setup()
+    sim.quote_times = {s: sim.t for s in sim.quotes}
+    place = sim.place
+    def slow_place(*args):
+        result = place(*args)
+        sim.t += 6
+        return result
+    monkeypatch.setattr(sim, 'place', slow_place)
+    assert overlay.on_quotes(sim)
+    assert len(sim.pending) == 1
+    assert overlay.targets is not None
+
+
+def change_competition(sim):
+    sim.competition_id = 'next-season'
+    sim.quotes.clear()
+    sim.mid.clear()
+    sim.position = {s: 0 for s in sim.symbols}
+    sim.pending.clear()
+    sim.orders.clear()
+
+
+@pytest.mark.parametrize('phase', ['entry', 'recovery'])
+@pytest.mark.parametrize('cancel_success', [True, False])
+def test_competition_change_during_cancel_discards_old_targets(setup, monkeypatch, phase, cancel_success):
+    overlay, sim = setup()
+    sim.competition_id = 'first-season'
+    if phase == 'recovery':
+        sim.position['A'] = 7
+        assert overlay.on_quotes(sim)
+        sim.t += 10
+    else:
+        overlay.participation = .5
+        sim.place('A', 'buy', 5, 8)
+    def rollover_cancel(symbol):
+        change_competition(sim)
+        return cancel_success
+    monkeypatch.setattr(sim, 'cancel_all', rollover_cancel)
+    assert not overlay.on_quotes(sim)
+    assert overlay.targets is None
+    assert overlay.round_start is None
+    assert not sim.pending and not any(sim.position.values())
+
+
+def test_competition_change_during_depth_reads_cannot_convert(setup, monkeypatch):
+    overlay, sim = setup()
+    sim.competition_id = 'first-season'
+    overlay.participation = .5
+    def rollover_book(*args):
+        change_competition(sim)
+        return 100
+    monkeypatch.setattr(sim, 'liquidity', rollover_book)
+    assert not overlay.on_quotes(sim)
+    assert overlay.targets is None and overlay.round_start is None
+    assert not sim.actions
+
+
+def test_competition_change_during_conversion_refresh_discards_old_targets(setup, monkeypatch):
+    overlay, sim = setup()
+    sim.competition_id = 'first-season'
+    sim.position['A'] = 7
+    convert = sim.create
+    def uncertain(etf, qty):
+        convert(etf, qty)
+        sim.state_ready = False
+        return False
+    def rollover_refresh():
+        change_competition(sim)
+        sim.state_ready = True
+    monkeypatch.setattr(sim, 'create', uncertain)
+    monkeypatch.setattr(sim, 'refresh', rollover_refresh, raising=False)
+    assert not overlay.on_quotes(sim)
+    assert overlay.targets is None and overlay.round_start is None
+    assert not sim.pending and not any(sim.position.values())
+
+
+def test_round_change_keeps_partial_recovery_in_the_same_competition(setup):
+    overlay, sim = setup()
+    sim.competition_id = 'same-season'
+    assert overlay.on_quotes(sim)
+    targets = overlay.targets.copy()
+    overlay.on_round(sim)
+    assert overlay.targets == targets
 
 
 @pytest.mark.parametrize('edge', [-.1, float('nan')])

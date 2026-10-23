@@ -75,6 +75,7 @@ class FairValueTrader(Strategy):
         self.paused: set[str] = set()
 
     def on_start(self, sim) -> None:
+        self.competition_id = getattr(sim, 'competition_id', None)
         self.basket = None
         if self.basket_edge:
             from .basket import BasketOverlay
@@ -177,7 +178,16 @@ class FairValueTrader(Strategy):
             return 0
         return min(target, position) if target > 0 else max(target, position)
 
+    def _same_competition(self, sim) -> bool:
+        if self.competition_id == getattr(sim, 'competition_id', None):
+            return True
+        self.on_start(sim)
+        self.on_round(sim)
+        return False
+
     def on_quotes(self, sim) -> None:
+        if not self._same_competition(sim):
+            return
         if self.price_signal is not None:
             now = sim.t
             prices = sim.mid
@@ -195,10 +205,13 @@ class FairValueTrader(Strategy):
                 if sim.cancel_all(s):
                     self.pause_pending.discard(s)
                     self.passive_order.pop(s, None)
+                if not self._same_competition(sim):
+                    return
         if not getattr(sim, "state_ready", True):
             return
         if self.basket is not None and (self.basket.targets is not None or sim.t - self.round_open_t >= self.warmup):
-            if self.basket.on_quotes(sim, self.paused):
+            active = self.basket.on_quotes(sim, self.paused)
+            if not self._same_competition(sim) or active:
                 return
         if sim.t - self.last_trade_t < self.every or sim.t - self.round_open_t < self.warmup:
             return
@@ -228,6 +241,8 @@ class FairValueTrader(Strategy):
         post = self.model.posterior
         ent = -sum(p * math.log(p) for p in post.values() if p > 0) if post else 0.0
         for s in self.symbols:
+            if not self._same_competition(sim):
+                return
             if s in self.paused or s not in sim.quotes or s in unsettled:
                 continue
             bid, ask = sim.quotes[s]
@@ -274,6 +289,8 @@ class FairValueTrader(Strategy):
             if resting_net != 0:
                 if not sim.cancel_all(s):                   # never replace an unconfirmed cancellation
                     continue
+                if not self._same_competition(sim):
+                    return
                 pos = sim.position[s]                      # fills may have beaten the cancellation
                 target = self.price_target(sim, s, target, pos)
                 delta = target - pos
@@ -300,6 +317,7 @@ class FairValueTrader(Strategy):
     def quote_passive(self, sim, s: str, f: float, bid: float, ask: float, conf: float, floor: float, lim: int, pos: int) -> None:
         """Rest one order inside the spread where the edge (after confidence) equals passive * floor; replace it only when
         the price moves. Fills come from the house re-quoting through us or other participants crossing."""
+        competition_id = getattr(sim, 'competition_id', None)
         keep = self.passive * floor / max(conf, 1e-9)
         tick = 0.01
         if f > bid:                                   # fair above the bid: bid inside the spread
@@ -329,10 +347,14 @@ class FairValueTrader(Strategy):
                     self.passive_order.pop(s, None)
             return
         old = self.passive_order.get(s)
-        if old and sim.resting(s, side) and old[0] == side and abs(old[1] - px) / px < 0.001 and sim.t - old[2] < 120:
+        if (old and sim.resting(s, side) and old[0] == side
+                and (not self.price_gate or sim.resting(s, side) <= qty)
+                and abs(old[1] - px) / px < 0.001 and sim.t - old[2] < 120):
             return                                    # our quote is still where we want it
         if sim.resting(s, "buy") or sim.resting(s, "sell"):
             if not sim.cancel_all(s):
+                return
+            if competition_id != getattr(sim, 'competition_id', None):
                 return
             pos = sim.position[s]
             target = self.price_target(sim, s, target, pos)

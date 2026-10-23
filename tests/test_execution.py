@@ -162,6 +162,22 @@ def test_aggressive_replacement_waits_for_successful_cancel(exchange):
     assert len(exchange.actions) == 0
 
 
+@pytest.mark.parametrize('passive', [False, True])
+def test_account_rollover_during_cancel_cannot_trade_old_season_fair(exchange, passive):
+    strategy = trader(exchange)
+    strategy.passive = .75 if passive else 0
+    exchange.open_orders = [order('sell', 30)]
+    exchange.responses['/competitions/time']['competition_id'] = 'season-2'
+    exchange.responses['/positions'] = {'positions': []}
+    with patch.object(exchange, 'send', return_value={}) as send:
+        if passive:
+            strategy.quote_passive(exchange, 'PORT', 103, 100, 101, 1, .025, 200, 10)
+        else:
+            strategy.on_quotes(exchange)
+    assert [call.args[0] for call in send.call_args_list] == ['DELETE']
+    assert not exchange.open_orders and exchange.position['PORT'] == 0
+
+
 def test_paused_symbol_cancels_resting_quotes_even_during_warmup(exchange):
     strategy = trader(exchange)
     strategy.warmup = 20

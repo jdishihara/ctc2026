@@ -37,11 +37,12 @@ class LiveExchange:
         self.quotes: dict[str, tuple[float, float]] = {}
         self.mid: dict[str, float] = {}
         self.quote_times: dict[str, float] = {}
+        self.quotes_valid_after = -math.inf
         self.position: dict[str, int] = {s: 0 for s in self.symbols}
         self.open_orders: list[dict[str, Any]] = []
         self.market_open = False
         self.state_ready = False  # complete account snapshot required before any new exposure
-        self.t0 = time.time()
+        self.t0 = time.monotonic()
         self.actions: collections.deque[float] = collections.deque()
         self.rate_limit = rate_limit
         self.rejected = 0
@@ -56,7 +57,7 @@ class LiveExchange:
 
     @property
     def t(self) -> float:
-        return time.time() - self.t0
+        return time.monotonic() - self.t0
 
     # ---- http ----
     def get(self, path: str, api: bool = True) -> Any:
@@ -135,13 +136,14 @@ class LiveExchange:
                 self.trade_cursor = None
                 self.quotes.clear(); self.mid.clear()
                 self.quote_times.clear()
+                self.quotes_valid_after = self.t
             # Publish a complete snapshot only after every required request succeeds.
             self.competition_id = cid
             self.position, self.open_orders = positions, orders
             self.last_positions = summary
             self.pnl_now = summary["realized"] + summary["unrealized"]
             self.market_open = tm.get("state") == "running"
-            self.reopened = self.market_open and not was_open
+            self.reopened = self.reopened or (self.market_open and not was_open)
             self.state_ready = True
             self.poll_trades()
         except Exception as exc:
@@ -341,6 +343,157 @@ def quote_from_frame(d: dict[str, Any]) -> tuple[str, float, float] | None:
     return None
 
 
+class MarketInbox:
+    """Event-loop-owned buffer: preserve news order, retain only each latest quote."""
+    def __init__(self):
+        self.quotes = {}
+        self.events = []
+        self.sequence = 0
+        self.changed = asyncio.Event()
+
+    def put(self, message, received_at):
+        self.sequence += 1
+        event = (self.sequence, message, received_at)
+        if message.get('type') == 'quote':
+            self.quotes[message.get('symbol')] = event
+        else:
+            self.events.append(event)
+        self.changed.set()
+
+    def drain(self):
+        events = sorted([*self.events, *self.quotes.values()], key=lambda item: item[0])
+        self.events.clear()
+        self.quotes.clear()
+        self.changed.clear()
+        return [(message, received_at) for _, message, received_at in events]
+
+
+async def receive_market_data(ws, inbox, clock):
+    # This coroutine never does HTTP, forecasts, or order work. Arrival time is
+    # captured before the serialized trading worker can delay processing.
+    async for frame in ws:
+        received_at = clock()
+        message = json.loads(frame)
+        if isinstance(message, dict):
+            inbox.put(message, received_at)
+
+
+async def drive_market_data(session, inbox, receiver, interval=.25):
+    """One account/strategy owner, with a heartbeat even during a feed outage."""
+    while True:
+        try:
+            await asyncio.wait_for(inbox.changed.wait(), timeout=interval)
+        except TimeoutError:
+            pass
+        await asyncio.to_thread(session.step, inbox.drain())
+        if receiver.done() and not inbox.changed.is_set():
+            await receiver
+            return
+
+
+class LiveSession:
+    def __init__(self, ex, strat, sync, season_year='', last_round=0, seen_seq=None):
+        self.ex, self.strat, self.sync = ex, strat, sync
+        self.season_year, self.last_round = season_year, last_round
+        self.seen_seq = seen_seq if seen_seq is not None else set()
+        self.competition_id = ex.competition_id
+        self.last_sync = self.last_log = 0.
+
+    def _competition_changed(self):
+        ex, strat = self.ex, self.strat
+        changed = self.competition_id is not None and ex.competition_id != self.competition_id
+        self.competition_id = ex.competition_id
+        if changed:
+            print('new competition id: resetting model', flush=True)
+            strat.on_start(ex)
+            strat.on_round(ex)
+            self.seen_seq.clear()
+            self.last_round = ex.round = 0
+            self.season_year = ''
+        return changed
+
+    def _news(self, m):
+        ex, strat = self.ex, self.strat
+        year = (m.get('time') or '')[:4]
+        if year and self.season_year and year != self.season_year:
+            print(f'new season (year {self.season_year} -> {year}): resetting model', flush=True)
+            strat.on_start(ex)
+            strat.on_round(ex)
+            self.seen_seq.clear()
+            self.last_round = 0
+        if year:
+            self.season_year = year
+        seq = m.get('seq')
+        if seq is not None:
+            if seq in self.seen_seq:
+                return
+            self.seen_seq.add(seq)
+        if m.get('type') == 'storm_formed':
+            if m['round'] < self.last_round or (m['round'] == 1 and (strat.model.reported_rounds or strat.model.round)):
+                print('new season: resetting model', flush=True)
+                strat.on_start(ex)
+                strat.on_round(ex)
+                self.seen_seq.clear()
+            self.last_round = ex.round = m['round']
+        if m.get('type') == 'snapshot':
+            strat.model.on_snapshot(m)
+            strat.fair = strat.compute_fair()
+            strat.last_trade_t = -1e9
+            print('snapshot processed: warm-up before trading', flush=True)
+            strat.on_round(ex)
+            return
+        if m.get('type') == 'announcement':
+            print(f"ANNOUNCEMENT {m.get('symbols')}: {m.get('headline')}  -> pausing those symbols", flush=True)
+            strat.pause(m.get('symbols', []))
+        strat.on_news(ex, m)
+
+    def step(self, events):
+        ex, strat = self.ex, self.strat
+        if ex.t - self.last_sync > self.sync:
+            ex.refresh()
+            self.last_sync = ex.t
+        self._competition_changed()
+        if ex.reopened:
+            print('market (re)opened: warm-up', flush=True)
+            strat.on_round(ex)
+            ex.reopened = False
+        for message, received_at in events:
+            kind = message.get('type')
+            if kind == 'quote':
+                if received_at < ex.quotes_valid_after or not 0 <= ex.t - received_at <= 5:
+                    continue
+                q = quote_from_frame(message)
+                if q and q[0] in ex.symbols and all(math.isfinite(p) and p > 0 for p in q[1:]) and q[1] <= q[2]:
+                    ex.quotes[q[0]] = (q[1], q[2])
+                    ex.mid[q[0]] = (q[1] + q[2]) / 2
+                    ex.quote_times[q[0]] = received_at
+            elif kind == 'news' and isinstance(message.get('message'), dict):
+                self._news(message['message'])
+            elif kind == 'disconnected':
+                ex.quotes.clear()
+                ex.mid.clear()
+                ex.quote_times.clear()
+        # Cached quotes cannot stay executable because other symbols/news tick.
+        now = ex.t
+        for symbol in list(ex.quotes):
+            if not 0 <= now - ex.quote_times.get(symbol, -math.inf) <= 5:
+                ex.quotes.pop(symbol, None)
+                ex.mid.pop(symbol, None)
+                ex.quote_times.pop(symbol, None)
+        if events and ex.quotes and len(ex.quotes) >= len(ex.symbols) // 2:
+            strat.on_quotes(ex)
+        elif strat.basket is not None and strat.basket.targets is not None:
+            # No fresh data is needed to cancel an expired leg. The overlay
+            # itself requires fresh quotes before any replacement is priced.
+            strat.basket.on_quotes(ex, strat.paused)
+        self._competition_changed()  # A nested cancel/conversion can refresh.
+        now = ex.t
+        if now - self.last_log > 10 and strat.fair:
+            print(f't={now:7.0f} r{strat.model.round} pnl {ex.pnl_now:+.0f} ' + ' '.join(
+                f'{s}:{ex.mid.get(s, 0):.2f}/{strat.fair.get(s, 0):.2f}/{ex.position[s]:+d}' for s in SYMS), flush=True)
+            self.last_log = now
+
+
 async def run(args: argparse.Namespace) -> None:
     ex = LiveExchange(args.url, args.key, args.dry_run, rate_limit=args.rate)
     if args.nowcast:
@@ -369,76 +522,27 @@ async def run(args: argparse.Namespace) -> None:
             strat.fair = strat.compute_fair(); ex.round = last_round
     ws_url = (args.ws or ex.url.replace("https://", "wss://", 1).replace("http://", "ws://", 1)) + "/ws/v1/market-data"
     subscribe = {"action": "subscribe", "symbols": ex.symbols, "channels": ["news", "quotes"]}
-    last_sync = last_log = 0.0
-    while True:
-        try:
-            async with websockets.connect(ws_url, additional_headers={"X-API-Key": ex.key}) as ws:
-                await ws.send(json.dumps(subscribe))
-                print("connected", flush=True)
-                async for frame in ws:
-                    d = json.loads(frame)
-                    if d.get("type") == "quote":
-                        q = quote_from_frame(d)
-                        if q:
-                            ex.quotes[q[0]] = (q[1], q[2]); ex.mid[q[0]] = (q[1] + q[2]) / 2
-                            ex.quote_times[q[0]] = ex.t
-                    elif d.get("type") == "news" and isinstance(d.get("message"), dict):
-                        m = d["message"]
-                        seq = m.get("seq")
-                        if seq is not None:
-                            if seq in seen_seq:
-                                continue
-                            seen_seq.add(seq)
-                        year = (m.get("time") or "")[:4]
-                        if year and season_year and year != season_year and m.get("type") != "snapshot":
-                            # the fictional year names the season; a change means the testnet moved on (02:07 tonight the first
-                            # snapshot still described the previous season and its damage was carried into the new one)
-                            print(f"new season (year {season_year} -> {year}): resetting model", flush=True)
-                            strat.on_start(ex); seen_seq.clear(); last_round = 0
-                        if year and m.get("type") != "snapshot":
-                            season_year = year
-                        if m.get("type") == "storm_formed":
-                            if m["round"] < last_round or (m["round"] == 1 and (strat.model.reported_rounds or strat.model.round)):
-                                print("new season: resetting model", flush=True)
-                                strat.on_start(ex); seen_seq.clear()
-                            last_round = ex.round = m["round"]
-                        if m.get("type") == "snapshot":
-                            if year and season_year and year != season_year:
-                                print(f"snapshot from another season (year {season_year} -> {year}): resetting model", flush=True)
-                                strat.on_start(ex); seen_seq.clear(); last_round = 0
-                            if year:
-                                season_year = year
-                            strat.model.on_snapshot(m)
-                            strat.fair = strat.compute_fair()
-                            strat.last_trade_t = -1e9
-                            # fair values right after a snapshot can be far off until live messages arrive
-                            # (14:10 reconnect: PORT fair 99.9 vs mid 81, full-size orders, -4k in 30 s); warm up as at a round open
-                            print("snapshot processed: warm-up before trading", flush=True)
-                            strat.on_round(ex)
-                            continue
-                        if m.get("type") == "announcement":
-                            print(f"ANNOUNCEMENT {m.get('symbols')}: {m.get('headline')}  -> pausing those symbols", flush=True)
-                            strat.pause(m.get("symbols", []))
-                        strat.on_news(ex, m)
-                    now = ex.t
-                    if now - last_sync > args.sync:
-                        cid_before = ex.competition_id
-                        ex.refresh(); last_sync = now
-                        if cid_before and ex.competition_id != cid_before:
-                            print("new competition id: resetting model", flush=True)
-                            strat.on_start(ex); seen_seq.clear(); last_round = 0
-                        if ex.reopened:
-                            print("market (re)opened: warm-up", flush=True)
-                            strat.on_round(ex); ex.reopened = False
-                    if len(ex.quotes) >= len(ex.symbols) // 2:
-                        strat.on_quotes(ex)
-                    if now - last_log > 10 and strat.fair:
-                        print(f"t={now:7.0f} r{strat.model.round} pnl {ex.pnl_now:+.0f} " + " ".join(
-                            f"{s}:{ex.mid.get(s, 0):.2f}/{strat.fair.get(s, 0):.2f}/{ex.position[s]:+d}" for s in SYMS), flush=True)
-                        last_log = now
-        except (OSError, websockets.WebSocketException) as exc:
-            print(f"disconnected ({exc}); reconnecting", flush=True)
+    inbox = MarketInbox()
+    session = LiveSession(ex, strat, args.sync, season_year, last_round, seen_seq)
+
+    async def receive_forever():
+        while True:
+            try:
+                async with websockets.connect(ws_url, additional_headers={'X-API-Key': ex.key}) as ws:
+                    await ws.send(json.dumps(subscribe))
+                    print('connected', flush=True)
+                    await receive_market_data(ws, inbox, lambda: ex.t)
+            except (OSError, websockets.WebSocketException) as exc:
+                print(f'disconnected ({exc}); reconnecting', flush=True)
+            inbox.put({'type': 'disconnected'}, ex.t)
             await asyncio.sleep(2)
+
+    receiver = asyncio.create_task(receive_forever())
+    try:
+        await drive_market_data(session, inbox, receiver)
+    finally:
+        receiver.cancel()
+        await asyncio.gather(receiver, return_exceptions=True)
 
 
 def main() -> None:

@@ -66,6 +66,23 @@ def test_gate_cancels_a_resting_addition(setup):
     assert not sim.pending
 
 
+@pytest.mark.parametrize('side,pos,prediction,fair,price', [
+    ('buy', -50, -.02, 103, 100.09), ('sell', 50, .02, 97, 99.91)])
+@pytest.mark.parametrize('racing_fill', [0, 20])
+def test_price_gate_replaces_oversized_passive_flip_even_at_same_price(
+        setup, monkeypatch, side, pos, prediction, fair, price, racing_fill):
+    trader, sim = setup(pos=pos, prediction=prediction, fair=fair, passive=.75)
+    sim.place('PORT', side, 100, price)
+    trader.passive_order['PORT'] = (side, price, sim.t)
+    cancel = sim.cancel_all
+    def racing_cancel(symbol):
+        sim.position[symbol] += racing_fill * (1 if side == 'buy' else -1)
+        return cancel(symbol)
+    monkeypatch.setattr(sim, 'cancel_all', racing_cancel)
+    trader.quote_passive(sim, 'PORT', fair, 99.9, 100.1, 1, .025, 200, pos)
+    assert [(o.side, o.qty) for o in sim.pending] == [(side, 50 - racing_fill)]
+
+
 def test_price_gate_also_blocks_new_passive_exposure(setup):
     trader, sim = setup(fair=101.9, passive=.75)
     trader.on_quotes(sim)
