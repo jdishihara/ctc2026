@@ -32,7 +32,12 @@ class FairValueTrader(Strategy):
                  passive: float = 0.0, warmup: float = 0.0, future_sd: float = 0.0, fair_jump: float = 0.0, max_cross: float = 0.0,
                  carry: float = 1.0, ent_cut: float = 0.0, rebuild_min_edge: float = 0.0, late_cut: float = 0.0,
                  edge_ramp: float = 0.0, final_exact: bool = False, final_edge: float = 0.0,
-                 final_edge_full: float = 0.0, **analog_kw):
+                 final_edge_full: float = 0.0, price_gate: float = 0.0,
+                 price_drift: float = 0.0, **analog_kw):
+        for name, value in (("price_gate", price_gate), ("price_drift", price_drift)):
+            if not math.isfinite(value) or value < 0:
+                raise ValueError(f"{name} must be finite and nonnegative")
+        self.price_gate, self.price_drift = price_gate, price_drift
         if not math.isfinite(edge_ramp) or edge_ramp < 0:
             raise ValueError("edge_ramp must be finite and nonnegative")
         self.edge_ramp = edge_ramp      # minimum excess edge from the floor to full size (0 preserves the old rule)
@@ -65,6 +70,12 @@ class FairValueTrader(Strategy):
         self.paused: set[str] = set()
 
     def on_start(self, sim) -> None:
+        self.price_signal = None
+        if self.price_gate or self.price_drift:
+            from .price_signal import PriceSignal
+            self.price_signal = PriceSignal()
+        self._price_round_start = sim.t
+        self._price_round = getattr(sim, 'round', 0)
         self.model = SeasonModel(sim.case, final_exact=self.final_exact)
         self.model.prior_mode = self.prior_mode
         self.model.future_sd_mult = self.future_sd
@@ -83,6 +94,10 @@ class FairValueTrader(Strategy):
 
     def on_round(self, sim) -> None:
         self.round_open_t = sim.t
+        self._price_round_start = sim.t
+        self._price_round = getattr(sim, 'round', 0)
+        if self.price_signal is not None:
+            self.price_signal.reset()
 
     def pause(self, symbols: list[str]) -> None:
         """Stop trading symbols named in a live announcement until a human clears them (model has not seen announcements)."""
@@ -93,6 +108,12 @@ class FairValueTrader(Strategy):
         return self.model.fair_analog() if self.analog else self.model.fair(self.project)
 
     def on_news(self, sim, m: dict[str, Any]) -> None:
+        if self.price_signal is not None and m['type'] in ('storm', 'storm_formed'):
+            if self._price_round != m['round']:
+                self.price_signal.reset()
+                self._price_round = m['round']
+            # A reconnect's warm-up time is not the true round-open clock.
+            self._price_round_start = sim.t - sim.case['timing']['pre_storm'] - m.get('age', 0)
         self.model.on_message(m)
         if m["type"] in ("damage_report", "advisory", "storm_formed", "storm_dissipated"):
             self.fair = self.compute_fair()
@@ -129,7 +150,23 @@ class FairValueTrader(Strategy):
     def full_edge_for_phase(self) -> float:
         return self.final_edge_full if self.final_edge_full and self.model.final_exact_ready else self.edge_full
 
+    def price_prediction(self, sim, symbol: str) -> float | None:
+        if self.price_signal is None or self.model.final_exact_ready:
+            return None
+        return self.price_signal.predict(symbol, sim.t, sim.t - self._price_round_start)
+
+    def price_target(self, sim, symbol: str, target: int, position: int) -> int:
+        """An adverse price signal may block additions, never necessary reductions."""
+        prediction = self.price_prediction(sim, symbol) if self.price_gate and target else None
+        if prediction is None or prediction * (1 if target > 0 else -1) > -self.price_gate:
+            return target
+        if target * position <= 0:
+            return 0
+        return min(target, position) if target > 0 else max(target, position)
+
     def on_quotes(self, sim) -> None:
+        if self.price_signal is not None:
+            self.price_signal.observe(sim.t, sim.mid)
         # Pausing additions alone leaves old quotes executable at obsolete fair
         # values. Cancel immediately, even during warm-up; retry at most once/s.
         for s in self.paused:
@@ -173,6 +210,9 @@ class FairValueTrader(Strategy):
             bid, ask = sim.quotes[s]
             mid = sim.mid[s]
             f = self.fair[s]
+            prediction = self.price_prediction(sim, s) if self.price_drift else None
+            if prediction is not None:
+                f += self.price_drift * prediction * mid
             edge = (f - mid) / mid * conf
             lim = sim.limits[s]
             if between and self.carry < 1.0:
@@ -202,6 +242,7 @@ class FairValueTrader(Strategy):
                 if self.passive > 0:
                     self.quote_passive(sim, s, f, bid, ask, conf, floor, lim, pos)
                 continue                                    # small edge: hold; settlement converges for free
+            target = self.price_target(sim, s, target, pos)
             self.passive_order.pop(s, None)
             resting_net = sim.resting(s, "buy") - sim.resting(s, "sell")
             delta = target - pos - resting_net
@@ -211,6 +252,7 @@ class FairValueTrader(Strategy):
                 if not sim.cancel_all(s):                   # never replace an unconfirmed cancellation
                     continue
                 pos = sim.position[s]                      # fills may have beaten the cancellation
+                target = self.price_target(sim, s, target, pos)
                 delta = target - pos
                 if delta == 0:
                     continue
@@ -256,9 +298,10 @@ class FairValueTrader(Strategy):
         edge_at = abs(f - px) / px * conf
         frac = min(1.0, (edge_at - self.passive * floor) / max(1e-9, self.edge_ramp, self.full_edge_for_phase() - self.passive * floor))
         target = int(round(lim * frac)) * (1 if side == "buy" else -1)
+        target = self.price_target(sim, s, target, pos)
         qty = (target - pos) if side == "buy" else (pos - target)
         if qty <= 0:
-            if s in self.passive_order:
+            if s in self.passive_order or (self.price_gate and (sim.resting(s, 'buy') or sim.resting(s, 'sell'))):
                 if sim.cancel_all(s):
                     self.passive_order.pop(s, None)
             return
@@ -269,6 +312,7 @@ class FairValueTrader(Strategy):
             if not sim.cancel_all(s):
                 return
             pos = sim.position[s]
+            target = self.price_target(sim, s, target, pos)
             qty = (target - pos) if side == "buy" else (pos - target)
             if qty <= 0:
                 self.passive_order.pop(s, None)

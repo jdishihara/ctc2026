@@ -14,6 +14,7 @@ import json
 from pathlib import Path
 import sys
 import time
+import subprocess
 
 import numpy as np
 
@@ -52,11 +53,11 @@ class AuditedSim(Sim):
         return accepted
 
 
-def evaluate(name, regime, seasons, latency):
+def evaluate(name, regime, seasons, latency, parameters=None, regime_spec=None):
     case = json.loads((ROOT / "data/case.json").read_text())
     manifest = json.loads((ROOT / "data/history/manifest.json").read_text())
-    params = {**BASE, **CONFIGS[name]}
-    refill, scale = REGIMES[regime]
+    params = parameters if parameters is not None else {**BASE, **CONFIGS[name]}
+    refill, scale = regime_spec if regime_spec is not None else REGIMES[regime]
     rows = []
     start = time.monotonic()
     for n in seasons:
@@ -80,18 +81,24 @@ def evaluate(name, regime, seasons, latency):
                 summary=summary, rows=rows)
 
 
-def main():
+def main(configs=None, regimes=None):
+    configs = CONFIGS if configs is None else configs
+    regimes = REGIMES if regimes is None else regimes
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--split", choices=["tune", "verify"], default="tune")
-    ap.add_argument("--configs", default=",".join(CONFIGS))
+    ap.add_argument("--configs", default=",".join(configs))
+    ap.add_argument("--regimes", default="deep,thin")
     ap.add_argument("--seasons", help="optional comma-separated subset of the selected split")
     ap.add_argument("--workers", type=int, default=4)
     ap.add_argument("--latency", type=float, default=0.25)
     ap.add_argument("--out")
     args = ap.parse_args()
     names = args.configs.split(",")
-    if any(n not in CONFIGS for n in names) or len(names) != len(set(names)):
+    if any(n not in configs for n in names) or len(names) != len(set(names)):
         ap.error("configs must be distinct known configuration names")
+    selected_regimes = args.regimes.split(',')
+    if any(r not in regimes for r in selected_regimes) or len(selected_regimes) != len(set(selected_regimes)):
+        ap.error('regimes must be distinct known regime names')
     if args.split == "verify" and (len(names) > 2 or "baseline" not in names):
         ap.error("verify only the frozen candidate and baseline")
     allowed = range(451, 526) if args.split == "tune" else range(526, 601)
@@ -103,15 +110,22 @@ def main():
         out.mkdir(parents=True, exist_ok=False)
     except FileExistsError:
         ap.error(f"output directory already exists: {out}; choose a fresh run directory")
+    try:
+        revision = subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=ROOT, text=True, stderr=subprocess.DEVNULL).strip()
+        dirty = bool(subprocess.check_output(['git', 'status', '--porcelain'], cwd=ROOT, text=True, stderr=subprocess.DEVNULL))
+    except (OSError, subprocess.CalledProcessError):
+        revision, dirty = None, None
     (out / "invocation.json").write_text(json.dumps(dict(
         split=args.split, seasons=seasons, latency=args.latency, rate_limit=120,
-        configurations={name: {**BASE, **CONFIGS[name]} for name in names},
-        regimes=REGIMES), indent=2) + "\n")
+        source_revision=revision, source_dirty=dirty,
+        configurations={name: {**BASE, **configs[name]} for name in names},
+        regimes={r: regimes[r] for r in selected_regimes}), indent=2) + "\n")
     print(f"output: {out}", flush=True)
     results = {}
     with ProcessPoolExecutor(max_workers=args.workers) as pool:
-        futures = [pool.submit(evaluate, name, regime, seasons, args.latency)
-                   for name in names for regime in REGIMES]
+        futures = [pool.submit(evaluate, name, regime, seasons, args.latency,
+                               {**BASE, **configs[name]}, regimes[regime])
+                   for name in names for regime in selected_regimes]
         for future in as_completed(futures):
             result = future.result()
             name, regime = result["config"], result["regime"]
@@ -119,6 +133,8 @@ def main():
             results.setdefault(name, {})[regime] = result["summary"]
             print(json.dumps({"config": name, "regime": regime, **result["summary"]}), flush=True)
     for name in names:
+        if not {'deep', 'thin'} <= results[name].keys():
+            continue
         deep, thin = results[name]["deep"], results[name]["thin"]
         score = 0.5 * (deep["mean"] + thin["mean"] + min(0, thin["p10"]))
         print(f"score {name}: {score:.2f}", flush=True)
