@@ -178,7 +178,7 @@ bad fills (see the ledger, 2026-10-23 02:25). The constant-velocity nowcast lose
 Official advisories name the true pattern 69% of the time, but their cone is calibrated (error / stated spread median 0.77)
 and predicts the storm's position 30-40% better than the ensemble did at 1-2 minutes ahead, so the cone is a likelihood term
 on the analogs (`python3 scripts/eval_forecast.py 15 100 shift 1.0 0 20`). The island probabilities are calibrated too but
-using them fattens the PnL tail (rejected). The ensemble is insensitive to sigma (15 to 40), k (50 to 100) and the position shift.
+using them fattens the PnL tail (rejected). With the cone the ensemble prefers sigma 15 and k 100 (sigma 10 or 25 and k 50 lose about 1,100 points of tune score).
 
 ## Next
 
