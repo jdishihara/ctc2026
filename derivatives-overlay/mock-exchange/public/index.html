@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CTC Exchange (mock)</title>
+<link rel="stylesheet" href="/app.css">
+</head>
+<body>
+<div class="app">
+  <header class="hdr">
+    <div class="team"><span class="team-name">Team Mock</span><span class="lbl">TOTAL PNL</span><b class="pnl">$0.00</b></div>
+    <div class="clockbox"><div class="time">--:--:--</div><div class="casename">NEWTONIA VS EULERIA</div></div>
+    <div class="status"><span class="dot"></span><span class="openlbl">CLOSED</span><span class="pill">LIVE</span></div>
+    <nav class="products"><button type="button" class="prod active">OIL</button><button type="button" class="prod">PLANE</button></nav>
+  </header>
+  <div class="latest"><span class="lbl">LATEST</span><span class="ltime"></span><span class="ltext">Waiting for news…</span><span class="learlier"></span></div>
+  <main class="grid">
+    <section class="panel left">
+      <div class="tabs lefttabs"><button type="button" class="ltab active">OIL</button><button type="button" class="ltab">Fair</button><button type="button" class="ltab">IV</button></div>
+      <div class="tabbody chartbody"><canvas width="360" height="120"></canvas></div>
+      <div class="tabbody fairbody hidden">
+        <div class="row"><label>SPOT</label><input class="fspot" value="100"></div>
+        <div class="row"><label>VOL %</label><input class="fvol" value="100"></div>
+        <div class="row"><span>Rate</span><span>0.00%</span></div>
+        <div class="row"><span>T</span><span class="ft">0.0794 yr (20.00 trading days)</span></div>
+        <div class="row"><span>Now</span><span class="fnow"></span></div>
+        <div class="row"><span>Countdown</span><span class="fcount"></span></div>
+        <div class="fout"></div>
+      </div>
+      <div class="tabbody ivbody hidden">
+        <div class="row"><label>PRICE</label><input class="ivprice" value="11.2"></div>
+        <div class="row"><button type="button" class="ivbtn">Bid</button><button type="button" class="ivbtn">Mid</button><button type="button" class="ivbtn">Ask</button></div>
+        <div class="ivout"></div>
+      </div>
+      <div class="tabs chaintoggle"><button type="button" class="ctab active">Chain</button><button type="button" class="ctab">Tape</button></div>
+      <div class="chainhdr"><span>Spot <b class="spot">—</b></span><select><option>Jun 26, 2026</option></select></div>
+      <table class="chain">
+        <thead>
+          <tr><th colspan="4">CALLS</th><th></th><th colspan="4">PUTS</th></tr>
+          <tr><th>BID SZ</th><th>BID</th><th>ASK</th><th>ASK SZ</th><th>STRIKE</th><th>BID SZ</th><th>BID</th><th>ASK</th><th>ASK SZ</th></tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+      <div class="tape hidden"></div>
+    </section>
+    <section class="panel mid">
+      <div class="bookhdr"><span class="booktitle">OIL_0626_C100 book</span><span class="bookba"></span></div>
+      <table class="book"><thead><tr><th>PRICE</th><th>SIZE</th><th>TOTAL</th><th>YOU</th></tr></thead><tbody></tbody></table>
+    </section>
+    <section class="panel right">
+      <form class="orderform" autocomplete="off">
+        <div class="ohdr"><span>Order</span><span class="osym">OIL_0626_C100</span></div>
+        <div class="odesc"></div>
+        <div class="seg sideseg"><button type="button" class="sidebtn active">BUY</button><button type="button" class="sidebtn">SELL</button></div>
+        <div class="seg typeseg"><button type="button" class="typebtn active">Limit</button><button type="button" class="typebtn">Market</button></div>
+        <div class="field"><label>QTY</label><input class="qty" inputmode="numeric" value="50"></div>
+        <div class="quick"><button type="button" class="qbtn">1</button><button type="button" class="qbtn">5</button><button type="button" class="qbtn">10</button><button type="button" class="qbtn">25</button><button type="button" class="qbtn">50</button></div>
+        <div class="field"><label>PRICE</label><input class="price" inputmode="decimal" value=""></div>
+        <div class="notional"><span>NOTIONAL</span><span class="notval">$0.00</span></div>
+        <button type="submit" class="submit buy">Buy 50 OIL_0626_C100</button>
+        <div class="msg"></div>
+      </form>
+      <div class="lists">
+        <div class="lhdr"><span>Open orders</span><span class="seg2"><button type="button">Current</button><button type="button">All</button></span></div>
+        <div class="openorders"></div>
+        <div class="lhdr"><span>Positions</span><span class="seg2"><button type="button">Current</button><button type="button">All</button></span></div>
+        <div class="positions"></div>
+      </div>
+    </section>
+  </main>
+</div>
+<script src="/app.js"></script>
+</body>
+</html>

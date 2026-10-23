@@ -1,0 +1,22 @@
+{
+  "manifest_version": 3,
+  "name": "CTC Derivatives Overlay",
+  "version": "1.0.0",
+  "description": "Read-only assistant overlay for the CTC 2026 Derivatives case. Observes the page; never submits orders.",
+  "permissions": ["storage"],
+  "content_scripts": [
+    {
+      "matches": ["https://cornelltradingcompetition.org/*"],
+      "js": ["main.js"],
+      "world": "MAIN",
+      "run_at": "document_start",
+      "all_frames": false
+    },
+    {
+      "matches": ["https://cornelltradingcompetition.org/*"],
+      "js": ["overlay.js"],
+      "run_at": "document_idle",
+      "all_frames": false
+    }
+  ]
+}
