@@ -53,4 +53,4 @@ Files: `README.md`, `EXPERIMENTS.md`, dependency/test configuration, `docs/effic
 - [x] Run the complete pytest suite and deterministic forecast benchmark.
 - [x] Report 526–600 PnL, p10, minimum, fill counts and runtime for deep and thin; distinguish numerical performance from behavior corrections.
 - [x] Obtain one independent code review, fix consequential findings with regression tests, and run the full suite.
-- [ ] Commit and push a reviewable branch/PR with precise reproduction commands and limitations.
+- [x] Commit and push a reviewable branch/PR with precise reproduction commands and limitations: https://github.com/jdishihara/ctc2026/pull/1.
