@@ -57,9 +57,10 @@ right; riskless arbs on an orange background), then every contract with bid/ask,
 and the log. One person watches the race and types the result; one person clicks orders in the UI from the action list
 (limit orders at the listed price and size; the size already respects the position limit and what is in the book).
 
-`--prefill` adds a "prepare" button per action that selects the symbol tab, side, Limit, and types qty and price into
-the UI; the human still clicks the submit button. Off by default: ask in #questions whether a bot filling the form is
-within "trading manually through the UI" before using it.
+Each action has a "prepare" button (or `prepare N` at the prompt) that selects the symbol tab, the side and Limit in the
+exchange window and types the quantity and price into its form; the human clicks the submit button. The organisers
+confirmed on 2026-10-23 that this is allowed. `--no-prefill` turns it off. The mock's page carries a copy of the real
+form (same element ids and button names), so `--mock --tap browser` drills the exact prepare-then-click loop.
 
 Flags: `--interval 1.0` (poll period; 46 book requests per poll, well inside the packet's 600 requests per second per team; the packet also caps the browser at 40 orders per minute, so the clicker has about one order every 1.5 s), `--clip 50` (max
 size per action), `--risk 1500` (score contracts: size x sd <= risk), `--min-profit 5`, `--cpu-skill -0.6`.

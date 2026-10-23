@@ -3,13 +3,13 @@
 result (four overall places) and click the orders in the exchange UI; the packet allows bots to assist but not to trade.
 
     python3 mario/desk.py                         # real exchange: opens a Chrome window, log in there, dashboard on http://localhost:8787
-    python3 mario/desk.py --prefill               # ... and "prepare" buttons type the order into the UI's form (you click the button)
+                                                  # "prepare" buttons type the order into the UI's form; you click the button (allowed by the organisers)
     python3 mario/mock_exchange.py --race-every 45 &  ; python3 mario/desk.py --mock --auto-results   # drill against the mock
     python3 mario/desk.py --mock --tap browser    # exercise the browser tap against the mock page
 
 Commands (terminal prompt or the dashboard box): race P1 P2 P3 P4  (overall places of BIRDO DAISY PEACH YOSHI, in
 that order) | undo | cpu -0.3 (CPU strength prior; see mario/README.md) | map (symbols and roles) | prepare N
-(prefill action N in the Chrome window) | fill SYM buy|sell QTY PX (mock only: sends the order) | q.
+(type action N, leg L, into the Chrome window's order form) | fill SYM buy|sell QTY PX (mock only: sends the order) | q.
 Every snapshot and every command is appended to recordings/mario_desk.jsonl.
 """
 from __future__ import annotations
@@ -81,12 +81,15 @@ class Desk:
                 if not isinstance(self.tap, BrowserTap):
                     return "prepare needs the browser tap"
                 if not self.a.prefill:
-                    return "start the desk with --prefill to type orders into the UI (check the rules first)"
+                    return "prefill is disabled (--no-prefill)"
                 acts = self.result["actions"] if self.result else []
                 i = int(parts[1]) - 1
                 if not 0 <= i < len(acts):
                     return "no such action"
-                self.pending_prefill = acts[i].legs[0]; return f"preparing {self.pending_prefill} ..."
+                leg = int(parts[2]) - 1 if len(parts) > 2 else 0
+                if not 0 <= leg < len(acts[i].legs):
+                    return "no such leg"
+                self.pending_prefill = acts[i].legs[leg]; return f"preparing leg {leg + 1}/{len(acts[i].legs)}: {self.pending_prefill} ..."
             if parts[0] == "fill":
                 if not isinstance(self.tap, HttpTap):
                     return "fill only works against the mock (HTTP tap)"
@@ -95,7 +98,7 @@ class Desk:
                 return f"mock fill: {r}"
             if parts[0] in ("q", "quit"):
                 self.stop = True; return "stopping"
-            return "commands: race P1 P2 P3 P4 | undo | cpu X | map | prepare N | fill SYM buy QTY PX | q"
+            return "commands: race P1 P2 P3 P4 | undo | cpu X | map | prepare N [leg] | fill SYM buy QTY PX | q"
         except Exception as exc:
             return f"error: {exc}"
 
@@ -192,7 +195,7 @@ button{background:#2563eb;color:#fff;border:0;border-radius:4px;padding:4px 10px
 <div class="box"><h3>Log</h3><pre id="log"></pre></div></div></div>
 <script>
 async function send(){const c=document.getElementById('cmd');const r=await fetch('/cmd',{method:'POST',body:c.value});document.getElementById('log').textContent=(await r.text())+"\n"+document.getElementById('log').textContent;c.value='';return false}
-async function prep(i){await fetch('/cmd',{method:'POST',body:'prepare '+i})}
+async function prep(i,l){await fetch('/cmd',{method:'POST',body:'prepare '+i+' '+l})}
 function f(x,d=1){return x==null?'':(+x).toFixed(d)}
 async function tick(){try{const s=await (await fetch('/state.json')).json();
 document.getElementById('status').innerHTML=(s.age>5?'<span class=stale>':'<span>')+s.status+' (data '+(s.age??'-')+' s old)</span>'+(s.unmapped.length?' <span class=stale>UNMAPPED: '+s.unmapped.join(' ')+'</span>':'');
@@ -200,7 +203,7 @@ document.getElementById('races').textContent=s.races.map((r,i)=>'R'+(i+1)+': '+r
 document.getElementById('skill').textContent=s.skill?s.racers.map((h,i)=>h+' '+(s.skill[i]>=0?'+':'')+s.skill[i]).join('  ')+'  (CPU prior '+s.cpu_skill+')':'';
 document.getElementById('points').textContent=s.points?s.points.map((p,k)=>'S'+(k+1)+' '+s.racers.map((h,i)=>h.slice(0,2)+p[i]).join(' ')).join(' | '):'';
 document.getElementById('pnl').textContent=s.pnl?('  PnL mark-to-fair '+f(s.pnl.total,0)+' (realized '+f(s.pnl.realized,0)+')  exchange '+f(s.exchange_pnl,0)):'';
-document.getElementById('acts').innerHTML='<tr><th>#</th><th>legs</th><th>profit</th><th>why</th>'+(s.prefill?'<th></th>':'')+'</tr>'+s.actions.map((a,i)=>'<tr class="'+a.kind+'"><td>'+(i+1)+'</td><td>'+a.legs.map(l=>'<span class="'+l[1]+'">'+l[1].toUpperCase()+' '+l[2]+' '+l[0]+' @ '+l[3]+'</span>').join(' + ')+'</td><td>'+f(a.profit,0)+'</td><td style="text-align:left">'+a.note+'</td>'+(s.prefill?'<td><button onclick="prep('+(i+1)+')">prepare</button></td>':'')+'</tr>').join('');
+document.getElementById('acts').innerHTML='<tr><th>#</th><th>legs</th><th>profit</th><th>why</th>'+(s.prefill?'<th></th>':'')+'</tr>'+s.actions.map((a,i)=>'<tr class="'+a.kind+'"><td>'+(i+1)+'</td><td>'+a.legs.map(l=>'<span class="'+l[1]+'">'+l[1].toUpperCase()+' '+l[2]+' '+l[0]+' @ '+l[3]+'</span>').join(' + ')+'</td><td>'+f(a.profit,0)+'</td><td style="text-align:left">'+a.note+'</td>'+(s.prefill?'<td>'+a.legs.map((l,k)=>'<button onclick="prep('+(i+1)+','+(k+1)+')">'+(a.legs.length>1?'leg '+(k+1):'prepare')+'</button>').join(' ')+'</td>':'')+'</tr>').join('');
 document.getElementById('rows').innerHTML='<tr><th>symbol</th><th>contract</th><th>bid</th><th>ask</th><th>fair</th><th>sd</th><th>edge buy</th><th>edge sell</th><th>bounds</th><th>pos</th><th>avg</th><th>action</th></tr>'+s.rows.map(r=>'<tr class="'+(r.bid==null&&r.ask==null?'settled':'')+'"><td>'+r.symbol+'</td><td>'+r.role+'</td><td>'+f(r.bid)+(r.bid_qty?'<span class=dim>×'+r.bid_qty+'</span>':'')+'</td><td>'+f(r.ask)+(r.ask_qty?'<span class=dim>×'+r.ask_qty+'</span>':'')+'</td><td><b>'+f(r.fair)+'</b></td><td class=dim>'+f(r.sd)+'</td><td class="'+(r.edge_buy>0?'buy':'')+'">'+f(r.edge_buy)+'</td><td class="'+(r.edge_sell>0?'sell':'')+'">'+f(r.edge_sell)+'</td><td class=dim>'+(r.lo==null?'':f(r.lo,0)+'-'+f(r.hi,0))+'</td><td>'+(r.pos||'')+'</td><td class=dim>'+f(r.avg)+'</td><td class="'+(r.action.startsWith('BUY')?'buy':r.action?'sell':'')+'">'+r.action+'</td></tr>').join('');
 document.getElementById('log').textContent=s.log.slice().reverse().join('\n');}catch(e){}}
 setInterval(tick,700);tick();
@@ -236,7 +239,7 @@ def main():
     ap.add_argument("--key", default=None, help="API key for the HTTP tap, if the organisers give one")
     ap.add_argument("--port", type=int, default=8787); ap.add_argument("--interval", type=float, default=1.0)
     ap.add_argument("--auto-results", action="store_true", help="mock only: read race results from /mock/results instead of typing them")
-    ap.add_argument("--prefill", action="store_true", help="allow 'prepare N' to type an order into the UI's form (you still click)")
+    ap.add_argument("--no-prefill", dest="prefill", action="store_false", help="disable 'prepare N' (typing an order into the UI's form; the organisers allowed it on 2026-10-23)")
     ap.add_argument("--headless", action="store_true")
     ap.add_argument("--cpu-skill", type=float, default=-0.6); ap.add_argument("--cpu-sd", type=float, default=0.5)
     ap.add_argument("--noise", type=float, default=1.0); ap.add_argument("--skill-sd", type=float, default=1.0)

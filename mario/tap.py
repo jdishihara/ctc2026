@@ -91,7 +91,9 @@ class BrowserTap:
         pg = self.page
         tab = pg.get_by_role("button", name=symbol, exact=True)
         if tab.count() == 0:
-            return f"no tab for {symbol}"
+            tab = pg.get_by_text(symbol, exact=True)
+        if tab.count() == 0:
+            return f"no tab for {symbol} in the UI"
         tab.first.click()
         pg.get_by_role("button", name=side.upper(), exact=True).first.click()
         pg.get_by_role("button", name="Limit", exact=True).first.click()
