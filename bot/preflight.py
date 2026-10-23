@@ -98,8 +98,12 @@ def check_code() -> None:
 def check_strategy(args) -> None:
     try:
         from ctc.strategies import FairValueTrader
-        st = FairValueTrader(min_edge=0.025, edge_full=0.03, analog=True, sd_mult=0.7, sigma=15.0, k=100, passive=0.75, warmup=20.0, max_cross=0.02, ent_cut=1.2, carry=0.5, cone_w=1.0, cone_s0=20.0)
+        st = FairValueTrader(min_edge=0.025, edge_full=0.03, analog=True, sd_mult=0.7, sigma=15.0, k=100, passive=0.75, warmup=20.0, max_cross=0.02, ent_cut=1.2, carry=0.5, cone_w=1.0, cone_s0=20.0,
+                             basket_edge=args.basket_edge, basket_participation=args.basket_participation,
+                             final_exact=True, final_edge=0.005, final_edge_full=0.005)
         report("PASS", "strategy constructs", f"analog={st.analog} min_edge={st.min_edge} edge_full={st.edge_full} sd_mult={st.sd_mult} passive={st.passive} warmup={st.warmup} max_cross={st.max_cross} carry={st.carry} ent_cut={st.ent_cut} cone_w={st.analog_kw.get('cone_w')} cone_s0={st.analog_kw.get('cone_s0')}")
+        report("PASS", "final phase", f"exact={st.final_exact} entry={st.final_edge} full={st.final_edge_full}; requires all reports and complete weather")
+        report('PASS', 'basket overlay', f'edge={st.basket_edge} participation={st.basket_participation}; max lot 10, requires fresh external depth')
     except Exception as exc:
         report("FAIL", "strategy constructs", repr(exc))
 
@@ -172,9 +176,10 @@ async def check_marketdata(url: str, key: str, ws_override: str | None, seconds:
         report("WARN", "market data", f"no messages in {seconds:.0f} s (market halted?)")
 
 
-def check_sim_smoke() -> None:
+def check_sim_smoke(basket_edge=0.01, basket_participation=0.5) -> None:
     try:
-        out = subprocess.run([sys.executable, "scripts/backtest.py", "--strategy", "analog", "--seasons", "526-527", "--liquidity", "ladder", "--refill", "10"],
+        out = subprocess.run([sys.executable, "scripts/backtest.py", "--strategy", "analog", "--seasons", "451-452", "--liquidity", "ladder", "--refill", "10",
+                              '--basket-edge', str(basket_edge), '--basket-participation', str(basket_participation)],
                              cwd=ROOT, capture_output=True, text=True, timeout=300).stdout
         line = next((l for l in out.splitlines() if l.startswith("analog:")), "")
         if "mean" in line and "nan" not in line:
@@ -202,6 +207,8 @@ def main() -> None:
     ap.add_argument("--allow-any-host", action="store_true")
     ap.add_argument("--listen", type=float, default=8.0, help="seconds to listen to market data")
     ap.add_argument("--no-sim", action="store_true", help="skip the simulator smoke run")
+    ap.add_argument('--basket-edge', type=float, default=0.01)
+    ap.add_argument('--basket-participation', type=float, default=0.5)
     a = ap.parse_args()
     print(f"preflight {time.strftime('%Y-%m-%d %H:%M:%S')} url={a.url}")
     key = check_key(Path(a.key_file))
@@ -215,7 +222,7 @@ def main() -> None:
         if tm is not None:
             asyncio.run(check_marketdata(a.url, key, a.ws, a.listen))
     if not a.no_sim:
-        check_sim_smoke()
+        check_sim_smoke(a.basket_edge, a.basket_participation)
     fails = [r for r in results if r[0] == "FAIL"]
     warns = [r for r in results if r[0] == "WARN"]
     print(f"\n{len(results) - len(fails) - len(warns)} passed, {len(warns)} warnings, {len(fails)} failures")

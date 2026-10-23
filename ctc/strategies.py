@@ -30,7 +30,29 @@ class FairValueTrader(Strategy):
                  symbols: list[str] | None = None, project: bool = True, analog: bool = False,
                  sd_mult: float = 1.0, loss_limit: float | None = None, prior_mode: str = "sample",
                  passive: float = 0.0, warmup: float = 0.0, future_sd: float = 0.0, fair_jump: float = 0.0, max_cross: float = 0.0,
-                 carry: float = 1.0, ent_cut: float = 0.0, rebuild_min_edge: float = 0.0, late_cut: float = 0.0, **analog_kw):
+                 carry: float = 1.0, ent_cut: float = 0.0, rebuild_min_edge: float = 0.0, late_cut: float = 0.0,
+                 edge_ramp: float = 0.0, final_exact: bool = False, final_edge: float = 0.0,
+                 final_edge_full: float = 0.0, price_gate: float = 0.0,
+                 price_drift: float = 0.0, basket_edge: float = 0.0,
+                 basket_participation: float = 0.0, **analog_kw):
+        for name, value in (("price_gate", price_gate), ("price_drift", price_drift), ("basket_edge", basket_edge)):
+            if not math.isfinite(value) or value < 0:
+                raise ValueError(f"{name} must be finite and nonnegative")
+        self.price_gate, self.price_drift = price_gate, price_drift
+        self.basket_edge = basket_edge
+        if not 0 <= basket_participation <= 1:
+            raise ValueError('basket_participation must be between zero and one')
+        self.basket_participation = basket_participation
+        if not math.isfinite(edge_ramp) or edge_ramp < 0:
+            raise ValueError("edge_ramp must be finite and nonnegative")
+        self.edge_ramp = edge_ramp      # minimum excess edge from the floor to full size (0 preserves the old rule)
+        self.final_exact = final_exact
+        if not math.isfinite(final_edge) or final_edge < 0:
+            raise ValueError("final_edge must be finite and nonnegative")
+        self.final_edge = final_edge  # optional entry floor only after all final reports and exact valuations
+        if not math.isfinite(final_edge_full) or final_edge_full < 0:
+            raise ValueError("final_edge_full must be finite and nonnegative")
+        self.final_edge_full = final_edge_full
         self.prior_mode = prior_mode
         self.carry = carry              # <1: between storms (after a final report, before the next storm forms) the position
                                         # limit is carry x the exchange limit, so less rides on the next storm's path
@@ -53,7 +75,18 @@ class FairValueTrader(Strategy):
         self.paused: set[str] = set()
 
     def on_start(self, sim) -> None:
-        self.model = SeasonModel(sim.case)
+        self.competition_id = getattr(sim, 'competition_id', None)
+        self.basket = None
+        if self.basket_edge:
+            from .basket import BasketOverlay
+            self.basket = BasketOverlay(self.basket_edge, participation=self.basket_participation)
+        self.price_signal = None
+        if self.price_gate or self.price_drift:
+            from .price_signal import PriceSignal
+            self.price_signal = PriceSignal()
+        self._price_round_start = None  # Anchor only to observed storm age, including after reconnect.
+        self._price_round = getattr(sim, 'round', 0)
+        self.model = SeasonModel(sim.case, final_exact=self.final_exact)
         self.model.prior_mode = self.prior_mode
         self.model.future_sd_mult = self.future_sd
         if self.analog:
@@ -66,18 +99,35 @@ class FairValueTrader(Strategy):
         self.prev_fair: dict[str, float] = {}
         self.passive_order: dict[str, tuple[str, float, float]] = {}   # symbol -> (side, price, t) of our resting quote
         self.round_open_t = -1e9
+        self.pause_cancel_t: dict[str, float] = {}
+        self.pause_pending: set[str] = set()
 
     def on_round(self, sim) -> None:
         self.round_open_t = sim.t
+        if self.basket is not None:
+            self.basket.on_round(sim)
+        self._price_round_start = None
+        self._price_round = getattr(sim, 'round', 0)
+        if self.price_signal is not None:
+            self.price_signal.reset()
 
     def pause(self, symbols: list[str]) -> None:
         """Stop trading symbols named in a live announcement until a human clears them (model has not seen announcements)."""
         self.paused |= set(symbols)
+        self.pause_pending.update(symbols)
 
     def compute_fair(self) -> dict[str, float]:
         return self.model.fair_analog() if self.analog else self.model.fair(self.project)
 
     def on_news(self, sim, m: dict[str, Any]) -> None:
+        if self.basket is not None:
+            self.basket.on_news(sim, m)
+        if self.price_signal is not None and m['type'] in ('storm', 'storm_formed'):
+            if self._price_round != m['round']:
+                self.price_signal.reset()
+                self._price_round = m['round']
+            # A reconnect's warm-up time is not the true round-open clock.
+            self._price_round_start = sim.t - sim.case['timing']['pre_storm'] - m.get('age', 0)
         self.model.on_message(m)
         if m["type"] in ("damage_report", "advisory", "storm_formed", "storm_dissipated"):
             self.fair = self.compute_fair()
@@ -105,12 +155,64 @@ class FairValueTrader(Strategy):
         sd = self.model.resid_sd(s)
         if self.analog:
             sd = math.hypot(sd, self.sd_mult * self.model.fair_sd.get(s, 0.0))
-        floor = max(self.min_edge, 2.0 * sd / max(1e-9, sim.mid[s]))
+        entry = self.final_edge if self.final_edge and self.model.final_exact_ready else self.min_edge
+        floor = max(entry, 2.0 * sd / max(1e-9, sim.mid[s]))
         if self.rebuild_min_edge > 0 and s in ("RECON", "MAT", "GEN"):
             floor = max(floor, self.rebuild_min_edge)
         return floor
 
+    def full_edge_for_phase(self) -> float:
+        return self.final_edge_full if self.final_edge_full and self.model.final_exact_ready else self.edge_full
+
+    def price_prediction(self, sim, symbol: str) -> float | None:
+        if self.price_signal is None or self._price_round_start is None or self.model.final_exact_ready:
+            return None
+        return self.price_signal.predict(symbol, sim.t, sim.t - self._price_round_start)
+
+    def price_target(self, sim, symbol: str, target: int, position: int) -> int:
+        """An adverse price signal may block additions, never necessary reductions."""
+        prediction = self.price_prediction(sim, symbol) if self.price_gate and target else None
+        if prediction is None or prediction * (1 if target > 0 else -1) > -self.price_gate:
+            return target
+        if target * position <= 0:
+            return 0
+        return min(target, position) if target > 0 else max(target, position)
+
+    def _same_competition(self, sim) -> bool:
+        if self.competition_id == getattr(sim, 'competition_id', None):
+            return True
+        self.on_start(sim)
+        self.on_round(sim)
+        return False
+
     def on_quotes(self, sim) -> None:
+        if not self._same_competition(sim):
+            return
+        if self.price_signal is not None:
+            now = sim.t
+            prices = sim.mid
+            quote_times = getattr(sim, 'quote_times', None)
+            if quote_times is not None:
+                prices = {symbol: price for symbol, price in prices.items()
+                          if symbol in quote_times and 0 <= now - quote_times[symbol] <= 10
+                          and quote_times[symbol] > self.price_signal.symbol_received_at.get(symbol, -math.inf)}
+            self.price_signal.observe(now, prices)
+        # Pausing additions alone leaves old quotes executable at obsolete fair
+        # values. Cancel immediately, even during warm-up; retry at most once/s.
+        for s in self.paused:
+            if (s in self.pause_pending or sim.resting(s, "buy") or sim.resting(s, "sell")) and sim.t - self.pause_cancel_t.get(s, -1e9) >= 1:
+                self.pause_cancel_t[s] = sim.t
+                if sim.cancel_all(s):
+                    self.pause_pending.discard(s)
+                    self.passive_order.pop(s, None)
+                if not self._same_competition(sim):
+                    return
+        if not getattr(sim, "state_ready", True):
+            return
+        if self.basket is not None and (self.basket.targets is not None or sim.t - self.round_open_t >= self.warmup):
+            active = self.basket.on_quotes(sim, self.paused)
+            if not self._same_competition(sim) or active:
+                return
         if sim.t - self.last_trade_t < self.every or sim.t - self.round_open_t < self.warmup:
             return
         self.last_trade_t = sim.t
@@ -139,11 +241,16 @@ class FairValueTrader(Strategy):
         post = self.model.posterior
         ent = -sum(p * math.log(p) for p in post.values() if p > 0) if post else 0.0
         for s in self.symbols:
+            if not self._same_competition(sim):
+                return
             if s in self.paused or s not in sim.quotes or s in unsettled:
                 continue
             bid, ask = sim.quotes[s]
             mid = sim.mid[s]
             f = self.fair[s]
+            prediction = self.price_prediction(sim, s) if self.price_drift else None
+            if prediction is not None:
+                f += self.price_drift * prediction * mid
             edge = (f - mid) / mid * conf
             lim = sim.limits[s]
             if between and self.carry < 1.0:
@@ -153,7 +260,7 @@ class FairValueTrader(Strategy):
             stopped = self.loss_limit is not None and self.cell_pnl.get((s, rnd), 0.0) < -self.loss_limit
             reduce = False
             if abs(edge) >= floor:
-                frac = min(1.0, (abs(edge) - floor) / max(1e-9, self.edge_full - floor))
+                frac = min(1.0, (abs(edge) - floor) / max(1e-9, self.edge_ramp, self.full_edge_for_phase() - floor))
                 target = int(round(lim * frac)) * (1 if edge > 0 else -1)
                 if self.ent_cut > 0 and self.model.storm_active and ent > self.ent_cut and abs(target) > abs(pos) and target * pos >= 0:
                     continue                                # pattern still ambiguous: do not add
@@ -173,13 +280,19 @@ class FairValueTrader(Strategy):
                 if self.passive > 0:
                     self.quote_passive(sim, s, f, bid, ask, conf, floor, lim, pos)
                 continue                                    # small edge: hold; settlement converges for free
+            target = self.price_target(sim, s, target, pos)
             self.passive_order.pop(s, None)
             resting_net = sim.resting(s, "buy") - sim.resting(s, "sell")
             delta = target - pos - resting_net
             if delta == 0:
                 continue
             if resting_net != 0:
-                sim.cancel_all(s)                           # replace stale resting orders rather than stack more
+                if not sim.cancel_all(s):                   # never replace an unconfirmed cancellation
+                    continue
+                if not self._same_competition(sim):
+                    return
+                pos = sim.position[s]                      # fills may have beaten the cancellation
+                target = self.price_target(sim, s, target, pos)
                 delta = target - pos
                 if delta == 0:
                     continue
@@ -204,6 +317,7 @@ class FairValueTrader(Strategy):
     def quote_passive(self, sim, s: str, f: float, bid: float, ask: float, conf: float, floor: float, lim: int, pos: int) -> None:
         """Rest one order inside the spread where the edge (after confidence) equals passive * floor; replace it only when
         the price moves. Fills come from the house re-quoting through us or other participants crossing."""
+        competition_id = getattr(sim, 'competition_id', None)
         keep = self.passive * floor / max(conf, 1e-9)
         tick = 0.01
         if f > bid:                                   # fair above the bid: bid inside the spread
@@ -218,22 +332,36 @@ class FairValueTrader(Strategy):
             side = None
         if side is None:
             if s in self.passive_order:
-                sim.cancel_all(s); self.passive_order.pop(s, None)
+                if sim.cancel_all(s):
+                    self.passive_order.pop(s, None)
             return
         px = round(px, 2)
         edge_at = abs(f - px) / px * conf
-        frac = min(1.0, (edge_at - self.passive * floor) / max(1e-9, self.edge_full - self.passive * floor))
+        frac = min(1.0, (edge_at - self.passive * floor) / max(1e-9, self.edge_ramp, self.full_edge_for_phase() - self.passive * floor))
         target = int(round(lim * frac)) * (1 if side == "buy" else -1)
+        target = self.price_target(sim, s, target, pos)
         qty = (target - pos) if side == "buy" else (pos - target)
         if qty <= 0:
-            if s in self.passive_order:
-                sim.cancel_all(s); self.passive_order.pop(s, None)
+            if s in self.passive_order or (self.price_gate and (sim.resting(s, 'buy') or sim.resting(s, 'sell'))):
+                if sim.cancel_all(s):
+                    self.passive_order.pop(s, None)
             return
         old = self.passive_order.get(s)
-        if old and old[0] == side and abs(old[1] - px) / px < 0.001 and sim.t - old[2] < 120:
+        if (old and sim.resting(s, side) and old[0] == side
+                and (not self.price_gate or sim.resting(s, side) <= qty)
+                and abs(old[1] - px) / px < 0.001 and sim.t - old[2] < 120):
             return                                    # our quote is still where we want it
-        if old or sim.resting(s, "buy") or sim.resting(s, "sell"):
-            sim.cancel_all(s)
+        if sim.resting(s, "buy") or sim.resting(s, "sell"):
+            if not sim.cancel_all(s):
+                return
+            if competition_id != getattr(sim, 'competition_id', None):
+                return
+            pos = sim.position[s]
+            target = self.price_target(sim, s, target, pos)
+            qty = (target - pos) if side == "buy" else (pos - target)
+            if qty <= 0:
+                self.passive_order.pop(s, None)
+                return
         if sim.place(s, side, qty, px) is not None:
             self.passive_order[s] = (side, px, sim.t)
         else:

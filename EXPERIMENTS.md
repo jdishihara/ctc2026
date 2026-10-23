@@ -1,3 +1,49 @@
+# Basket continuation 2026-10-23 (Codex)
+
+Frozen at `2ec8d26`: 1% net quoted basket edge, maximum 10 ETF units, capped by
+50% of each closing leg's external executable depth. Same fundamental model.
+Confirmation means **9925.95 / 6412.88** versus 9452.36 / 5993.53; p10
+**512.72 / -2459.40** versus -254.55 / -2712.92. Worst seasons improve in
+both regimes; losing counts 7/75 and 13/75. Paired gain intervals
+[386.90,566.47] / [283.23,563.94]. Zero normal basket timeouts, rate blocks or
+rejections; peak actions 48/56. Three-second delay gains are small and uncertain;
+severe+3s mean improves 987.59 -> 1285.44. No live performance claim.
+
+Promoted consistently in launch commands after all PnL gates. All five Important
+final-review findings fixed at `73aed77`; 180 tests pass. Nine post-fix comparisons
+(675 season replays) exactly reproduce every frozen result row and summary.
+There were no Critical or deferred Minor findings. Price timing, direct cone
+centering and fixed-lot basket precursors
+were rejected under the recorded gates. [Complete evidence and reproduction](docs/research-continuation.md).
+
+---
+
+# Earlier competition continuation 2026-10-23 (Codex)
+
+Frozen tune winner `final_limit` at `2ae7a02`: correct saturated-site report
+allocation, exact final valuation, 0.5% entry/full-size final thresholds. The
+final phase requires all three reports and complete observed weather; snapshots
+and gaps retain conservative settings. Earlier-phase parameters are unchanged.
+
+Verification 526–600 versus `e8d4307`: mean **9452.36 / 5993.53** versus
+9345.51 / 5927.40; p10 **-254.55 / -2712.92** versus -147.60 / -2682.24.
+Thin p10 deteriorates 1.14%, within the 10% rule. Worst seasons are slightly
+worse; losing counts remain 8/75 and 13/75. Paired mean-delta 95% bootstrap
+intervals are [49.01,169.82] / [27.37,107.85], conditional on this simulator.
+Peak actions 41/48 at the 120 cap, zero rate blocks/rejections.
+
+ACCEPTED as live/backtest/preflight defaults after verification. Faster cadence,
+smoother sizing and wind conditioning failed tune gates and remain disabled.
+Three important independent-review findings were reproduced with failing tests
+and fixed in one pass; the suite has 88 tests and post-review verification
+matches every frozen per-season result. The actual exchange accounting gap
+remains open pending the requested recordings.
+
+[Experiment table, review rulings, latency stress and reproduction](docs/competition-results.md)
+and [paired evidence](docs/competition-verification.json).
+
+---
+
 # Overnight report 2026-10-23 (session 02:05-07:00, Fable; all commits pushed)
 
 ## What improved (verify seasons 526-600, deep / thin regime, mean PnL and p10)
@@ -206,6 +252,27 @@ python3 scripts/eval_forecast.py 25 50       # forecast skill
 | 2026-10-23 06:05 | grid 4 (cone_w 0.75 / 1.0 / 1.25 / 1.5 x cone_s0 15 / 20 / 30 at the accepted set, tune 451-525): (1.0, 20) keeps the top score 5014; (1.5, 30) 4873 verifies at 9487 / 6013 (p10 +489 / -2037, min -16.7k / -18.1k) vs 9344 / 5925; (0.75, 15) 4840; (1.0, 15) 4815; (1.5, 20) 4798 | | | NO CHANGE by the protocol (selection on the tune set); (1.5, 30) is a near-equivalent alternative |
 | 2026-10-23 06:25 | EXCHANGE PnL vs FILLS (seasons 217, 218): the bot's deduped FILL lines reproduce the exchange's positions exactly and the unrealized leg within 70, but the exchange's REALIZED PnL is below an average-cost replay of the same trades: 217 +6053 vs +9364 (-3.3k, -81 bp of notional), 218 +3775 vs +5731 (-2.0k, -34 bp). Fills marked at settlement: 217 +10.6k, 218 +4.7k vs exchange totals +7.3k, +2.7k. Live rounds 1-2 sum to 65% of the sim (29.4k vs 44.9k over 215-218) and live round 3 loses 11.8k vs the sim's -3.3k; the exchange-side gap is of the same size as the round-3 shortfall | | | OPEN. Not fees (not proportional), not missing fills, not the mark. The bot now logs per-symbol realized and average price at SEASON END; scratch script realized_check.py compares per symbol mid-season. Suspect: how the exchange books position flips |
 | 2026-10-23 16:00 | MARIO DESK (packet update: bots allowed for Mario, no API key). Checked in Chrome: the trading UI calls the same /api/v1 endpoints as the bot API with the login cookie (orderbook/positions/orders/trades/symbols), 401 without it. Built mario/desk.py: Playwright drives its own Chrome window (log in once), polls the books inside the page, prices all 46 contracts (pricer.fairs), engine ranks riskless arbs (sets of 4 binaries vs 100, top-2 = #1 + #2, hard bounds from banked points) and fair +- margin edges sized to the book and limits, dashboard on localhost:8787, results typed in. mario/mock_exchange.py drill: taking the top 3 actions every 3 s over 6 races +6.5k in the mock's marks (+2.5k realized). Browser tap verified against the mock page; --prefill (types the order into the UI form, human clicks) exists but is off pending a rules check | | | DELIVERED (not PnL-scored) |
+
+## 2026-10-23 — Codex / Arjun: forecast efficiency and execution reconciliation
+
+Reference `f4eb4dd`. Complete forecasts: 1,419 calls per version, tune seasons
+451/470/500, three repeats, 8,235.53 -> 4,817.48 ms (**1.71x**), maximum fair/SD
+difference 1.14e-13. Age-aligned matching, verified-prefix caching, tie-preserving
+partition and vectorized damage; no fitted parameters or strategy defaults changed.
+
+Cancellation success is explicit and reconciles racing fills before replacement;
+uncertain accounts block orders; paused symbols cancel/retry; pending simulated
+orders reserve capacity; fully filled passive quotes can be replenished. Tune
+451–525 mean deep/thin: 8,572.12 / 5,154.10 -> 8,577.71 / 5,155.03. Verify 526–600:
+**9,343.72 / 5,924.82 -> 9,345.51 / 5,927.40**. Verify p10 deep/thin:
+-144.98 / -2,680.86 -> -147.60 / -2,682.24; thin p10 worsens **0.052%**, within
+the 10% bound. Both means rise, satisfying the repository's acceptance rule;
+the changes are too small to claim a material new trading advantage.
+
+40 regression/integration tests pass. Independent review's four important findings
+were reproduced and fixed. Minor fractional-age exposure-duration issue deferred
+(the supplied dense history has two-second steps). No remote orders or deployment.
+Full measurements, tails, review rulings and commands: [efficiency results](docs/efficiency-results.md).
 
 ## Backlog (ordered by expected value)
 1. Passive quoting: rest orders inside the house spread instead of crossing; measure under thin regime.

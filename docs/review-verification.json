@@ -1,0 +1,340 @@
+{
+  "date": "2026-10-23",
+  "reviewed_range": "aa51985..ecd40a5",
+  "fix_revision": "73aed77fa7e160fa1fea68f50ae86aec5c94df97",
+  "independent_review": {
+    "critical": 0,
+    "important": 5,
+    "minor": 0,
+    "original_assessment": "With fixes",
+    "second_review_requested": false
+  },
+  "tests": {
+    "command": ".venv/bin/python -m pytest -q",
+    "passed": 180
+  },
+  "mock_verification": {
+    "invocation": {
+      "source_revision": "73aed77fa7e160fa1fea68f50ae86aec5c94df97",
+      "server_command": [
+        "/Users/arjunhans/Documents/ctc2026/.venv/bin/python",
+        "scripts/mock_exchange.py",
+        "--season",
+        "451",
+        "--speed",
+        "25",
+        "--port",
+        "18775"
+      ],
+      "client_command": [
+        "/Users/arjunhans/Documents/ctc2026/.venv/bin/python",
+        "bot/live.py",
+        "--url",
+        "http://localhost:18775",
+        "--ws",
+        "ws://localhost:18776",
+        "--key",
+        "local-test"
+      ],
+      "server_exit": 0,
+      "client_exit_before_stop": null
+    },
+    "server_end": "season over: fills 31, settlement pnl 11089",
+    "client_fills": 31,
+    "unique_fill_ids": 31,
+    "rounds": [
+      1,
+      2,
+      3
+    ],
+    "errors": [],
+    "client_sha256": "d02cc310c67eb72c5318f40e33801857517be44aac2f2ac95e41dfe95d13a839",
+    "server_sha256": "cbe626734337b34d88afaabb707b5b0e3d356f53eb853f173df1b1564c081b2c"
+  },
+  "findings": [
+    {
+      "id": 1,
+      "issue": "Stale quotes prevented expired-leg cancellation",
+      "resolution": "Cancel and reconcile before quote-dependent replacement; separate cancellation budget; heartbeat through quiet/reconnecting feeds."
+    },
+    {
+      "id": 2,
+      "issue": "Blocking calls invalidated freshness and competition identity",
+      "resolution": "Check readiness, identity and quotes after blocking calls and before each leg; invalidate old-season targets/quotes and stop old-fair replacements."
+    },
+    {
+      "id": 3,
+      "issue": "Buffered websocket quotes were marked fresh at processing time",
+      "resolution": "Independent asynchronous receiver, original monotonic arrival timestamps, per-symbol quote coalescing, serialized account/strategy worker."
+    },
+    {
+      "id": 4,
+      "issue": "Paused symbols retained already-completed cycles",
+      "resolution": "Check reconciled, order-free completion before pause handling and after cancellation."
+    },
+    {
+      "id": 5,
+      "issue": "Optional gate reused oversized passive orders that could flip exposure",
+      "resolution": "Reuse only within gated remaining quantity; cancel, reconcile racing fills and recompute allowed remainder."
+    }
+  ],
+  "declined_to_judge": [
+    {
+      "scope": "Actual exchange accounting / prior PnL discrepancy",
+      "ruling": "Unresolved pending authoritative fill/position exports; no claim that localhost validates competition accounting."
+    },
+    {
+      "scope": "Live profitability / superiority to other teams",
+      "ruling": "Not established by historical simulation; no guaranteed-win claim."
+    },
+    {
+      "scope": "Changes before aa51985",
+      "ruling": "Retain prior review evidence; add rollover integration regressions where this review exposed shared behavior."
+    },
+    {
+      "scope": "Broad alternative research",
+      "ruling": "Existing bounded experiments and rejections are documented; no further tuning on reused confirmation."
+    }
+  ],
+  "deferred_minor_findings": [],
+  "replay_verification": {
+    "comparisons": [
+      {
+        "reference": "out/basket-depth-verify/baseline-deep.json",
+        "verified": "out/basket-review-verify/baseline-deep.json",
+        "source_revision": "73aed77fa7e160fa1fea68f50ae86aec5c94df97",
+        "source_dirty": false,
+        "seasons": 75,
+        "exact_rows": true,
+        "exact_summary": true,
+        "parameters_match": true,
+        "reference_sha256": "c5df4ffae998c2aa266def9bdb5b5993ba4035f567a84adf9ccd0455061c042d",
+        "verified_sha256": "bd2d650512cbe9cc76dd346b5fce84768ba5b50a46639553575060a31313bf80",
+        "summary": {
+          "mean": 9452.361641748492,
+          "median": 9381.403496873967,
+          "p10": -254.5533889860833,
+          "minimum": -15984.813332979324,
+          "losing": 8,
+          "fills": 376.8,
+          "peak_actions": 41,
+          "rate_blocks": 0,
+          "rejected": 0,
+          "basket_cycles": 0,
+          "basket_timeouts": 0
+        },
+        "changed_seasons": []
+      },
+      {
+        "reference": "out/basket-depth-verify/baseline-thin.json",
+        "verified": "out/basket-review-verify/baseline-thin.json",
+        "source_revision": "73aed77fa7e160fa1fea68f50ae86aec5c94df97",
+        "source_dirty": false,
+        "seasons": 75,
+        "exact_rows": true,
+        "exact_summary": true,
+        "parameters_match": true,
+        "reference_sha256": "de00f8be40660bd43f90269df440453817fac69a5be2dbc38f93d4b66c20f3c4",
+        "verified_sha256": "eee1adbfd4dc850e3557d2a1c5dd631716fb8a24d76ea4f8f086822994f63494",
+        "summary": {
+          "mean": 5993.525841033491,
+          "median": 6205.639158313199,
+          "p10": -2712.917597899049,
+          "minimum": -17314.914967478006,
+          "losing": 13,
+          "fills": 918.8266666666667,
+          "peak_actions": 48,
+          "rate_blocks": 0,
+          "rejected": 0,
+          "basket_cycles": 0,
+          "basket_timeouts": 0
+        },
+        "changed_seasons": []
+      },
+      {
+        "reference": "out/basket-depth-verify/basket_depth-deep.json",
+        "verified": "out/basket-review-verify/basket_depth-deep.json",
+        "source_revision": "73aed77fa7e160fa1fea68f50ae86aec5c94df97",
+        "source_dirty": false,
+        "seasons": 75,
+        "exact_rows": true,
+        "exact_summary": true,
+        "parameters_match": true,
+        "reference_sha256": "64bc82ba9961b76379e7750ab52ed7eacd43ea4a0ec4467e002bf80f0ea39b26",
+        "verified_sha256": "a8633aab8fc8c233cbb820a140a000b374f4e4cfff88b42f562346d0c67f85f6",
+        "summary": {
+          "mean": 9925.948603283981,
+          "median": 9989.601808383657,
+          "p10": 512.7159493723027,
+          "minimum": -15710.931101735823,
+          "losing": 7,
+          "fills": 423.4266666666667,
+          "peak_actions": 48,
+          "rate_blocks": 0,
+          "rejected": 0,
+          "basket_cycles": 7.1066666666666665,
+          "basket_timeouts": 0
+        },
+        "changed_seasons": []
+      },
+      {
+        "reference": "out/basket-depth-verify/basket_depth-thin.json",
+        "verified": "out/basket-review-verify/basket_depth-thin.json",
+        "source_revision": "73aed77fa7e160fa1fea68f50ae86aec5c94df97",
+        "source_dirty": false,
+        "seasons": 75,
+        "exact_rows": true,
+        "exact_summary": true,
+        "parameters_match": true,
+        "reference_sha256": "c0b43a6ceb2fc4aaab434f98d791c6c4fa2c6aa2caad9fb1c851cd1c2ac74e78",
+        "verified_sha256": "047983bca97ff2814438f641cb0988b1a538252a7938a04961edf68d7c901b4c",
+        "summary": {
+          "mean": 6412.881389251978,
+          "median": 6404.410407076713,
+          "p10": -2459.403101064573,
+          "minimum": -17076.712005470836,
+          "losing": 13,
+          "fills": 954.1466666666666,
+          "peak_actions": 56,
+          "rate_blocks": 0,
+          "rejected": 0,
+          "basket_cycles": 6.56,
+          "basket_timeouts": 0
+        },
+        "changed_seasons": []
+      },
+      {
+        "reference": "out/basket-depth-tune/basket_depth-deep.json",
+        "verified": "out/basket-review-tune/basket_depth-deep.json",
+        "source_revision": "73aed77fa7e160fa1fea68f50ae86aec5c94df97",
+        "source_dirty": false,
+        "seasons": 75,
+        "exact_rows": true,
+        "exact_summary": true,
+        "parameters_match": true,
+        "reference_sha256": "0f413a6de2aa2d994510354e44e941d5774232454e0b015c147121162e325270",
+        "verified_sha256": "680bb84055c5ba4fd9d7182360b9d959e24f91a6ddb649dd835153b4f0c15c71",
+        "summary": {
+          "mean": 9144.197221508804,
+          "median": 7943.372862341057,
+          "p10": -1127.1580828309159,
+          "minimum": -13477.283516680716,
+          "losing": 13,
+          "fills": 440.29333333333335,
+          "peak_actions": 52,
+          "rate_blocks": 0,
+          "rejected": 0,
+          "basket_cycles": 7.28,
+          "basket_timeouts": 0
+        },
+        "changed_seasons": []
+      },
+      {
+        "reference": "out/basket-depth-tune/basket_depth-thin.json",
+        "verified": "out/basket-review-tune/basket_depth-thin.json",
+        "source_revision": "73aed77fa7e160fa1fea68f50ae86aec5c94df97",
+        "source_dirty": false,
+        "seasons": 75,
+        "exact_rows": true,
+        "exact_summary": true,
+        "parameters_match": true,
+        "reference_sha256": "1360a1b85a897b59d1b274830e5fad5487ce3896a16c717668f05f8097401416",
+        "verified_sha256": "ab57b5fd1ba74474b66fe7f77ec435a02ad87166bc7d3d495d0d7765e6ea37ce",
+        "summary": {
+          "mean": 5603.765699719109,
+          "median": 4981.207917980435,
+          "p10": -3443.486238367608,
+          "minimum": -14822.322917824418,
+          "losing": 17,
+          "fills": 1006.88,
+          "peak_actions": 54,
+          "rate_blocks": 0,
+          "rejected": 0,
+          "basket_cycles": 6.613333333333333,
+          "basket_timeouts": 0
+        },
+        "changed_seasons": []
+      },
+      {
+        "reference": "out/basket-depth-latency/basket_depth-deep.json",
+        "verified": "out/basket-review-stress/basket_depth-deep.json",
+        "source_revision": "73aed77fa7e160fa1fea68f50ae86aec5c94df97",
+        "source_dirty": false,
+        "seasons": 75,
+        "exact_rows": true,
+        "exact_summary": true,
+        "parameters_match": true,
+        "reference_sha256": "c355d143c45ed1f4e36ddf1346642f9b1a1970b734ff5895db46ccd38c6ee889",
+        "verified_sha256": "d859e1a0ae45a1e9ba8eec8e6e5b8f06f995bad3b0b5dd4d46928f09208a81b4",
+        "summary": {
+          "mean": 6883.2168155073605,
+          "median": 6228.101589740416,
+          "p10": -4087.51762442832,
+          "minimum": -13860.950606174152,
+          "losing": 14,
+          "fills": 437.5733333333333,
+          "peak_actions": 58,
+          "rate_blocks": 0,
+          "rejected": 0,
+          "basket_cycles": 7.386666666666667,
+          "basket_timeouts": 408
+        },
+        "changed_seasons": []
+      },
+      {
+        "reference": "out/basket-depth-latency/basket_depth-thin.json",
+        "verified": "out/basket-review-stress/basket_depth-thin.json",
+        "source_revision": "73aed77fa7e160fa1fea68f50ae86aec5c94df97",
+        "source_dirty": false,
+        "seasons": 75,
+        "exact_rows": true,
+        "exact_summary": true,
+        "parameters_match": true,
+        "reference_sha256": "664f7d86fbf6f547d173a92423291de2568877d94fc35110e2fefed6fe90c0e4",
+        "verified_sha256": "1533b027d7e6902e3a332b12a35aa8e5f6ca56c05755341aa3ac72461688481b",
+        "summary": {
+          "mean": 4065.699422324363,
+          "median": 3610.637296412504,
+          "p10": -5078.849932854141,
+          "minimum": -15078.065861409976,
+          "losing": 21,
+          "fills": 982.8133333333334,
+          "peak_actions": 59,
+          "rate_blocks": 0,
+          "rejected": 0,
+          "basket_cycles": 6.8133333333333335,
+          "basket_timeouts": 374
+        },
+        "changed_seasons": []
+      },
+      {
+        "reference": "out/basket-depth-severe/basket_depth-severe.json",
+        "verified": "out/basket-review-stress/basket_depth-severe.json",
+        "source_revision": "73aed77fa7e160fa1fea68f50ae86aec5c94df97",
+        "source_dirty": false,
+        "seasons": 75,
+        "exact_rows": true,
+        "exact_summary": true,
+        "parameters_match": true,
+        "reference_sha256": "5d9f4fcb1c1845ff231ca5602e75353c7428bfb2f9a33cc32090e56dba31fb2a",
+        "verified_sha256": "f482920f32362ca7f7ec969a2ddb6c5cc183db14acf3590b2d52546861d9404c",
+        "summary": {
+          "mean": 1285.442860459002,
+          "median": 1804.8393015035726,
+          "p10": -7953.1226075457,
+          "minimum": -16428.676711936263,
+          "losing": 31,
+          "fills": 1216.4,
+          "peak_actions": 58,
+          "rate_blocks": 0,
+          "rejected": 0,
+          "basket_cycles": 6.066666666666666,
+          "basket_timeouts": 333
+        },
+        "changed_seasons": []
+      }
+    ],
+    "season_replays": 675,
+    "all_exact": true
+  }
+}

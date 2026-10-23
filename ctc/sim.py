@@ -86,8 +86,26 @@ class Sim:
         self.market_open = False
 
     # ---------- public API for strategies ----------
+    def liquidity(self, symbol: str, side: str, limit: float) -> int:
+        """External displayed quantity executable at the current limit; does not consume it."""
+        if self.ladder is None or not self.ladder.has(symbol):
+            touch = self.quotes[symbol][1 if side == 'buy' else 0]
+            if (side == 'buy' and touch > limit) or (side == 'sell' and touch < limit):
+                return 0
+            return self.depth if self.depth is not None else 2 * self.limits[symbol]
+        row = self.ladder.table[symbol]
+        available = self.ladder._avail(symbol, side, self.t)
+        total = 0
+        for i, quantity in enumerate(available):
+            distance = row['spread'] / 2 if i == 0 else row['bands'][i]
+            price = self.mid[symbol] * (1 + distance if side == 'buy' else 1 - distance)
+            if (side == 'buy' and price <= limit) or (side == 'sell' and price >= limit):
+                total += int(quantity)
+        return total
+
     def resting(self, symbol: str, side: str) -> int:
-        return sum(o.qty - o.filled for o in self.orders.values() if o.symbol == symbol and o.side == side)
+        return sum(o.qty - o.filled for o in (*self.orders.values(), *self.pending)
+                   if o.symbol == symbol and o.side == side)
 
     def _action_ok(self) -> bool:
         while self.actions and self.actions[0] < self.t - 60:
@@ -122,11 +140,12 @@ class Sim:
             self.pending = [p for p in self.pending if p.id != oid]
         return True
 
-    def cancel_all(self, symbol: str | None = None) -> None:
+    def cancel_all(self, symbol: str | None = None) -> bool:
         if not self._action_ok():
-            return
+            return False
         self.orders = {k: o for k, o in self.orders.items() if symbol is not None and o.symbol != symbol}
         self.pending = [p for p in self.pending if symbol is not None and p.symbol != symbol]
+        return True
 
     def create(self, etf: str, qty: int) -> bool:
         return self._etf(etf, qty, +1)

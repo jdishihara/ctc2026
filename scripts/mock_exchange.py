@@ -11,13 +11,14 @@ testnet session.
 from __future__ import annotations
 import argparse, asyncio, json, sys, threading, time
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+from datetime import datetime, timezone
 from pathlib import Path
 import websockets
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from ctc.sim import Sim
 
 ROOT = Path(__file__).resolve().parents[1] / "data"
-STATE = {"mid": {}, "half_spread": 0.0015, "position": {}, "cash": 0.0, "fills": 0, "open": True, "lock": threading.Lock(), "case": None}
+STATE = {"mid": {}, "half_spread": 0.0015, "position": {}, "cash": 0.0, "fills": 0, "trades": [], "open": True, "lock": threading.Lock(), "case": None}
 
 
 class H(BaseHTTPRequestHandler):
@@ -30,6 +31,16 @@ class H(BaseHTTPRequestHandler):
     def do_GET(self):
         if self.path == "/cases/hurricane.json":
             return self._json(STATE["case"])
+        if self.path.startswith('/api/v1/orderbook/'):
+            symbol = self.path.rsplit('/', 1)[-1]
+            with STATE['lock']:
+                mid = STATE['mid'].get(symbol)
+                if mid is None:
+                    return self._json({'error': 'no market'}, 404)
+                size = STATE.get('book_size', 100)
+                return self._json({'symbol': symbol,
+                    'bids': [{'price': mid * (1 - STATE['half_spread']), 'quantity': size}],
+                    'asks': [{'price': mid * (1 + STATE['half_spread']), 'quantity': size}]})
         if self.path.startswith("/api/v1/competitions/time"):
             return self._json({"state": "running" if STATE["open"] else "paused"})
         if self.path.startswith("/api/v1/positions"):
@@ -37,6 +48,9 @@ class H(BaseHTTPRequestHandler):
                 return self._json({"positions": [{"symbol": s, "quantity": q} for s, q in STATE["position"].items()]})
         if self.path.startswith("/api/v1/orders/open"):
             return self._json({"orders": []})
+        if self.path.startswith("/api/v1/trades"):
+            with STATE["lock"]:
+                return self._json({"trades": list(reversed(STATE["trades"][-100:]))})
         self._json({"error": "not found"}, 404)
 
     def do_POST(self):
@@ -56,9 +70,28 @@ class H(BaseHTTPRequestHandler):
                 if qty <= 0:
                     return self._json({"error": "position limit"}, 400)
                 STATE["position"][sym] = pos + sign * qty; STATE["cash"] -= sign * qty * px; STATE["fills"] += 1
+                STATE["trades"].append({"trade_id": STATE["fills"], "symbol": sym, "side": side,
+                    "quantity": qty, "price": px, "sequence": STATE["fills"],
+                    "executed_at": datetime.now(timezone.utc).isoformat()})
                 return self._json({"order_id": STATE["fills"], "status": "filled", "filled_quantity": qty, "price": px})
-        if "/etf/" in self.path:
-            return self._json({"status": "ok"})
+        if self.path.startswith('/api/v1/etf/'):
+            etf, action = self.path.rsplit('/', 2)[-2:]
+            quantity = body.get('quantity')
+            if (etf not in STATE['case']['etfs'] or action not in ('create', 'redeem')
+                    or type(quantity) is not int or quantity <= 0):
+                return self._json({'error': 'invalid conversion'}, 400)
+            sign = 1 if action == 'create' else -1
+            changes = {etf: sign * quantity, **{
+                symbol: -sign * quantity * units
+                for symbol, units in STATE['case']['etfs'][etf]['basket'].items()}}
+            with STATE['lock']:
+                if not STATE['open']:
+                    return self._json({'error': 'market closed'}, 403)
+                positions = {s: STATE['position'].get(s, 0) + q for s, q in changes.items()}
+                if any(abs(q) > STATE['case']['limits'][s] for s, q in positions.items()):
+                    return self._json({'error': 'position limit'}, 400)
+                STATE['position'].update(positions)
+            return self._json({'status': 'ok'})
         self._json({"error": "not found"}, 404)
 
     def do_DELETE(self):

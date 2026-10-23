@@ -1,0 +1,1346 @@
+{
+  "schema": 1,
+  "date": "2026-10-23",
+  "frozen_commit": "2ae7a02",
+  "reference_commit": "e8d4307",
+  "selection_seasons": [
+    451,
+    525
+  ],
+  "verification_seasons": [
+    526,
+    600
+  ],
+  "candidate": "final_limit",
+  "parameters": {
+    "final_exact": true,
+    "final_edge": 0.005,
+    "final_edge_full": 0.005
+  },
+  "baseline_precision": "CSV PnL rounded to 0.01; paired deltas have at most 0.005 rounding error",
+  "bootstrap": {
+    "seed": 20261023,
+    "resamples": 10000,
+    "method": "paired season resampling; 2.5/97.5 percentiles; conditional on these seasons and this fill model"
+  },
+  "regimes": {
+    "deep": {
+      "baseline": {
+        "mean": 9345.508133333333,
+        "median": 9435.54,
+        "p10": -147.6039999999997,
+        "minimum": -15911.48,
+        "losing": 8
+      },
+      "candidate": {
+        "mean": 9452.361641748492,
+        "median": 9381.403496873967,
+        "p10": -254.5533889860833,
+        "minimum": -15984.813332979324,
+        "losing": 8,
+        "fills": 376.8,
+        "peak_actions": 41,
+        "rate_blocks": 0,
+        "rejected": 0
+      },
+      "paired": {
+        "mean_delta": 106.85350841516015,
+        "mean_delta_ci95": [
+          49.00683610278625,
+          169.8240767411416
+        ],
+        "improved": 41,
+        "worsened": 32,
+        "unchanged": 2
+      },
+      "seasons": [
+        {
+          "season": 526,
+          "baseline": 15347.23,
+          "candidate": 15453.173423796874,
+          "fills": 367,
+          "peak_actions": 32,
+          "rejected": 0
+        },
+        {
+          "season": 527,
+          "baseline": 313.56,
+          "candidate": 312.50122561201715,
+          "fills": 318,
+          "peak_actions": 25,
+          "rejected": 0
+        },
+        {
+          "season": 528,
+          "baseline": 6090.45,
+          "candidate": 6066.826155690191,
+          "fills": 344,
+          "peak_actions": 31,
+          "rejected": 0
+        },
+        {
+          "season": 529,
+          "baseline": 15465.22,
+          "candidate": 15426.349915412939,
+          "fills": 400,
+          "peak_actions": 22,
+          "rejected": 0
+        },
+        {
+          "season": 530,
+          "baseline": 2492.89,
+          "candidate": 2637.8946835384922,
+          "fills": 457,
+          "peak_actions": 22,
+          "rejected": 0
+        },
+        {
+          "season": 531,
+          "baseline": 17961.06,
+          "candidate": 18070.30260917388,
+          "fills": 306,
+          "peak_actions": 30,
+          "rejected": 0
+        },
+        {
+          "season": 532,
+          "baseline": 9532.53,
+          "candidate": 9346.939025260164,
+          "fills": 539,
+          "peak_actions": 25,
+          "rejected": 0
+        },
+        {
+          "season": 533,
+          "baseline": 2925.67,
+          "candidate": 3149.1995933713406,
+          "fills": 406,
+          "peak_actions": 22,
+          "rejected": 0
+        },
+        {
+          "season": 534,
+          "baseline": 20564.58,
+          "candidate": 21001.6416055909,
+          "fills": 334,
+          "peak_actions": 24,
+          "rejected": 0
+        },
+        {
+          "season": 535,
+          "baseline": 11368.35,
+          "candidate": 11547.258588131568,
+          "fills": 335,
+          "peak_actions": 31,
+          "rejected": 0
+        },
+        {
+          "season": 536,
+          "baseline": -4847.15,
+          "candidate": -4900.395591153778,
+          "fills": 247,
+          "peak_actions": 19,
+          "rejected": 0
+        },
+        {
+          "season": 537,
+          "baseline": 18219.67,
+          "candidate": 18585.24419673776,
+          "fills": 430,
+          "peak_actions": 24,
+          "rejected": 0
+        },
+        {
+          "season": 538,
+          "baseline": 1572.87,
+          "candidate": 1487.541500956113,
+          "fills": 334,
+          "peak_actions": 20,
+          "rejected": 0
+        },
+        {
+          "season": 539,
+          "baseline": 9926.14,
+          "candidate": 9928.842888398616,
+          "fills": 392,
+          "peak_actions": 21,
+          "rejected": 0
+        },
+        {
+          "season": 540,
+          "baseline": 9435.54,
+          "candidate": 9350.895251204991,
+          "fills": 386,
+          "peak_actions": 18,
+          "rejected": 0
+        },
+        {
+          "season": 541,
+          "baseline": 7401.28,
+          "candidate": 7337.170250580079,
+          "fills": 339,
+          "peak_actions": 28,
+          "rejected": 0
+        },
+        {
+          "season": 542,
+          "baseline": 9445.26,
+          "candidate": 9381.403496873967,
+          "fills": 465,
+          "peak_actions": 32,
+          "rejected": 0
+        },
+        {
+          "season": 543,
+          "baseline": 12348.48,
+          "candidate": 12559.019073811753,
+          "fills": 311,
+          "peak_actions": 31,
+          "rejected": 0
+        },
+        {
+          "season": 544,
+          "baseline": 8686.55,
+          "candidate": 8550.018874025765,
+          "fills": 432,
+          "peak_actions": 26,
+          "rejected": 0
+        },
+        {
+          "season": 545,
+          "baseline": 9075.96,
+          "candidate": 9237.819144447283,
+          "fills": 311,
+          "peak_actions": 25,
+          "rejected": 0
+        },
+        {
+          "season": 546,
+          "baseline": 10813.41,
+          "candidate": 11240.051049680575,
+          "fills": 348,
+          "peak_actions": 30,
+          "rejected": 0
+        },
+        {
+          "season": 547,
+          "baseline": 2744.5,
+          "candidate": 2661.6259820986306,
+          "fills": 349,
+          "peak_actions": 26,
+          "rejected": 0
+        },
+        {
+          "season": 548,
+          "baseline": -2539.61,
+          "candidate": -2519.0006029262904,
+          "fills": 407,
+          "peak_actions": 37,
+          "rejected": 0
+        },
+        {
+          "season": 549,
+          "baseline": 15668.35,
+          "candidate": 15716.251532904029,
+          "fills": 267,
+          "peak_actions": 32,
+          "rejected": 0
+        },
+        {
+          "season": 550,
+          "baseline": 13541.44,
+          "candidate": 14692.784920371938,
+          "fills": 301,
+          "peak_actions": 20,
+          "rejected": 0
+        },
+        {
+          "season": 551,
+          "baseline": -7398.76,
+          "candidate": -7467.462299784565,
+          "fills": 242,
+          "peak_actions": 18,
+          "rejected": 0
+        },
+        {
+          "season": 552,
+          "baseline": -426.88,
+          "candidate": -531.4986946553963,
+          "fills": 389,
+          "peak_actions": 27,
+          "rejected": 0
+        },
+        {
+          "season": 553,
+          "baseline": 21098.97,
+          "candidate": 21207.66979318869,
+          "fills": 632,
+          "peak_actions": 31,
+          "rejected": 0
+        },
+        {
+          "season": 554,
+          "baseline": 8599.82,
+          "candidate": 8813.94441644309,
+          "fills": 250,
+          "peak_actions": 24,
+          "rejected": 0
+        },
+        {
+          "season": 555,
+          "baseline": 11165.08,
+          "candidate": 11390.6840453654,
+          "fills": 415,
+          "peak_actions": 25,
+          "rejected": 0
+        },
+        {
+          "season": 556,
+          "baseline": 21327.45,
+          "candidate": 21145.340838902375,
+          "fills": 317,
+          "peak_actions": 25,
+          "rejected": 0
+        },
+        {
+          "season": 557,
+          "baseline": 9622.02,
+          "candidate": 10017.372628127232,
+          "fills": 309,
+          "peak_actions": 35,
+          "rejected": 0
+        },
+        {
+          "season": 558,
+          "baseline": 1321.14,
+          "candidate": 1462.5950162598456,
+          "fills": 350,
+          "peak_actions": 25,
+          "rejected": 0
+        },
+        {
+          "season": 559,
+          "baseline": 2539.94,
+          "candidate": 2478.093963628111,
+          "fills": 245,
+          "peak_actions": 15,
+          "rejected": 0
+        },
+        {
+          "season": 560,
+          "baseline": 16312.6,
+          "candidate": 16627.18571213915,
+          "fills": 405,
+          "peak_actions": 28,
+          "rejected": 0
+        },
+        {
+          "season": 561,
+          "baseline": 14188.11,
+          "candidate": 14331.455726272041,
+          "fills": 276,
+          "peak_actions": 29,
+          "rejected": 0
+        },
+        {
+          "season": 562,
+          "baseline": 16079.29,
+          "candidate": 16182.560967690075,
+          "fills": 197,
+          "peak_actions": 27,
+          "rejected": 0
+        },
+        {
+          "season": 563,
+          "baseline": 2860.01,
+          "candidate": 2795.1829447527343,
+          "fills": 448,
+          "peak_actions": 31,
+          "rejected": 0
+        },
+        {
+          "season": 564,
+          "baseline": 3630.53,
+          "candidate": 3766.7962639956095,
+          "fills": 273,
+          "peak_actions": 30,
+          "rejected": 0
+        },
+        {
+          "season": 565,
+          "baseline": 11027.37,
+          "candidate": 10961.19338571584,
+          "fills": 563,
+          "peak_actions": 25,
+          "rejected": 0
+        },
+        {
+          "season": 566,
+          "baseline": 271.31,
+          "candidate": 160.86456951788568,
+          "fills": 221,
+          "peak_actions": 19,
+          "rejected": 0
+        },
+        {
+          "season": 567,
+          "baseline": 6737.49,
+          "candidate": 6737.492581499691,
+          "fills": 293,
+          "peak_actions": 34,
+          "rejected": 0
+        },
+        {
+          "season": 568,
+          "baseline": 2273.34,
+          "candidate": 2285.334106291648,
+          "fills": 413,
+          "peak_actions": 31,
+          "rejected": 0
+        },
+        {
+          "season": 569,
+          "baseline": 6600.45,
+          "candidate": 6573.9970426743785,
+          "fills": 506,
+          "peak_actions": 26,
+          "rejected": 0
+        },
+        {
+          "season": 570,
+          "baseline": 16455.37,
+          "candidate": 16434.949362976433,
+          "fills": 586,
+          "peak_actions": 26,
+          "rejected": 0
+        },
+        {
+          "season": 571,
+          "baseline": -7211.38,
+          "candidate": -7489.879527102137,
+          "fills": 317,
+          "peak_actions": 17,
+          "rejected": 0
+        },
+        {
+          "season": 572,
+          "baseline": 26974.67,
+          "candidate": 27894.55406377223,
+          "fills": 485,
+          "peak_actions": 26,
+          "rejected": 0
+        },
+        {
+          "season": 573,
+          "baseline": 1821.15,
+          "candidate": 2116.243207363834,
+          "fills": 322,
+          "peak_actions": 16,
+          "rejected": 0
+        },
+        {
+          "season": 574,
+          "baseline": 25657.73,
+          "candidate": 25488.762141071707,
+          "fills": 284,
+          "peak_actions": 28,
+          "rejected": 0
+        },
+        {
+          "season": 575,
+          "baseline": 19484.75,
+          "candidate": 19244.22405024977,
+          "fills": 415,
+          "peak_actions": 25,
+          "rejected": 0
+        },
+        {
+          "season": 576,
+          "baseline": 9063.36,
+          "candidate": 9524.90357492083,
+          "fills": 539,
+          "peak_actions": 29,
+          "rejected": 0
+        },
+        {
+          "season": 577,
+          "baseline": -8110.4,
+          "candidate": -8117.29277377484,
+          "fills": 506,
+          "peak_actions": 29,
+          "rejected": 0
+        },
+        {
+          "season": 578,
+          "baseline": 15008.94,
+          "candidate": 15264.406914925774,
+          "fills": 381,
+          "peak_actions": 41,
+          "rejected": 0
+        },
+        {
+          "season": 579,
+          "baseline": -15911.48,
+          "candidate": -15984.813332979324,
+          "fills": 419,
+          "peak_actions": 25,
+          "rejected": 0
+        },
+        {
+          "season": 580,
+          "baseline": 11748.3,
+          "candidate": 12407.964843417001,
+          "fills": 440,
+          "peak_actions": 24,
+          "rejected": 0
+        },
+        {
+          "season": 581,
+          "baseline": 2525.14,
+          "candidate": 2940.244252830671,
+          "fills": 503,
+          "peak_actions": 26,
+          "rejected": 0
+        },
+        {
+          "season": 582,
+          "baseline": 18429.01,
+          "candidate": 18414.762945696064,
+          "fills": 549,
+          "peak_actions": 34,
+          "rejected": 0
+        },
+        {
+          "season": 583,
+          "baseline": 6372.57,
+          "candidate": 6139.127545142066,
+          "fills": 410,
+          "peak_actions": 31,
+          "rejected": 0
+        },
+        {
+          "season": 584,
+          "baseline": 8015.44,
+          "candidate": 8594.874434088248,
+          "fills": 217,
+          "peak_actions": 19,
+          "rejected": 0
+        },
+        {
+          "season": 585,
+          "baseline": 4283.09,
+          "candidate": 4258.670540608717,
+          "fills": 330,
+          "peak_actions": 29,
+          "rejected": 0
+        },
+        {
+          "season": 586,
+          "baseline": 12657.84,
+          "candidate": 12602.717398914552,
+          "fills": 302,
+          "peak_actions": 21,
+          "rejected": 0
+        },
+        {
+          "season": 587,
+          "baseline": 33682.64,
+          "candidate": 33275.518866435006,
+          "fills": 477,
+          "peak_actions": 25,
+          "rejected": 0
+        },
+        {
+          "season": 588,
+          "baseline": 9369.17,
+          "candidate": 9571.640669305156,
+          "fills": 334,
+          "peak_actions": 20,
+          "rejected": 0
+        },
+        {
+          "season": 589,
+          "baseline": 14912.31,
+          "candidate": 14929.29020130516,
+          "fills": 377,
+          "peak_actions": 22,
+          "rejected": 0
+        },
+        {
+          "season": 590,
+          "baseline": 17985.63,
+          "candidate": 17845.215522955903,
+          "fills": 481,
+          "peak_actions": 33,
+          "rejected": 0
+        },
+        {
+          "season": 591,
+          "baseline": 7414.75,
+          "candidate": 7501.912990131459,
+          "fills": 447,
+          "peak_actions": 25,
+          "rejected": 0
+        },
+        {
+          "season": 592,
+          "baseline": 18071.93,
+          "candidate": 18094.324546866366,
+          "fills": 369,
+          "peak_actions": 21,
+          "rejected": 0
+        },
+        {
+          "season": 593,
+          "baseline": -4789.7,
+          "candidate": -4644.337229736855,
+          "fills": 395,
+          "peak_actions": 27,
+          "rejected": 0
+        },
+        {
+          "season": 594,
+          "baseline": 9307.04,
+          "candidate": 9215.695391981695,
+          "fills": 416,
+          "peak_actions": 18,
+          "rejected": 0
+        },
+        {
+          "season": 595,
+          "baseline": 32101.78,
+          "candidate": 32735.825669998696,
+          "fills": 362,
+          "peak_actions": 21,
+          "rejected": 0
+        },
+        {
+          "season": 596,
+          "baseline": 6250.06,
+          "candidate": 6250.057020262064,
+          "fills": 350,
+          "peak_actions": 22,
+          "rejected": 0
+        },
+        {
+          "season": 597,
+          "baseline": 9976.02,
+          "candidate": 10114.447469724444,
+          "fills": 450,
+          "peak_actions": 24,
+          "rejected": 0
+        },
+        {
+          "season": 598,
+          "baseline": 11479.23,
+          "candidate": 11946.512647099313,
+          "fills": 258,
+          "peak_actions": 22,
+          "rejected": 0
+        },
+        {
+          "season": 599,
+          "baseline": 9954.22,
+          "candidate": 10099.651248501308,
+          "fills": 300,
+          "peak_actions": 17,
+          "rejected": 0
+        },
+        {
+          "season": 600,
+          "baseline": 6550.42,
+          "candidate": 6996.786672572069,
+          "fills": 370,
+          "peak_actions": 31,
+          "rejected": 0
+        }
+      ],
+      "latency_2s_tune": {
+        "baseline": {
+          "mean": 8591.950466508706,
+          "median": 7594.3639432248965,
+          "p10": -1580.0869970727115,
+          "minimum": -14310.351532380217,
+          "losing": 14,
+          "fills": 378.6933333333333,
+          "peak_actions": 42,
+          "rate_blocks": 0,
+          "rejected": 0
+        },
+        "final_limit": {
+          "mean": 8644.057225163195,
+          "median": 7594.3639432248965,
+          "p10": -1577.2466406756794,
+          "minimum": -14312.064306740542,
+          "losing": 14,
+          "fills": 393.7733333333333,
+          "peak_actions": 42,
+          "rate_blocks": 0,
+          "rejected": 0
+        }
+      }
+    },
+    "thin": {
+      "baseline": {
+        "mean": 5927.398933333332,
+        "median": 6201.42,
+        "p10": -2682.2419999999997,
+        "minimum": -17236.05,
+        "losing": 13
+      },
+      "candidate": {
+        "mean": 5993.525841033491,
+        "median": 6205.639158313199,
+        "p10": -2712.917597899049,
+        "minimum": -17314.914967478006,
+        "losing": 13,
+        "fills": 918.8266666666667,
+        "peak_actions": 48,
+        "rate_blocks": 0,
+        "rejected": 0
+      },
+      "paired": {
+        "mean_delta": 66.12690770015756,
+        "mean_delta_ci95": [
+          27.367557479788537,
+          107.85211013726634
+        ],
+        "improved": 41,
+        "worsened": 32,
+        "unchanged": 2
+      },
+      "seasons": [
+        {
+          "season": 526,
+          "baseline": 10802.48,
+          "candidate": 10927.09870126546,
+          "fills": 854,
+          "peak_actions": 38,
+          "rejected": 0
+        },
+        {
+          "season": 527,
+          "baseline": -3054.43,
+          "candidate": -3060.2732353277097,
+          "fills": 881,
+          "peak_actions": 27,
+          "rejected": 0
+        },
+        {
+          "season": 528,
+          "baseline": 2883.34,
+          "candidate": 2845.5487845829775,
+          "fills": 825,
+          "peak_actions": 36,
+          "rejected": 0
+        },
+        {
+          "season": 529,
+          "baseline": 6849.39,
+          "candidate": 6812.971261900442,
+          "fills": 983,
+          "peak_actions": 25,
+          "rejected": 0
+        },
+        {
+          "season": 530,
+          "baseline": 1126.53,
+          "candidate": 1146.6010598946305,
+          "fills": 902,
+          "peak_actions": 33,
+          "rejected": 0
+        },
+        {
+          "season": 531,
+          "baseline": 15323.15,
+          "candidate": 15323.005789779236,
+          "fills": 885,
+          "peak_actions": 47,
+          "rejected": 0
+        },
+        {
+          "season": 532,
+          "baseline": 6485.93,
+          "candidate": 6364.896745406035,
+          "fills": 1479,
+          "peak_actions": 31,
+          "rejected": 0
+        },
+        {
+          "season": 533,
+          "baseline": 1093.45,
+          "candidate": 1297.256386038498,
+          "fills": 905,
+          "peak_actions": 35,
+          "rejected": 0
+        },
+        {
+          "season": 534,
+          "baseline": 14138.89,
+          "candidate": 14625.658344462783,
+          "fills": 725,
+          "peak_actions": 27,
+          "rejected": 0
+        },
+        {
+          "season": 535,
+          "baseline": 5666.81,
+          "candidate": 5722.656144256927,
+          "fills": 833,
+          "peak_actions": 48,
+          "rejected": 0
+        },
+        {
+          "season": 536,
+          "baseline": -4295.08,
+          "candidate": -4333.79622638422,
+          "fills": 581,
+          "peak_actions": 20,
+          "rejected": 0
+        },
+        {
+          "season": 537,
+          "baseline": 14515.86,
+          "candidate": 14808.895220673845,
+          "fills": 1090,
+          "peak_actions": 32,
+          "rejected": 0
+        },
+        {
+          "season": 538,
+          "baseline": -1838.68,
+          "candidate": -1886.1243866889058,
+          "fills": 1081,
+          "peak_actions": 27,
+          "rejected": 0
+        },
+        {
+          "season": 539,
+          "baseline": 7829.57,
+          "candidate": 7774.630556841086,
+          "fills": 998,
+          "peak_actions": 31,
+          "rejected": 0
+        },
+        {
+          "season": 540,
+          "baseline": 8530.07,
+          "candidate": 8494.942572789148,
+          "fills": 1197,
+          "peak_actions": 31,
+          "rejected": 0
+        },
+        {
+          "season": 541,
+          "baseline": 4600.72,
+          "candidate": 4604.468464572565,
+          "fills": 941,
+          "peak_actions": 30,
+          "rejected": 0
+        },
+        {
+          "season": 542,
+          "baseline": 7512.55,
+          "candidate": 7495.0068147972215,
+          "fills": 1093,
+          "peak_actions": 32,
+          "rejected": 0
+        },
+        {
+          "season": 543,
+          "baseline": 7329.22,
+          "candidate": 7439.26257130213,
+          "fills": 822,
+          "peak_actions": 31,
+          "rejected": 0
+        },
+        {
+          "season": 544,
+          "baseline": 2724.52,
+          "candidate": 2650.7724853930995,
+          "fills": 928,
+          "peak_actions": 32,
+          "rejected": 0
+        },
+        {
+          "season": 545,
+          "baseline": 5108.95,
+          "candidate": 5136.607476441808,
+          "fills": 626,
+          "peak_actions": 34,
+          "rejected": 0
+        },
+        {
+          "season": 546,
+          "baseline": 7300.79,
+          "candidate": 7502.693832724039,
+          "fills": 865,
+          "peak_actions": 30,
+          "rejected": 0
+        },
+        {
+          "season": 547,
+          "baseline": 1338.28,
+          "candidate": 1303.818270859445,
+          "fills": 1073,
+          "peak_actions": 32,
+          "rejected": 0
+        },
+        {
+          "season": 548,
+          "baseline": -5188.06,
+          "candidate": -5158.4539010607805,
+          "fills": 991,
+          "peak_actions": 37,
+          "rejected": 0
+        },
+        {
+          "season": 549,
+          "baseline": 9856.69,
+          "candidate": 9884.198603359968,
+          "fills": 695,
+          "peak_actions": 32,
+          "rejected": 0
+        },
+        {
+          "season": 550,
+          "baseline": 9687.51,
+          "candidate": 10448.103660793575,
+          "fills": 591,
+          "peak_actions": 29,
+          "rejected": 0
+        },
+        {
+          "season": 551,
+          "baseline": -8436.87,
+          "candidate": -8538.3437304162,
+          "fills": 681,
+          "peak_actions": 19,
+          "rejected": 0
+        },
+        {
+          "season": 552,
+          "baseline": -2123.96,
+          "candidate": -2191.884141756058,
+          "fills": 1038,
+          "peak_actions": 30,
+          "rejected": 0
+        },
+        {
+          "season": 553,
+          "baseline": 14223.21,
+          "candidate": 14314.909327726975,
+          "fills": 1560,
+          "peak_actions": 35,
+          "rejected": 0
+        },
+        {
+          "season": 554,
+          "baseline": 4832.55,
+          "candidate": 4899.525161902064,
+          "fills": 562,
+          "peak_actions": 28,
+          "rejected": 0
+        },
+        {
+          "season": 555,
+          "baseline": 10137.77,
+          "candidate": 10255.825837805693,
+          "fills": 1020,
+          "peak_actions": 34,
+          "rejected": 0
+        },
+        {
+          "season": 556,
+          "baseline": 17830.26,
+          "candidate": 17579.232021534204,
+          "fills": 834,
+          "peak_actions": 30,
+          "rejected": 0
+        },
+        {
+          "season": 557,
+          "baseline": 6429.98,
+          "candidate": 6795.204228999111,
+          "fills": 634,
+          "peak_actions": 43,
+          "rejected": 0
+        },
+        {
+          "season": 558,
+          "baseline": -1754.07,
+          "candidate": -1688.7700832328119,
+          "fills": 767,
+          "peak_actions": 24,
+          "rejected": 0
+        },
+        {
+          "season": 559,
+          "baseline": 1345.6,
+          "candidate": 1277.9628529455294,
+          "fills": 570,
+          "peak_actions": 17,
+          "rejected": 0
+        },
+        {
+          "season": 560,
+          "baseline": 11824.4,
+          "candidate": 12041.914205453832,
+          "fills": 923,
+          "peak_actions": 31,
+          "rejected": 0
+        },
+        {
+          "season": 561,
+          "baseline": 12091.52,
+          "candidate": 12137.298325761414,
+          "fills": 654,
+          "peak_actions": 33,
+          "rejected": 0
+        },
+        {
+          "season": 562,
+          "baseline": 10701.56,
+          "candidate": 10695.608669708432,
+          "fills": 552,
+          "peak_actions": 29,
+          "rejected": 0
+        },
+        {
+          "season": 563,
+          "baseline": 1631.19,
+          "candidate": 1622.4795677937054,
+          "fills": 814,
+          "peak_actions": 38,
+          "rejected": 0
+        },
+        {
+          "season": 564,
+          "baseline": 3267.61,
+          "candidate": 3392.9998454113593,
+          "fills": 686,
+          "peak_actions": 39,
+          "rejected": 0
+        },
+        {
+          "season": 565,
+          "baseline": 1779.25,
+          "candidate": 1757.826409604033,
+          "fills": 1438,
+          "peak_actions": 31,
+          "rejected": 0
+        },
+        {
+          "season": 566,
+          "baseline": -1579.88,
+          "candidate": -1606.3232728400617,
+          "fills": 539,
+          "peak_actions": 29,
+          "rejected": 0
+        },
+        {
+          "season": 567,
+          "baseline": 6201.42,
+          "candidate": 6201.41962027935,
+          "fills": 845,
+          "peak_actions": 36,
+          "rejected": 0
+        },
+        {
+          "season": 568,
+          "baseline": -1836.25,
+          "candidate": -1799.4862719375305,
+          "fills": 878,
+          "peak_actions": 39,
+          "rejected": 0
+        },
+        {
+          "season": 569,
+          "baseline": 3231.06,
+          "candidate": 3267.659941800397,
+          "fills": 1356,
+          "peak_actions": 30,
+          "rejected": 0
+        },
+        {
+          "season": 570,
+          "baseline": 12298.76,
+          "candidate": 12270.970155106284,
+          "fills": 1367,
+          "peak_actions": 34,
+          "rejected": 0
+        },
+        {
+          "season": 571,
+          "baseline": -7636.63,
+          "candidate": -7726.388496196567,
+          "fills": 940,
+          "peak_actions": 22,
+          "rejected": 0
+        },
+        {
+          "season": 572,
+          "baseline": 19058.31,
+          "candidate": 19512.36005471189,
+          "fills": 919,
+          "peak_actions": 30,
+          "rejected": 0
+        },
+        {
+          "season": 573,
+          "baseline": 2257.7,
+          "candidate": 2345.655385437607,
+          "fills": 950,
+          "peak_actions": 18,
+          "rejected": 0
+        },
+        {
+          "season": 574,
+          "baseline": 19110.16,
+          "candidate": 19019.60065487869,
+          "fills": 870,
+          "peak_actions": 48,
+          "rejected": 0
+        },
+        {
+          "season": 575,
+          "baseline": 14786.21,
+          "candidate": 14680.966819334662,
+          "fills": 1065,
+          "peak_actions": 30,
+          "rejected": 0
+        },
+        {
+          "season": 576,
+          "baseline": 4990.65,
+          "candidate": 5234.987990925547,
+          "fills": 1134,
+          "peak_actions": 36,
+          "rejected": 0
+        },
+        {
+          "season": 577,
+          "baseline": -9238.29,
+          "candidate": -9228.72746697154,
+          "fills": 1234,
+          "peak_actions": 32,
+          "rejected": 0
+        },
+        {
+          "season": 578,
+          "baseline": 11409.39,
+          "candidate": 11448.148778311817,
+          "fills": 947,
+          "peak_actions": 48,
+          "rejected": 0
+        },
+        {
+          "season": 579,
+          "baseline": -17236.05,
+          "candidate": -17314.914967478006,
+          "fills": 1201,
+          "peak_actions": 27,
+          "rejected": 0
+        },
+        {
+          "season": 580,
+          "baseline": 4274.38,
+          "candidate": 4609.96203360369,
+          "fills": 951,
+          "peak_actions": 33,
+          "rejected": 0
+        },
+        {
+          "season": 581,
+          "baseline": 1438.25,
+          "candidate": 1794.6838972763726,
+          "fills": 1180,
+          "peak_actions": 32,
+          "rejected": 0
+        },
+        {
+          "season": 582,
+          "baseline": 14111.51,
+          "candidate": 13983.883523382197,
+          "fills": 1277,
+          "peak_actions": 43,
+          "rejected": 0
+        },
+        {
+          "season": 583,
+          "baseline": 2798.9,
+          "candidate": 2656.2525994605094,
+          "fills": 906,
+          "peak_actions": 38,
+          "rejected": 0
+        },
+        {
+          "season": 584,
+          "baseline": 6293.99,
+          "candidate": 6714.485469008498,
+          "fills": 420,
+          "peak_actions": 28,
+          "rejected": 0
+        },
+        {
+          "season": 585,
+          "baseline": 2298.1,
+          "candidate": 2289.924686950135,
+          "fills": 658,
+          "peak_actions": 33,
+          "rejected": 0
+        },
+        {
+          "season": 586,
+          "baseline": 11154.53,
+          "candidate": 11125.870807709885,
+          "fills": 838,
+          "peak_actions": 23,
+          "rejected": 0
+        },
+        {
+          "season": 587,
+          "baseline": 28917.86,
+          "candidate": 28669.47841308075,
+          "fills": 1045,
+          "peak_actions": 28,
+          "rejected": 0
+        },
+        {
+          "season": 588,
+          "baseline": 7246.11,
+          "candidate": 7367.668358108622,
+          "fills": 1015,
+          "peak_actions": 29,
+          "rejected": 0
+        },
+        {
+          "season": 589,
+          "baseline": 9584.39,
+          "candidate": 9587.68178906387,
+          "fills": 850,
+          "peak_actions": 28,
+          "rejected": 0
+        },
+        {
+          "season": 590,
+          "baseline": 12072.52,
+          "candidate": 11982.417128304878,
+          "fills": 1032,
+          "peak_actions": 41,
+          "rejected": 0
+        },
+        {
+          "season": 591,
+          "baseline": 6527.27,
+          "candidate": 6564.093024105707,
+          "fills": 1098,
+          "peak_actions": 39,
+          "rejected": 0
+        },
+        {
+          "season": 592,
+          "baseline": 13863.78,
+          "candidate": 13871.98698035712,
+          "fills": 958,
+          "peak_actions": 26,
+          "rejected": 0
+        },
+        {
+          "season": 593,
+          "baseline": -6399.01,
+          "candidate": -6160.326811872822,
+          "fills": 1162,
+          "peak_actions": 30,
+          "rejected": 0
+        },
+        {
+          "season": 594,
+          "baseline": 4341.87,
+          "candidate": 4297.268715711543,
+          "fills": 1166,
+          "peak_actions": 23,
+          "rejected": 0
+        },
+        {
+          "season": 595,
+          "baseline": 20869.93,
+          "candidate": 21240.649919614232,
+          "fills": 702,
+          "peak_actions": 30,
+          "rejected": 0
+        },
+        {
+          "season": 596,
+          "baseline": 6655.68,
+          "candidate": 6655.680221017477,
+          "fills": 745,
+          "peak_actions": 30,
+          "rejected": 0
+        },
+        {
+          "season": 597,
+          "baseline": 4930.14,
+          "candidate": 5023.904125742971,
+          "fills": 1018,
+          "peak_actions": 25,
+          "rejected": 0
+        },
+        {
+          "season": 598,
+          "baseline": 8783.99,
+          "candidate": 9108.422110036627,
+          "fills": 643,
+          "peak_actions": 26,
+          "rejected": 0
+        },
+        {
+          "season": 599,
+          "baseline": 6033.24,
+          "candidate": 6205.639158313199,
+          "fills": 630,
+          "peak_actions": 22,
+          "rejected": 0
+        },
+        {
+          "season": 600,
+          "baseline": 2832.48,
+          "candidate": 3096.648505259229,
+          "fills": 796,
+          "peak_actions": 40,
+          "rejected": 0
+        }
+      ],
+      "latency_2s_tune": {
+        "baseline": {
+          "mean": 5145.763454896226,
+          "median": 4601.361514325887,
+          "p10": -3709.412564706278,
+          "minimum": -15112.14653409467,
+          "losing": 20,
+          "fills": 953.2533333333333,
+          "peak_actions": 47,
+          "rate_blocks": 0,
+          "rejected": 0
+        },
+        "final_limit": {
+          "mean": 5177.411667752711,
+          "median": 4824.866130839997,
+          "p10": -3727.132178066233,
+          "minimum": -15134.038580992543,
+          "losing": 20,
+          "fills": 972.8533333333334,
+          "peak_actions": 47,
+          "rate_blocks": 0,
+          "rejected": 0
+        }
+      }
+    }
+  },
+  "acceptance": {
+    "deep_mean_rises": true,
+    "thin_mean_rises": true,
+    "thin_p10_deterioration_pct": 1.1436551175862983,
+    "allowed_deterioration_pct": 10
+  }
+}

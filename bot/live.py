@@ -9,6 +9,7 @@ mid for the operator every 10 s. Start with --dry-run: orders are printed, not s
 """
 from __future__ import annotations
 import argparse, asyncio, collections, json, math, sys, time, urllib.error, urllib.request
+from http.client import HTTPException
 from pathlib import Path
 from typing import Any
 import websockets
@@ -35,10 +36,13 @@ class LiveExchange:
         self.limits = self.case["limits"]; self.symbols = list(self.limits)
         self.quotes: dict[str, tuple[float, float]] = {}
         self.mid: dict[str, float] = {}
+        self.quote_times: dict[str, float] = {}
+        self.quotes_valid_after = -math.inf
         self.position: dict[str, int] = {s: 0 for s in self.symbols}
         self.open_orders: list[dict[str, Any]] = []
         self.market_open = False
-        self.t0 = time.time()
+        self.state_ready = False  # complete account snapshot required before any new exposure
+        self.t0 = time.monotonic()
         self.actions: collections.deque[float] = collections.deque()
         self.rate_limit = rate_limit
         self.rejected = 0
@@ -53,7 +57,7 @@ class LiveExchange:
 
     @property
     def t(self) -> float:
-        return time.time() - self.t0
+        return time.monotonic() - self.t0
 
     # ---- http ----
     def get(self, path: str, api: bool = True) -> Any:
@@ -67,13 +71,24 @@ class LiveExchange:
                                      headers={**HEADERS, "X-API-Key": self.key, "Content-Type": "application/json"})
         try:
             with urllib.request.urlopen(req, timeout=10) as r:
-                return json.load(r)
+                payload = r.read()
+                return json.loads(payload) if payload else {}
         except urllib.error.HTTPError as exc:
             self.rejected += 1
-            detail = exc.read().decode()[:200]
+            self.state_ready = False
+            try:
+                detail = exc.read().decode(errors="replace")[:200]
+            except (OSError, HTTPException):
+                detail = "unreadable error response"
             print(f"HTTP {exc.code} {method} {path} {body}: {detail}", flush=True)
             if exc.code == 403 and "halted" in detail:
                 self.market_open = False                     # stop sending until the next time poll says running
+            return None
+        except (OSError, ValueError, HTTPException) as exc:
+            # A timeout may have happened after the exchange accepted the action.
+            # Do not retry or free capacity until positions/orders are reconciled.
+            self.state_ready = False
+            print(f"uncertain {method} {path}: {exc}; waiting for account refresh", flush=True)
             return None
 
     def _action_ok(self) -> bool:
@@ -90,31 +105,51 @@ class LiveExchange:
         try:
             tm = self.get("/competitions/time")
             was_open = self.market_open
-            self.market_open = tm.get("state") == "running"
-            self.reopened = self.market_open and not was_open
             cid = tm.get("competition_id")
-            if self.competition_id and cid != self.competition_id:
-                print(f"SEASON END competition {self.competition_id} ({tm.get('fictional_time')}): last positions {json.dumps(self.last_positions)}", flush=True)
-                self.position = {s: 0 for s in self.symbols}
-                self.trade_cursor = None
-            self.competition_id = cid
-            self.poll_trades()
+            # Orders first, positions second: a fill between the two reads is
+            # counted in the position without losing its reservation prematurely.
+            oo = self.get("/orders/open")
+            orders = oo.get("orders", oo) if isinstance(oo, dict) else oo
             pos = self.get("/positions")
             items = pos.get("positions", pos) if isinstance(pos, dict) else pos
-            if items:
-                self.last_positions = {"realized": round(sum(p.get("realized_pnl", 0) for p in items)),
-                                       "unrealized": round(sum(p.get("unrealized_pnl", 0) for p in items)),
-                                       "positions": {p["symbol"]: p.get("quantity") for p in items},
-                                       "realized_by": {p["symbol"]: round(p.get("realized_pnl", 0)) for p in items},
-                                       "avg_price": {p["symbol"]: p.get("average_price") for p in items}}
-                self.pnl_now = self.last_positions["realized"] + self.last_positions["unrealized"]
-            for p in items if isinstance(items, list) else []:
+            if not isinstance(items, list) or not isinstance(orders, list):
+                raise ValueError("positions and open orders must be lists")
+            positions = {s: 0 for s in self.symbols}
+            for p in items:
                 sym = p.get("symbol"); q = p.get("quantity", p.get("position"))
-                if sym in self.position and q is not None:
-                    self.position[sym] = int(q)
-            oo = self.get("/orders/open")
-            self.open_orders = oo.get("orders", oo) if isinstance(oo, dict) else oo
-        except Exception as exc:  # keep trading on stale state rather than crash
+                if sym in positions:
+                    if q is None:
+                        raise ValueError(f"missing position quantity for {sym}")
+                    positions[sym] = int(q)
+            for o in orders:
+                if o.get("symbol") not in self.limits or o.get("side") not in ("buy", "sell"):
+                    raise ValueError("invalid open order")
+                if int(o["quantity"]) < int(o.get("filled_quantity", 0)):
+                    raise ValueError("invalid remaining order quantity")
+            summary = {"realized": round(sum(p.get("realized_pnl", 0) for p in items)),
+                       "unrealized": round(sum(p.get("unrealized_pnl", 0) for p in items)),
+                       "positions": positions.copy(),
+                       "realized_by": {p["symbol"]: round(p.get("realized_pnl", 0)) for p in items},
+                       "avg_price": {p["symbol"]: p.get("average_price") for p in items}}
+            if self.competition_id and cid != self.competition_id:
+                print(f"SEASON END competition {self.competition_id} ({tm.get('fictional_time')}): last positions {json.dumps(self.last_positions)}", flush=True)
+                self.trade_cursor = None
+                self.quotes.clear(); self.mid.clear()
+                self.quote_times.clear()
+                self.quotes_valid_after = self.t
+            # Publish a complete snapshot only after every required request succeeds.
+            self.competition_id = cid
+            self.position, self.open_orders = positions, orders
+            self.last_positions = summary
+            self.pnl_now = summary["realized"] + summary["unrealized"]
+            self.market_open = tm.get("state") == "running"
+            self.reopened = self.reopened or (self.market_open and not was_open)
+            self.state_ready = True
+            self.poll_trades()
+        except Exception as exc:
+            self.state_ready = False
+            self.market_open = False
+            self.reopened = False
             print(f"refresh failed: {exc}", flush=True)
 
     def poll_trades(self) -> None:
@@ -133,14 +168,20 @@ class LiveExchange:
         for tr in reversed(new):
             self.seen_trades.add(tr.get("trade_id", tr.get("id")))
             sym, px, qty = tr.get("symbol"), tr.get("price"), tr.get("quantity")
-            side = tr.get("side") or tr.get("aggressor_side") or ("buy" if (tr.get("buyer_is_me") or tr.get("is_buyer")) else "?")
+            side = tr.get("side")
+            if side not in ("buy", "sell"):
+                side = "?"
+                for field in ("buyer_is_me", "is_buyer"):
+                    if isinstance(tr.get(field), bool):
+                        side = "buy" if tr[field] else "sell"
+                        break
             if sym is None or px is None or qty is None:
                 print(f"FILL raw {json.dumps(tr)[:200]}", flush=True)
                 continue
             mid = self.mid.get(sym)
             slip = ""
-            if mid:
-                sgn = 1 if side == "buy" else -1 if side == "sell" else 0
+            if mid and side in ("buy", "sell"):
+                sgn = 1 if side == "buy" else -1
                 cost = sgn * (float(px) - mid) * float(qty)
                 self.fill_cost[0] += cost; self.fill_cost[1] += float(px) * float(qty)
                 slip = f" mid {mid:.2f} slip {cost / max(1e-9, float(px) * float(qty)) * 1e4:+.0f} bp (cum {self.fill_cost[0] / max(1e-9, self.fill_cost[1]) * 1e4:+.0f} bp)"
@@ -154,12 +195,14 @@ class LiveExchange:
 
     # ---- orders (same signatures as Sim) ----
     def place(self, symbol: str, side: str, qty: int, price: float | None = None) -> int | None:
-        if not self.market_open or qty <= 0 or not self._action_ok():
+        if not self.market_open or not self.state_ready or qty <= 0:
             return None
         sign = 1 if side == "buy" else -1
         room = self.limits[symbol] - sign * self.position[symbol] - self.resting(symbol, side)
         qty = min(int(qty), room)
         if qty <= 0:
+            return None
+        if not self._action_ok():
             return None
         order = {"symbol": symbol, "side": side, "order_type": "limit" if price is not None else "market", "quantity": qty}
         if price is not None:
@@ -169,28 +212,88 @@ class LiveExchange:
             return -1
         resp = self.send("POST", "/orders", order)
         print(f"ORDER {order} -> {resp}", flush=True)
-        if resp:
-            filled = int(resp.get("filled_quantity", resp.get("filled", 0)) or 0)
-            self.position[symbol] += sign * filled                     # apply what we know now; refresh() corrects later
-            if filled < qty:
-                self.open_orders.append({**order, "filled_quantity": filled, "order_id": resp.get("order_id", resp.get("id"))})
-            return resp.get("order_id", resp.get("id"))
-        return None
+        try:
+            if not isinstance(resp, dict):
+                raise ValueError("missing order acknowledgement")
+            oid = resp.get("order_id", resp.get("id"))
+            if isinstance(oid, bool) or not isinstance(oid, (str, int)) or oid == "":
+                raise ValueError("missing order id")
+            raw_filled = resp.get("filled_quantity", resp.get("filled", 0))
+            raw_accepted = resp.get("quantity", qty)
+            accepted, filled = int(raw_accepted), int(raw_filled)
+            if (isinstance(raw_accepted, bool) or accepted != raw_accepted
+                    or isinstance(raw_filled, bool) or filled != raw_filled
+                    or not 0 <= filled <= accepted <= qty or accepted <= 0):
+                raise ValueError("invalid acknowledged quantity")
+            status = resp.get("status")
+            if status is not None and status not in {"new", "pending", "accepted", "open", "resting", "partial", "partially_filled", "filled"}:
+                raise ValueError("unrecognized order status")
+            if status == "filled" and filled != accepted:
+                raise ValueError("filled acknowledgement lacks complete fill quantity")
+        except (TypeError, ValueError, OverflowError):
+            self.state_ready = False
+            print("uncertain order acknowledgement; waiting for account refresh", flush=True)
+            return None
+        self.position[symbol] += sign * filled  # refresh() reconciles later fills
+        if filled < accepted:
+            self.open_orders.append({**order, "quantity": accepted, "filled_quantity": filled, "order_id": oid})
+        return oid
 
-    def cancel_all(self, symbol: str | None = None) -> None:
+    def cancel_all(self, symbol: str | None = None) -> bool:
         if not self._action_ok():
-            return
+            return False
         if self.dry_run:
             print(f"[dry-run] would cancel all {symbol or ''}", flush=True)
+            self.open_orders = [o for o in self.open_orders if symbol is not None and o.get("symbol") != symbol]
+            return True
         else:
-            self.send("DELETE", "/orders/all" + (f"?symbol={symbol}" if symbol else ""))
-        self.open_orders = [o for o in self.open_orders if symbol is not None and o.get("symbol") != symbol]
+            if self.send("DELETE", "/orders/all" + (f"?symbol={symbol}" if symbol else "")) is None:
+                return False
+        # A fill can beat the cancel. Reconcile its position before a caller
+        # calculates replacement quantity, and verify the targeted orders vanished.
+        self.refresh()
+        return self.state_ready and not any(symbol is None or o.get("symbol") == symbol for o in self.open_orders)
+
+    def liquidity(self, symbol: str, side: str, limit: float) -> int | None:
+        """Current external executable depth; unavailable books fail closed for baskets."""
+        if not self.state_ready:
+            return None
+        try:
+            book = self.get(f'/orderbook/{symbol}')
+            levels = book['asks' if side == 'buy' else 'bids']
+            resting_side = 'sell' if side == 'buy' else 'buy'
+            total = 0
+            for level in levels:
+                price, quantity = level['price'], level['quantity']
+                if (isinstance(price, bool) or isinstance(quantity, bool)
+                        or not math.isfinite(price) or price <= 0
+                        or not math.isfinite(quantity) or quantity < 0 or int(quantity) != quantity):
+                    return None
+                own = sum(int(o['quantity']) - int(o.get('filled_quantity', 0) or 0)
+                          for o in self.open_orders if o['symbol'] == symbol and o['side'] == resting_side
+                          and o.get('price') is not None and math.isclose(o['price'], price, rel_tol=0, abs_tol=1e-8))
+                if (side == 'buy' and price <= limit) or (side == 'sell' and price >= limit):
+                    total += max(0, int(quantity) - own)
+            return total
+        except (OSError, HTTPException, ValueError, TypeError, KeyError):
+            return None
 
     def create(self, etf: str, qty: int) -> bool:
-        return bool(self._action_ok() and (self.dry_run or self.send("POST", f"/etf/{etf}/create", {"quantity": qty})))
+        return self._convert(etf, qty, "create")
 
     def redeem(self, etf: str, qty: int) -> bool:
-        return bool(self._action_ok() and (self.dry_run or self.send("POST", f"/etf/{etf}/redeem", {"quantity": qty})))
+        return self._convert(etf, qty, "redeem")
+
+    def _convert(self, etf: str, qty: int, action: str) -> bool:
+        if not self.market_open or not self.state_ready or qty <= 0 or not self._action_ok():
+            return False
+        if self.dry_run:
+            return True
+        response = self.send("POST", f"/etf/{etf}/{action}", {"quantity": qty})
+        # Conversion changes several positions. Reconcile the complete basket
+        # before a subsequent order can use any of its position capacity.
+        self.state_ready = False
+        return response is not None
 
 
 def replay_feed_log(path: str, ex: "LiveExchange", strat, seen_seq: set[int], tail_bytes: int = 150_000_000) -> tuple[str, int, int]:
@@ -240,16 +343,171 @@ def quote_from_frame(d: dict[str, Any]) -> tuple[str, float, float] | None:
     return None
 
 
+class MarketInbox:
+    """Event-loop-owned buffer: preserve news order, retain only each latest quote."""
+    def __init__(self):
+        self.quotes = {}
+        self.events = []
+        self.sequence = 0
+        self.changed = asyncio.Event()
+
+    def put(self, message, received_at):
+        self.sequence += 1
+        event = (self.sequence, message, received_at)
+        if message.get('type') == 'quote':
+            self.quotes[message.get('symbol')] = event
+        else:
+            self.events.append(event)
+        self.changed.set()
+
+    def drain(self):
+        events = sorted([*self.events, *self.quotes.values()], key=lambda item: item[0])
+        self.events.clear()
+        self.quotes.clear()
+        self.changed.clear()
+        return [(message, received_at) for _, message, received_at in events]
+
+
+async def receive_market_data(ws, inbox, clock):
+    # This coroutine never does HTTP, forecasts, or order work. Arrival time is
+    # captured before the serialized trading worker can delay processing.
+    async for frame in ws:
+        received_at = clock()
+        message = json.loads(frame)
+        if isinstance(message, dict):
+            inbox.put(message, received_at)
+
+
+async def drive_market_data(session, inbox, receiver, interval=.25):
+    """One account/strategy owner, with a heartbeat even during a feed outage."""
+    while True:
+        try:
+            await asyncio.wait_for(inbox.changed.wait(), timeout=interval)
+        except TimeoutError:
+            pass
+        await asyncio.to_thread(session.step, inbox.drain())
+        if receiver.done() and not inbox.changed.is_set():
+            await receiver
+            return
+
+
+class LiveSession:
+    def __init__(self, ex, strat, sync, season_year='', last_round=0, seen_seq=None):
+        self.ex, self.strat, self.sync = ex, strat, sync
+        self.season_year, self.last_round = season_year, last_round
+        self.seen_seq = seen_seq if seen_seq is not None else set()
+        self.competition_id = ex.competition_id
+        self.last_sync = self.last_log = 0.
+
+    def _competition_changed(self):
+        ex, strat = self.ex, self.strat
+        changed = self.competition_id is not None and ex.competition_id != self.competition_id
+        self.competition_id = ex.competition_id
+        if changed:
+            print('new competition id: resetting model', flush=True)
+            strat.on_start(ex)
+            strat.on_round(ex)
+            self.seen_seq.clear()
+            self.last_round = ex.round = 0
+            self.season_year = ''
+        return changed
+
+    def _news(self, m):
+        ex, strat = self.ex, self.strat
+        year = (m.get('time') or '')[:4]
+        if year and self.season_year and year != self.season_year:
+            print(f'new season (year {self.season_year} -> {year}): resetting model', flush=True)
+            strat.on_start(ex)
+            strat.on_round(ex)
+            self.seen_seq.clear()
+            self.last_round = 0
+        if year:
+            self.season_year = year
+        seq = m.get('seq')
+        if seq is not None:
+            if seq in self.seen_seq:
+                return
+            self.seen_seq.add(seq)
+        if m.get('type') == 'storm_formed':
+            if m['round'] < self.last_round or (m['round'] == 1 and (strat.model.reported_rounds or strat.model.round)):
+                print('new season: resetting model', flush=True)
+                strat.on_start(ex)
+                strat.on_round(ex)
+                self.seen_seq.clear()
+            self.last_round = ex.round = m['round']
+        if m.get('type') == 'snapshot':
+            strat.model.on_snapshot(m)
+            strat.fair = strat.compute_fair()
+            strat.last_trade_t = -1e9
+            print('snapshot processed: warm-up before trading', flush=True)
+            strat.on_round(ex)
+            return
+        if m.get('type') == 'announcement':
+            print(f"ANNOUNCEMENT {m.get('symbols')}: {m.get('headline')}  -> pausing those symbols", flush=True)
+            strat.pause(m.get('symbols', []))
+        strat.on_news(ex, m)
+
+    def step(self, events):
+        ex, strat = self.ex, self.strat
+        if ex.t - self.last_sync > self.sync:
+            ex.refresh()
+            self.last_sync = ex.t
+        self._competition_changed()
+        if ex.reopened:
+            print('market (re)opened: warm-up', flush=True)
+            strat.on_round(ex)
+            ex.reopened = False
+        for message, received_at in events:
+            kind = message.get('type')
+            if kind == 'quote':
+                if received_at < ex.quotes_valid_after or not 0 <= ex.t - received_at <= 5:
+                    continue
+                q = quote_from_frame(message)
+                if q and q[0] in ex.symbols and all(math.isfinite(p) and p > 0 for p in q[1:]) and q[1] <= q[2]:
+                    ex.quotes[q[0]] = (q[1], q[2])
+                    ex.mid[q[0]] = (q[1] + q[2]) / 2
+                    ex.quote_times[q[0]] = received_at
+            elif kind == 'news' and isinstance(message.get('message'), dict):
+                self._news(message['message'])
+            elif kind == 'disconnected':
+                ex.quotes.clear()
+                ex.mid.clear()
+                ex.quote_times.clear()
+        # Cached quotes cannot stay executable because other symbols/news tick.
+        now = ex.t
+        for symbol in list(ex.quotes):
+            if not 0 <= now - ex.quote_times.get(symbol, -math.inf) <= 5:
+                ex.quotes.pop(symbol, None)
+                ex.mid.pop(symbol, None)
+                ex.quote_times.pop(symbol, None)
+        if events and ex.quotes and len(ex.quotes) >= len(ex.symbols) // 2:
+            strat.on_quotes(ex)
+        elif strat.basket is not None and strat.basket.targets is not None:
+            # No fresh data is needed to cancel an expired leg. The overlay
+            # itself requires fresh quotes before any replacement is priced.
+            strat.basket.on_quotes(ex, strat.paused)
+        self._competition_changed()  # A nested cancel/conversion can refresh.
+        now = ex.t
+        if now - self.last_log > 10 and strat.fair:
+            print(f't={now:7.0f} r{strat.model.round} pnl {ex.pnl_now:+.0f} ' + ' '.join(
+                f'{s}:{ex.mid.get(s, 0):.2f}/{strat.fair.get(s, 0):.2f}/{ex.position[s]:+d}' for s in SYMS), flush=True)
+            self.last_log = now
+
+
 async def run(args: argparse.Namespace) -> None:
     ex = LiveExchange(args.url, args.key, args.dry_run, rate_limit=args.rate)
     if args.nowcast:
         strat = S.FairValueTrader(min_edge=args.min_edge, edge_full=args.edge_full, project=True)
     else:   # the analog ensemble, same parameters as scripts/backtest.py --strategy analog
         strat = S.FairValueTrader(min_edge=args.min_edge, edge_full=args.edge_full, analog=True, sd_mult=args.sd_mult,
+                                  basket_edge=args.basket_edge, basket_participation=args.basket_participation,
+                                  final_exact=args.final_exact, final_edge=args.final_edge, final_edge_full=args.final_edge_full,
                                   sigma=args.sigma, k=args.k, passive=args.passive, warmup=args.warmup, max_cross=args.max_cross,
                                   carry=args.carry, ent_cut=args.ent_cut, cone_w=args.cone_w, cone_s0=args.cone_s0, cone_nu=args.cone_nu, isl_w=args.isl_w)
     print(f"strategy {'nowcast' if args.nowcast else 'analog'} min_edge {args.min_edge} edge_full {args.edge_full} sd_mult {args.sd_mult} sigma {args.sigma} k {args.k} passive {args.passive} warmup {args.warmup} max_cross {args.max_cross} carry {args.carry} ent_cut {args.ent_cut} cone_w {args.cone_w} cone_s0 {args.cone_s0} cone_nu {args.cone_nu} isl_w {args.isl_w}", flush=True)
     strat.on_start(ex)
+    print(f"final phase exact={strat.final_exact} entry={strat.final_edge} full={strat.final_edge_full}", flush=True)
+    print(f"basket edge={strat.basket_edge} participation={strat.basket_participation} max_lot=10", flush=True)
     ex.refresh()
     season_year = ""
     last_round = 0
@@ -264,75 +522,27 @@ async def run(args: argparse.Namespace) -> None:
             strat.fair = strat.compute_fair(); ex.round = last_round
     ws_url = (args.ws or ex.url.replace("https://", "wss://", 1).replace("http://", "ws://", 1)) + "/ws/v1/market-data"
     subscribe = {"action": "subscribe", "symbols": ex.symbols, "channels": ["news", "quotes"]}
-    last_sync = last_log = 0.0
-    while True:
-        try:
-            async with websockets.connect(ws_url, additional_headers={"X-API-Key": ex.key}) as ws:
-                await ws.send(json.dumps(subscribe))
-                print("connected", flush=True)
-                async for frame in ws:
-                    d = json.loads(frame)
-                    if d.get("type") == "quote":
-                        q = quote_from_frame(d)
-                        if q:
-                            ex.quotes[q[0]] = (q[1], q[2]); ex.mid[q[0]] = (q[1] + q[2]) / 2
-                    elif d.get("type") == "news" and isinstance(d.get("message"), dict):
-                        m = d["message"]
-                        seq = m.get("seq")
-                        if seq is not None:
-                            if seq in seen_seq:
-                                continue
-                            seen_seq.add(seq)
-                        year = (m.get("time") or "")[:4]
-                        if year and season_year and year != season_year and m.get("type") != "snapshot":
-                            # the fictional year names the season; a change means the testnet moved on (02:07 tonight the first
-                            # snapshot still described the previous season and its damage was carried into the new one)
-                            print(f"new season (year {season_year} -> {year}): resetting model", flush=True)
-                            strat.on_start(ex); seen_seq.clear(); last_round = 0
-                        if year and m.get("type") != "snapshot":
-                            season_year = year
-                        if m.get("type") == "storm_formed":
-                            if m["round"] < last_round or (m["round"] == 1 and (strat.model.reported_rounds or strat.model.round)):
-                                print("new season: resetting model", flush=True)
-                                strat.on_start(ex); seen_seq.clear()
-                            last_round = ex.round = m["round"]
-                        if m.get("type") == "snapshot":
-                            if year and season_year and year != season_year:
-                                print(f"snapshot from another season (year {season_year} -> {year}): resetting model", flush=True)
-                                strat.on_start(ex); seen_seq.clear(); last_round = 0
-                            if year:
-                                season_year = year
-                            strat.model.on_snapshot(m)
-                            strat.fair = strat.compute_fair()
-                            strat.last_trade_t = -1e9
-                            # fair values right after a snapshot can be far off until live messages arrive
-                            # (14:10 reconnect: PORT fair 99.9 vs mid 81, full-size orders, -4k in 30 s); warm up as at a round open
-                            print("snapshot processed: warm-up before trading", flush=True)
-                            strat.on_round(ex)
-                            continue
-                        if m.get("type") == "announcement":
-                            print(f"ANNOUNCEMENT {m.get('symbols')}: {m.get('headline')}  -> pausing those symbols", flush=True)
-                            strat.pause(m.get("symbols", []))
-                        strat.on_news(ex, m)
-                    now = ex.t
-                    if now - last_sync > args.sync:
-                        cid_before = ex.competition_id
-                        ex.refresh(); last_sync = now
-                        if cid_before and ex.competition_id != cid_before:
-                            print("new competition id: resetting model", flush=True)
-                            strat.on_start(ex); seen_seq.clear(); last_round = 0
-                        if ex.reopened:
-                            print("market (re)opened: warm-up", flush=True)
-                            strat.on_round(ex); ex.reopened = False
-                    if len(ex.quotes) >= len(ex.symbols) // 2:
-                        strat.on_quotes(ex)
-                    if now - last_log > 10 and strat.fair:
-                        print(f"t={now:7.0f} r{strat.model.round} pnl {ex.pnl_now:+.0f} " + " ".join(
-                            f"{s}:{ex.mid.get(s, 0):.2f}/{strat.fair.get(s, 0):.2f}/{ex.position[s]:+d}" for s in SYMS), flush=True)
-                        last_log = now
-        except (OSError, websockets.WebSocketException) as exc:
-            print(f"disconnected ({exc}); reconnecting", flush=True)
+    inbox = MarketInbox()
+    session = LiveSession(ex, strat, args.sync, season_year, last_round, seen_seq)
+
+    async def receive_forever():
+        while True:
+            try:
+                async with websockets.connect(ws_url, additional_headers={'X-API-Key': ex.key}) as ws:
+                    await ws.send(json.dumps(subscribe))
+                    print('connected', flush=True)
+                    await receive_market_data(ws, inbox, lambda: ex.t)
+            except (OSError, websockets.WebSocketException) as exc:
+                print(f'disconnected ({exc}); reconnecting', flush=True)
+            inbox.put({'type': 'disconnected'}, ex.t)
             await asyncio.sleep(2)
+
+    receiver = asyncio.create_task(receive_forever())
+    try:
+        await drive_market_data(session, inbox, receiver)
+    finally:
+        receiver.cancel()
+        await asyncio.gather(receiver, return_exceptions=True)
 
 
 def main() -> None:
@@ -342,6 +552,12 @@ def main() -> None:
     ap.add_argument("--dry-run", action="store_true")
     ap.add_argument("--min-edge", type=float, default=0.025)
     ap.add_argument("--edge-full", type=float, default=0.03)
+    ap.add_argument('--basket-edge', type=float, default=0.01, help='net quoted ETF/basket edge (0 disables the overlay)')
+    ap.add_argument('--basket-participation', type=float, default=0.5, help='maximum fraction of displayed external depth per closing leg')
+    ap.add_argument("--final-exact", action=argparse.BooleanOptionalAction, default=True,
+                    help="use exact final rules after three reports and complete recorded weather")
+    ap.add_argument("--final-edge", type=float, default=0.005, help="entry floor in the exact final phase (0 = normal floor)")
+    ap.add_argument("--final-edge-full", type=float, default=0.005, help="full-size edge in the exact final phase (0 = normal)")
     ap.add_argument("--sync", type=float, default=3.0, help="seconds between position/open-order polls")
     ap.add_argument("--ws", default=None, help="override the market-data host, e.g. ws://localhost:8766 for the mock")
     ap.add_argument("--rate", type=int, default=120, help="max order actions per minute for this bot (team limit is 180)")
