@@ -149,10 +149,10 @@ class World:
 WORLD: World | None = None
 PAGE = ("<!doctype html><title>Mario mock</title><body style='font-family:sans-serif;background:#0f172a;color:#eee'>"
         "<h3>Mario Markets mock exchange (order form copies the real UI's ids and buttons)</h3><div id=tabs></div>"
-        "<p><button onclick=\"side='buy'\">BUY</button> <button onclick=\"side='sell'\">SELL</button> <button>Limit</button> <button>Market</button></p>"
+        "<p><button onclick=\"side='buy';lbl()\">BUY</button> <button onclick=\"side='sell';lbl()\">SELL</button> <button>Limit</button> <button>Market</button></p>"
         "<p>Qty <input id=order-qty placeholder=1> Price <input id=order-price placeholder=1.00> <button id=submit onclick='send()'>Buy</button></p><pre id=out></pre>"
-        "<script>let side='buy',sym=null;fetch('/api/v1/symbols').then(r=>r.json()).then(d=>{const t=document.getElementById('tabs');"
-        "d.symbols.forEach(s=>{const b=document.createElement('button');b.textContent=s.symbol;b.onclick=()=>{sym=s.symbol;document.getElementById('submit').textContent=side+' '+s.symbol};t.appendChild(b);t.append(' ')})});"
+        "<script>let side='buy',sym=null;function lbl(){document.getElementById('submit').textContent=side+' '+(sym||'')};fetch('/api/v1/symbols').then(r=>r.json()).then(d=>{const t=document.getElementById('tabs');"
+        "d.symbols.forEach(s=>{const b=document.createElement('button');b.textContent=s.symbol;b.onclick=()=>{sym=s.symbol;lbl()};t.appendChild(b);t.append(' ')})});"
         "async function send(){const b={symbol:sym,side:side,quantity:+document.getElementById('order-qty').value,price:+document.getElementById('order-price').value};"
         "const r=await fetch('/api/v1/orders',{method:'POST',body:JSON.stringify(b)});document.getElementById('out').textContent=JSON.stringify(b)+' -> '+await r.text()}</script>").encode()
 

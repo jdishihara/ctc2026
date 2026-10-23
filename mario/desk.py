@@ -2,7 +2,7 @@
 (mario/pricer.py), ranks the trades (mario/engine.py) and shows them on a local dashboard. The humans enter each race
 result (four overall places) and click the orders in the exchange UI; the packet allows bots to assist but not to trade.
 
-    python3 mario/desk.py                         # real exchange: opens a Chrome window, log in there, dashboard on http://localhost:8787
+    python3 mario/desk.py                         # real exchange: opens its own Chrome window, log in there (Google), dashboard on http://localhost:8787
                                                   # "prepare" buttons type the order into the UI's form; you click the button (allowed by the organisers)
     python3 mario/mock_exchange.py --race-every 45 &  ; python3 mario/desk.py --mock --auto-results   # drill against the mock
     python3 mario/desk.py --mock --tap browser    # exercise the browser tap against the mock page
@@ -271,7 +271,7 @@ def main():
                 print(out, flush=True)
     desk.stop = True
     if isinstance(desk.tap, BrowserTap):
-        desk.tap.stop()
+        desk.tap.stop()                           # detaches; the Chrome window stays open and logged in
 
 
 if __name__ == "__main__":

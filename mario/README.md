@@ -26,7 +26,8 @@ including race 5-8 winners and the series 2 contracts during series 1.
 
 ```
 mario/desk.py          the program: tap thread + pricer + engine + dashboard on http://localhost:8787 + a command prompt
-mario/tap.py           BrowserTap: its own Chrome window (Playwright), you log in once; polls /api/v1/symbols, orderbook/{sym},
+mario/tap.py           BrowserTap: starts a plain Chrome with remote debugging and attaches over CDP (a Playwright-launched Chrome
+                       is refused by Google sign-in), you log in once; polls /api/v1/symbols, orderbook/{sym},
                        positions, orders/open, trades inside that page, so the session cookie authenticates (no API key).
                        HttpTap: plain HTTP for the mock (or an API key if one appears). prefill() types an order into the UI's form.
 mario/engine.py        fairs + books + positions -> ranked actions: model-free arbs (set of 4 binaries vs 100, top-2 = #1 + #2,
@@ -46,7 +47,7 @@ from the page returns the full book; the same call without a session returns 401
 
 ```bash
 pip install playwright                                # once; it drives the installed Google Chrome, no download
-python3 mario/desk.py                                 # opens a Chrome window on the exchange: LOG IN THERE (once; the profile is kept in ~/.ctc_mario_chrome)
+python3 mario/desk.py                                 # starts its own Chrome (remote debugging, profile ~/.ctc_mario_chrome): LOG IN THERE once with Google
 open http://localhost:8787                            # the dashboard, on a second screen next to the exchange tab
 > map                                                 # check every symbol's role; fix mario/contracts.json and restart if any is wrong or UNMAPPED
 > race 1 2 5 9                                        # after each race: overall places of BIRDO DAISY PEACH YOSHI (alphabetical), from the stream

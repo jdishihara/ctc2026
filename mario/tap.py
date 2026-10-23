@@ -1,8 +1,8 @@
 """Read the exchange the way the trading UI does. Two taps with the same `snapshot()`:
 
-  BrowserTap  opens its own Chrome window (Playwright, persistent profile in ~/.ctc_mario_chrome) on the exchange; you
-              log in there once (the login survives restarts). Every poll runs one fetch() batch inside that page, so
-              the browser's session cookie authenticates it: no API key needed, which is the Mario Markets situation.
+  BrowserTap  starts a plain Google Chrome with remote debugging on its own profile (~/.ctc_mario_chrome), attaches over
+              CDP, and opens the exchange; you log in there once (the login survives restarts). Every poll runs one
+              fetch() batch inside that tab, so the session cookie authenticates it: no API key needed (Mario Markets).
               `prefill()` types a symbol, side, quantity and price into the UI's order form; the human clicks the button.
   HttpTap     plain HTTP with an optional X-API-Key (the mock exchange, or a key if the organisers hand one out).
 
@@ -61,33 +61,72 @@ class HttpTap:
 
 
 class BrowserTap:
-    """Playwright must be used from the thread that created it: the desk calls every method from its tap thread."""
+    """Starts a plain Google Chrome (no automation flags: Google sign-in refuses Playwright-launched windows with
+    "browser not secure / unsupported") with remote debugging on a private profile, attaches to it over CDP, and runs the
+    polling fetch() inside the exchange tab. Playwright objects are used only from the thread that created them."""
 
-    def __init__(self, url: str, profile: str | None = None, headless: bool = False):
+    CHROME = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
+
+    def __init__(self, url: str, profile: str | None = None, headless: bool = False, port: int = 9333):
         self.url = url.rstrip("/"); self.profile = profile or os.path.expanduser("~/.ctc_mario_chrome"); self.headless = headless
-        self.pw = self.ctx = self.page = None
+        self.port = port; self.proc = None; self.pw = self.browser = self.ctx = self.page = None
+
+    def _cdp_alive(self) -> bool:
+        try:
+            with urllib.request.urlopen(f"http://127.0.0.1:{self.port}/json/version", timeout=1) as r:
+                return r.status == 200
+        except Exception:
+            return False
 
     def start(self) -> None:
+        import subprocess
         from playwright.sync_api import sync_playwright
+        if not self._cdp_alive():
+            args = [self.CHROME, f"--remote-debugging-port={self.port}", f"--user-data-dir={self.profile}", "--no-first-run",
+                    "--no-default-browser-check", "--window-size=1500,900", "--new-window"]
+            if self.headless:
+                args.append("--headless=new")
+            args.append(self.url + "/trading")
+            self.proc = subprocess.Popen(args, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+            for _ in range(100):
+                if self._cdp_alive():
+                    break
+                time.sleep(0.2)
+            else:
+                raise RuntimeError("Chrome did not open its debugging port; is Google Chrome installed in /Applications?")
         self.pw = sync_playwright().start()
-        self.ctx = self.pw.chromium.launch_persistent_context(self.profile, channel="chrome", headless=self.headless,
-                                                              viewport=None, args=["--window-size=1500,900"])
-        self.page = self.ctx.pages[0] if self.ctx.pages else self.ctx.new_page()
-        self.page.goto(self.url + "/trading", timeout=60_000)
+        self.browser = self.pw.chromium.connect_over_cdp(f"http://127.0.0.1:{self.port}")
+        self.ctx = self.browser.contexts[0] if self.browser.contexts else self.browser.new_context()
+        self._find_page()
+
+    def _find_page(self) -> None:
+        pages = [p for p in self.ctx.pages if p.url.startswith(self.url)]
+        if pages:
+            self.page = pages[0]
+        else:
+            self.page = self.ctx.new_page(); self.page.goto(self.url + "/trading", timeout=60_000)
 
     def ready(self) -> bool:
         try:
             return self.page.evaluate(JS_LOGGED_IN) == 200
         except Exception:
+            try:
+                self._find_page()
+            except Exception:
+                pass
             return False
 
     def snapshot(self, symbols: list[str] | None = None) -> dict:
-        d = self.page.evaluate(JS_POLL, symbols or [])
+        try:
+            d = self.page.evaluate(JS_POLL, symbols or [])
+        except Exception:
+            self._find_page()                      # the tab was closed or navigated away: reopen it
+            d = self.page.evaluate(JS_POLL, symbols or [])
         d["t"] = time.time()
         return d
 
     def prefill(self, symbol: str, side: str, qty: int, price: float) -> str:
-        """Select the symbol tab, the side, limit, and type qty and price. Nothing is submitted."""
+        """Select the symbol tab, the side, Limit, and type qty and price. Nothing is submitted."""
         pg = self.page
         tab = pg.get_by_role("button", name=symbol, exact=True)
         if tab.count() == 0:
@@ -98,11 +137,12 @@ class BrowserTap:
         pg.get_by_role("button", name=side.upper(), exact=True).first.click()
         pg.get_by_role("button", name="Limit", exact=True).first.click()
         pg.fill("#order-qty", str(int(qty))); pg.fill("#order-price", f"{price:.2f}")
+        pg.bring_to_front()
         return f"prepared {side} {qty} {symbol} @ {price:.2f}: click the button in the Chrome window to send it"
 
     def stop(self) -> None:
         try:
-            if self.ctx: self.ctx.close()
+            if self.browser: self.browser.close()
             if self.pw: self.pw.stop()
         except Exception:
             pass
