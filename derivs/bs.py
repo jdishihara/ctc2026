@@ -6,6 +6,8 @@ and an analyst scorecard. No bots are allowed in this case; this is a calculator
     python3 derivs/bs.py scan --S 80 --iv 0.40 --T 20 --book OIL_book.csv
          book csv columns: type,strike,bid,ask   (one row per contract)
     python3 derivs/bs.py analysts --file analysts.csv
+    python3 derivs/bs.py convert move_pct 2.5 --S 80 --T 18      # round 3: analyst quantity (1-day expected move 2.5%) -> IV
+         kinds: variance var_daily daily_vol daily_vol_pct move move_pct straddle straddle_pct vega_price
          columns: event,underlying,a1,a2,a3,truth   (truth = IV implied after the makers snap to fair)
 
 T is in trading days (252 per year). Rate r defaults to 0; the exchange calculator fixes it, set --r to match.
@@ -86,6 +88,37 @@ def analysts(rows: list[dict]) -> None:
     print("  " + "  ".join(f"{a} {v / tot:.2f}" for a, v in inv.items()))
 
 
+def convert(kind: str, value: float, S: float, T_days: float, horizon_days: float = 1.0, K: float | None = None, r: float = 0.0) -> dict:
+    """Round 3: the analysts publish 'a quantity linked to IV'. Turn the common candidates into an annualised IV.
+    kind: variance (annual sigma^2) | daily_vol (sd of the 1-day return, fraction) | daily_vol_pct | move (expected
+    absolute 1-sd move in $ over horizon_days) | move_pct (the same in % of spot) | straddle (ATM straddle price in $
+    for the contract expiry T_days) | straddle_pct | vega_price (price of the ATM call, $) | var_daily (daily variance)"""
+    T = T_days / 252.0; h = horizon_days / 252.0
+    if kind == "variance":
+        iv = math.sqrt(value)
+    elif kind == "var_daily":
+        iv = math.sqrt(value * 252.0)
+    elif kind in ("daily_vol", "daily_vol_pct"):
+        iv = (value / 100.0 if kind.endswith("pct") else value) * math.sqrt(252.0)
+    elif kind in ("move", "move_pct"):
+        iv = (value / S if kind == "move" else value / 100.0) / math.sqrt(h)
+    elif kind in ("straddle", "straddle_pct", "vega_price"):
+        K = K or S
+        target = value * (S / 100.0 if kind == "straddle_pct" else 1.0)
+        lo, hi = 1e-4, 5.0
+        for _ in range(100):
+            mid = (lo + hi) / 2
+            px = bs(S, K, mid, T_days, r, "call")["price"] + (bs(S, K, mid, T_days, r, "put")["price"] if kind != "vega_price" else 0.0)
+            lo, hi = (lo, mid) if px > target else (mid, hi)
+        iv = (lo + hi) / 2
+    else:
+        raise ValueError(f"unknown quantity {kind}")
+    atm = bs(S, S, iv, T_days, r, "call")
+    return {"iv": iv, "daily_vol": iv / math.sqrt(252.0), "move_1d_pct": iv / math.sqrt(252.0) * 100, "move_1d": S * iv / math.sqrt(252.0),
+            "variance": iv * iv, "atm_straddle": 2 * atm["price"] if abs(bs(S, S, iv, T_days, r, "put")["price"] - atm["price"]) < 1e-6 else atm["price"] + bs(S, S, iv, T_days, r, "put")["price"],
+            "atm_vega": atm["vega"]}
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     sub = ap.add_subparsers(dest="cmd", required=True)
@@ -93,6 +126,7 @@ def main():
     p = sub.add_parser("iv"); p.add_argument("--S", type=float, required=True); p.add_argument("--K", type=float, required=True); p.add_argument("--T", type=float, required=True); p.add_argument("--price", type=float, required=True); p.add_argument("--type", default="call"); p.add_argument("--r", type=float, default=0.0)
     p = sub.add_parser("scan"); p.add_argument("--S", type=float, required=True); p.add_argument("--iv", type=float, required=True); p.add_argument("--T", type=float, required=True); p.add_argument("--book", required=True); p.add_argument("--r", type=float, default=0.0)
     p = sub.add_parser("analysts"); p.add_argument("--file", required=True)
+    p = sub.add_parser("convert", help="round 3: IV-linked quantity -> IV"); p.add_argument("kind", choices=["variance", "var_daily", "daily_vol", "daily_vol_pct", "move", "move_pct", "straddle", "straddle_pct", "vega_price"]); p.add_argument("value", type=float); p.add_argument("--S", type=float, required=True); p.add_argument("--T", type=float, required=True); p.add_argument("--days", type=float, default=1.0, help="horizon of a 'move' quantity in trading days"); p.add_argument("--K", type=float, default=None); p.add_argument("--r", type=float, default=0.0)
     a = ap.parse_args()
     if a.cmd == "price":
         for kind in ("call", "put"):
@@ -104,6 +138,9 @@ def main():
         print(f"{'type':5s} {'K':>7s} {'bid':>7s} {'ask':>7s} {'fair':>7s} side {'edge$':>6s} {'edge(vol)':>9s} {'mktIV':>6s} {'delta':>6s} {'vega':>6s}")
         for x in rows:
             print(f"{x['type']:5s} {x['strike']:7.2f} {x['bid']:7.2f} {x['ask']:7.2f} {x['fair']:7.2f} {x['side']:4s} {x['edge']:6.2f} {x['edge_vol']:9.2f} {(x['mkt_iv'] or 0):6.3f} {x['delta']:+6.2f} {x['vega']:6.3f}")
+    elif a.cmd == "convert":
+        c = convert(a.kind, a.value, a.S, a.T, a.days, a.K, a.r)
+        print(f"IV {c['iv']:.4f} ({c['iv']*100:.1f} vol pts) | daily vol {c['daily_vol']*100:.2f}% = 1-day 1-sd move {c['move_1d']:.2f} $ | annual variance {c['variance']:.4f} | ATM straddle {c['atm_straddle']:.2f} $ (T={a.T:g} d) | ATM vega {c['atm_vega']:.3f} $/vol pt")
     else:
         analysts(list(csv.DictReader(open(a.file))))
 
