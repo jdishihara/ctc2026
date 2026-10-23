@@ -74,7 +74,7 @@ class FairValueTrader(Strategy):
         if self.price_gate or self.price_drift:
             from .price_signal import PriceSignal
             self.price_signal = PriceSignal()
-        self._price_round_start = sim.t
+        self._price_round_start = None  # Anchor only to observed storm age, including after reconnect.
         self._price_round = getattr(sim, 'round', 0)
         self.model = SeasonModel(sim.case, final_exact=self.final_exact)
         self.model.prior_mode = self.prior_mode
@@ -94,7 +94,7 @@ class FairValueTrader(Strategy):
 
     def on_round(self, sim) -> None:
         self.round_open_t = sim.t
-        self._price_round_start = sim.t
+        self._price_round_start = None
         self._price_round = getattr(sim, 'round', 0)
         if self.price_signal is not None:
             self.price_signal.reset()
@@ -151,7 +151,7 @@ class FairValueTrader(Strategy):
         return self.final_edge_full if self.final_edge_full and self.model.final_exact_ready else self.edge_full
 
     def price_prediction(self, sim, symbol: str) -> float | None:
-        if self.price_signal is None or self.model.final_exact_ready:
+        if self.price_signal is None or self._price_round_start is None or self.model.final_exact_ready:
             return None
         return self.price_signal.predict(symbol, sim.t, sim.t - self._price_round_start)
 
@@ -166,7 +166,14 @@ class FairValueTrader(Strategy):
 
     def on_quotes(self, sim) -> None:
         if self.price_signal is not None:
-            self.price_signal.observe(sim.t, sim.mid)
+            now = sim.t
+            prices = sim.mid
+            quote_times = getattr(sim, 'quote_times', None)
+            if quote_times is not None:
+                prices = {symbol: price for symbol, price in prices.items()
+                          if symbol in quote_times and 0 <= now - quote_times[symbol] <= 10
+                          and quote_times[symbol] > self.price_signal.symbol_received_at.get(symbol, -math.inf)}
+            self.price_signal.observe(now, prices)
         # Pausing additions alone leaves old quotes executable at obsolete fair
         # values. Cancel immediately, even during warm-up; retry at most once/s.
         for s in self.paused:

@@ -77,3 +77,12 @@ def test_lag_uses_quote_at_or_before_timestamp(signal):
         signal.observe(t, {"PORT": 100 + .1 * t})
     # At t=121, 120s ago means t=1, so use the observed price at t=0.
     assert signal.predict("PORT", 121, 121) == pytest.approx(12 / 112)
+
+
+def test_other_symbols_cannot_keep_stale_symbol_history_alive(signal):
+    fill_history(signal)
+    for t in range(122, 138, 2):
+        signal.observe(t, {'UNKNOWN': 100})
+    assert signal.predict('PORT', 136, 136) is None
+    signal.observe(138, {'PORT': 112})
+    assert signal.predict('PORT', 138, 138) is None

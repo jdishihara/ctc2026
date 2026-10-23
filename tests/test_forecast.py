@@ -87,6 +87,59 @@ def test_terminal_observation_has_no_future_exposure(ensemble):
     assert all(a.sum() == 0 for a in o.values())
 
 
+@pytest.mark.parametrize('fraction', [.5, 1.0])
+def test_cone_center_moves_projected_exposure_without_mutating_library(ensemble, fraction):
+    ensemble.cone_center = fraction
+    before = ensemble.tracks.copy()
+    obs = [observation(478)]
+    advisory = {'cone': [{'age': 480, 'x': 480, 'y': 500, 'spread': 20}]}
+    e, _, selected = ensemble.future_exposure(obs, np.array([0., 0., 1.]), advisory)
+    # The selected trajectory ends at -480. Translation toward the cone at +480
+    # puts the fractional forecast at 0 or 480; the company site is at +480.
+    distance = 960 * (1 - fraction)
+    wind = math.exp(-PARAMS['k'] * distance / 100)
+    assert selected.tolist() == [2]
+    assert e['PORT'][0, 0] == pytest.approx(2 * max(wind - PARAMS['thr_dmg'], 0) ** PARAMS['p'])
+    np.testing.assert_array_equal(ensemble.tracks, before)
+
+
+def test_cone_center_ignores_expired_and_missing_cones(ensemble):
+    ensemble.cone_center = 1
+    obs, w = [observation(478)], np.array([0., 0., 1.])
+    baseline = ensemble.future_exposure(obs, w)[0]
+    for advisory in (None, {}, {'cone': [{'age': 470, 'x': 480, 'y': 500, 'spread': 20}]}):
+        actual = ensemble.future_exposure(obs, w, advisory)[0]
+        for symbol in PHYS:
+            np.testing.assert_array_equal(actual[symbol], baseline[symbol])
+
+
+def test_cone_center_preserves_dispersion_and_fades_after_last_point(ensemble):
+    ensemble.cone_center = 1
+    obs, w = [observation(0)], np.full(3, 1 / 3)
+    advisory = {'cone': [{'age': 60, 'x': 200, 'y': 600, 'spread': 20}]}
+    paths, selected = ensemble.future_tracks(obs, w, advisory)
+    np.testing.assert_allclose(w[selected] @ paths[:, 29, :2], [200, 600])
+    # All analogs receive the same offset, so pairwise distances stay intact.
+    np.testing.assert_allclose(paths[0, :, :2] - paths[1, :, :2],
+                               ensemble.tracks[0, 1:, :2] - ensemble.tracks[1, 1:, :2])
+    np.testing.assert_array_equal(paths[:, 59:, :], ensemble.tracks[:, 60:, :])
+
+
+def test_zero_center_preserves_the_original_projection(ensemble):
+    ensemble.cone_center = 0
+    obs, w = [observation(478)], np.array([0., 0., 1.])
+    baseline = ensemble.future_exposure(obs, w)[0]
+    actual = ensemble.future_exposure(obs, w, {'cone': [{'age': 480, 'x': 480, 'y': 500, 'spread': 20}]})[0]
+    for symbol in PHYS:
+        np.testing.assert_array_equal(actual[symbol], baseline[symbol])
+
+
+@pytest.mark.parametrize('fraction', [-.1, 1.1, float('nan')])
+def test_invalid_cone_center_rejected(ensemble, fraction):
+    with pytest.raises(ValueError, match='cone_center'):
+        AnalogEnsemble(ensemble.case, cone_center=fraction)
+
+
 @pytest.mark.parametrize("varying", [True, False])
 def test_wind_conditioning_uses_current_strength_without_changing_library(tmp_path, varying):
     tracks = np.zeros((3, len(GRID_AGES), 4))

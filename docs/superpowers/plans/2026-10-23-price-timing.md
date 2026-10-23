@@ -132,3 +132,84 @@ score; all other accepted parameters remain fixed. Confirmation is baseline
 versus this candidate only. Stress uses the same pair on all tune seasons at
 2s latency, and separately refill 60s / depth 0.25 / normal 0.25s latency.
 Source outputs: `out/price-timing-tune/`, revision `693cd17`, clean tree.
+
+2026-10-23, Codex: `timing05` REJECTED for promotion. Confirmation means
+fell 9452.36 -> 9277.55 (deep) and 5993.53 -> 5968.32 (thin). Thin p10
+improved -2712.92 -> -1969.59, but that does not override the required mean
+gates. Severe tune liquidity improved 1671.82 -> 1978.33; also insufficient
+to override the gate. Leave `price_gate=0` and `price_drift=0` in launch defaults.
+Do not inspect another price candidate on verification.
+
+### Task 3: Internal validation of recent storm observations
+
+**Hypothesis:** Equal weighting of the entire observed path overweights stale
+trajectory errors after a storm turns. Exponentially decay position mismatch
+with observation age, retaining the same latest cone and advisory likelihoods.
+
+**Screen before implementation:** Build an analog library only from seasons
+1–300; evaluate seasons 301–450. Compare equal weights and half-lives 60/120/240s
+at storm ages 30/90/150/240/360. Primary screen is 120s-ahead position RMSE;
+require at least 5% improvement and no increase in aggregate end-damage RMSE.
+Damage parameters were already fit on 1–450, so damage error is a shared
+secondary screen, not an independent held-out calibration claim.
+
+- [ ] Run this bounded internal screen and record every candidate.
+- [ ] If any pass, implement optional decayed position error with cache/reset
+  tests observed RED then GREEN. Equal-weight default must be unchanged.
+- [ ] Compare at most the two best eligible internal candidates on all tune
+  seasons against `aa51985`, using the same PnL gates and fixed score. Price
+  timing stays disabled. Freeze one winner before confirmation; never tune
+  half-life on verification.
+- [ ] Promote only after the frozen winner passes confirmation and the same
+  latency/liquidity stresses. Otherwise retain accepted defaults and publish
+  the negative evidence. Include this task in the single final branch review.
+
+Ruling: continue with an independently motivated storm-forecast experiment
+after the failed price candidate, as the user requested continued competitive
+improvement. Cost if wrong is bounded computation and research time; the
+accepted launch strategy remains protected by the same promotion gates.
+
+2026-10-23, Codex: Recency screen rejected all three half-lives. Baseline
+120s position / damage RMSE = 96.809 / 7.3025. Half-lives 60, 120, 240 give
+92.007 / 7.3207, 95.087 / 7.3133, 98.029 / 7.3081. No candidate satisfies
+both criteria; no runtime recency feature or tune/verification run is justified.
+
+### Task 4: Direct forecast-cone centering
+
+**Hypothesis:** Cone likelihoods cannot move the available analog paths toward
+the more accurate official position forecast. Centering the projected ensemble
+can correct that mismatch while preserving its dispersion and strength paths.
+
+Use the same 1–300 library / 301–450 internal screen, ages and gates as Task 3.
+Compare centering fractions 0.5 and 1.0 against zero. At each future cone age,
+translate every selected path by the fraction times (cone position minus
+weighted ensemble position). Linearly interpolate these offsets from zero at
+the current observation through future cone points; fade to zero over 60s after
+the last future cone point. Never use expired cone points. Preserve analog
+weights, radius/intensity, uncertainty floors and all trading settings.
+
+- [ ] Screen both fixed fractions; no runtime change unless eligible.
+- [ ] If eligible, implement with causal/no-cone/cache tests first, run the
+  eligible candidates on tune, freeze the best under the same gates, and
+  confirm/stress only that frozen candidate. Otherwise record rejection.
+- [ ] Finish with one independent review of the whole continuation and publish
+  all results, including rejected hypotheses; no claim of guaranteed wins.
+
+Ruling: the recency screen supports looking beyond path weighting; the packet
+supplies official future cones as a distinct information source. Test direct
+centering using the same predeclared screen and PnL gates. Cost if wrong is one
+bounded internal experiment; no live defaults change merely for forecast skill.
+
+2026-10-23, Codex: Both cone fractions passed the internal screen. Baseline
+120s position / damage RMSE 96.809 / 7.3025; centering 0.5 gives 86.951 /
+7.2202, centering 1.0 gives 82.307 / 7.2140. Evaluate exactly those two on
+tune. Production implementation passes scalar exposure, unchanged dispersion,
+expired/missing cone, zero-fraction parity, fade-out and library immutability
+tests. No launch defaults changed.
+
+Three additional failing tests reproduced defects in the rejected price model's
+optional live path: mistaking reconnect for a round boundary, renewing a stale
+symbol from other symbols' traffic, and renewing it from cached midpoints.
+Fixed with an explicit unknown clock until storm age arrives, per-symbol
+freshness, and observed quote timestamps. A storm-age test confirms reanchoring.
+These are correctness fixes, not a reason to revisit the rejected PnL decision.

@@ -25,6 +25,7 @@ class PriceSignal:
 
     def reset(self):
         self.history = {symbol: deque() for symbol in self.coefficients}
+        self.symbol_received_at = {}
         self.received_at = None
 
     def observe(self, t, prices):
@@ -38,6 +39,10 @@ class PriceSignal:
             if symbol not in self.history:
                 continue
             history = self.history[symbol]
+            last = self.symbol_received_at.get(symbol)
+            if last is not None and t - last > 10:
+                history.clear()
+            self.symbol_received_at[symbol] = t
             if isinstance(price, bool) or not isinstance(price, (int, float)) or not math.isfinite(price) or price <= 0:
                 history.clear()
                 continue
@@ -50,7 +55,8 @@ class PriceSignal:
     def predict(self, symbol, t, elapsed):
         if (symbol not in self.history or not math.isfinite(t) or not math.isfinite(elapsed)
                 or not self.active_interval[0] <= elapsed <= self.active_interval[1]
-                or self.received_at is None or t - self.received_at > 10):
+                or symbol not in self.symbol_received_at
+                or t - self.symbol_received_at[symbol] > 10):
             return None
         points = list(self.history[symbol])
         if not points or points[0][0] > t - max(self.lags):

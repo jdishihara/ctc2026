@@ -69,10 +69,13 @@ def build_library(root: Path, seasons: list[dict[str, Any]], out: Path = LIB) ->
 class AnalogEnsemble:
     def __init__(self, case: dict[str, Any], sigma: float = 25.0, tau_wire: float = 0.5, k: int = 50,
                  shift: bool = True, lib: Path = LIB, cone_w: float = 0.0, isl_w: float = 0.0, cone_s0: float = 10.0, cone_nu: float = 0.0, vel_w: float = 0.0, vel_sd: float = 0.3, cone_all: bool = False,
-                 wind_condition: float = 0.0):
+                 wind_condition: float = 0.0, cone_center: float = 0.0):
         if not 0 <= wind_condition <= 1:
             raise ValueError("wind_condition must be between zero and one")
         self.wind_condition = wind_condition
+        if not 0 <= cone_center <= 1:
+            raise ValueError('cone_center must be between zero and one')
+        self.cone_center = cone_center
         self.strength_response = (_strength_response(str(lib.resolve()), lib.stat().st_mtime_ns)
                                   if wind_condition else None)
         with np.load(lib) as d:
@@ -180,8 +183,9 @@ class AnalogEnsemble:
     def pattern_posterior(self, w: np.ndarray) -> dict[str, float]:
         return {o: float(w[self.pattern == i].sum()) for o, i in OIDX.items()}
 
-    def future_exposure(self, obs: list[dict[str, Any]], w: np.ndarray) -> tuple[dict[str, np.ndarray], dict[str, np.ndarray], np.ndarray]:
-        """Per company: arrays (n_analog, n_sites) of future exposure E and future closure seconds, for analogs with w > 0."""
+    def future_tracks(self, obs: list[dict[str, Any]], w: np.ndarray,
+                      adv: dict[str, Any] | None = None) -> tuple[np.ndarray, np.ndarray]:
+        """Projected paths; optional cone centering translates all selected paths equally."""
         idx = int(np.clip(obs[-1]["age"] // 2, 0, len(GRID_AGES) - 1))
         sel = np.nonzero(w > 0)[0]
         fut = self.tracks[sel, idx + 1:, :]                      # (K, F, 4)
@@ -202,6 +206,29 @@ class AnalogEnsemble:
             fut[:, :, 2:4] += self.wind_condition * (observed - current)[:, None, :] * response[None, :, :]
             fut[:, :, 2] = np.maximum(fut[:, :, 2], 1e-6)
             fut[:, :, 3] = np.maximum(fut[:, :, 3], 0)
+        age = obs[-1]['age']
+        cones = [cp for cp in (adv or {}).get('cone', []) if age < cp['age'] <= GRID_AGES[-1]]
+        if self.cone_center and cones and fut.shape[1]:
+            fut = fut.copy()
+            grid = GRID_AGES[idx + 1:]
+            mean = np.einsum('i,ijk->jk', w[sel], fut[:, :, :2])
+            knots, corrections = [age], [np.zeros(2)]
+            for cp in sorted(cones, key=lambda cp: cp['age']):
+                projected = np.array([np.interp(cp['age'], grid, mean[:, axis]) for axis in range(2)])
+                knots.append(cp['age'])
+                corrections.append(np.array([cp['x'], cp['y']]) - projected)
+            # Beyond the last official prediction, return smoothly to the analogs.
+            knots.append(knots[-1] + 60)
+            corrections.append(np.zeros(2))
+            correction = np.stack([np.interp(grid, knots, np.array(corrections)[:, axis])
+                                   for axis in range(2)], axis=1)
+            fut[:, :, :2] += self.cone_center * correction[None]
+        return fut, sel
+
+    def future_exposure(self, obs: list[dict[str, Any]], w: np.ndarray,
+                        adv: dict[str, Any] | None = None) -> tuple[dict[str, np.ndarray], dict[str, np.ndarray], np.ndarray]:
+        """Per company: future exposure and closure seconds for analogs with positive weight."""
+        fut, sel = self.future_tracks(obs, w, adv)
         E, O = {}, {}
         for sym, sites in self.sites.items():
             dist = np.hypot(fut[:, :, 0][:, :, None] - sites[:, 0], fut[:, :, 1][:, :, None] - sites[:, 1])   # (K, F, S)

@@ -36,6 +36,7 @@ class LiveExchange:
         self.limits = self.case["limits"]; self.symbols = list(self.limits)
         self.quotes: dict[str, tuple[float, float]] = {}
         self.mid: dict[str, float] = {}
+        self.quote_times: dict[str, float] = {}
         self.position: dict[str, int] = {s: 0 for s in self.symbols}
         self.open_orders: list[dict[str, Any]] = []
         self.market_open = False
@@ -133,6 +134,7 @@ class LiveExchange:
                 print(f"SEASON END competition {self.competition_id} ({tm.get('fictional_time')}): last positions {json.dumps(self.last_positions)}", flush=True)
                 self.trade_cursor = None
                 self.quotes.clear(); self.mid.clear()
+                self.quote_times.clear()
             # Publish a complete snapshot only after every required request succeeds.
             self.competition_id = cid
             self.position, self.open_orders = positions, orders
@@ -353,6 +355,7 @@ async def run(args: argparse.Namespace) -> None:
                         q = quote_from_frame(d)
                         if q:
                             ex.quotes[q[0]] = (q[1], q[2]); ex.mid[q[0]] = (q[1] + q[2]) / 2
+                            ex.quote_times[q[0]] = ex.t
                     elif d.get("type") == "news" and isinstance(d.get("message"), dict):
                         m = d["message"]
                         seq = m.get("seq")

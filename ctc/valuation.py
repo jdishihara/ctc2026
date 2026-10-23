@@ -368,7 +368,7 @@ class SeasonModel:
             return f
         w = self.ensemble.weights(self.obs, self.official, self.wire, self.adv)
         self.posterior = self.ensemble.pattern_posterior(w)
-        E, O, sel = self.ensemble.future_exposure(self.obs, w)
+        E, O, sel = self.ensemble.future_exposure(self.obs, w, self.adv)
         wsel = w[sel]
         K = len(sel)
         cum_a, out_a = np.empty((K, len(PHYS))), np.empty((K, len(PHYS)))

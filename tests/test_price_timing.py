@@ -30,6 +30,7 @@ def setup(tmp_path):
         trader.on_start(sim)
         trader.price_signal = PriceSignal(path)
         trader.on_round(sim)
+        trader._price_round_start = 0  # This order fixture starts at a known round boundary.
         trader.model.round = 3; trader.model.storm_reported = True
         trader.fair = {'PORT': fair}
         for t in range(0,120,2):
@@ -103,6 +104,37 @@ def test_new_round_discards_price_history(setup):
     trader, sim = setup()
     trader.on_round(sim)
     assert trader.price_signal.predict('PORT',120,120) is None
+
+
+def test_reconnect_without_storm_clock_does_not_assume_round_just_started(setup):
+    trader, sim = setup()
+    trader.on_round(sim)  # Live reconnect can happen in the aftermath.
+    for t in range(120, 242, 2):
+        trader.price_signal.observe(t, sim.mid)
+    sim.t = 240
+    assert trader.price_prediction(sim, 'PORT') is None
+
+
+def test_live_storm_age_reanchors_clock_after_reconnect(setup):
+    trader, sim = setup()
+    trader.on_round(sim)
+    sim.t = 200
+    trader.on_news(sim, {'type': 'storm', 'round': 3, 'age': 420,
+                        'x': 500, 'y': 500, 'radius': 100, 'intensity': 1})
+    assert trader._price_round_start == 200 - 60 - 420
+    for t in range(200, 322, 2):
+        trader.price_signal.observe(t, sim.mid)
+    sim.t = 320
+    assert trader.price_prediction(sim, 'PORT') == pytest.approx(-.02)
+
+
+def test_partial_quote_frames_do_not_refresh_a_missing_symbol(setup):
+    trader, sim = setup()
+    sim.quote_times = {'PORT': 120}
+    for t in range(122, 138, 2):
+        sim.t = t
+        trader.on_quotes(sim)  # Other symbols are active; PORT's cached mid is stale.
+    assert trader.price_prediction(sim, 'PORT') is None
 
 
 @pytest.mark.parametrize('field,value', [('price_gate',-.01),('price_drift',float('nan'))])
