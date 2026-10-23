@@ -152,17 +152,19 @@ open (depth within 1% of mid 330-550 shares in the first minute against 285-410 
 instant round replays either (the testnet replayed one round in a second). Live fill cost after the warm-up fix: 29 bp
 of notional (93 bp before it).
 
-## Results (verify seasons 526-600, default parameters, 2026-10-23 03:45)
+## Results (verify seasons 526-600, default parameters, 2026-10-23 03:42)
 
 | Regime | mean PnL | median | p10 | min | losing seasons | fills/season |
 |---|---|---|---|---|---|---|
-| deep (ladder, refill 10 s) | 9,344 | 8,900 | -145 | -15,910 | 11% | 330 |
-| thin (ladder at half size, refill 30 s) | 5,925 | 5,500 | -2,681 | -17,236 | 17% | 850 |
+| deep (ladder, refill 10 s) | 9,344 | 9,436 | -145 | -15,910 | 11% | 363 |
+| thin (ladder at half size, refill 30 s) | 5,925 | 6,231 | -2,681 | -17,236 | 17% | 900 |
 
-Deep regime by symbol: HAVEN +2669, PORT +1300, ARCH +1181, FERRY +720, GRID +590, AQUA +537, RECON +540, REBLD +441,
-ISLE +241, MAT +100, GEN +68, REIN +47. By round: R1 +2649, R2 +3144, R3 +2639. Fill PnL by phase (thin regime, 75 seasons):
-the storm itself earns everything (+286k, of which +129k in the first 60 s of the storm); pre-storm, aftermath and
-post-report fills are flat to negative. The constant-velocity nowcast loses about 20k per season under the ladder.
+Deep regime by symbol: HAVEN +2708, PORT +1541, ARCH +1384, FERRY +837, GRID +725, AQUA +571, REBLD +543, RECON +453,
+ISLE +298, GEN +173, MAT +90, REIN +20. By round: R1 +3160, R2 +2945, R3 +3239. Fill PnL by phase (deep, 75 seasons, marked
+at the round end): the storm itself earns everything (+675k, of which +401k in its first 60 s and +174k in the next 60 s;
+after 240 s the fills are flat); pre-storm, aftermath and post-report fills are flat to slightly negative (the post-report
+rebuilder fills, -8k, are the carry cap paying the spread). The season tail is positions carried into the next storm, not
+bad fills (see the ledger, 2026-10-23 02:25). The constant-velocity nowcast loses about 20k per season under the ladder.
 
 ## Forecast skill (holdout storms, RMSE of end-of-storm company damage in points, PORT/ISLE/AQUA/GRID/FERRY)
 
