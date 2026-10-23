@@ -9,9 +9,9 @@ ctc/history.py   the organisers' loader (unchanged)
 ctc/wind.py      wind field + per-site damage/outage model, parameters in damage_params.json
 ctc/valuation.py fair-value rules for all 12 symbols + SeasonModel (feed -> state -> fair), valuation_params.json
 ctc/sim.py       offline replay simulator: feed + house prices on the real-time axis, synthetic house quotes, fills, limits
-ctc/analog.py    analog track ensemble (library of training storms, advisory confusion matrices), analog_library.npz
+ctc/analog.py    analog track ensemble (library of training storms, advisory confusion matrices, cone likelihood), analog_library.npz
 ctc/ladder.py    liquidity ladder fill model (ctc/ladder.json, measured on the testnet by scripts/calibrate_book.py)
-ctc/strategies.py FairValueTrader (analog ensemble; passive quoting; warm-up) and FinalReportOnly
+ctc/strategies.py FairValueTrader (analog ensemble; passive quoting; warm-up; carry cap between storms) and FinalReportOnly
 ctc/storm_sample.npz  1350 historical storms (seasons 1-450) for the future-storm prior
 bot/live.py      live bot: wraps the exchange API in the Sim interface and runs FairValueTrader (bot/run_live.sh keeps it up)
 scripts/backtest.py       runs a strategy over seasons (the protocol's numbers come from here, see EXPERIMENTS.md)
@@ -43,7 +43,7 @@ python3 scripts/backtest.py --strategy nowcast --seasons 451-600                
 ```
 Strategy flags (defaults are the accepted configuration): `--passive 0.75` (rest inside the spread when the edge is
 small), `--warmup 20` (no trading for 20 s after a round opens), `--max-cross 0.02` (an aggressive order never pays
-more than 2% through the touch), `--ent-cut 1.2` (do not add while the pattern posterior is near-uniform), `--carry 1.0` (between storms, position limit as a fraction of the exchange limit; 0.5 halves the tail at 3% of the mean, off by the protocol, see the ledger), `--prior sample|point`, `--future-sd`,
+more than 2% through the touch), `--cone-w 1.0 --cone-s0 20` (the official advisory's cone as a likelihood on the analogs; `--cone-nu` for a Student-t version, `--isl-w` for the island probabilities, rejected), `--carry 0.5` (between storms the position limit is half the exchange limit: the tail of the season PnL is positions carried into the next storm), `--ent-cut 1.2` (do not add while the pattern posterior is near-uniform), `--prior sample|point`, `--future-sd`,
 `--loss-limit`, `--exact-rebuild` (the last three are rejected options kept for reference).
 
 Live bot (testnet or competition), dry run first:
@@ -53,7 +53,8 @@ pip install "websockets>=14"
 python3 bot/live.py --key BOT_KEY --dry-run          # default url https://cornelltradingcompetition.org
 zsh bot/run_live.sh                                  # keeps it running, logs to recordings/bot_live.log (pnl every 10 s, SEASON END lines)
 ```
-The bot runs the same FairValueTrader as the backtest (analog ensemble, passive 0.75, warm-up 20 s, max-cross 2%). Prices are
+The bot runs the same FairValueTrader as the backtest (analog ensemble with the cone likelihood, passive 0.75, warm-up 20 s, max-cross 2%, carry 0.5). On each
+start it rebuilds the season from the recorder's feed file (`--feed-log`, exact state) and falls back to the exchange snapshot. Prices are
 rounded to the 0.01 tick (buys down, sells up). On the testnet the fictional year gives the season: season = 2027 - year (verified by matching storm tracks). The
 `SEASON END` log line prints the fictional time of the NEXT season, so the season that just ended is 2026 - that year.
 `bot/preflight.py` checks everything that went wrong on the testnet before a start; `bot/stop.sh` is the kill switch.
@@ -77,7 +78,7 @@ tail -f recordings/bot_live.log
 While it runs, one person watches the log. Every 10 s it prints `t= … r<round> pnl <season pnl> SYM:mid/fair/position`.
 What to look for:
 
-- `strategy analog min_edge 0.02 edge_full 0.03 …` at start: the accepted configuration. Anything else, stop and check the flags.
+- `strategy analog min_edge 0.02 edge_full 0.03 … carry 0.5 … cone_w 1.0 cone_s0 20.0` at start, then `replayed N feed messages of season year Y`: the accepted configuration rebuilt from the recording. Anything else, stop and check the flags and FEED_LOG.
 - `snapshot processed: warm-up before trading` and `market (re)opened: warm-up`: no orders for 20 s. Fair values in the
   first line after a connect can be far from the mids (the model is still catching up); they should be sane by the second line.
 - Round opens: the house re-prices by about 7% from the previous close, stays quiet for 30 s, then moves about 3% over the
@@ -151,12 +152,12 @@ open (depth within 1% of mid 330-550 shares in the first minute against 285-410 
 instant round replays either (the testnet replayed one round in a second). Live fill cost after the warm-up fix: 29 bp
 of notional (93 bp before it).
 
-## Results (verify seasons 526-600, default parameters, 2026-10-23 03:05)
+## Results (verify seasons 526-600, default parameters, 2026-10-23 04:30)
 
 | Regime | mean PnL | median | p10 | min | losing seasons | fills/season |
 |---|---|---|---|---|---|---|
-| deep (ladder, refill 10 s) | 8,747 | 8,324 | -3,127 | -12,774 | 17% | 348 |
-| thin (ladder at half size, refill 30 s) | 5,348 | 4,763 | -4,297 | -14,113 | 20% | 879 |
+| deep (ladder, refill 10 s) | 9,287 | 8,841 | -271 | -14,987 | 11% | 340 |
+| thin (ladder at half size, refill 30 s) | 5,812 | 5,477 | -2,839 | -17,755 | 17% | 860 |
 
 Deep regime by symbol: HAVEN +2669, PORT +1300, ARCH +1181, FERRY +720, GRID +590, AQUA +537, RECON +540, REBLD +441,
 ISLE +241, MAT +100, GEN +68, REIN +47. By round: R1 +2649, R2 +3144, R3 +2639. Fill PnL by phase (thin regime, 75 seasons):
@@ -165,23 +166,24 @@ post-report fills are flat to negative. The constant-velocity nowcast loses abou
 
 ## Forecast skill (holdout storms, RMSE of end-of-storm company damage in points, PORT/ISLE/AQUA/GRID/FERRY)
 
-| Storm age | Constant velocity | Analog ensemble | Pattern top-1 |
-|---|---|---|---|
-| 30 s | 24.7 / 11.2 / 14.9 / 11.3 / 10.8 | 18.7 / 9.1 / 10.9 / 7.4 / 7.3 | 71% |
-| 90 s | 23.2 / 10.1 / 14.1 / 10.9 / 10.2 | 15.2 / 6.0 / 7.2 / 6.2 / 6.4 | 87% |
-| 150 s | 22.1 / 8.3 / 9.1 / 9.7 / 8.1 | 12.0 / 4.7 / 5.9 / 5.4 / 5.4 | 93% |
-| 240 s | 13.3 / 4.5 / 5.3 / 5.8 / 5.1 | 9.8 / 3.5 / 4.0 / 4.5 / 4.1 | 95% |
+| Storm age | Constant velocity | Analog ensemble (outlook only) | Ensemble + cone (accepted) | Pattern top-1 (outlook only / + cone) |
+|---|---|---|---|---|
+| 30 s | 24.7 / 11.2 / 14.9 / 11.3 / 10.8 | 17.9 / 8.6 / 10.4 / 7.1 / 7.1 | 16.7 / 7.7 / 9.4 / 6.9 / 6.9 | 70% / 78% |
+| 90 s | 23.2 / 10.1 / 14.2 / 10.9 / 10.2 | 14.6 / 5.8 / 7.1 / 6.1 / 6.3 | 13.5 / 5.1 / 6.1 / 5.9 / 5.9 | 88% / 92% |
+| 150 s | 22.1 / 8.3 / 9.1 / 9.7 / 8.1 | 11.9 / 4.6 / 5.8 / 5.4 / 5.3 | 11.1 / 4.5 / 5.3 / 5.1 / 4.9 | 92% / 96% |
+| 240 s | 13.3 / 4.5 / 5.3 / 5.8 / 5.1 | 9.4 / 3.5 / 3.9 / 4.5 / 4.0 | 9.2 / 3.6 / 3.9 / 4.5 / 3.9 | 95% / 96% |
 
-Official advisories name the true pattern 69% of the time; the ensemble passes that by the second advisory.
-The ensemble is insensitive to sigma (15 to 40), k (50 to 100) and the position shift.
+Official advisories name the true pattern 69% of the time, but their cone is calibrated (error / stated spread median 0.77)
+and predicts the storm's position 30-40% better than the ensemble did at 1-2 minutes ahead, so the cone is a likelihood term
+on the analogs (`python3 scripts/eval_forecast.py 15 100 shift 1.0 0 20`). The island probabilities are calibrated too but
+using them fattens the PnL tail (rejected). The ensemble is insensitive to sigma (15 to 40), k (50 to 100) and the position shift.
 
 ## Next
 
-1. Freeze the parameters: the tuner is being re-run on the current simulator (out/tune/ledger.csv); re-verify its winner
-   against the accepted set before competition day.
-2. Live earns about 70% of the sim on the same seasons with the sign right every time since the warm-up fix; the
-   remaining gap is concentrated in the big winning seasons (190: +15k live vs +33k sim). Compare the bot's fills in those
-   seasons with the sim's (scripts/dissect.py --json) before changing anything.
+1. Season PnL tail = positions carried into the next storm (carry PnL over 150 seasons: mean about 0, sd 8k; intra-round
+   mean +7.8k, p10 -1k). `--carry 0.5` is the accepted compromise; `--carry 0.25` cuts the tail further at about 10% of the mean.
+2. Live vs sim on the testnet seasons the bot trades tonight (215 on): compare SEASON END with `scripts/backtest.py --seasons N`
+   (deep regime); the bot now logs every fill once (FILL lines) and rebuilds the season from the recording on each start.
 3. Exact rebuilder settlement rules with a 3% floor for RECON and MAT (needs its own tune run).
 4. ETF create/redeem arbitrage (measured: ARCH quote more than 0.9% from its basket 5% of the time; small, riskless).
 5. Live announcements: the bot pauses named symbols; a human must read the headline and decide.

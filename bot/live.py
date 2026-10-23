@@ -245,8 +245,8 @@ async def run(args: argparse.Namespace) -> None:
     else:   # the analog ensemble, same parameters as scripts/backtest.py --strategy analog
         strat = S.FairValueTrader(min_edge=args.min_edge, edge_full=args.edge_full, analog=True, sd_mult=args.sd_mult,
                                   sigma=args.sigma, k=args.k, passive=args.passive, warmup=args.warmup, max_cross=args.max_cross,
-                                  carry=args.carry, ent_cut=args.ent_cut)
-    print(f"strategy {'nowcast' if args.nowcast else 'analog'} min_edge {args.min_edge} edge_full {args.edge_full} sd_mult {args.sd_mult} sigma {args.sigma} k {args.k} passive {args.passive} warmup {args.warmup} max_cross {args.max_cross} carry {args.carry} ent_cut {args.ent_cut}", flush=True)
+                                  carry=args.carry, ent_cut=args.ent_cut, cone_w=args.cone_w, cone_s0=args.cone_s0, cone_nu=args.cone_nu, isl_w=args.isl_w)
+    print(f"strategy {'nowcast' if args.nowcast else 'analog'} min_edge {args.min_edge} edge_full {args.edge_full} sd_mult {args.sd_mult} sigma {args.sigma} k {args.k} passive {args.passive} warmup {args.warmup} max_cross {args.max_cross} carry {args.carry} ent_cut {args.ent_cut} cone_w {args.cone_w} cone_s0 {args.cone_s0} cone_nu {args.cone_nu} isl_w {args.isl_w}", flush=True)
     strat.on_start(ex)
     ex.refresh()
     season_year = ""
@@ -351,7 +351,11 @@ def main() -> None:
     ap.add_argument("--warmup", type=float, default=20.0, help="seconds after the market opens with no trading")
     ap.add_argument("--max-cross", type=float, default=0.02, help="aggressive orders never pay more than this fraction through the touch (0 = off)")
     ap.add_argument("--feed-log", default=None, help="recorder output (record_feed.py --out ...) to rebuild the season from on start, instead of the exchange snapshot")
-    ap.add_argument("--carry", type=float, default=1.0, help="between storms the position limit is carry x the exchange limit (1 = off; 0.5 halves the tail, see EXPERIMENTS.md 2026-10-23)")
+    ap.add_argument("--carry", type=float, default=0.5, help="between storms the position limit is carry x the exchange limit (1 = off; 0.5 accepted 2026-10-23 with the cone)")
+    ap.add_argument("--cone-w", type=float, default=1.0, help="analog likelihood power for the official advisory cone (0 = off)")
+    ap.add_argument("--cone-s0", type=float, default=20.0, help="spread floor (map units) added in quadrature to the cone spread")
+    ap.add_argument("--cone-nu", type=float, default=0.0, help="Student-t degrees of freedom for the cone likelihood (0 = Gaussian)")
+    ap.add_argument("--isl-w", type=float, default=0.0, help="analog likelihood power for the advisory island probabilities (0 = off; rejected, fattens the tail)")
     ap.add_argument("--ent-cut", type=float, default=1.2, help="do not add while the pattern posterior entropy exceeds this, nats (0 = off)")
     asyncio.run(run(ap.parse_args()))
 

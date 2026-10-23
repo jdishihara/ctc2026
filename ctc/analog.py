@@ -49,7 +49,7 @@ def build_library(root: Path, seasons: list[dict[str, Any]], out: Path = LIB) ->
 
 class AnalogEnsemble:
     def __init__(self, case: dict[str, Any], sigma: float = 25.0, tau_wire: float = 0.5, k: int = 50,
-                 shift: bool = True, lib: Path = LIB, cone_w: float = 0.0, isl_w: float = 0.0, cone_s0: float = 10.0):
+                 shift: bool = True, lib: Path = LIB, cone_w: float = 0.0, isl_w: float = 0.0, cone_s0: float = 10.0, cone_nu: float = 0.0):
         d = np.load(lib)
         self.tracks, self.pattern, self.flip = d["tracks"], d["pattern"], d["flip"]
         self.C_off, self.C_wire = d["C_off"], d["C_wire"]
@@ -57,6 +57,7 @@ class AnalogEnsemble:
         # official advisory likelihoods (measured on holdout storms 2026-10-23: the cone's position error is 60-70% of the
         # ensemble's at 1-2 minutes ahead and its stated spread is calibrated; the island probabilities are calibrated too)
         self.cone_w, self.isl_w, self.cone_s0 = cone_w, isl_w, cone_s0     # tempering powers; cone_s0 = spread floor (map units)
+        self.cone_nu = cone_nu          # >0: Student-t cone likelihood with this many degrees of freedom (a wrong cone does not zero out the right analogs)
         self.case = case
         self.sites = {sym: np.array([[s["x"], s["y"], s["weight"]] for s in case["companies"][sym]["sites"]]) for sym in PHYS}
         isl: dict[str, list] = {i: [] for i in case["islands"]}
@@ -100,7 +101,11 @@ class AnalogEnsemble:
                         continue
                     pos = self.tracks[:, j, :2] + off
                     dc = ((pos - np.array([cp["x"], cp["y"]])) ** 2).sum(1)
-                    logw -= self.cone_w * dc / (2 * (cp["spread"] ** 2 + self.cone_s0 ** 2))
+                    var = cp["spread"] ** 2 + self.cone_s0 ** 2
+                    if self.cone_nu > 0:        # bivariate t: log density ~ -(nu + 2) / 2 * log(1 + d^2 / (nu var))
+                        logw -= self.cone_w * (self.cone_nu + 2) / 2 * np.log1p(dc / (self.cone_nu * var))
+                    else:
+                        logw -= self.cone_w * dc / (2 * var)
             conds = adv.get("hurricane_conditions") if self.isl_w > 0 else None
             if conds and idx + 1 < len(GRID_AGES):
                 for isl, p in conds.items():
