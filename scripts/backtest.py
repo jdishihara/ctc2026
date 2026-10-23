@@ -38,7 +38,7 @@ def main():
     ap.add_argument("--liquidity", default="ladder", choices=["ladder", "spread"], help="ladder = measured testnet book; spread = flat half-spread model")
     ap.add_argument("--refill", type=float, default=10.0, help="ladder: seconds for consumed depth to regenerate")
     ap.add_argument("--ladder-scale", type=float, default=1.0, help="ladder: multiply all sizes")
-    ap.add_argument("--min-edge", type=float, default=0.02)
+    ap.add_argument("--min-edge", type=float, default=0.025)
     ap.add_argument("--edge-full", type=float, default=0.03)
     ap.add_argument("--verbose", action="store_true")
     ap.add_argument("--sd-mult", type=float, default=0.7)

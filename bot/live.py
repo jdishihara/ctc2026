@@ -338,7 +338,7 @@ def main() -> None:
     ap.add_argument("--url", default="https://cornelltradingcompetition.org")
     ap.add_argument("--key", required=True)
     ap.add_argument("--dry-run", action="store_true")
-    ap.add_argument("--min-edge", type=float, default=0.02)
+    ap.add_argument("--min-edge", type=float, default=0.025)
     ap.add_argument("--edge-full", type=float, default=0.03)
     ap.add_argument("--sync", type=float, default=3.0, help="seconds between position/open-order polls")
     ap.add_argument("--ws", default=None, help="override the market-data host, e.g. ws://localhost:8766 for the mock")

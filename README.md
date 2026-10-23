@@ -78,7 +78,7 @@ tail -f recordings/bot_live.log
 While it runs, one person watches the log. Every 10 s it prints `t= … r<round> pnl <season pnl> SYM:mid/fair/position`.
 What to look for:
 
-- `strategy analog min_edge 0.02 edge_full 0.03 … carry 0.5 … cone_w 1.0 cone_s0 20.0` at start, then `replayed N feed messages of season year Y`: the accepted configuration rebuilt from the recording. Anything else, stop and check the flags and FEED_LOG.
+- `strategy analog min_edge 0.025 edge_full 0.03 … carry 0.5 … cone_w 1.0 cone_s0 20.0` at start, then `replayed N feed messages of season year Y`: the accepted configuration rebuilt from the recording. Anything else, stop and check the flags and FEED_LOG.
 - `snapshot processed: warm-up before trading` and `market (re)opened: warm-up`: no orders for 20 s. Fair values in the
   first line after a connect can be far from the mids (the model is still catching up); they should be sane by the second line.
 - Round opens: the house re-prices by about 7% from the previous close, stays quiet for 30 s, then moves about 3% over the
@@ -152,12 +152,12 @@ open (depth within 1% of mid 330-550 shares in the first minute against 285-410 
 instant round replays either (the testnet replayed one round in a second). Live fill cost after the warm-up fix: 29 bp
 of notional (93 bp before it).
 
-## Results (verify seasons 526-600, default parameters, 2026-10-23 04:30)
+## Results (verify seasons 526-600, default parameters, 2026-10-23 03:45)
 
 | Regime | mean PnL | median | p10 | min | losing seasons | fills/season |
 |---|---|---|---|---|---|---|
-| deep (ladder, refill 10 s) | 9,287 | 8,841 | -271 | -14,987 | 11% | 340 |
-| thin (ladder at half size, refill 30 s) | 5,812 | 5,477 | -2,839 | -17,755 | 17% | 860 |
+| deep (ladder, refill 10 s) | 9,344 | 8,900 | -145 | -15,910 | 11% | 330 |
+| thin (ladder at half size, refill 30 s) | 5,925 | 5,500 | -2,681 | -17,236 | 17% | 850 |
 
 Deep regime by symbol: HAVEN +2669, PORT +1300, ARCH +1181, FERRY +720, GRID +590, AQUA +537, RECON +540, REBLD +441,
 ISLE +241, MAT +100, GEN +68, REIN +47. By round: R1 +2649, R2 +3144, R3 +2639. Fill PnL by phase (thin regime, 75 seasons):
