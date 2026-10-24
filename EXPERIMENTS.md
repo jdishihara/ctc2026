@@ -6,15 +6,16 @@ overlay says "needs you") and the tool says exactly what to click. Testnet check
 page, so the real Derivatives and Mario pages stay unseen until the morning; robustness to unknown formats ranks above tuning.
 Baseline at 99b530a: 17 Mario tests pass; overlay 131/132 (the autopilot integration test is a timing flake, passes alone).
 
-## Morning summary (written 04:25; everything below is pushed to origin/main; both suites green: 144 overlay, 80 Mario)
+## Morning summary (written 04:50; everything below is pushed to origin/main; both suites green: 144 overlay, 80 Mario)
 
 What changed on the Derivatives desk (35% of the score), all behind the existing flags, auto-submit still OFF by default:
 1. The auto-pilot now trades Round 1 from the headline instead of waiting for the +60 s move (a phase-timing bug: 0 orders
    in the first minute of every Round 1 event before, 18-23 after).
 2. It gets flat: flatten orders go through the touch, are re-sent after 6 s net of resting orders, run before a day's first
    news too, keep 12 orders a minute in reserve and go out 0.8 s apart; with a risk cap breached during an event it works
-   the closing tickets instead of idling. Same-seed mock drills at real speed: 19,795 -> 21,604 -> 23,967 -> 24,622
-   (fifth run with the faster flatten below). Gross carried into the next event fell from 288-1,154 to roughly 50-900.
+   the closing tickets instead of idling. Same-seed mock drills at real speed: 19,795 -> 21,604 -> 23,967 -> 24,622 ->
+   21,751 (run-to-run noise about 2k; the Round 1 fix is the clear signal). Gross carried into the next event is still
+   50-1,100 in places: watch the Risk tab's FLATTEN NOW line after each snap and click Alt+F tickets if auto is not armed.
 3. "Ready n/m" box on the Edge tab: the first-live-minutes checklist made automatic, each red line naming the Config
    field or key that fixes it. The real Derivatives page has never been seen (the testnet serves only Hurricane), so this
    is the thing to look at first.
@@ -52,7 +53,7 @@ it if marks are at mid, unknown); (c) nothing from tonight touched bot/ or ctc/.
 - [x] D5 Derivatives: Round 3 converter auto-identification across every converter kind with mock analyst data.
 - [x] D4 Derivatives: make the autopilot integration test deterministic.
 - [x] B1 docs/gameday-sheets.md: per desk, the exact list of human inputs and what each self-check line means.
-- [ ] B2 06:45 final report here; everything pushed.
+- [x] B2 final report (04:50); everything pushed.
 
 ## Results
 
@@ -131,6 +132,12 @@ was red. Two root causes found and fixed:
    only 4-9 and gross carried 549, 69, 53, 805, 297, 638, 80, 587, 287, 921: the rate cap was not the bottleneck, the
    flatten pipeline is (one order per 1.5 s spacing on a 0.7 s step, and a contract/side is held 6 s after a send).
    KEPT (free risk reduction, PnL neutral). Four real-speed runs on the same seed: 19,795 -> 21,604 -> 23,967 -> 24,622.
+   Fifth run (04:19-04:46, flatten orders 0.8 s apart on a 0.4 s step): **+21,751**, 488 orders, flatten orders in the
+   window still 2-11, gross carried 89-1,087: NEUTRAL/REJECTED, defaults back to 1.5 s / 0.7 s (knob auto.flattenIntervalMs
+   kept). The flatten bottleneck is not spacing and not the rate cap; unexplained tonight (candidates: the 6 s per-contract
+   hold, position-poll lag, prefill time per ticket). Five same-seed runs: 19,795 / 21,604 / 23,967 / 24,622 / 21,751;
+   run-to-run noise is about 2k, so the confirm fix (Round 1 trading from the headline) is the one change with a clear
+   signal; the flatten changes are directionally right (events end flatter) but not proven on PnL.
    Remaining known gap: a book of 300-900 contracts can be carried into the next event in Round 3; the auto-pilot now
    works it down during the event when a cap is breached, and the Risk tab's FLATTEN NOW line is the human's cue.
 Also fixed on the way: the integration test raced the content script's own 700 ms auto-pilot timer (now disabled in
