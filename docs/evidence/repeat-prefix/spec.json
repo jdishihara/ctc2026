@@ -1,0 +1,71 @@
+{
+  "baseline_root": "/Users/arjunhans/Documents/ctc2026/.worktrees/practice-history",
+  "captures": [
+    {
+      "capture": 241,
+      "input": "/var/folders/5_/4_9w4ch971l2mm9c6fqtg5400000gn/T/practice-independent-audit-471iu5fj/241.json",
+      "input_sha256": "84a0c1f7662a0e10b6fd14d653bcacd8e557aa20a6d5a862aabdc40e1a8a4ad9",
+      "archive": "/Users/arjunhans/Documents/ctc2026/out/supervised-replay-v2-20261024/supervised",
+      "archive_sha256": {
+        "metadata.json": "76d7ef4e62cefaa9fe5a56c48759ecd7b4212ef4d6d5de5d0866226697867e0e",
+        "results.jsonl": "985fdb64e556a0c2caad2f947149e09c5c5b0adceb911f5420b034735035e0bf",
+        "summary.json": "8845b2a40055154b71d77620e4d4bef26bd9b0910849dd2ed1e3fc1440eb5337"
+      }
+    },
+    {
+      "capture": 242,
+      "input": "/var/folders/5_/4_9w4ch971l2mm9c6fqtg5400000gn/T/practice-independent-audit-471iu5fj/242.json",
+      "input_sha256": "134d250ca2af61b6828e01acd8135c19a5daa85520111bed5412a5acbcb639b6",
+      "archive": "/Users/arjunhans/Documents/ctc2026/out/supervised-replay-v2-20261024/supervised",
+      "archive_sha256": {
+        "metadata.json": "76d7ef4e62cefaa9fe5a56c48759ecd7b4212ef4d6d5de5d0866226697867e0e",
+        "results.jsonl": "985fdb64e556a0c2caad2f947149e09c5c5b0adceb911f5420b034735035e0bf",
+        "summary.json": "8845b2a40055154b71d77620e4d4bef26bd9b0910849dd2ed1e3fc1440eb5337"
+      }
+    },
+    {
+      "capture": 243,
+      "input": "/var/folders/5_/4_9w4ch971l2mm9c6fqtg5400000gn/T/practice-independent-audit-471iu5fj/243.json",
+      "input_sha256": "126ccd306b0c8aff6895cfb626c88c9e2ab4afaebe213c4d99473eef060e157e",
+      "archive": "/Users/arjunhans/Documents/ctc2026/out/supervised-replay-v2-20261024/supervised",
+      "archive_sha256": {
+        "metadata.json": "76d7ef4e62cefaa9fe5a56c48759ecd7b4212ef4d6d5de5d0866226697867e0e",
+        "results.jsonl": "985fdb64e556a0c2caad2f947149e09c5c5b0adceb911f5420b034735035e0bf",
+        "summary.json": "8845b2a40055154b71d77620e4d4bef26bd9b0910849dd2ed1e3fc1440eb5337"
+      }
+    },
+    {
+      "capture": 244,
+      "input": "/var/folders/5_/4_9w4ch971l2mm9c6fqtg5400000gn/T/practice-independent-audit-471iu5fj/244.json",
+      "input_sha256": "99226507701f6ba1b368d9e3190245195cb1bc0048fb2ddd5120682d10080b91",
+      "archive": "/Users/arjunhans/Documents/ctc2026/out/supervised-replay-v2-20261024/supervised",
+      "archive_sha256": {
+        "metadata.json": "76d7ef4e62cefaa9fe5a56c48759ecd7b4212ef4d6d5de5d0866226697867e0e",
+        "results.jsonl": "985fdb64e556a0c2caad2f947149e09c5c5b0adceb911f5420b034735035e0bf",
+        "summary.json": "8845b2a40055154b71d77620e4d4bef26bd9b0910849dd2ed1e3fc1440eb5337"
+      }
+    },
+    {
+      "capture": 245,
+      "input": "/var/folders/5_/4_9w4ch971l2mm9c6fqtg5400000gn/T/practice-245-independent-input-or60g0fo/245.json",
+      "input_sha256": "0a727b84851cf7d00bba4da7f1b0da0ad6df79fce884b1ebaccad3ecac92887a",
+      "archive": "/Users/arjunhans/Documents/ctc2026/recordings/consistency-20261024/supervised-forward/a7e77935-0ddd-4c77-8ce9-5494a9941962/attempt-01/supervised",
+      "archive_sha256": {
+        "metadata.json": "15d02aad9f27cf4e8c301dfa081991dd7df62ec4cabc77fe8575e1e9f2460f1c",
+        "results.jsonl": "f698e8b6f26db7c2eb7c65117cea8057fb9d85a23037dcb490fbe28a304db894",
+        "summary.json": "a52e966509c5bc254cc4f4dc41f51705b3d21d791aca420901cfe42bcdb0ca6c"
+      }
+    },
+    {
+      "capture": 246,
+      "input": "/Users/arjunhans/Documents/ctc2026/out/repeat-prefix-v1-20261024/capture-246.json",
+      "input_sha256": "5ad4db69458b89c33a960541ddbb84c1463d5f89d92ac5888be59077ed0841fd",
+      "archive": "/Users/arjunhans/Documents/ctc2026/recordings/consistency-20261024/supervised-forward/83fc18b9-e9fd-4634-bc8e-c7a1a77768a7/attempt-01/supervised",
+      "archive_sha256": {
+        "metadata.json": "8879ab3f516798a6d5d13ca09353af67eb35c9856deb3947e74179f4e513797f",
+        "results.jsonl": "60960b091422ac4cbfcc4e9c88f60d561e6ecf095a215405de11818436e591cb",
+        "summary.json": "3a77f054e137392471bbc02af084d83448932ea2473bd7cb79c239b2e571fd2e"
+      }
+    }
+  ]
+}

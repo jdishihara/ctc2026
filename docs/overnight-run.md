@@ -1,5 +1,15 @@
 # Overnight practice — October 24, 2026
 
+## 09:33 UTC — one-hot repeated-weather candidate rejected
+
+Independent review confirms all 96 capture pairs and 75 development pairs.
+Recognition improves the mean but fails four declared risk rules: worse worst
+loss, more negative settings, new cleanup attention outcomes and increased
+residual exposure. All unmatched development behavior remains exact. Full
+results, source freezes, negative cases and review archives are retained in
+[repeat-prefix.md](repeat-prefix.md). No production strategy or frozen forward
+evaluator changed; live account ownership is still unresolved.
+
 ## 09:10 UTC — capture 246 independently verified
 
 All 16 full-supervisor settings complete and finish positive; primary

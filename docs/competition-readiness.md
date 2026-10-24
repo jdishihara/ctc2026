@@ -1,6 +1,6 @@
 # Competition readiness — 2026-10-24
 
-Status updated after the 09:10 UTC capture-246 review (05:10 EDT). One complete small-size live season
+Status updated after the 09:33 UTC recognition review (05:33 EDT). One complete small-size live season
 has a verified settlement receipt. The next trial contains mixed activity.
 Live practice remains stopped pending shared-account ownership clarification.
 Market recording and offline evaluations continue.
@@ -62,6 +62,14 @@ cleanup time from 96.00 to 89.67 seconds, but worsened the worst terminal loss
 from $420.64 to $434.39 and added one negative setting. Independent review
 reproduced all 80 pairs and twelve representative reruns. It remains out of
 production; see [cleanup-empty-cancel.md](cleanup-empty-cancel.md).
+
+An exact-prefix recognition experiment also fails its risk rules. Across six
+known-training paths and 96 execution settings, mean simulated P&L rises from
+$678.13 to $1,093.27, but the worst loss worsens to $514.88, negative settings
+increase from 12 to 14, and cleanup attention receipts increase from 2 to 6.
+All 75 unmatched development pairs remain identical. Independent audits and
+representative reruns verify both findings. The candidate stays out of
+production; see [repeat-prefix.md](repeat-prefix.md).
 
 ## Historical data and evaluation
 
