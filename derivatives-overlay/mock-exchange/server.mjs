@@ -528,7 +528,7 @@ const server = http.createServer(async (req, res) => {
         o.status = 'cancelled'; n++;
       }
       log(`CANCEL ALL${sym ? ` ${sym}` : ''}${undq ? ` ${undq}` : ''}: ${n}`);
-      return json(res, 200, { cancelled: n });
+      return json(res, 200, { message: n ? `Cancelled ${n} orders` : "No open orders", cancelled_count: n });
     }
     if (p.startsWith('/api/v1/orders/') && req.method === 'DELETE') {
       stats.orderDeletes++;

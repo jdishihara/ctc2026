@@ -18,10 +18,13 @@ The exchange is one Next.js app for every case; the Derivatives UI calls:
 | `GET /api/v1/positions?include_zero=true`, `GET /api/v1/orders/open` | positions, resting orders (`quantity - filled_quantity`) |
 | `GET /api/v1/competitions/current` | fictional clock and `clock_rate` |
 | `POST /api/v1/orders` `{symbol, side, order_type, quantity, price}` | an order (the Buy button) |
-| `DELETE /api/v1/orders/all?symbol_type=option&underlying=OIL` | cancel every resting option order of one underlying |
+| `DELETE /api/v1/orders/all?symbol_type=option&underlying=OIL` | cancel every resting option order of one underlying → `{message, cancelled_count}` |
 | `wss://host/ws/v1/market-data` + `{action:"subscribe", symbols, channels}` | `quote`, `trade`, `news` (`message.headline`), `orderbook` frames |
 
-The overlay polls the first four (Config `api`, about 5 requests/s, backing off on HTTP 429), opens its own socket for all
+Checked on the testnet from the logged-in tab (2026-10-24 11:25, Hurricane page): every GET above answers 200 in these
+shapes, a burst of 20 parallel GETs returned 20×200 in 64 ms (no rate limit hit), a POST on a halted symbol answers
+`403 {"detail":"Trading halted"}`, and the overlay itself loads with no console errors. The overlay polls the first four
+(Config `api`, about 5 requests/s, backing off on HTTP 429), opens its own socket for all
 12 contracts plus both underlyings (Config `feed`; the page only subscribes to the product tab it shows), and keeps the
 old DOM readers as fallbacks. T = trading days / 252 and r = the chain's `risk_free_rate`, exactly as the exchange's Fair
 calculator computes them (`tests/unit/apiPath.test.ts` checks our prices against a copy of its code).

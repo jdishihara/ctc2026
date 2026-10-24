@@ -226,7 +226,9 @@ export class Autopilot {
       store.handleBridge('http-req', { method: 'DELETE', url, body: null, t: now });
       const res = await api.del(path);
       store.handleBridge('http', { method: 'DELETE', url, status: res.status, json: res.json, body: res.text, t: res.t });
-      const n = res.json && typeof res.json === 'object' ? (res.json as { cancelled?: unknown }).cancelled : undefined;
+      // live shape (testnet 2026-10-24): {message: "No open orders", cancelled_count: 0}
+      const jo = res.json && typeof res.json === 'object' ? (res.json as { cancelled_count?: unknown; cancelled?: unknown }) : null;
+      const n = jo ? jo.cancelled_count ?? jo.cancelled : undefined;
       results.push(`${u}: HTTP ${res.status}${typeof n === 'number' ? ` (${n} cancelled)` : ''}`);
     }
     store.capture.add({ t: now, key: 'auto:cancel-all', dir: 'meta', raw: `${key} ${results.join(', ')}`, highlights: [] });
