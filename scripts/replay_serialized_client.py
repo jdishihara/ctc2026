@@ -248,9 +248,11 @@ def replay_client(case, frames, year, cid, settlement, *, fraction=.1, rtt=.25,
     steps = 0
     with contextlib.redirect_stdout(io.StringIO()):
         exchange = OfflineExchange(server)
+        exchange.refresh()
+        if not exchange.state_ready or not isinstance(exchange.competition_id, str) or not exchange.competition_id.strip():
+            raise RuntimeError('initial account snapshot is unavailable or missing competition identity')
         trader = FairValueTrader(**parameters)
         trader.on_start(exchange)
-        exchange.refresh()
         # Like a fresh production session, establish the season from its first
         # observed news rather than pre-populating a partially initialized model.
         session = AuditedSession(exchange, trader, sync=3)

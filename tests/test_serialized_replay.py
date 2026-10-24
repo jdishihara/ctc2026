@@ -256,6 +256,30 @@ def test_complete_client_replay_is_offline_and_keeps_all_news(monkeypatch):
     assert row['terminal_closed']
 
 
+@pytest.mark.parametrize('rtt', [0., .25])
+def test_complete_history_survives_first_quote_callback(monkeypatch, rtt):
+    import scripts.replay_serialized_client as replay
+    observed = []
+
+    class AuditedTrader(FairValueTrader):
+        def on_quotes(self, exchange):
+            before = sorted(self.model.reported_rounds)
+            super().on_quotes(exchange)
+            observed.append((before, sorted(self.model.reported_rounds),
+                             self.competition_id, exchange.competition_id))
+
+    frames = synthetic_frames()
+    frames += [quote(30., symbol=s) for s in CASE['limits']]
+    frames += [{**frames[-1], 'received_at': 60.}]
+    monkeypatch.setattr(replay, 'FairValueTrader', AuditedTrader)
+    row = replay.replay_client(CASE, frames, '1786', 'synthetic',
+                               {s: 100. for s in CASE['limits']}, rtt=rtt)
+    assert observed
+    assert all(before == after == [1, 2, 3] and strategy == account == 'synthetic'
+               for before, after, strategy, account in observed)
+    assert row['final_report_rounds'] == [1, 2, 3]
+
+
 def test_settlement_values_are_not_accessed_until_irrevocable_close(monkeypatch):
     import scripts.replay_serialized_client as replay
     created = []

@@ -104,3 +104,30 @@ already been examined and are not untouched validation.
 - Conversion reconciliation follows the existing overlay's refresh path;
   there is no additional implicit refresh. Strategy computation is modeled as
   instantaneous. No empirical CPU delay or network-delay distribution is fitted.
+
+## Version 2 correction declared before rerunning results
+
+The first frozen source `b065a8111187a48c183162df97046db88907d397` rejected all
+48 scenarios for incomplete model history. No valid P&L was computed. Its
+outputs remain at `out/serialized-client-20261024-{241,242,243}`. Independent
+review verified all rows, grid combinations, source/input/receipt hashes, and
+tail gaps. The original 27 tests and six additional boundary checks passed,
+but the full-history test had no quotes and missed the initialization issue.
+
+The driver followed the then-current direct launcher's incorrect ordering:
+initialize the strategy with an empty competition ID, then refresh the account.
+The first quote callback reset accumulated history while session sequence
+tracking retained those messages. Two new complete-history-plus-quotes
+regressions, at zero and 0.25-second RTT, fail under that ordering.
+
+Production fix PR #15 confirms a complete account snapshot and nonempty string
+competition ID before constructing/initializing the strategy. It was reviewed
+and merged independently. Version 2 adopts the same ordering and initial-state
+gate. Supervised practice already used the correct order. This change addresses
+initialization, not strategy parameters, fill assumptions, or the earlier loss.
+
+Freeze the corrected source, preserve all failed version 1 artifacts, and rerun
+the identical 48 scenarios into separate `out/serialized-client-v2-20261024-*`
+directories. The paired timing reference, fixed grid, required checks, and
+limitations above remain unchanged. Independent review must approve the fresh
+results before interpreting or merging the diagnostic.
