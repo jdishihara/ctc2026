@@ -1,0 +1,141 @@
+{
+  "competition_id": "6650d983-93c3-45d2-96dd-15209dcd8320",
+  "season": 241,
+  "matching_method": "Interpolate fictional time between consecutive same-round received snapshots at most 45 seconds apart, then linearly interpolate the published minute prices. Offline completed-season diagnostic only; this alignment is approximate.",
+  "matched_quotes": 16836,
+  "skipped_quotes": 156,
+  "results": [
+    {
+      "symbol": "HAVEN",
+      "quotes": 2215,
+      "median_abs_deviation_pct": 2.238,
+      "p95_abs_deviation_pct": 13.767,
+      "median_signed_deviation_pct": 1.185,
+      "median_spread_bps": 108.99,
+      "median_bid_size": 25,
+      "median_ask_size": 25
+    },
+    {
+      "symbol": "PORT",
+      "quotes": 2106,
+      "median_abs_deviation_pct": 1.582,
+      "p95_abs_deviation_pct": 5.547,
+      "median_signed_deviation_pct": 0.371,
+      "median_spread_bps": 76.42,
+      "median_bid_size": 20,
+      "median_ask_size": 20
+    },
+    {
+      "symbol": "ARCH",
+      "quotes": 1489,
+      "median_abs_deviation_pct": 0.762,
+      "p95_abs_deviation_pct": 4.53,
+      "median_signed_deviation_pct": 0.004,
+      "median_spread_bps": 40.2,
+      "median_bid_size": 20,
+      "median_ask_size": 20
+    },
+    {
+      "symbol": "FERRY",
+      "quotes": 1396,
+      "median_abs_deviation_pct": 0.774,
+      "p95_abs_deviation_pct": 3.006,
+      "median_signed_deviation_pct": -0.11,
+      "median_spread_bps": 40.3,
+      "median_bid_size": 80,
+      "median_ask_size": 80
+    },
+    {
+      "symbol": "GRID",
+      "quotes": 1457,
+      "median_abs_deviation_pct": 0.771,
+      "p95_abs_deviation_pct": 2.726,
+      "median_signed_deviation_pct": 0.517,
+      "median_spread_bps": 40.98,
+      "median_bid_size": 40,
+      "median_ask_size": 40
+    },
+    {
+      "symbol": "ISLE",
+      "quotes": 1402,
+      "median_abs_deviation_pct": 0.762,
+      "p95_abs_deviation_pct": 2.581,
+      "median_signed_deviation_pct": -0.58,
+      "median_spread_bps": 39.66,
+      "median_bid_size": 30,
+      "median_ask_size": 30
+    },
+    {
+      "symbol": "AQUA",
+      "quotes": 1746,
+      "median_abs_deviation_pct": 0.872,
+      "p95_abs_deviation_pct": 2.548,
+      "median_signed_deviation_pct": -0.568,
+      "median_spread_bps": 49.35,
+      "median_bid_size": 50,
+      "median_ask_size": 50
+    },
+    {
+      "symbol": "RECON",
+      "quotes": 1208,
+      "median_abs_deviation_pct": 0.516,
+      "p95_abs_deviation_pct": 1.959,
+      "median_signed_deviation_pct": -0.256,
+      "median_spread_bps": 38.44,
+      "median_bid_size": 50,
+      "median_ask_size": 50
+    },
+    {
+      "symbol": "MAT",
+      "quotes": 1028,
+      "median_abs_deviation_pct": 0.429,
+      "p95_abs_deviation_pct": 1.547,
+      "median_signed_deviation_pct": -0.184,
+      "median_spread_bps": 35.28,
+      "median_bid_size": 70,
+      "median_ask_size": 70
+    },
+    {
+      "symbol": "REBLD",
+      "quotes": 1023,
+      "median_abs_deviation_pct": 0.442,
+      "p95_abs_deviation_pct": 1.486,
+      "median_signed_deviation_pct": -0.15,
+      "median_spread_bps": 29.43,
+      "median_bid_size": 40,
+      "median_ask_size": 40
+    },
+    {
+      "symbol": "GEN",
+      "quotes": 1128,
+      "median_abs_deviation_pct": 0.532,
+      "p95_abs_deviation_pct": 1.419,
+      "median_signed_deviation_pct": 0.011,
+      "median_spread_bps": 36.08,
+      "median_bid_size": 60,
+      "median_ask_size": 60
+    },
+    {
+      "symbol": "REIN",
+      "quotes": 638,
+      "median_abs_deviation_pct": 0.188,
+      "p95_abs_deviation_pct": 0.474,
+      "median_signed_deviation_pct": 0.016,
+      "median_spread_bps": 26.75,
+      "median_bid_size": 20,
+      "median_ask_size": 20
+    }
+  ],
+  "weighting": "Each usable recorded quote update receives equal weight; these are not time-weighted estimates.",
+  "percentile_definition": "Nearest-rank p95: sorted_values[ceil(0.95*n)-1].",
+  "independent_review": {
+    "approved": true,
+    "complete_trial_and_official_receipt_verified": true,
+    "all_12_settlements_match_published": true,
+    "original_matched_quote_count_reproduced": 16836,
+    "dense_anchor_common_frames": 13221,
+    "dense_anchor_haven_median_absolute_deviation_pct": 2.8077,
+    "dense_anchor_haven_p95_absolute_deviation_pct": 14.021,
+    "limitations": "Storm clocks are finer observations from the same feed, not a separate authoritative clock. Retrospective alignment, receive delays and minute-grid interpolation remain. This does not isolate the entire P&L gap."
+  }
+}

@@ -47,6 +47,37 @@ def test_complete_observed_capture_has_no_live_profit_claim(tmp_path):
     assert 'pnl' not in receipt
 
 
+def test_missing_disconnect_markers_do_not_prove_uninterrupted_capture(tmp_path):
+    observations, feed, _, _ = capture(tmp_path)
+    _, _, coverage = observed_capture(observations, feed, 'one', ['A'])
+    assert coverage['recorded_disconnect_frames'] == 0
+    assert coverage['disconnect_count_known'] is False
+    assert 'disconnect_events' not in coverage
+
+
+def test_subscription_after_season_start_is_disclosed_without_inventing_disconnect_time(tmp_path):
+    observations, feed, _, frames = capture(tmp_path)
+    acknowledgement = {'type': 'subscription_ack', 'received_at': 2.5}
+    frames.insert(2, acknowledgement)
+    save(feed, frames)
+    _, selected, coverage = observed_capture(observations, feed, 'one', ['A'])
+    assert coverage['subscription_acknowledgements'] == [
+        {'at': 2.5, 'round': 1, 'seconds_since_previous_frame': .5}]
+    assert coverage['recorded_disconnect_frames'] == 0
+    assert coverage['disconnect_count_known'] is False
+    assert acknowledgement not in selected
+
+
+def test_explicit_disconnect_marker_is_counted_and_replayed(tmp_path):
+    observations, feed, _, frames = capture(tmp_path)
+    disconnect = {'type': 'disconnected', 'received_at': 2.5}
+    frames.insert(2, disconnect)
+    save(feed, frames)
+    _, selected, coverage = observed_capture(observations, feed, 'one', ['A'])
+    assert coverage['recorded_disconnect_frames'] == 1
+    assert disconnect in selected
+
+
 @pytest.mark.parametrize('change', ['running', 'different_id', 'different_year', 'missing_prices'])
 def test_invalid_receipt_is_rejected_before_feed_is_read(tmp_path, change):
     observations, feed, receipt, _ = capture(tmp_path)
