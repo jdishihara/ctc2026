@@ -1,7 +1,9 @@
 # Competition readiness — 2026-10-24
 
-Status recorded at 05:20 UTC (01:20 EDT). One complete small-size live season
+Status recorded at 06:08 UTC (02:08 EDT). One complete small-size live season
 has a verified settlement receipt. The next trial contains mixed activity.
+Live practice remains stopped pending shared-account ownership clarification.
+Market recording and offline evaluations continue.
 
 ## What the evidence supports
 
@@ -18,7 +20,8 @@ establishes a probability of winning the competition.
 451–525. Seasons 526–600 were inspected during previous research and are reused
 confirmation data, not an untouched holdout.
 
-Latest confirmation at normal simulated position limits:
+Earlier confirmation at normal simulated position limits, before the latest
+execution-price correction:
 
 | Liquidity assumption | Mean season P&L | Losing seasons | Worst season |
 | --- | ---: | ---: | ---: |
@@ -29,6 +32,14 @@ These simulated results do not reproduce every live request delay, queue
 position, partial fill, or exchange transition. Availability of historical data
 does not establish that live code consumes it correctly or that future paths
 will be profitable.
+
+The latest entry-corrected comparison repeats all 675 scenarios on development
+seasons 451–525 at **10% limits**, with three liquidity assumptions and three
+delays. Shorter-delay means range from $1,434.31 to $1,584.50, with six losing
+seasons per 75. At three seconds, means range from $1,027.27 to $1,118.30, with
+8–9 losses per 75; the worst is −$1,097.41. Positive means do not imply that every
+season, or a competition round, will be positive. Full paired results are in
+[executable-entry.md](executable-entry.md).
 
 ## Earlier practice loss
 
@@ -91,6 +102,29 @@ behavior, not profitability.
 The snapshot and basket changes were not in batch 01. Their live profitability
 has not been demonstrated.
 
+## Later integrated changes and experiments
+
+- PR 5 preserves the fixed recorded-market evaluation grid.
+- PR 6 corrects historical simulator activation times and final-round closure.
+- PR 7 retains the execution-cost grid and season-242 capture evidence, including
+  its recorder reconnect and uncertainty about quote completeness.
+- [PR 8](https://github.com/jdishihara/ctc2026/pull/8) enforces entry-price bounds
+  and checks stale partial/pending orders and fills during cancellation. The
+  reviewed implementation and paired evidence are merged. Profit effects are
+  mixed: shorter-delay historical means improve slightly, three-second means
+  decline slightly, and two cost profiles gain an additional losing season.
+- [PR 9](https://github.com/jdishihara/ctc2026/pull/9) adds an offline final-report-only
+  diagnostic. It gives up most profit and still loses in some scenarios, so it
+  does not replace the competition strategy. Future evaluation manifests now
+  include model NPZ hashes; the older manifest limitation is documented.
+
+The integrated branch suite passes **390 tests**, including the offline worker's
+restart-integrity and cutoff checks. Independent reviews reproduced
+representative results and checked every stored scenario pair. Neither the
+entry correction nor final-report-only research has a new attributable live
+trial. No live size increase or automatic strategy promotion follows from these
+merges.
+
 ## Why historical profit overstated the first live result
 
 On the completed first season, historical-price replay at the same 10% limits
@@ -105,6 +139,23 @@ does not automatically improve results. Queue priority, market impact, serialize
 HTTP requests, cancellation races, and conversion delays remain unmodeled.
 
 Full evidence: [recorded-market-diagnostic.md](recorded-market-diagnostic.md).
+
+## Completed captured markets after the entry correction
+
+The later research comparison reran the full strategy with current snapshot
+behavior, three delays, full/half depth, and basket off/on: 12 scenarios for each
+completed capture. These are simulated results on already examined markets.
+
+| Captured season | Full-strategy range | Negative scenarios | Actual attributable result |
+| --- | ---: | ---: | --- |
+| 241 | −$21.70 to +$88.19 | 3 / 12 | +$141.16 on earlier runtime |
+| 242 | +$1,462.74 to +$2,172.95 | 0 / 12 | None; shared account activity |
+
+The full older-snapshot ablations and unfavorable changes are also preserved in
+[executable-entry.md](executable-entry.md). Waiting for all final reports earns
+only $19.25–$22.25 on capture 241 and −$4.00–$5.60 on capture 242; it is retained
+as a diagnostic baseline. All pairs and assumptions are in
+[final-report-experiment.md](final-report-experiment.md).
 
 ## Remaining evaluation
 
