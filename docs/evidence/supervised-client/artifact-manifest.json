@@ -1,0 +1,88 @@
+{
+  "source_revision": "5d7d67bc636ed34ad09630812070e37bf12219bb",
+  "created_at": 1792828125.362696,
+  "archive_files_byte_verified": 15,
+  "journal_members_byte_verified": 448,
+  "files": [
+    {
+      "path": "baseline/metadata.json",
+      "bytes": 31439,
+      "sha256": "0406d25ce81db453b2d7fc8c17d55626ed391b98284940c1c9e3c9c62ad67536"
+    },
+    {
+      "path": "baseline/results.jsonl",
+      "bytes": 109738,
+      "sha256": "8c05ff9ab2f42c6a7f8aa144f043ccbb6b99f80038e8a8d4a6136fbb00b741af"
+    },
+    {
+      "path": "baseline/summary.json",
+      "bytes": 200,
+      "sha256": "e3d7df1b207018fb197dca7b9f980dfc980b921f145aed76f13756430a39ccba"
+    },
+    {
+      "path": "reference/metadata.json",
+      "bytes": 31133,
+      "sha256": "fbb71e21dd5221095474091c4441b5eaa14ce8aa04a132d588afc1cca5940220"
+    },
+    {
+      "path": "reference/results.jsonl",
+      "bytes": 109098,
+      "sha256": "6f01f462fdf82fd42714fb749263ed4635590f15b4fb26951c4bce07db306bbb"
+    },
+    {
+      "path": "reference/summary.json",
+      "bytes": 200,
+      "sha256": "1e66e4b7cb7b5c9df4e849887e7e2c0595581e4d034d6a42e2458c78848b9025"
+    },
+    {
+      "path": "supervised/metadata.json",
+      "bytes": 31440,
+      "sha256": "8285b1c8d6beced16f0f2b7dbea00363348227a0a270af5545f8e37d0e4075fd"
+    },
+    {
+      "path": "supervised/results.jsonl",
+      "bytes": 365175,
+      "sha256": "37105a64fb82feb196dc5a7899386aab60ce3c1b6ce04fcd5140b933e9c2d608"
+    },
+    {
+      "path": "supervised/summary.json",
+      "bytes": 200,
+      "sha256": "949f100c14859b2635d2a83e7f4e98dcf2081718dc5ebfe9f0c383f5566cf592"
+    },
+    {
+      "path": "supervised-journals.tar.gz",
+      "bytes": 1098055,
+      "sha256": "48966d10f6b70fb97813e5f19110ac03210b6d9a0717e6d691e42c6ce8ba107b"
+    },
+    {
+      "path": "supervised-replay-v1-baseline.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "supervised-replay-v1-baseline.stdout.log",
+      "bytes": 7665,
+      "sha256": "c195849c3a625945cb3c3197b295234483259a6f10737602ed3aba563067b873"
+    },
+    {
+      "path": "supervised-replay-v1-reference.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "supervised-replay-v1-reference.stdout.log",
+      "bytes": 7025,
+      "sha256": "03097eb323085e0e8a829c66c9ca879142e748820adf08ecd49882ff5a8bfab0"
+    },
+    {
+      "path": "supervised-replay-v1-supervised.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "supervised-replay-v1-supervised.stdout.log",
+      "bytes": 8241,
+      "sha256": "43f5fba3ebf8227a99e3891f09763a1af03a6aff48b629b5d6cb2f99d3f1c99a"
+    }
+  ]
+}

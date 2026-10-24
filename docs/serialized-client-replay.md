@@ -1,5 +1,10 @@
 # Sequential REST execution on three captured markets
 
+Follow-up: [production-supervisor replay](supervised-client-replay.md) adds the
+actual practice loss stop, history audits and cleanup on captures 241–244.
+Its weaker outcomes are necessary context when interpreting the core-client
+profits below; final result review is pending.
+
 ## What this evaluates
 
 This diagnostic runs the current strategy through the production account and

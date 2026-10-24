@@ -1,0 +1,899 @@
+{
+  "phase": "supervised",
+  "source_revision": "5d7d67bc636ed34ad09630812070e37bf12219bb",
+  "source_sha256": {
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/practice-replay/bot/control.py": "b33ba64f8110eb59ce4a16e8cd987be8365bf0c3db98810f06c58333d4104401",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/practice-replay/bot/http_transport.py": "5cc2dd41e418b794eac9dde2548fd40abcef605af303057ff633bd11d8b92162",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/practice-replay/bot/live.py": "bdfe8ecd489cdcd42d7e6687cbb34511d75f6503c55ad195bc22b0451f1be72e",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/practice-replay/ctc/__init__.py": "e178e73a3b0452a098d1cfa7f909ad65a3463457389018ab626ac281e1b634fe",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/practice-replay/ctc/accounting.py": "b9cddb93959b277fe9ab7c6089e84dee2c092a2d049c466212878a5531ff0f99",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/practice-replay/ctc/analog.py": "c606eefeab7cd0b5015b7b46cd831496d995f4b50030784ff2dd8171636938b2",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/practice-replay/ctc/analog_library.npz": "22694387c3b612f5c20853feb9143e1bf8b8f5722a845da8ed584ab1b30bdf09",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/practice-replay/ctc/basket.py": "ad08208095eb32a51fe19625b0e0929060a35bc4846ff4f8843e316f87d9a522",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/practice-replay/ctc/damage_params.json": "c274463749d70b6ae85b6981fb029423c76e6fe5db0224e0d1aec83a70d22415",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/practice-replay/ctc/history.py": "c9a93c117e4df869a4e8a34b03f0b656ada231bdf41864778d536ce129b91521",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/practice-replay/ctc/ladder.json": "b70e7a8c5672dc6e4955c39fac62a70709ba29b39f00eead9add3cb4feeba5a4",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/practice-replay/ctc/ladder.py": "da0c82abb297719dc1ea6d244558703072c881d3bd3b3fa43dc0885ae07f1f25",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/practice-replay/ctc/price_signal.json": "3d421c258d939b6a0adc5db9f764b416c15be47cc684accc2187e074f11750f8",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/practice-replay/ctc/price_signal.py": "aeb4b06e402231ac82e3b34ea7d1244346ee9b029036c4ffeb926112513b1fa4",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/practice-replay/ctc/sim.py": "91da5850c313b94835364dabd7622fb8282382a710cf324c99471d9c29021273",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/practice-replay/ctc/storm_sample.npz": "76da0f456aaadb8baee99920619db79c6f16e928dfab82ad33aade297a4b7c0f",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/practice-replay/ctc/strategies.py": "4c667bebeb84dfe11883205656702bb3f66545661f01a0685c1e4c24f6b2680c",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/practice-replay/ctc/valuation.py": "e19ceef5dc38154d1889065c4a85aae0d99b159267a0503a4c4fc3c7054292cd",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/practice-replay/ctc/valuation_params.json": "06439094fc54318a8bfd1854fc2765d6ef542d1acad23de1836a4db47bf3b80b",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/practice-replay/ctc/wind.py": "2e91425031bae6c2d60bb92a2e529cfc1222778820f126a29be836a4ec026f84",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/practice-replay/data/case.json": "bcd0eb79c5a89b6625c17f2c233a686a04fafc75093e8a57d3c90f3b09972839",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/practice-replay/docs/serialized-forward-plan.md": "2b9e7bafae7437f2c23e5c510d7cf7aad343df6d57e69331658f8d71562816ec",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/practice-replay/docs/serialized-replay-plan.md": "8fdf3271d88e02ab132d172d0aaee9034e267a7d51322a7949e0f45182254776",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/practice-replay/scripts/evaluate_observed_season.py": "f7f9113f5dba6e81bba35e5aed50f72b0df4d2853c4cae4d9565407846861576",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/practice-replay/scripts/experiment_execution_costs.py": "f947346da806425aa4c5a810ffa9f775f3c13a4bd33fe5fdbe4cf97d45b009d1",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/practice-replay/scripts/observe_market_seasons.py": "7290d9fa0fb902a1904f49a7927779517e6edcc77aa4f0ded9b57858d9627e96",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/practice-replay/scripts/replay_captured_market.py": "10741686ba5ebbff2758bc488fb2a34ef61183b2d57ec3d91d895b1981784ef9",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/practice-replay/scripts/replay_serialized_client.py": "2b976be6688b8df93f8508b38bbf02510d233533ece6a7d32d0bc1dfb6bcdfb3",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/practice-replay/bot/practice.py": "d16e82e3791ff8a8aef95faa09ddb2a708afb82f9a5ec7e6e29b5367739ae5de",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/practice-replay/scripts/replay_practice_supervisor.py": "77c9195a286a4ffb1395539879b3f1ee81b20ce8badd3edd25442787a97acd27",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/practice-replay/scripts/compare_practice_supervisor.py": "6405a79136b7844b502e8bfcc0e8e9f1fbb07a0c07b7e3fd79c5d185ddd8393e",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/practice-replay/docs/supervised-replay-plan.md": "06fda0af47b149a57e14c00ef13fe9636325ae84d0a4d52787b0fbeca2aa4a3e",
+    "docs/supervised-replay-inputs.json": "59e2ceb6ad394e5d7d3f852f6ba8e91a871d1b478c1d18709886ce5caaee3ded"
+  },
+  "spec": {
+    "reference_root": "/Users/arjunhans/Documents/ctc2026/.worktrees/serialized-forward",
+    "reference_revision": "505a5ad2d5a6f81e7c711cb550871ce7aa7f3734",
+    "captures": [
+      {
+        "capture": 241,
+        "mode": "completed",
+        "competition_id": "6650d983-93c3-45d2-96dd-15209dcd8320",
+        "batch": "/Users/arjunhans/Documents/ctc2026/recordings/consistency-20261024/batch-01",
+        "feed": "/Users/arjunhans/Documents/ctc2026/recordings/consistency-20261024/feed.jsonl",
+        "archive_results": "/Users/arjunhans/Documents/ctc2026/out/serialized-client-v2-20261024-241/results.jsonl"
+      },
+      {
+        "capture": 242,
+        "mode": "observed",
+        "competition_id": "0d7afac2-6acd-4223-aa8a-8c1a067091f0",
+        "observations": "/Users/arjunhans/Documents/ctc2026/recordings/consistency-20261024/market-observations.jsonl",
+        "feed": "/Users/arjunhans/Documents/ctc2026/recordings/consistency-20261024/feed.jsonl",
+        "archive_results": "/Users/arjunhans/Documents/ctc2026/out/serialized-client-v2-20261024-242/results.jsonl"
+      },
+      {
+        "capture": 243,
+        "mode": "observed",
+        "competition_id": "5edc122c-e97d-4d59-ada5-658c02c3c0da",
+        "observations": "/Users/arjunhans/Documents/ctc2026/recordings/consistency-20261024/market-observations.jsonl",
+        "feed": "/Users/arjunhans/Documents/ctc2026/recordings/consistency-20261024/feed.jsonl",
+        "archive_results": "/Users/arjunhans/Documents/ctc2026/out/serialized-client-v2-20261024-243/results.jsonl"
+      },
+      {
+        "capture": 244,
+        "mode": "observed",
+        "competition_id": "2cf67e88-9081-4258-aa6a-3648c41925de",
+        "observations": "/Users/arjunhans/Documents/ctc2026/recordings/consistency-20261024/market-observations.jsonl",
+        "feed": "/Users/arjunhans/Documents/ctc2026/recordings/consistency-20261024/feed.jsonl",
+        "archive_results": "/Users/arjunhans/Documents/ctc2026/recordings/consistency-20261024/serialized-forward/2cf67e88-9081-4258-aa6a-3648c41925de/results.jsonl"
+      }
+    ]
+  },
+  "grid": [
+    [
+      0.0,
+      1.0,
+      false
+    ],
+    [
+      0.0,
+      1.0,
+      true
+    ],
+    [
+      0.0,
+      0.5,
+      false
+    ],
+    [
+      0.0,
+      0.5,
+      true
+    ],
+    [
+      0.05,
+      1.0,
+      false
+    ],
+    [
+      0.05,
+      1.0,
+      true
+    ],
+    [
+      0.05,
+      0.5,
+      false
+    ],
+    [
+      0.05,
+      0.5,
+      true
+    ],
+    [
+      0.25,
+      1.0,
+      false
+    ],
+    [
+      0.25,
+      1.0,
+      true
+    ],
+    [
+      0.25,
+      0.5,
+      false
+    ],
+    [
+      0.25,
+      0.5,
+      true
+    ],
+    [
+      1.0,
+      1.0,
+      false
+    ],
+    [
+      1.0,
+      1.0,
+      true
+    ],
+    [
+      1.0,
+      0.5,
+      false
+    ],
+    [
+      1.0,
+      0.5,
+      true
+    ]
+  ],
+  "fraction": 0.1,
+  "loss_trigger": 250.0,
+  "prior_pnl": 0.0,
+  "captures": [
+    {
+      "capture": 241,
+      "competition_id": "6650d983-93c3-45d2-96dd-15209dcd8320",
+      "year": "1786",
+      "coverage": {
+        "news_count": 865
+      },
+      "receipt_sha256": "67fe3eb20b3991e599ffd39f03f6ba25c754f519b5150f81cdd91d20df09ab29",
+      "frames_sha256": "b1964d1a3c40244be2906a5a53d402d9020050eaca0b8b0fb23bc9b09ad942db",
+      "archive_sha256": "8514b8471dfffb4c93f3217aa958d82363564c30c5a91d19c576a8561c0a2f90",
+      "receipt_at": 1792817469.3986921,
+      "first_at": 1792814705.939921,
+      "last_at": 1792817467.460374,
+      "frame_count": 17949
+    },
+    {
+      "capture": 242,
+      "competition_id": "0d7afac2-6acd-4223-aa8a-8c1a067091f0",
+      "year": "1785",
+      "coverage": {
+        "news_count": 866,
+        "advertised_last_seq": 865,
+        "quote_count": 14570,
+        "quote_count_by_round": {
+          "1": {
+            "PORT": 591,
+            "ISLE": 411,
+            "AQUA": 427,
+            "GRID": 444,
+            "FERRY": 546,
+            "RECON": 323,
+            "MAT": 312,
+            "GEN": 401,
+            "HAVEN": 564,
+            "REIN": 269,
+            "ARCH": 414,
+            "REBLD": 464
+          },
+          "2": {
+            "PORT": 524,
+            "ISLE": 489,
+            "AQUA": 485,
+            "GRID": 433,
+            "FERRY": 515,
+            "RECON": 276,
+            "MAT": 277,
+            "GEN": 326,
+            "HAVEN": 638,
+            "REIN": 323,
+            "ARCH": 462,
+            "REBLD": 283
+          },
+          "3": {
+            "PORT": 603,
+            "ISLE": 310,
+            "AQUA": 390,
+            "GRID": 518,
+            "FERRY": 530,
+            "RECON": 271,
+            "MAT": 244,
+            "GEN": 291,
+            "HAVEN": 298,
+            "REIN": 327,
+            "ARCH": 290,
+            "REBLD": 236
+          }
+        },
+        "observed_quote_gaps": {
+          "1": {
+            "PORT": {
+              "max_seconds": 121.51317405700684,
+              "over_five_seconds": 25
+            },
+            "ISLE": {
+              "max_seconds": 121.50171709060669,
+              "over_five_seconds": 46
+            },
+            "AQUA": {
+              "max_seconds": 121.50172805786133,
+              "over_five_seconds": 49
+            },
+            "GRID": {
+              "max_seconds": 121.50175094604492,
+              "over_five_seconds": 36
+            },
+            "FERRY": {
+              "max_seconds": 121.50176095962524,
+              "over_five_seconds": 27
+            },
+            "RECON": {
+              "max_seconds": 121.50173997879028,
+              "over_five_seconds": 46
+            },
+            "MAT": {
+              "max_seconds": 121.5016610622406,
+              "over_five_seconds": 39
+            },
+            "GEN": {
+              "max_seconds": 121.5015721321106,
+              "over_five_seconds": 35
+            },
+            "HAVEN": {
+              "max_seconds": 121.50177216529846,
+              "over_five_seconds": 28
+            },
+            "REIN": {
+              "max_seconds": 121.50163912773132,
+              "over_five_seconds": 45
+            },
+            "ARCH": {
+              "max_seconds": 121.50170493125916,
+              "over_five_seconds": 39
+            },
+            "REBLD": {
+              "max_seconds": 121.50167798995972,
+              "over_five_seconds": 40
+            }
+          },
+          "2": {
+            "PORT": {
+              "max_seconds": 23.320235013961792,
+              "over_five_seconds": 37
+            },
+            "ISLE": {
+              "max_seconds": 34.97409200668335,
+              "over_five_seconds": 31
+            },
+            "AQUA": {
+              "max_seconds": 31.729310989379883,
+              "over_five_seconds": 38
+            },
+            "GRID": {
+              "max_seconds": 19.049190044403076,
+              "over_five_seconds": 35
+            },
+            "FERRY": {
+              "max_seconds": 31.129602909088135,
+              "over_five_seconds": 35
+            },
+            "RECON": {
+              "max_seconds": 23.346476078033447,
+              "over_five_seconds": 40
+            },
+            "MAT": {
+              "max_seconds": 29.903558254241943,
+              "over_five_seconds": 47
+            },
+            "GEN": {
+              "max_seconds": 23.34437084197998,
+              "over_five_seconds": 45
+            },
+            "HAVEN": {
+              "max_seconds": 22.79694890975952,
+              "over_five_seconds": 29
+            },
+            "REIN": {
+              "max_seconds": 27.282045125961304,
+              "over_five_seconds": 53
+            },
+            "ARCH": {
+              "max_seconds": 37.48016309738159,
+              "over_five_seconds": 37
+            },
+            "REBLD": {
+              "max_seconds": 34.62710404396057,
+              "over_five_seconds": 46
+            }
+          },
+          "3": {
+            "PORT": {
+              "max_seconds": 25.64918613433838,
+              "over_five_seconds": 25
+            },
+            "ISLE": {
+              "max_seconds": 28.3019859790802,
+              "over_five_seconds": 43
+            },
+            "AQUA": {
+              "max_seconds": 29.198729038238525,
+              "over_five_seconds": 42
+            },
+            "GRID": {
+              "max_seconds": 20.736302852630615,
+              "over_five_seconds": 42
+            },
+            "FERRY": {
+              "max_seconds": 25.090203285217285,
+              "over_five_seconds": 35
+            },
+            "RECON": {
+              "max_seconds": 26.071680068969727,
+              "over_five_seconds": 53
+            },
+            "MAT": {
+              "max_seconds": 57.295528173446655,
+              "over_five_seconds": 48
+            },
+            "GEN": {
+              "max_seconds": 35.16876196861267,
+              "over_five_seconds": 42
+            },
+            "HAVEN": {
+              "max_seconds": 34.674471855163574,
+              "over_five_seconds": 43
+            },
+            "REIN": {
+              "max_seconds": 30.311497926712036,
+              "over_five_seconds": 39
+            },
+            "ARCH": {
+              "max_seconds": 27.340410947799683,
+              "over_five_seconds": 49
+            },
+            "REBLD": {
+              "max_seconds": 39.44921898841858,
+              "over_five_seconds": 47
+            }
+          }
+        },
+        "round_windows": {
+          "1": {
+            "first_at": 1792817590.738782,
+            "closed_at": 1792818494.329058,
+            "close_source": "news_snapshot"
+          },
+          "2": {
+            "first_at": 1792818671.329996,
+            "closed_at": 1792819454.262076,
+            "close_source": "news_snapshot"
+          },
+          "3": {
+            "first_at": 1792819632.875015,
+            "closed_at": 1792820415.9171178,
+            "close_source": "news_snapshot"
+          }
+        },
+        "unusable_quotes": 65,
+        "recorded_disconnect_frames": 0,
+        "disconnect_count_known": false,
+        "subscription_acknowledgements": [
+          {
+            "at": 1792818339.962582,
+            "round": 1,
+            "seconds_since_previous_frame": 3.520155191421509
+          }
+        ],
+        "disconnect_note": "The recorder may log disconnects only to its text log. Subscription acknowledgements may indicate reconnections but do not determine disconnect onset or reconstruct missed frames. Only explicit disconnect frames are applied to the replay.",
+        "quote_path_completeness_proven": false,
+        "gap_note": "Receive-time gaps include delays in observing round opens/closes; they do not prove missing server events."
+      },
+      "receipt_sha256": "482237fa8fe616422977281e8f0b7c13027d18acc665472bd1e180e17548519a",
+      "frames_sha256": "0f3f369fdde5dfcf2cb07a761bd5533147a5c546a6adc4621235c5f70532ed85",
+      "archive_sha256": "dd2961ac5200c0ed3106213c440ad1b64ff543241dc259b46b60149b7ec9d0d3",
+      "receipt_at": 1792820424.18974,
+      "first_at": 1792817590.738782,
+      "last_at": 1792820415.9171178,
+      "frame_count": 15531
+    },
+    {
+      "capture": 243,
+      "competition_id": "5edc122c-e97d-4d59-ada5-658c02c3c0da",
+      "year": "1784",
+      "coverage": {
+        "news_count": 860,
+        "advertised_last_seq": 859,
+        "quote_count": 16429,
+        "quote_count_by_round": {
+          "1": {
+            "PORT": 551,
+            "ISLE": 457,
+            "AQUA": 527,
+            "GRID": 322,
+            "FERRY": 389,
+            "RECON": 495,
+            "MAT": 347,
+            "GEN": 337,
+            "HAVEN": 548,
+            "REIN": 228,
+            "ARCH": 344,
+            "REBLD": 395
+          },
+          "2": {
+            "PORT": 522,
+            "ISLE": 635,
+            "AQUA": 640,
+            "GRID": 562,
+            "FERRY": 796,
+            "RECON": 325,
+            "MAT": 376,
+            "GEN": 398,
+            "HAVEN": 839,
+            "REIN": 193,
+            "ARCH": 472,
+            "REBLD": 273
+          },
+          "3": {
+            "PORT": 476,
+            "ISLE": 413,
+            "AQUA": 443,
+            "GRID": 449,
+            "FERRY": 451,
+            "RECON": 602,
+            "MAT": 377,
+            "GEN": 408,
+            "HAVEN": 650,
+            "REIN": 364,
+            "ARCH": 362,
+            "REBLD": 386
+          }
+        },
+        "observed_quote_gaps": {
+          "1": {
+            "PORT": {
+              "max_seconds": 121.31094980239868,
+              "over_five_seconds": 45
+            },
+            "ISLE": {
+              "max_seconds": 121.29180693626404,
+              "over_five_seconds": 37
+            },
+            "AQUA": {
+              "max_seconds": 121.29174971580505,
+              "over_five_seconds": 31
+            },
+            "GRID": {
+              "max_seconds": 121.29161190986633,
+              "over_five_seconds": 47
+            },
+            "FERRY": {
+              "max_seconds": 121.2917947769165,
+              "over_five_seconds": 41
+            },
+            "RECON": {
+              "max_seconds": 121.29181575775146,
+              "over_five_seconds": 44
+            },
+            "MAT": {
+              "max_seconds": 121.29183006286621,
+              "over_five_seconds": 45
+            },
+            "GEN": {
+              "max_seconds": 121.29182267189026,
+              "over_five_seconds": 53
+            },
+            "HAVEN": {
+              "max_seconds": 121.31090092658997,
+              "over_five_seconds": 40
+            },
+            "REIN": {
+              "max_seconds": 121.31095671653748,
+              "over_five_seconds": 44
+            },
+            "ARCH": {
+              "max_seconds": 121.31093192100525,
+              "over_five_seconds": 40
+            },
+            "REBLD": {
+              "max_seconds": 121.31094193458557,
+              "over_five_seconds": 43
+            }
+          },
+          "2": {
+            "PORT": {
+              "max_seconds": 52.14553499221802,
+              "over_five_seconds": 31
+            },
+            "ISLE": {
+              "max_seconds": 35.55624508857727,
+              "over_five_seconds": 26
+            },
+            "AQUA": {
+              "max_seconds": 26.126501083374023,
+              "over_five_seconds": 37
+            },
+            "GRID": {
+              "max_seconds": 50.719666957855225,
+              "over_five_seconds": 23
+            },
+            "FERRY": {
+              "max_seconds": 33.33048224449158,
+              "over_five_seconds": 22
+            },
+            "RECON": {
+              "max_seconds": 30.78851890563965,
+              "over_five_seconds": 44
+            },
+            "MAT": {
+              "max_seconds": 46.34264802932739,
+              "over_five_seconds": 39
+            },
+            "GEN": {
+              "max_seconds": 51.51473593711853,
+              "over_five_seconds": 41
+            },
+            "HAVEN": {
+              "max_seconds": 29.002415657043457,
+              "over_five_seconds": 18
+            },
+            "REIN": {
+              "max_seconds": 31.414600372314453,
+              "over_five_seconds": 47
+            },
+            "ARCH": {
+              "max_seconds": 32.3243510723114,
+              "over_five_seconds": 37
+            },
+            "REBLD": {
+              "max_seconds": 33.667885065078735,
+              "over_five_seconds": 47
+            }
+          },
+          "3": {
+            "PORT": {
+              "max_seconds": 40.15503406524658,
+              "over_five_seconds": 40
+            },
+            "ISLE": {
+              "max_seconds": 41.18448209762573,
+              "over_five_seconds": 34
+            },
+            "AQUA": {
+              "max_seconds": 25.947328567504883,
+              "over_five_seconds": 46
+            },
+            "GRID": {
+              "max_seconds": 25.139688968658447,
+              "over_five_seconds": 45
+            },
+            "FERRY": {
+              "max_seconds": 38.603545904159546,
+              "over_five_seconds": 32
+            },
+            "RECON": {
+              "max_seconds": 23.009128093719482,
+              "over_five_seconds": 35
+            },
+            "MAT": {
+              "max_seconds": 34.80480217933655,
+              "over_five_seconds": 42
+            },
+            "GEN": {
+              "max_seconds": 21.99409008026123,
+              "over_five_seconds": 40
+            },
+            "HAVEN": {
+              "max_seconds": 27.623998880386353,
+              "over_five_seconds": 36
+            },
+            "REIN": {
+              "max_seconds": 43.223748207092285,
+              "over_five_seconds": 47
+            },
+            "ARCH": {
+              "max_seconds": 39.18417000770569,
+              "over_five_seconds": 43
+            },
+            "REBLD": {
+              "max_seconds": 32.45979404449463,
+              "over_five_seconds": 39
+            }
+          }
+        },
+        "round_windows": {
+          "1": {
+            "first_at": 1792820535.5923672,
+            "closed_at": 1792821438.316577,
+            "close_source": "news_snapshot"
+          },
+          "2": {
+            "first_at": 1792821616.232607,
+            "closed_at": 1792822399.1645818,
+            "close_source": "news_snapshot"
+          },
+          "3": {
+            "first_at": 1792822576.777953,
+            "closed_at": 1792823359.863008,
+            "close_source": "official_receipt"
+          }
+        },
+        "unusable_quotes": 65,
+        "recorded_disconnect_frames": 0,
+        "disconnect_count_known": false,
+        "subscription_acknowledgements": [],
+        "disconnect_note": "The recorder may log disconnects only to its text log. Subscription acknowledgements may indicate reconnections but do not determine disconnect onset or reconstruct missed frames. Only explicit disconnect frames are applied to the replay.",
+        "quote_path_completeness_proven": false,
+        "gap_note": "Receive-time gaps include delays in observing round opens/closes; they do not prove missing server events."
+      },
+      "receipt_sha256": "8f92306b15696ed4046594b3118a749ae86e5ee259657b528350c5554c74b04a",
+      "frames_sha256": "e9f32129e5b0bbbb7477451959bd1a367b1cbfbcfee4883da80128296a5013e5",
+      "archive_sha256": "2b8f950933450f292528a6ef221630d2ce36983dec0cb8567eb50adad52ac7f9",
+      "receipt_at": 1792823359.863008,
+      "first_at": 1792820535.5923672,
+      "last_at": 1792823357.210552,
+      "frame_count": 17383
+    },
+    {
+      "capture": 244,
+      "competition_id": "2cf67e88-9081-4258-aa6a-3648c41925de",
+      "year": "1783",
+      "coverage": {
+        "news_count": 871,
+        "advertised_last_seq": 870,
+        "quote_count": 22169,
+        "quote_count_by_round": {
+          "1": {
+            "PORT": 1262,
+            "ISLE": 754,
+            "AQUA": 785,
+            "GRID": 805,
+            "FERRY": 742,
+            "RECON": 673,
+            "MAT": 554,
+            "GEN": 628,
+            "HAVEN": 1289,
+            "REIN": 381,
+            "ARCH": 773,
+            "REBLD": 504
+          },
+          "2": {
+            "PORT": 786,
+            "ISLE": 561,
+            "AQUA": 538,
+            "GRID": 476,
+            "FERRY": 813,
+            "RECON": 342,
+            "MAT": 313,
+            "GEN": 442,
+            "HAVEN": 1024,
+            "REIN": 279,
+            "ARCH": 502,
+            "REBLD": 287
+          },
+          "3": {
+            "PORT": 831,
+            "ISLE": 501,
+            "AQUA": 569,
+            "GRID": 635,
+            "FERRY": 783,
+            "RECON": 267,
+            "MAT": 333,
+            "GEN": 499,
+            "HAVEN": 998,
+            "REIN": 317,
+            "ARCH": 549,
+            "REBLD": 331
+          }
+        },
+        "observed_quote_gaps": {
+          "1": {
+            "PORT": {
+              "max_seconds": 121.56963181495667,
+              "over_five_seconds": 19
+            },
+            "ISLE": {
+              "max_seconds": 121.56956577301025,
+              "over_five_seconds": 29
+            },
+            "AQUA": {
+              "max_seconds": 121.56943893432617,
+              "over_five_seconds": 26
+            },
+            "GRID": {
+              "max_seconds": 121.56946778297424,
+              "over_five_seconds": 21
+            },
+            "FERRY": {
+              "max_seconds": 121.56954073905945,
+              "over_five_seconds": 23
+            },
+            "RECON": {
+              "max_seconds": 121.56949400901794,
+              "over_five_seconds": 25
+            },
+            "MAT": {
+              "max_seconds": 121.56939959526062,
+              "over_five_seconds": 32
+            },
+            "GEN": {
+              "max_seconds": 121.56924271583557,
+              "over_five_seconds": 35
+            },
+            "HAVEN": {
+              "max_seconds": 121.56960988044739,
+              "over_five_seconds": 16
+            },
+            "REIN": {
+              "max_seconds": 121.56951880455017,
+              "over_five_seconds": 38
+            },
+            "ARCH": {
+              "max_seconds": 121.56958794593811,
+              "over_five_seconds": 24
+            },
+            "REBLD": {
+              "max_seconds": 121.56965279579163,
+              "over_five_seconds": 34
+            }
+          },
+          "2": {
+            "PORT": {
+              "max_seconds": 20.977344036102295,
+              "over_five_seconds": 20
+            },
+            "ISLE": {
+              "max_seconds": 44.78255891799927,
+              "over_five_seconds": 30
+            },
+            "AQUA": {
+              "max_seconds": 28.591667890548706,
+              "over_five_seconds": 39
+            },
+            "GRID": {
+              "max_seconds": 36.227368116378784,
+              "over_five_seconds": 34
+            },
+            "FERRY": {
+              "max_seconds": 18.502259016036987,
+              "over_five_seconds": 30
+            },
+            "RECON": {
+              "max_seconds": 25.612437963485718,
+              "over_five_seconds": 42
+            },
+            "MAT": {
+              "max_seconds": 26.968005895614624,
+              "over_five_seconds": 43
+            },
+            "GEN": {
+              "max_seconds": 28.79496121406555,
+              "over_five_seconds": 29
+            },
+            "HAVEN": {
+              "max_seconds": 18.71292495727539,
+              "over_five_seconds": 20
+            },
+            "REIN": {
+              "max_seconds": 42.711376905441284,
+              "over_five_seconds": 49
+            },
+            "ARCH": {
+              "max_seconds": 25.617676973342896,
+              "over_five_seconds": 31
+            },
+            "REBLD": {
+              "max_seconds": 23.541579008102417,
+              "over_five_seconds": 44
+            }
+          },
+          "3": {
+            "PORT": {
+              "max_seconds": 32.582659006118774,
+              "over_five_seconds": 27
+            },
+            "ISLE": {
+              "max_seconds": 26.53988814353943,
+              "over_five_seconds": 37
+            },
+            "AQUA": {
+              "max_seconds": 27.397693157196045,
+              "over_five_seconds": 33
+            },
+            "GRID": {
+              "max_seconds": 22.368998050689697,
+              "over_five_seconds": 32
+            },
+            "FERRY": {
+              "max_seconds": 29.38867688179016,
+              "over_five_seconds": 20
+            },
+            "RECON": {
+              "max_seconds": 28.943116188049316,
+              "over_five_seconds": 53
+            },
+            "MAT": {
+              "max_seconds": 22.611676931381226,
+              "over_five_seconds": 42
+            },
+            "GEN": {
+              "max_seconds": 32.054646015167236,
+              "over_five_seconds": 29
+            },
+            "HAVEN": {
+              "max_seconds": 20.27508306503296,
+              "over_five_seconds": 17
+            },
+            "REIN": {
+              "max_seconds": 40.19341588020325,
+              "over_five_seconds": 41
+            },
+            "ARCH": {
+              "max_seconds": 26.72326397895813,
+              "over_five_seconds": 24
+            },
+            "REBLD": {
+              "max_seconds": 26.035526752471924,
+              "over_five_seconds": 41
+            }
+          }
+        },
+        "round_windows": {
+          "1": {
+            "first_at": 1792823479.5663402,
+            "closed_at": 1792824383.518068,
+            "close_source": "news_snapshot"
+          },
+          "2": {
+            "first_at": 1792824560.148386,
+            "closed_at": 1792825343.33916,
+            "close_source": "news_snapshot"
+          },
+          "3": {
+            "first_at": 1792825520.945497,
+            "closed_at": 1792826304.268478,
+            "close_source": "news_snapshot"
+          }
+        },
+        "unusable_quotes": 43,
+        "recorded_disconnect_frames": 0,
+        "disconnect_count_known": false,
+        "subscription_acknowledgements": [],
+        "disconnect_note": "The recorder may log disconnects only to its text log. Subscription acknowledgements may indicate reconnections but do not determine disconnect onset or reconstruct missed frames. Only explicit disconnect frames are applied to the replay.",
+        "quote_path_completeness_proven": false,
+        "gap_note": "Receive-time gaps include delays in observing round opens/closes; they do not prove missing server events."
+      },
+      "receipt_sha256": "275a4573727610c4b2f91c861aedce858c6eed0f0c199fba51b804c04f675690",
+      "frames_sha256": "ff76815be619b2b62310dcf77dce868ea31d80fbbe7e41137c64083c73401b20",
+      "archive_sha256": "c68a8fb332739e16ad25e069e92f5e24866dd56494e6129040c71740b7c7314a",
+      "receipt_at": 1792826305.620034,
+      "first_at": 1792823479.5663402,
+      "last_at": 1792826304.268478,
+      "frame_count": 23135
+    }
+  ],
+  "reference_results_sha256": null,
+  "baseline_results_sha256": "8c05ff9ab2f42c6a7f8aa144f043ccbb6b99f80038e8a8d4a6136fbb00b741af",
+  "started_at": 1792827931.225141
+}
