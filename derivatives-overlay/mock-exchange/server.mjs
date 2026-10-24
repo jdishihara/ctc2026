@@ -370,7 +370,7 @@ const REAL_OFFSETS = process.argv.includes('--real-offsets');
 function eventTimes(e) {
   const news = parseNaive(`${e.date}T${e.news}`);
   if (REAL_OFFSETS) {
-    const r = rateOfDay(e.date);
+    const r = rateOfDay(e.date) / FAST; // rateOfDay includes --fast: the offsets are nominal real seconds, like the schedule's
     return { news, move: news + 60 * r, snap: news + 120 * r };
   }
   return { news, move: parseNaive(`${e.date}T${e.move}`), snap: parseNaive(`${e.date}T${e.snap}`) };

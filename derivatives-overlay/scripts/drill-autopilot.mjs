@@ -86,6 +86,7 @@ if (Object.keys(patch).length) {
   await ta.fill(JSON.stringify(deepMerge(cur, patch)));
   await ov.getByRole('button', { name: /Validate/ }).click();
   await sleep(300);
+  await ov.getByRole('button', { name: 'Edge', exact: true }).click(); // back to the Edge tab: the text samples below read it
 }
 await ov.getByRole('button', { name: 'arm auto' }).click();
 await ov.getByText('AUTO ON', { exact: true }).waitFor({ timeout: 5_000 });
@@ -97,7 +98,10 @@ let lastNewsCount = 0;
 let lastState = null;
 let quietSince = null;
 let nextDiag = 0;
-const maxRealMs = (NEVENTS * 150 + 120) * 1000 / FAST + 60_000;
+// with --rate N the events are spaced 130 market minutes apart as ever, i.e. 150 * 52 / N nominal real seconds
+const rateOverride = Number(MOCK_ARGS[MOCK_ARGS.indexOf('--rate') + 1] || 0) || 0;
+const perEventSec = rateOverride ? (150 * 52) / rateOverride : 150;
+const maxRealMs = (NEVENTS * perEventSec + 120) * 1000 / FAST + 60_000;
 while (Date.now() - t0 < maxRealMs) {
   let stats, pnl, news;
   try {
@@ -138,7 +142,7 @@ while (Date.now() - t0 < maxRealMs) {
   // done: all events seen, the last one snapped (clock paused for the break or closed) and we are flat for 15 s
   if (events.length >= NEVENTS) {
     const sinceNews = row.t - cur.tNews;
-    if (sinceNews > (150 / FAST) + 5 && (gross === 0 || sinceNews > (150 / FAST) + 60)) {
+    if (sinceNews > (perEventSec / FAST) + 5 && (gross === 0 || sinceNews > (perEventSec / FAST) + 60)) {
       if (quietSince == null) quietSince = row.t;
       if (row.t - quietSince > 5) { cur.pnlAfter = pnl.total_pnl; cur.ordersAfter = stats.orderPosts; cur.grossEnd = gross; break; }
     } else quietSince = null;
