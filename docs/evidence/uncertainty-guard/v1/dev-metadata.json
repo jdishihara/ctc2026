@@ -1,0 +1,701 @@
+{
+  "mode": "dev",
+  "source_competition_id": "6650d983-93c3-45d2-96dd-15209dcd8320",
+  "year": "1786",
+  "official_receipt": {
+    "at": 1792817469.3986921,
+    "kind": "settlement",
+    "competition_id": "6650d983-93c3-45d2-96dd-15209dcd8320",
+    "pnl": 141.16000000000048,
+    "prices": {
+      "PORT": 76.11,
+      "ISLE": 50.51,
+      "AQUA": 25.51,
+      "GRID": 38.83,
+      "FERRY": 21.36,
+      "RECON": 51.69,
+      "MAT": 35.58,
+      "GEN": 37.84,
+      "HAVEN": 42.81,
+      "REIN": 90.0,
+      "ARCH": 302.0,
+      "REBLD": 212.38
+    },
+    "positions": [
+      {
+        "symbol": "GRID",
+        "quantity": -11,
+        "average_price": 38.901250000000005,
+        "current_price": 38.83,
+        "unrealized_pnl": 0.7837500000000688,
+        "realized_pnl": 39.91625000000009
+      },
+      {
+        "symbol": "ARCH",
+        "quantity": 0,
+        "average_price": null,
+        "current_price": 302.0,
+        "unrealized_pnl": null,
+        "realized_pnl": 42.87000000000006
+      },
+      {
+        "symbol": "HAVEN",
+        "quantity": -12,
+        "average_price": 38.86705882352941,
+        "current_price": 42.81,
+        "unrealized_pnl": -47.315294117647085,
+        "realized_pnl": -36.544705882352886
+      },
+      {
+        "symbol": "PORT",
+        "quantity": -7,
+        "average_price": 70.32083333333334,
+        "current_price": 76.11,
+        "unrealized_pnl": -40.524166666666616,
+        "realized_pnl": 24.36416666666669
+      },
+      {
+        "symbol": "AQUA",
+        "quantity": -50,
+        "average_price": 27.785245454545453,
+        "current_price": 25.51,
+        "unrealized_pnl": 113.7622727272726,
+        "realized_pnl": 26.167727272727262
+      },
+      {
+        "symbol": "ISLE",
+        "quantity": -30,
+        "average_price": 50.94500000000001,
+        "current_price": 50.51,
+        "unrealized_pnl": 13.050000000000281,
+        "realized_pnl": 3.829999999999991
+      },
+      {
+        "symbol": "FERRY",
+        "quantity": 0,
+        "average_price": null,
+        "current_price": 21.36,
+        "unrealized_pnl": null,
+        "realized_pnl": 0.8000000000000185
+      }
+    ],
+    "clock": {
+      "competition_id": "6650d983-93c3-45d2-96dd-15209dcd8320",
+      "state": "ready",
+      "fictional_time": "1786-05-31T16:00:00",
+      "elapsed_active_seconds": 2460
+    }
+  },
+  "coverage": {
+    "news_count": 865,
+    "quote_path_completeness_proven": false
+  },
+  "parameters": {
+    "analog": true,
+    "min_edge": 0.025,
+    "edge_full": 0.03,
+    "sd_mult": 0.7,
+    "sigma": 15,
+    "k": 100,
+    "passive": 0.75,
+    "warmup": 20,
+    "max_cross": 0.02,
+    "carry": 0.5,
+    "ent_cut": 1.2,
+    "cone_w": 1,
+    "cone_s0": 20,
+    "cone_nu": 0,
+    "isl_w": 0,
+    "final_exact": true,
+    "final_edge": 0.005,
+    "final_edge_full": 0.005,
+    "basket_edge": 0.01,
+    "basket_participation": 0.5,
+    "announce_wait": 60
+  },
+  "fraction": 0.1,
+  "latencies": [
+    0.25,
+    1.0,
+    3.0
+  ],
+  "frame_count": 17949,
+  "first_at": 1792814705.939921,
+  "last_at": 1792817467.460374,
+  "frames_sha256": "b1964d1a3c40244be2906a5a53d402d9020050eaca0b8b0fb23bc9b09ad942db",
+  "baseline_sha256": "f247d82b4e041120583d89a56b11d937314325523e8f8a07d490c44fa7635fdc",
+  "source_sha256": {
+    "ctc/analog.py": "c606eefeab7cd0b5015b7b46cd831496d995f4b50030784ff2dd8171636938b2",
+    "ctc/sim.py": "91da5850c313b94835364dabd7622fb8282382a710cf324c99471d9c29021273",
+    "ctc/accounting.py": "b9cddb93959b277fe9ab7c6089e84dee2c092a2d049c466212878a5531ff0f99",
+    "ctc/strategies.py": "4c667bebeb84dfe11883205656702bb3f66545661f01a0685c1e4c24f6b2680c",
+    "ctc/wind.py": "2e91425031bae6c2d60bb92a2e529cfc1222778820f126a29be836a4ec026f84",
+    "ctc/__init__.py": "e178e73a3b0452a098d1cfa7f909ad65a3463457389018ab626ac281e1b634fe",
+    "ctc/price_signal.py": "aeb4b06e402231ac82e3b34ea7d1244346ee9b029036c4ffeb926112513b1fa4",
+    "ctc/valuation.py": "e19ceef5dc38154d1889065c4a85aae0d99b159267a0503a4c4fc3c7054292cd",
+    "ctc/basket.py": "ad08208095eb32a51fe19625b0e0929060a35bc4846ff4f8843e316f87d9a522",
+    "ctc/history.py": "c9a93c117e4df869a4e8a34b03f0b656ada231bdf41864778d536ce129b91521",
+    "ctc/ladder.py": "da0c82abb297719dc1ea6d244558703072c881d3bd3b3fa43dc0885ae07f1f25",
+    "ctc/price_signal.json": "3d421c258d939b6a0adc5db9f764b416c15be47cc684accc2187e074f11750f8",
+    "ctc/valuation_params.json": "06439094fc54318a8bfd1854fc2765d6ef542d1acad23de1836a4db47bf3b80b",
+    "ctc/ladder.json": "b70e7a8c5672dc6e4955c39fac62a70709ba29b39f00eead9add3cb4feeba5a4",
+    "ctc/damage_params.json": "c274463749d70b6ae85b6981fb029423c76e6fe5db0224e0d1aec83a70d22415",
+    "ctc/storm_sample.npz": "76da0f456aaadb8baee99920619db79c6f16e928dfab82ad33aade297a4b7c0f",
+    "ctc/analog_library.npz": "22694387c3b612f5c20853feb9143e1bf8b8f5722a845da8ed584ab1b30bdf09",
+    "data/case.json": "bcd0eb79c5a89b6625c17f2c233a686a04fafc75093e8a57d3c90f3b09972839",
+    "bot/live.py": "885e22c3d4f311081058ea1ea7bae3a4d50b156d8ec456b7534e69229de352e8",
+    "bot/http_transport.py": "5cc2dd41e418b794eac9dde2548fd40abcef605af303057ff633bd11d8b92162",
+    "scripts/experiment_uncertainty_guard.py": "197a83ea460951c515dd6df15e7943a1d3fac6d6289a239918f27c88e9503666",
+    "scripts/experiment_final_reports.py": "0f8ac851ef99c539aa3a6834b9a259658f4545448e4962720cb3fd4f032a5ad6",
+    "scripts/experiment_execution_costs.py": "f947346da806425aa4c5a810ffa9f775f3c13a4bd33fe5fdbe4cf97d45b009d1",
+    "scripts/replay_captured_market.py": "10741686ba5ebbff2758bc488fb2a34ef61183b2d57ec3d91d895b1981784ef9",
+    "scripts/evaluate_observed_season.py": "f7f9113f5dba6e81bba35e5aed50f72b0df4d2853c4cae4d9565407846861576",
+    "docs/uncertainty-guard-plan.md": "b716a9e455d93358927d158e976f3f40799d3b0bb8a6ac03d637f5155c47e0ac"
+  },
+  "limitations": [
+    "Offline virtual fills do not establish actual account profit.",
+    "Development and previously viewed captures are reused data, not untouched holdouts.",
+    "The audit counts accepted passive risk additions, not every forecast error or later fill.",
+    "The candidate also caps fundamental reversals and cancels risk-increasing working orders.",
+    "Basket execution and its model-free hedges are outside this uncertainty gate.",
+    "No parameter selection or live activation occurs in this script."
+  ],
+  "seasons": [
+    451,
+    452,
+    453,
+    454,
+    455,
+    456,
+    457,
+    458,
+    459,
+    460,
+    461,
+    462,
+    463,
+    464,
+    465,
+    466,
+    467,
+    468,
+    469,
+    470,
+    471,
+    472,
+    473,
+    474,
+    475,
+    476,
+    477,
+    478,
+    479,
+    480,
+    481,
+    482,
+    483,
+    484,
+    485,
+    486,
+    487,
+    488,
+    489,
+    490,
+    491,
+    492,
+    493,
+    494,
+    495,
+    496,
+    497,
+    498,
+    499,
+    500,
+    501,
+    502,
+    503,
+    504,
+    505,
+    506,
+    507,
+    508,
+    509,
+    510,
+    511,
+    512,
+    513,
+    514,
+    515,
+    516,
+    517,
+    518,
+    519,
+    520,
+    521,
+    522,
+    523,
+    524,
+    525
+  ],
+  "profile": "observed_touch",
+  "profile_table": {
+    "PORT": {
+      "spread": 0.007500493453516776,
+      "bands": [
+        0.003750246726758388
+      ],
+      "bid": [
+        20
+      ],
+      "ask": [
+        20
+      ]
+    },
+    "ISLE": {
+      "spread": 0.003921936052312029,
+      "bands": [
+        0.0019609680261560144
+      ],
+      "bid": [
+        30
+      ],
+      "ask": [
+        30
+      ]
+    },
+    "AQUA": {
+      "spread": 0.004908206894931459,
+      "bands": [
+        0.0024541034474657294
+      ],
+      "bid": [
+        50
+      ],
+      "ask": [
+        50
+      ]
+    },
+    "GRID": {
+      "spread": 0.004085802904352634,
+      "bands": [
+        0.002042901452176317
+      ],
+      "bid": [
+        40
+      ],
+      "ask": [
+        40
+      ]
+    },
+    "FERRY": {
+      "spread": 0.004022137936177127,
+      "bands": [
+        0.0020110689680885637
+      ],
+      "bid": [
+        80
+      ],
+      "ask": [
+        80
+      ]
+    },
+    "RECON": {
+      "spread": 0.0038402457757297013,
+      "bands": [
+        0.0019201228878648507
+      ],
+      "bid": [
+        50
+      ],
+      "ask": [
+        50
+      ]
+    },
+    "MAT": {
+      "spread": 0.0034227509946211064,
+      "bands": [
+        0.0017113754973105532
+      ],
+      "bid": [
+        70
+      ],
+      "ask": [
+        70
+      ]
+    },
+    "GEN": {
+      "spread": 0.003594814679434296,
+      "bands": [
+        0.001797407339717148
+      ],
+      "bid": [
+        60
+      ],
+      "ask": [
+        60
+      ]
+    },
+    "HAVEN": {
+      "spread": 0.010899182561307818,
+      "bands": [
+        0.005449591280653909
+      ],
+      "bid": [
+        25
+      ],
+      "ask": [
+        25
+      ]
+    },
+    "REIN": {
+      "spread": 0.002674392689993257,
+      "bands": [
+        0.0013371963449966284
+      ],
+      "bid": [
+        20
+      ],
+      "ask": [
+        20
+      ]
+    },
+    "ARCH": {
+      "spread": 0.003991614255765382,
+      "bands": [
+        0.001995807127882691
+      ],
+      "bid": [
+        20
+      ],
+      "ask": [
+        20
+      ]
+    },
+    "REBLD": {
+      "spread": 0.0029206274411311415,
+      "bands": [
+        0.0014603137205655707
+      ],
+      "bid": [
+        40
+      ],
+      "ask": [
+        40
+      ]
+    }
+  },
+  "calibration": {
+    "PORT": {
+      "usable_quotes": 2119,
+      "median_spread": 0.007500493453516776,
+      "effective_spread": 0.007500493453516776,
+      "median_bid_size": 20,
+      "median_ask_size": 20
+    },
+    "ISLE": {
+      "usable_quotes": 1422,
+      "median_spread": 0.003921936052312029,
+      "effective_spread": 0.003921936052312029,
+      "median_bid_size": 30.0,
+      "median_ask_size": 30.0
+    },
+    "AQUA": {
+      "usable_quotes": 1760,
+      "median_spread": 0.004908206894931459,
+      "effective_spread": 0.004908206894931459,
+      "median_bid_size": 50.0,
+      "median_ask_size": 50.0
+    },
+    "GRID": {
+      "usable_quotes": 1464,
+      "median_spread": 0.004085802904352634,
+      "effective_spread": 0.004085802904352634,
+      "median_bid_size": 40.0,
+      "median_ask_size": 40.0
+    },
+    "FERRY": {
+      "usable_quotes": 1400,
+      "median_spread": 0.004022137936177127,
+      "effective_spread": 0.004022137936177127,
+      "median_bid_size": 80.0,
+      "median_ask_size": 80.0
+    },
+    "RECON": {
+      "usable_quotes": 1220,
+      "median_spread": 0.0038402457757297013,
+      "effective_spread": 0.0038402457757297013,
+      "median_bid_size": 50.0,
+      "median_ask_size": 50.0
+    },
+    "MAT": {
+      "usable_quotes": 1038,
+      "median_spread": 0.0034227509946211064,
+      "effective_spread": 0.0034227509946211064,
+      "median_bid_size": 70.0,
+      "median_ask_size": 70.0
+    },
+    "GEN": {
+      "usable_quotes": 1140,
+      "median_spread": 0.003594814679434296,
+      "effective_spread": 0.003594814679434296,
+      "median_bid_size": 60.0,
+      "median_ask_size": 60.0
+    },
+    "HAVEN": {
+      "usable_quotes": 2223,
+      "median_spread": 0.010899182561307818,
+      "effective_spread": 0.010899182561307818,
+      "median_bid_size": 25,
+      "median_ask_size": 25
+    },
+    "REIN": {
+      "usable_quotes": 645,
+      "median_spread": 0.002674392689993257,
+      "effective_spread": 0.002674392689993257,
+      "median_bid_size": 20,
+      "median_ask_size": 20
+    },
+    "ARCH": {
+      "usable_quotes": 1494,
+      "median_spread": 0.003991614255765382,
+      "effective_spread": 0.003991614255765382,
+      "median_bid_size": 20.0,
+      "median_ask_size": 20.0
+    },
+    "REBLD": {
+      "usable_quotes": 1030,
+      "median_spread": 0.0029206274411311415,
+      "effective_spread": 0.0029206274411311415,
+      "median_bid_size": 40.0,
+      "median_ask_size": 40.0
+    }
+  },
+  "baseline_metadata_sha256": "2f323a24a23c91c2caea9c611decf76b310149da2a682bb955af1d20a9b0e8e6",
+  "history_sha256": {
+    "season-451/feed.jsonl": "96ab0f96854b45d7f96ec016e187e16c887ce130be6ef6d8979d627cbd81a080",
+    "season-451/market.csv": "f1adbc1dabb772b4b7647471db46edbc65048ef7df6d3d8a171bf477f2a2d07b",
+    "season-451/settlement.json": "46ee8e1bd564af6b89eba94afcd264a4b910949ec155ff1e3bcabdda1b2aab43",
+    "season-452/feed.jsonl": "be254cf57ba6ebc6c27300c34aaaef05e0092c6a8e25dc2afda7931eb483d5df",
+    "season-452/market.csv": "89103178ca1a7185cecb8cbcfb967bb1e76c5746cbe3401e04533731f10f24e2",
+    "season-452/settlement.json": "39c26dc1eac9cab8bfbffd5ddcaf5d18fefc32385621ba4e1a1317295a643e69",
+    "season-453/feed.jsonl": "55c96248a1b6db9d63261ff475c1d83c9261616caebe80801c4bee8d5bd9527c",
+    "season-453/market.csv": "38b78585566814f4d5491ceca209d4b14a5577cf7570117374b8c4672d505316",
+    "season-453/settlement.json": "6ff24f0a5493815771c9fae037f9e4efe1a50cf73c2faab52ca8b1238e2e8078",
+    "season-454/feed.jsonl": "597ffefeb1f3e3d7b7c499dc4a3e8edc01e39860cfa9dafaa5d86910d26f8ebc",
+    "season-454/market.csv": "1ab7f991639a76eb979ee03706e45964a4e07f507fb619e1da4a79aecc309aeb",
+    "season-454/settlement.json": "e6597d0abedd61e1f7a619697b80baa63dfb53b5fdc94c17def3aa99df1b17ec",
+    "season-455/feed.jsonl": "cd952d51b6a2b55ffd3666debb0ee9e21207b6ffa520f0956ad574cd0073e7b4",
+    "season-455/market.csv": "d700cc49963e225807b5113c5e939d587321817f0b0861a55cc6531ece29e3bb",
+    "season-455/settlement.json": "027348f82abe933292f1c88f06c2fadf65cfedd2e614c6f032d4778838806010",
+    "season-456/feed.jsonl": "6e619a6749ed938f28fcb4b7433c9e516333053c49a1207f7dadc6d54d0e27b8",
+    "season-456/market.csv": "dd968c99ba5e7103a28e374f43b223dc789b4a01337607f03c12a635a9c6486f",
+    "season-456/settlement.json": "a7dc5c695bdca29e4d0bf527f1764df46e0032e11842ac7b16069e648c24773a",
+    "season-457/feed.jsonl": "0ab59a18bba858f96b719e2373e0be49ab1e3fb23b583b0b8cb439492af4cee3",
+    "season-457/market.csv": "5b120f7f1140f355904bdc785d3705280baf6566abe791e4101e08df3d9a86c9",
+    "season-457/settlement.json": "c4e057e361c2d9e8c7fc605e5c5eb1c268d0877400c4f265a4792f9ef73b3e92",
+    "season-458/feed.jsonl": "ca52d0fc150f3f8800e198e773db0db73f21c4c16250717fa848825030924db1",
+    "season-458/market.csv": "006da61985e71b6edd7146e24d78b573a1bf09d946b3d7c7baccde67af1b50ac",
+    "season-458/settlement.json": "d76f761658e5ffafe36da5881272c60d22d78915af07abe0d5833c5418af706c",
+    "season-459/feed.jsonl": "b3ada087eae38b75412ad9b7863380c6b9aff1bb82836c38ab238273175080d5",
+    "season-459/market.csv": "0a4459fcb9c74652b14418f08d0c24dbcfc79f9497f4c438d77d60d85f8b789a",
+    "season-459/settlement.json": "ded4a2631fe327a406582c84769d4cca92d9ceadcf5dda41835a7f4a4e492dfc",
+    "season-460/feed.jsonl": "1f5e263679f09e015924e4f8f5d8df91ea20baefa3658245e8914da0ad43934f",
+    "season-460/market.csv": "68a2cbafb504beef255254f25415ec88d478f23cf86b6f680031f26e8dc198f1",
+    "season-460/settlement.json": "5ff2e6304ce9d93c9275fdc65f04dce633a17a5e5ef05aed68059a3cc4d3aa75",
+    "season-461/feed.jsonl": "47a37a6be65f3b214055b08a7a6b960f8cf76e0f6e4df9d2966d840c2209e5dd",
+    "season-461/market.csv": "a1b3230d2bfc69ac1a8791a9546775656bbfe90f9dfcb8936077b386a465fbf4",
+    "season-461/settlement.json": "bb57e1d35669443eb5b086f4559f4de8412b61f1a669b5ab1c32bba44ea21c05",
+    "season-462/feed.jsonl": "31439d654ccf1a954ecfe0590099e93eef029d284317f7e8e52c4cdee9c3d44f",
+    "season-462/market.csv": "06bdc647f4ed9134d89bef39d05c0da8e8d08a1724d597c018f202fbba5fcb44",
+    "season-462/settlement.json": "a852f9b87e15372c176be0211b5db3ab7e35d6977f0787b88b9c33b30488e05c",
+    "season-463/feed.jsonl": "04896a528b26628544680b8c101d9c69667b1367d41d3a480b85fc969e8b81a8",
+    "season-463/market.csv": "4364a0eb356556d8f7b2c726a5d24ca8d59566ffb81aed41befd9d2d2d3999ca",
+    "season-463/settlement.json": "7f410ed289214c24b839e7938f18ab63baa3b57c18813674df86bc2c157b28e8",
+    "season-464/feed.jsonl": "f1c4376e16d746f962128c59e41d5aac9dd400dbf83d5cfaccd6bd2c82a4fdff",
+    "season-464/market.csv": "814261c5c55828c744f1463f205d04ad38a228a52fc4b758f2c86e8b90e737aa",
+    "season-464/settlement.json": "4d3c7bd76dd4c37ec2c940f4fb3e4c62158be90e0bc635f49431baa034b459da",
+    "season-465/feed.jsonl": "e0ec2a81120d6f1d708ff69ff999802d3104e7132bc47c544efb2e997a11c1d5",
+    "season-465/market.csv": "c8ef2b1ad9cfbcb137efe9f61a5505f3b6b6ef842f8255fbbcf78f57308e941a",
+    "season-465/settlement.json": "578c9f15f4c5a6d2e2e4cd77c39d80b2b52315caa64ca0750a8c9c1e8cb3973e",
+    "season-466/feed.jsonl": "d669e6c7bfb700a8503111050fc24996582fe706350e52071309aeaba38eb315",
+    "season-466/market.csv": "e56e757f06523527298006adeee251590f631ec05cb4e36908498320a0450352",
+    "season-466/settlement.json": "8101d30934917a58c0c9076a133b3720c5c845d363a557c80202f4ce4de23a8c",
+    "season-467/feed.jsonl": "09c3eed505d40323f1e06976aa83fe50b06c7093be6f95dd121179d8f15a4a2b",
+    "season-467/market.csv": "0a830bb9af60b34c45bba653d065b73ab967364a66a53b19f9f87992a0e01e18",
+    "season-467/settlement.json": "d1b14b709c8192011bba4b458733fcaf0f590bdeed8344dc5d8dce36a60f3ae7",
+    "season-468/feed.jsonl": "5e98096ad46507c000bdb5d7b451957cb410052294401d08fd7783defa8457bc",
+    "season-468/market.csv": "41b8141c4c295b4dde0f88687bb5493ae4f58c8c1f5f33651dfede50cb86e88c",
+    "season-468/settlement.json": "25487e5d264694652a5ad18f53f6b92bf7e2d39836da848ef723e20b4e42b9fd",
+    "season-469/feed.jsonl": "97dfc3a90d995c2980a728cb80a86a9610c3481775705d61b80a40a3aa05e623",
+    "season-469/market.csv": "9dfd261ea963b415a68d2b2b84ad36d75cbc3c1d65d85e966fa9f536f857fb78",
+    "season-469/settlement.json": "ae1e8d6a78089c4aa13786d9191d82d7f4c3675993eacc84cbbf1ee6cda5f27c",
+    "season-470/feed.jsonl": "0ba4adf523dbb0c9aa9033c71205089c3002b08ad118a60154d5b7678a35e226",
+    "season-470/market.csv": "76f49c60ac63ec2878e59a228c8b1c5a06d57b4194c0a43e2e9d4acd0f9c864c",
+    "season-470/settlement.json": "5ba8ddc665917e7809db8f4b5098ce52cec43950cc20f2ac9ccb60e40eb2ac77",
+    "season-471/feed.jsonl": "a5c5ee52c701d54405062ea81e3e83e3833115f114c24b3d08cb0707fca1268c",
+    "season-471/market.csv": "63bead8d54dce50733bb509cfeba5b51674bbbea777cce3dc3784f3aabd12f3f",
+    "season-471/settlement.json": "09693bb540bf6921a56d9702ab9ee42d2201c6a4901e01136edf73fd35eb9ae1",
+    "season-472/feed.jsonl": "4d48e96b927afd58335f99ee16ac37ecc2e73b7a73c86468e6f9e3534709febc",
+    "season-472/market.csv": "71a72aae84e71417813d5fb22fee2d316b9ff892f7a929cdb23294866de157ff",
+    "season-472/settlement.json": "e2e2233b7957a8e54add5dbc8943d16c67b716c837882b32bdb12aeb0406c21d",
+    "season-473/feed.jsonl": "e1d00e6a9d703d99e5abff9c0a525b5992e29dfa9ad474818026ba81ef2a2700",
+    "season-473/market.csv": "c6fa003a607a01c2f430fd20d2cee7f13d87a18e7627cf8fba88e40e6519d4db",
+    "season-473/settlement.json": "528d646cabdce40f6b3467ae458f47fc09e354c4d775489e968f7f9d28dc7df0",
+    "season-474/feed.jsonl": "232b93e4db61878607fca2a291914068a4c7fa915d23b80d4b8904fbd227ec51",
+    "season-474/market.csv": "df8562dd1aabc75dd64627258b2e9af1d3424d03a955546588e3464e6ab3720a",
+    "season-474/settlement.json": "64a4fc353088d117986a9305a0c5aa161c6ffb890118faa238ba9f8d0fd4da6c",
+    "season-475/feed.jsonl": "68a70a7e2e0ef2e108d49fd565574130a5b03092ffd8c2a3a9c414c39c6c71ba",
+    "season-475/market.csv": "cf4e5fc41d843122b02b7fce2e58b33adc3157a9e7fa733016c044eae888011e",
+    "season-475/settlement.json": "d2a5db72fc76174cb9ff130cf68cfa06bbd5f47b18ba7529dea83d7970774892",
+    "season-476/feed.jsonl": "6da7065d9a0942dbedbeeefb4a7a5e7d0cd61d4b9ebbd8c3e6b86f0e1986d231",
+    "season-476/market.csv": "16928f18de071b9da9819f82ea40c7a13db47ba14e273bfa3ede837f04d24efc",
+    "season-476/settlement.json": "bd2e6c966eded4f19fd9d9c33ea4b7b5040eec8cba2bfd830f9e9cdffd5962da",
+    "season-477/feed.jsonl": "470deaeeeaefc3b74938738386c4c20c23c2b2d2c51960cfe2c885a8119c42e4",
+    "season-477/market.csv": "6a1fe9945fa72c9f0d6042fbef3f2b342d8fdbd69b6db6c360a4659518d91ff0",
+    "season-477/settlement.json": "f687c68c8acaa0a1bb741720477b79569c684307fd12688eb641d34711bfb521",
+    "season-478/feed.jsonl": "e6e23cba6675acabcdcfb056f138f1b5d6bfd88838c3de3fd531877576976e8f",
+    "season-478/market.csv": "7d764564d67ee3ede85eb170d2f14ba4f1ebd6b72fd0ba15229656b4e1b9ba2f",
+    "season-478/settlement.json": "8b806ba06409846dbcdf9c2bdbb72dd864b53a156036236c051e7592f1e4725e",
+    "season-479/feed.jsonl": "83c0a9f4b4b0b7c651b89563ead98d4eca4a8746573af6685d02986efcdbaeca",
+    "season-479/market.csv": "cb694667fcf814b11295edf36cd7fd88eea3605959fcb184dd1ea2e13fdceb53",
+    "season-479/settlement.json": "7755977d4ae1b589add100ad9958eee6fb5ec5ca7553ba2bfd486c13fa3dcb9e",
+    "season-480/feed.jsonl": "aef2c03af01cd12ae5e9dac486197a36119ca2b92c557ae715eafd633f97983f",
+    "season-480/market.csv": "b103f166b488b775cd7266e76d36259a02043d44499c9e1b8e9cfa6ef013aeed",
+    "season-480/settlement.json": "d90158a875e31ad3c5e22625b99a14b9c54995e177bebb12fb586aacff63d255",
+    "season-481/feed.jsonl": "efcb1b2814a69277b9538d6619e099c35acc1ac06092808e95c9a94f486ec355",
+    "season-481/market.csv": "7cf78969e7d52aaeb337d3ecd9d7965a23496e15e8c5d3fe8a42541178f892a3",
+    "season-481/settlement.json": "240308f495d1745b8c9c78ea8b48a3d1e3071aa2a81db4719dc7f99abfdaa879",
+    "season-482/feed.jsonl": "114bb952aa94838fa5500c3bc731f131a9ab5c7dbf083ec5763613787929435d",
+    "season-482/market.csv": "2d4142c865f8d2a3f90690a712bf8e296a180cac9272ab8e4d235e94816f3e84",
+    "season-482/settlement.json": "ff1a6b64629cb786adebeabe9255fd25c0d1844f97275da58ca15394f8d38095",
+    "season-483/feed.jsonl": "75bb060b04899811c3e1695bb76b5612a7fb20b6745c8a66d17163b370a1ead1",
+    "season-483/market.csv": "b84ec9f385f3f819cd940361ad896c29b12674e65c86f1bd235142d4bd934ab2",
+    "season-483/settlement.json": "ab159120210f027778423877a98be085c1eb596acbc81b3890aeb1224840bc99",
+    "season-484/feed.jsonl": "c0fba758c3e201b2d12d84a568612a2e85571c6e27ff2fca98a0ac826b147486",
+    "season-484/market.csv": "dc99d0e298dd62452370f9aa345f4d0e5231d1b99d1442c4566e0769454d3d20",
+    "season-484/settlement.json": "ad9b2637cf47b9ffbfea326c44abb26ef80bf49b3b93ba670b31f4733e2da306",
+    "season-485/feed.jsonl": "17140b13ac56ddea5acf8d3927685af0346f4a183f771ffd5cda6f0165f1b6fa",
+    "season-485/market.csv": "d9fa89064fff685cbd135a7fcf8978c462c3106d727573d06b8b794da5b1c64c",
+    "season-485/settlement.json": "b30b8d159cbb3d24e88b3f4bcad93d61282b693c999888f5f8deda56f707ff57",
+    "season-486/feed.jsonl": "60f3b7249c745e1c1511eadf5a5e1dcb3105c4b6bf68db724214b2c3cb523e6e",
+    "season-486/market.csv": "1564bd03bc15cdb698867c00f47787a71812335d1c0918b41368541338239a08",
+    "season-486/settlement.json": "6db3502b1ba98945f3296a04ed0445ff49eb2a6d849a4cf8976acadf9c352cf2",
+    "season-487/feed.jsonl": "03ffb1bb6b7d9239b6ac58c11f2709a89bc6a9d89e431e2ccee63078f4cd272c",
+    "season-487/market.csv": "3c35842d93a4c81756c7c278acee9e11f340fe98e5035ac4041880eac93e6241",
+    "season-487/settlement.json": "bd27c6ac47ded03e8d91f7b80791a324af7833548a3c863d1bfbab06168e229c",
+    "season-488/feed.jsonl": "50f2d6922f16d09f3924d282fbffad85c94193c1fa7563ed4bd459bf279f1a59",
+    "season-488/market.csv": "cfc1f281296a3d09234c88b26bfa60e358084023c9b3e411003c3424a35d9297",
+    "season-488/settlement.json": "cc35ae5cdc1cfe5a742a524f653075e872e77cad95dd9472bf76f74e3306342c",
+    "season-489/feed.jsonl": "2382af8b7f9d74ae2d69f265460e3a77d547e1fadea1bb6041c64be2b5069a60",
+    "season-489/market.csv": "9e923ca23e16fba89d10c102db6a3cbd0854b5985d94b98ae7d9ceb2405a3a4b",
+    "season-489/settlement.json": "8ac86920ca6157f9af97ff6372de60af85e3bae8f906431f407ef21bd40fda56",
+    "season-490/feed.jsonl": "43e410b7fd06edbfa8144c878bf7cadab3d49493448aab4224bcb15d6b779144",
+    "season-490/market.csv": "70a9df763b53aed2fd729bb3e713f518dab2baa3ad057a7c47aa79d19b64ebdf",
+    "season-490/settlement.json": "5872d9b63e67e4898c31da4191998d6acb2061e3d210935a3dee0e56fa699886",
+    "season-491/feed.jsonl": "2d74e3e65186a8bb3604c5ee874b14510cb98ba37fc54a45db1da0abeca8b8b8",
+    "season-491/market.csv": "7e6325dc8ae1b1a05295a59a4496251495cb94c2239a8bb4d8d1d56937201d5d",
+    "season-491/settlement.json": "8ce287689d0dfcac74f6da6f1d680c81aeb2c37dc20389882373c7e99d34e4ae",
+    "season-492/feed.jsonl": "31114942af354baf213ce9148c2055e9aec2ec6c021e11b84793158e9fc79bc0",
+    "season-492/market.csv": "c297012241b52226a941317d692e06d135a5f71fe7455c3283f604daff592841",
+    "season-492/settlement.json": "dad64e8e23707495ec695982e26ccdd15de02a0b644999790296ea0984184d0b",
+    "season-493/feed.jsonl": "14d6c8ebc110ad20961327c5b61a89f1f20e700c6b2afc3c4e40e325ee3d05bd",
+    "season-493/market.csv": "72f25c584361865b15c56b5bf68ac94038bafef40f414cc7bd14f4fc911a542c",
+    "season-493/settlement.json": "19e20181fb663ef1ea88976ab4a8bc1b5c91dbbf1f5808d9c57ff7455b4353a6",
+    "season-494/feed.jsonl": "690717cab237438e7f09c592bc9225dbd0e7789dad97bc6f85d4d89b884f3731",
+    "season-494/market.csv": "bcbc58a0b9da98015f309e35df157bfcebb0393e9c97ae863929c13c0840e317",
+    "season-494/settlement.json": "a6c94a8ae153937c0623bd68e6fc8f7ebfdb64815cbcaf08be492beeff21231b",
+    "season-495/feed.jsonl": "dd59886fb543ef65ffdd38a120dc06809475c7bd8ea616e16b6309f778b216d3",
+    "season-495/market.csv": "1e8eab6499d6f9b93da17183c286e764e7ef432e401920d9fe7a5b2a585f9552",
+    "season-495/settlement.json": "54ced950f0ffff6883ef89924220dc4fd3bf02069f6f6a438d898712fa5997a7",
+    "season-496/feed.jsonl": "6cf25598f0ca6e2b5808f9c82ce41d4fcef719fc3f0d5d7ebd91d5d1bfa4af3a",
+    "season-496/market.csv": "8a28efb31d52574923e0c08a6a48f7266bd3dacdc9ece32c08b09e8f27aeb6c2",
+    "season-496/settlement.json": "e2c845c21d4a218ff07a38a25a09999f222e9bcad4c324dedad0d0da1008ba82",
+    "season-497/feed.jsonl": "be4551592aebd7c791425b23d62a942d33a374bd0deab5fe0ee0915f70ac3506",
+    "season-497/market.csv": "6c48df3ea286889add637f0d60b4d475500843f4edcd4ff722487cf9731884b2",
+    "season-497/settlement.json": "1361e0a9dd464c8ecfa4673278f2907b9005fc27b4edce87f8eb1f5add00ad70",
+    "season-498/feed.jsonl": "38afae3fee53fdee50ae203581ebc5dacbd320325017c272e9181a4b036f435c",
+    "season-498/market.csv": "681d7f4bdd42ca89f300ace7d6254bdbf9ecf2279a13f3063064f75cf2e2cbcc",
+    "season-498/settlement.json": "a24d476ad8104537450f6fda2d99ec5e49b262c4522b85274245504f602d9dbe",
+    "season-499/feed.jsonl": "fb6f149b4904c1897018ced6a65cfb011b9e372efcc01dff68bca17e2840a1f2",
+    "season-499/market.csv": "b4fc734cb89adcc704e92643e6bcf7ccda746c3041b486371c0eca9a2a3b78af",
+    "season-499/settlement.json": "c923d1278e53326a41f2ac187770d8a2fa8c355244352a7576a3907afb99263f",
+    "season-500/feed.jsonl": "15c14ec1f8f330ba550caaefd6b8e4d8370a3191f3cd9659f5ee8829d0a8b4aa",
+    "season-500/market.csv": "708951f8b0e0bee46ca7edf0a3079e17b472d87d8f13a91a7ff7e65d6296be56",
+    "season-500/settlement.json": "9351abb7f5dbe262235f9d191ddd6e61190168300409eebb11cf22926e6eddd2",
+    "season-501/feed.jsonl": "b9f7032d67b4b4a142b29c52d42adc2aff44b9932d5a257df9e80004423d3c13",
+    "season-501/market.csv": "b5d5eefc7886c6de6b5742637de002471cd504fdccedccae1aff6bf3cac2b2e2",
+    "season-501/settlement.json": "5c18d97b0faf601782dc8d9dd995958dcb74d848e44fb249840c35ee7448515c",
+    "season-502/feed.jsonl": "258e999ee1ea1650f1bf5c105f2576fd1f6eb7d9655b503159cd4ab5aa60564a",
+    "season-502/market.csv": "69157587ad89054da34c59d8e0b470551467a271bab7433c2cfac6dca319960d",
+    "season-502/settlement.json": "963dd04be0287f138bc6bc351ee71595b08fca4e49421a387fcc6e403027950c",
+    "season-503/feed.jsonl": "ac0e1612240b756ed344ede20e81cf4ffda9cd92b3a748e85074c09cffe35912",
+    "season-503/market.csv": "a9fb5be76484be6f7ba3555ef47f0a085ef99f0cef219e32744d9cad6f984e8a",
+    "season-503/settlement.json": "e4cbc8ba56da2e8f8de302eee1b08fb46dffb4c1ce277757210999e95017a091",
+    "season-504/feed.jsonl": "844f188583dcbe6a332f926d79528a0b98966afa3d4d9bcde9ddf7f7143b87cd",
+    "season-504/market.csv": "0b816bd8974ca5edeaa4314be0da6ff04a94a53b301f6782ea062571ff171ef7",
+    "season-504/settlement.json": "afc89d0899dd36f62bd12c16f2ccc51d63173906fcb5a5ac08f14d72c26d7ca4",
+    "season-505/feed.jsonl": "08b2ecb8e9773f03a8139bdfd57d008fc1910ef0f6bba6e5820b4982acde9e41",
+    "season-505/market.csv": "50b724c5b16b61dd06cd435d14d8d2c5cd0269cfd59f872b0e715570974c2aa6",
+    "season-505/settlement.json": "909c1dd053c4c2163a6b4994ad210f66e03e994b9ceb9448a7111e44dc5396e0",
+    "season-506/feed.jsonl": "5bccc81aeca0470b0d0263085ef7374c88c8e198802958e351857cd4b618ee12",
+    "season-506/market.csv": "d7456d6c9ac41e1a7f8ee20979f5680b38644e44be87ea34d7caf8aee43a44d6",
+    "season-506/settlement.json": "f0f0ebc51e31c32ca77a08772b920a2e014b54a67b43f1afdfa065a1649271e5",
+    "season-507/feed.jsonl": "a323a9e1554fb57969da847b05ea071a2ec529a01bf916cc3b953fd2bdbcc58e",
+    "season-507/market.csv": "1a3edbc6a8fe0e2e15d3ff7ecb315afe8e11d287d21c4f8f01514cb47d1f773d",
+    "season-507/settlement.json": "422cc5ec1c423a80299b869f6c55caf9e3963a3092f34f18fde6b78b477347eb",
+    "season-508/feed.jsonl": "9319bab5f36afa10e2bd907de33990f8f51bc68df5193672d7f98215e6a19520",
+    "season-508/market.csv": "0d77600a74eeb19d920db8f9ee3b5805f07c93946855b51c4ccca99eea42bebd",
+    "season-508/settlement.json": "f91b0ae3574f3bd7f84bdbab0839f51f820d1eecde5cce17f58b0304664cb408",
+    "season-509/feed.jsonl": "feebd453813713550a716617ff520889962a455eca461b0ece5a5b2a803c7780",
+    "season-509/market.csv": "e287b1c358c2b6deb40ba02a4dbda2cdda02b7498a1ec653d226d1acccf5f7d7",
+    "season-509/settlement.json": "6b2d215fbf2644aea50c6ba7df2686a1b7e2b9530fdc10b123cad5723ee4e611",
+    "season-510/feed.jsonl": "405c2a7a9cc12cc9bc508a7288d2c780c37d4d7925f9a092632f31ca2c956530",
+    "season-510/market.csv": "48fc51ac58630b3bbc34cb34c8f1835c531e08737a7902c484ab1fe82f5a7df7",
+    "season-510/settlement.json": "cb17899f2cdce096b8d381e955423cd2c309f8035cb51b409ad79003ab15de58",
+    "season-511/feed.jsonl": "861d8dfdbbe4e7b7ccc021a1220260221e9d36f07cd999b925f1cab6bb358ba1",
+    "season-511/market.csv": "a94028b01c666944009f9c01b864b1b9b1a1dd5212c6fd9bcde98e3488e70634",
+    "season-511/settlement.json": "18a72f78224b6d6a3d57c9412507bcf1b7120677cebf0e340bf2f89870f4b863",
+    "season-512/feed.jsonl": "73bafbbb0647a482930784d57dcb75a9d674e5f46f3ce354173d19240fc3a20b",
+    "season-512/market.csv": "f5b707e3011ee58a04ea459165396cecd9c376821245eceaee97b4300796cc99",
+    "season-512/settlement.json": "1a5c6963149502d593caf88912216b28591a479e89ecbb432bbf13c6d22b0a35",
+    "season-513/feed.jsonl": "3551c75a4cda5cd9e4a77ce22d2b692108c7c3a2adde1448b0bc61708c712e81",
+    "season-513/market.csv": "dfc2e4a47073c70034431fea54b61dbed1d6792b27d96ca4e1b64a55f408f613",
+    "season-513/settlement.json": "3c3d4e4196450c0f8e727885c47184a68d33166aacfc9c37dd08730c59d7b560",
+    "season-514/feed.jsonl": "6824792fe03bc7c7ca0f1d9e74d422c4de209d38f913d506cd35f2c638c71f7a",
+    "season-514/market.csv": "f9a007a4b028f08c5894f7168e4d3ca29b26de342c69c0873fbb156ac23c9eeb",
+    "season-514/settlement.json": "b3e262921b8b4864377b36afdc8432043336be18a67740304cf2aec2d4e4e77e",
+    "season-515/feed.jsonl": "9a497b88b62858e683b074364f33d202f4d5384d3538cec199448ba97a12be1f",
+    "season-515/market.csv": "421a66b98895e97b3fb3291699006d94b37bed53dea67d0fbb15fc3bd35c5619",
+    "season-515/settlement.json": "616c2850c38684bf6c123435d4d0f74ae923a5511e47fe51f4c08a11bfb20e01",
+    "season-516/feed.jsonl": "1c008d17204d10af5ea9e7585d30081ee79f38eb9f04523376039238eae8263d",
+    "season-516/market.csv": "4af222e6841aaa81450bc61945ce97d541c705b7b8d8dc5505a63301b2809f40",
+    "season-516/settlement.json": "4cffa6002a1e5259604d053805ab4f6314d30e02f476d1eadbd21c6ed34d14a3",
+    "season-517/feed.jsonl": "1b652ed9ec5caafe316b85477553fb0fbc9438d9f65d81acb090b1ed12c4f411",
+    "season-517/market.csv": "8f24edaf267bad3a75bba2580e23fc11886b7306c1c42ae2233f880af26bf3c7",
+    "season-517/settlement.json": "5a372c4b33296e16b770a3a49a6b4f32615ebc3915dcf760a473ed025068238c",
+    "season-518/feed.jsonl": "502cae87e89b6129a9454a3119d7efa1ec5a836520dd4487147a540e880970e2",
+    "season-518/market.csv": "2678da163e10c5e44ede3a75fa3c3ff7b50a9466787080e8a56b01fcc170e404",
+    "season-518/settlement.json": "efc5312f532045483a026677ca5a3d79b66f9daf7a5129e51197aaf8309bb56b",
+    "season-519/feed.jsonl": "bc9c2fb44503003be2782f08c8de7af1df00c661179a0d2d4dace6f25abc25d4",
+    "season-519/market.csv": "64f51331f1b05c94fafa49df13e01124769ac0c67078c751f6bf6d1eb51e78a2",
+    "season-519/settlement.json": "12cad435d6eeef5b28b03c81cddf78b34159072756692139a25701a16671a5fa",
+    "season-520/feed.jsonl": "6c2d0ea282931709e70abe8fbb8470f6c5545188f549c2e21db125a873f43b9e",
+    "season-520/market.csv": "38124a3f207e70bab6db2bd694b95b2ca2dcb5a4a00c8a9fa5bfc84f12303048",
+    "season-520/settlement.json": "d172d20fb315f65eaf70ddc2042117a780158fc03405313307007f430375967d",
+    "season-521/feed.jsonl": "6e562ead669f115b48bce08ffc620d12be8aeb9a5205ab99cedad6fa5a8a8dfe",
+    "season-521/market.csv": "48bc54cb658d38f1a3dcbf35c7bcb587137ef26d2203eb39ed3cc34aa7e5b5e7",
+    "season-521/settlement.json": "d438ac594c85a839752b11767a806005eadadc862c3384391862650de1668f0d",
+    "season-522/feed.jsonl": "c43d2f474772275de2f23f004510452ebc2ca91495af0984969c2035fa85a624",
+    "season-522/market.csv": "8e2dd9de07308d846aa1049fee3a17372da89f4bf535f63564c36db67d52846e",
+    "season-522/settlement.json": "d68e1b7e227ae46833d5e618bc9597b604201e4171c03633aec554055fcb199f",
+    "season-523/feed.jsonl": "3080c3794a795655a5bf6731b827783f0aeb029949a8e9cbb1492a9afeafd89d",
+    "season-523/market.csv": "4dfdeedc003bce953cfd6b8cf69f51933cfd8a92b3d682271e4e246981187515",
+    "season-523/settlement.json": "a85e39c8028b55b3e0d0c017f99307e89cbfffa0b246ebc8b1b0efd3a60026f5",
+    "season-524/feed.jsonl": "fbab7f3010c1b0eeb1ef7afc918d8fb11c1cd3352e3d81448eda23fa62b5f112",
+    "season-524/market.csv": "ed7d07a20b1dfe286841cb003844b1f9847746bc5ed7e78f01f068650b5d6919",
+    "season-524/settlement.json": "2a3c088c24c2353a25577853eeae6b840f56ed60030a9bf8707af39d9a9eb34b",
+    "season-525/feed.jsonl": "fa94a2089dbfa1a489d7b842ed73d20dcbe01ec05e9e2b08ce7aee1492dd0935",
+    "season-525/market.csv": "8e24a8a553bb383af56ce0fb4ed0a94bd30c47ba880c04e28ea01bedb9aba503",
+    "season-525/settlement.json": "e01f823e081e40212a3aa3fa11eaaf6403d4bb052bea1756d770280b64145354"
+  }
+}

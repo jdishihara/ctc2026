@@ -1,0 +1,64 @@
+{
+  "runs": 24,
+  "elapsed_seconds": 25.23879116700118,
+  "overall": {
+    "scenarios": 12,
+    "baseline_mean": 1837.0541666666672,
+    "candidate_mean": 1835.854166666667,
+    "baseline_losses": 0,
+    "candidate_losses": 0,
+    "baseline_worst": 1462.740000000003,
+    "candidate_worst": 1461.5400000000022,
+    "candidate_best": 2171.7500000000023,
+    "mean_pnl_change": -1.2000000000004245,
+    "improved": 0,
+    "declined": 12,
+    "zero_trade_scenarios": 0
+  },
+  "by_latency": {
+    "0.25": {
+      "scenarios": 4,
+      "baseline_mean": 2132.0250000000005,
+      "candidate_mean": 2130.8250000000007,
+      "baseline_losses": 0,
+      "candidate_losses": 0,
+      "baseline_worst": 2097.749999999999,
+      "candidate_worst": 2096.5499999999993,
+      "candidate_best": 2171.7500000000023,
+      "mean_pnl_change": -1.199999999999818,
+      "improved": 0,
+      "declined": 4,
+      "zero_trade_scenarios": 0
+    },
+    "1": {
+      "scenarios": 4,
+      "baseline_mean": 1845.0925000000004,
+      "candidate_mean": 1843.8924999999997,
+      "baseline_losses": 0,
+      "candidate_losses": 0,
+      "baseline_worst": 1829.909999999999,
+      "candidate_worst": 1828.7099999999982,
+      "candidate_best": 1881.900000000001,
+      "mean_pnl_change": -1.2000000000007276,
+      "improved": 0,
+      "declined": 4,
+      "zero_trade_scenarios": 0
+    },
+    "3": {
+      "scenarios": 4,
+      "baseline_mean": 1534.0450000000008,
+      "candidate_mean": 1532.845,
+      "baseline_losses": 0,
+      "candidate_losses": 0,
+      "baseline_worst": 1462.740000000003,
+      "candidate_worst": 1461.5400000000022,
+      "candidate_best": 1634.139999999999,
+      "mean_pnl_change": -1.2000000000007276,
+      "improved": 0,
+      "declined": 4,
+      "zero_trade_scenarios": 0
+    }
+  },
+  "baseline_uncertain_passive_orders": 24,
+  "candidate_uncertain_passive_orders": 0
+}
