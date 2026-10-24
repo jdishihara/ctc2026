@@ -1,12 +1,12 @@
 # Competition readiness — 2026-10-24
 
-Status updated after the 09:33 UTC recognition review (05:33 EDT). One complete small-size live season
+Status updated after the 10:02 UTC capture-247 blend review (06:02 EDT). One complete small-size live season
 has a verified settlement receipt. The next trial contains mixed activity.
 Live practice remains stopped pending shared-account ownership clarification.
 Market recording and offline evaluations continue.
 
-**Validation limitation:** all 18 complete storm tracks in closed captures
-241–246 exactly match tracks in the fitted analog training library. Their
+**Validation limitation:** all 21 complete storm tracks in closed captures
+241–247 exactly match tracks in the fitted analog training library. Their
 replays and the +$141.16 actual completed trial therefore do not establish
 performance on unfamiliar weather. Source-freeze dates describe chronology,
 not independence from model training. See
@@ -16,8 +16,9 @@ retained evidence and implications for the prior reports.
 ## What the evidence supports
 
 The historical strategy is profitable on average in the local simulator, but
-losing seasons remain. The earlier live loss exposed execution defects; those
-defects have been fixed and regression-tested. One completed live season was
+losing seasons remain. The earlier live loss exposed execution defects; reviewed
+corrections have been regression-tested, while the latest cleanup failure remains
+under investigation. One completed live season was
 positive; consistent live profitability has not been established. Neither the historical average nor the test count
 establishes a probability of winning the competition.
 
@@ -48,6 +49,13 @@ the source freezes, but its three weather tracks exactly match fitted-library
 rows 735–737. These remain offline execution diagnostics on known training
 weather; see [observed-season-246.md](observed-season-246.md).
 
+Capture 247 reverses that result: 15 of 16 full-supervisor settings lose money,
+with mean −$332.11, worst −$573.91 and primary −$239.99. Only four complete;
+nine finish flat after stopping and three retain REIN −6. Eleven independent
+reruns and the complete source/input/output audit confirm the result. Its three
+weather tracks also repeat training. See
+[observed-season-247.md](observed-season-247.md).
+
 A separate 80-setting cleanup experiment was rejected after independent
 review. Its newer quotes did not consistently reduce risk: mean cleanup time
 across the twelve loss stops rose from 96.00 to 98.25 seconds, and the worst
@@ -70,6 +78,12 @@ increase from 12 to 14, and cleanup attention receipts increase from 2 to 6.
 All 75 unmatched development pairs remain identical. Independent audits and
 representative reruns verify both findings. The candidate stays out of
 production; see [repeat-prefix.md](repeat-prefix.md).
+
+A fixed 50/50 recognition blend passes all 96 settings on captures 241–246,
+but fails the supplemental capture-247 check: twelve of sixteen settings lose,
+the primary falls to −$319.63, and two attention outcomes retain more exposure
+than baseline. Independent audits confirm both sets of results. Its reviewed
+optional launcher remains unmerged. See [repeat-blend.md](repeat-blend.md).
 
 ## Historical data and evaluation
 

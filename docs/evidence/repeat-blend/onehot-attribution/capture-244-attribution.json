@@ -1,0 +1,1658 @@
+{
+  "scope": "Accounting of existing audited closed capture 244 traces only; no new performance run.",
+  "frozen_source_commit": "357d9986babf2b21bd3bbdcc2e69550059f16154",
+  "audit_script_sha256": "aeac5c6113b7d30324c9d5e606c672294900aa011954df72bdc257ded92b7747",
+  "scenarios": [
+    {
+      "variant": "baseline",
+      "rtt_seconds": 0.25,
+      "displayed_depth_fraction": 1.0,
+      "basket_enabled": true,
+      "source_directory": "/var/folders/5_/4_9w4ch971l2mm9c6fqtg5400000gn/T/repeat-prefix-independent-baseline-ihx0dkmp/capture-244-0.25-1.0-1",
+      "source_sha256": {
+        "result.json": "59570bb4b1d69ab06e0907d2737473f811bbbee19573e9f202b0bc3272f3175d",
+        "request-trace.json": "a1e6861fd86d5e5eba090da3fc74340b038ac361d14e21d42f80325b9e60ff9d",
+        "fill-trace.json": "394a7726dfc95beb482a225704cc4824c6cb52042ee0422314cd35e33a2a79b5",
+        "last-quote-observations.json": "bc3c0827a1e2c9183a269765213e6d7b17992e3109621e4e8f2f9a2a1918156c",
+        "observations.json": "b9a041a597813a5e014acf3a9e6d4af9b0aa0b2c29721357e8a9746a039bc0f4",
+        "final-receipt.json": "417722b8d3566c24ac77dedfca20590f8b7121ebdb4539a3e332fa92e756cf29",
+        "cleanup-profile.json": "884e7923efd3bf0c5a8fdbcee6a630aac18836da1e495e4f2a93907f01d1a992",
+        "repeat-profile.json": "260f2399137d8130ab90ff9b0e369fb3003ffc76422df4441141fbe0d7a10d70"
+      },
+      "producer_result_fields_match": true,
+      "stop_at": 458.14223861694336,
+      "first_loss_observation": {
+        "observed_at": 458.14223861694336,
+        "positions_started_at": 456.89223861694336,
+        "positions_executed_at": 457.01723861694336,
+        "positions_completed_at": 457.14223861694336,
+        "pnl": -256.25999999999993,
+        "server_pnl": -256.2600000000011,
+        "stop_reason": "cumulative simulated P&L reached loss trigger (-256.26)"
+      },
+      "last_pre_cleanup_position_snapshot_at": 458.76723861694336,
+      "last_pre_cleanup_position_snapshot_pnl": -256.85999999999996,
+      "cleanup_started_at": 459.89223861694336,
+      "first_cleanup_position_snapshot_at": 460.76723861694336,
+      "first_cleanup_position_snapshot_pnl": -244.1100000000002,
+      "cleanup_completed_at": 504.89223861694336,
+      "cleanup_duration_seconds": 45.0,
+      "pre_cleanup_fills": 7,
+      "cleanup_fills": 8,
+      "conversions": 0,
+      "pre_cleanup_cash": 7526.32,
+      "cleanup_cash_flow": -7787.32,
+      "inventory_mark_removed_at_flat": 7770.43,
+      "pnl_change_first_cleanup_snapshot_to_flat": -16.889999999999844,
+      "final_flat_cash_pnl": -261.00000000000006,
+      "ex_post_frozen_inventory_diagnostic": {
+        "inventory_value_at_contemporaneous_mark": -7770.43,
+        "inventory_value_at_terminal_settlement": -7402.9,
+        "pre_cleanup_cash_plus_terminal_payoff": 123.42000000000007,
+        "terminal_payoff_minus_contemporaneous_mark": 367.53000000000065,
+        "terminal_cash_plus_payoff_minus_actual_flat_cash": 384.42000000000013
+      },
+      "lowest_marked_pnl": -261.0000000000018,
+      "cached_last_callback": {
+        "at": 455.89223861694336,
+        "round": 1,
+        "last_observed_age": 274,
+        "fair": {
+          "PORT": 56.80793766175753,
+          "ISLE": 52.93258386344478,
+          "AQUA": 29.21957929791386,
+          "GRID": 35.556968936241965,
+          "FERRY": 20.213423614490942,
+          "RECON": 53.90280153605535,
+          "MAT": 35.79249024800278,
+          "GEN": 40.24195308064947,
+          "HAVEN": 34.33193996139894,
+          "REIN": 85.81972945366519,
+          "ARCH": 278.4954362476529,
+          "REBLD": 219.63253664876567
+        },
+        "fair_sd": {
+          "PORT": 10.7470400835097,
+          "ISLE": 1.2161292192650217,
+          "AQUA": 0.720683179959879,
+          "GRID": 1.254835019324129,
+          "FERRY": 0.19641990130875278,
+          "RECON": 1.8012214607196317,
+          "MAT": 0.6697863941392095,
+          "GEN": 0.6356627341779489,
+          "HAVEN": 7.971864384520947,
+          "REIN": 1.7440838774579932,
+          "ARCH": 19.682494922086203,
+          "REBLD": 5.486815974042223
+        },
+        "future_sd": {
+          "PORT": 17.515249076307203,
+          "ISLE": 6.585706111267654,
+          "AQUA": 4.20842250978537,
+          "GRID": 4.476083753669155,
+          "FERRY": 2.7644884662198392,
+          "RECON": 3.427617936162187,
+          "MAT": 1.664476435916896,
+          "GEN": 2.0182523739327993,
+          "HAVEN": 12.674023465892386,
+          "REIN": 7.068687778604575,
+          "ARCH": 37.68272538389206,
+          "REBLD": 11.510453486700829
+        },
+        "repeat_match": null,
+        "history_ready": true
+      },
+      "repeat_profile": {
+        "calls": 47,
+        "recognized": 0,
+        "rows": {}
+      },
+      "by_symbol": {
+        "PORT": {
+          "quantity_at_first_cleanup_snapshot": -20,
+          "entry_vwap": 69.23999999999998,
+          "exit_vwap": 70.17,
+          "pre_cleanup_cash": 1384.7999999999997,
+          "cleanup_cash_flow": -1403.4,
+          "first_cleanup_snapshot_midpoint": 70.09,
+          "last_pre_cleanup_snapshot_pnl": -29.800000000000182,
+          "first_cleanup_snapshot_pnl": -17.000000000000455,
+          "mark_change_between_snapshots_no_fills": 12.799999999999727,
+          "inventory_mark_removed_at_flat": 1401.8000000000002,
+          "pnl_change_first_cleanup_snapshot_to_flat": -1.5999999999997954,
+          "final_flat_pnl": -18.60000000000025,
+          "ex_post_frozen_inventory_diagnostic": {
+            "terminal_settlement_price": 44.69,
+            "inventory_value_at_contemporaneous_mark": -1401.8000000000002,
+            "inventory_value_at_terminal_settlement": -893.8,
+            "pre_cleanup_cash_plus_terminal_payoff": 490.9999999999998,
+            "terminal_payoff_minus_contemporaneous_mark": 508.0000000000001
+          },
+          "entry_fills": 2,
+          "cleanup_fills": 1,
+          "entry_first_at": 455.89223861694336,
+          "entry_last_at": 455.98836278915405,
+          "cleanup_first_fill_after_start_seconds": 6.375,
+          "cleanup_last_fill_after_start_seconds": 6.375
+        },
+        "ISLE": {
+          "quantity_at_first_cleanup_snapshot": -30,
+          "entry_vwap": 51.58,
+          "exit_vwap": 54.018,
+          "pre_cleanup_cash": 1547.3999999999999,
+          "cleanup_cash_flow": -1620.54,
+          "first_cleanup_snapshot_midpoint": 53.974999999999994,
+          "last_pre_cleanup_snapshot_pnl": -71.84999999999988,
+          "first_cleanup_snapshot_pnl": -71.84999999999988,
+          "mark_change_between_snapshots_no_fills": 0.0,
+          "inventory_mark_removed_at_flat": 1619.2499999999998,
+          "pnl_change_first_cleanup_snapshot_to_flat": -1.2900000000002478,
+          "final_flat_pnl": -73.14000000000013,
+          "ex_post_frozen_inventory_diagnostic": {
+            "terminal_settlement_price": 58.55,
+            "inventory_value_at_contemporaneous_mark": -1619.2499999999998,
+            "inventory_value_at_terminal_settlement": -1756.5,
+            "pre_cleanup_cash_plus_terminal_payoff": -209.10000000000014,
+            "terminal_payoff_minus_contemporaneous_mark": -137.25000000000009
+          },
+          "entry_fills": 1,
+          "cleanup_fills": 2,
+          "entry_first_at": 225.20623064041138,
+          "entry_last_at": 225.20623064041138,
+          "cleanup_first_fill_after_start_seconds": 11.375,
+          "cleanup_last_fill_after_start_seconds": 12.304633140563965
+        },
+        "AQUA": {
+          "quantity_at_first_cleanup_snapshot": -50,
+          "entry_vwap": 27.84,
+          "exit_vwap": 29.742000000000004,
+          "pre_cleanup_cash": 1392.0,
+          "cleanup_cash_flow": -1487.1000000000001,
+          "first_cleanup_snapshot_midpoint": 29.65,
+          "last_pre_cleanup_snapshot_pnl": -90.49999999999994,
+          "first_cleanup_snapshot_pnl": -90.49999999999994,
+          "mark_change_between_snapshots_no_fills": 0.0,
+          "inventory_mark_removed_at_flat": 1482.5,
+          "pnl_change_first_cleanup_snapshot_to_flat": -4.600000000000193,
+          "final_flat_pnl": -95.10000000000014,
+          "ex_post_frozen_inventory_diagnostic": {
+            "terminal_settlement_price": 34.03,
+            "inventory_value_at_contemporaneous_mark": -1482.5,
+            "inventory_value_at_terminal_settlement": -1701.5,
+            "pre_cleanup_cash_plus_terminal_payoff": -309.5,
+            "terminal_payoff_minus_contemporaneous_mark": -219.0000000000001
+          },
+          "entry_fills": 1,
+          "cleanup_fills": 2,
+          "entry_first_at": 230.85201978683472,
+          "entry_last_at": 230.85201978683472,
+          "cleanup_first_fill_after_start_seconds": 16.375,
+          "cleanup_last_fill_after_start_seconds": 16.679765224456787
+        },
+        "GRID": {
+          "quantity_at_first_cleanup_snapshot": -40,
+          "entry_vwap": 36.53,
+          "exit_vwap": 38.07,
+          "pre_cleanup_cash": 1461.2,
+          "cleanup_cash_flow": -1522.8,
+          "first_cleanup_snapshot_midpoint": 37.935,
+          "last_pre_cleanup_snapshot_pnl": -56.200000000000045,
+          "first_cleanup_snapshot_pnl": -56.200000000000045,
+          "mark_change_between_snapshots_no_fills": 0.0,
+          "inventory_mark_removed_at_flat": 1517.4,
+          "pnl_change_first_cleanup_snapshot_to_flat": -5.399999999999864,
+          "final_flat_pnl": -61.59999999999991,
+          "ex_post_frozen_inventory_diagnostic": {
+            "terminal_settlement_price": 32.3,
+            "inventory_value_at_contemporaneous_mark": -1517.4,
+            "inventory_value_at_terminal_settlement": -1292.0,
+            "pre_cleanup_cash_plus_terminal_payoff": 169.20000000000005,
+            "terminal_payoff_minus_contemporaneous_mark": 225.4000000000002
+          },
+          "entry_fills": 1,
+          "cleanup_fills": 1,
+          "entry_first_at": 211.93803191184998,
+          "entry_last_at": 211.93803191184998,
+          "cleanup_first_fill_after_start_seconds": 21.375,
+          "cleanup_last_fill_after_start_seconds": 21.375
+        },
+        "FERRY": {
+          "quantity_at_first_cleanup_snapshot": 2,
+          "entry_vwap": 19.94,
+          "exit_vwap": 20.36,
+          "pre_cleanup_cash": -39.88,
+          "cleanup_cash_flow": 40.72,
+          "first_cleanup_snapshot_midpoint": 20.41,
+          "last_pre_cleanup_snapshot_pnl": 0.990000000000002,
+          "first_cleanup_snapshot_pnl": 0.9399999999999977,
+          "mark_change_between_snapshots_no_fills": -0.05000000000000426,
+          "inventory_mark_removed_at_flat": -40.82,
+          "pnl_change_first_cleanup_snapshot_to_flat": -0.10000000000000142,
+          "final_flat_pnl": 0.8399999999999963,
+          "ex_post_frozen_inventory_diagnostic": {
+            "terminal_settlement_price": 20.45,
+            "inventory_value_at_contemporaneous_mark": 40.82,
+            "inventory_value_at_terminal_settlement": 40.9,
+            "pre_cleanup_cash_plus_terminal_payoff": 1.019999999999996,
+            "terminal_payoff_minus_contemporaneous_mark": 0.0799999999999983
+          },
+          "entry_fills": 1,
+          "cleanup_fills": 1,
+          "entry_first_at": 333.02910590171814,
+          "entry_last_at": 333.02910590171814,
+          "cleanup_first_fill_after_start_seconds": 37.125,
+          "cleanup_last_fill_after_start_seconds": 37.125
+        },
+        "REIN": {
+          "quantity_at_first_cleanup_snapshot": -20,
+          "entry_vwap": 89.04,
+          "exit_vwap": 89.71,
+          "pre_cleanup_cash": 1780.8000000000002,
+          "cleanup_cash_flow": -1794.1999999999998,
+          "first_cleanup_snapshot_midpoint": 89.515,
+          "last_pre_cleanup_snapshot_pnl": -9.499999999999886,
+          "first_cleanup_snapshot_pnl": -9.499999999999886,
+          "mark_change_between_snapshots_no_fills": 0.0,
+          "inventory_mark_removed_at_flat": 1790.3,
+          "pnl_change_first_cleanup_snapshot_to_flat": -3.89999999999975,
+          "final_flat_pnl": -13.399999999999636,
+          "ex_post_frozen_inventory_diagnostic": {
+            "terminal_settlement_price": 90.0,
+            "inventory_value_at_contemporaneous_mark": -1790.3,
+            "inventory_value_at_terminal_settlement": -1800.0,
+            "pre_cleanup_cash_plus_terminal_payoff": -19.199999999999818,
+            "terminal_payoff_minus_contemporaneous_mark": -9.699999999999989
+          },
+          "entry_fills": 1,
+          "cleanup_fills": 1,
+          "entry_first_at": 224.6174328327179,
+          "entry_last_at": 224.6174328327179,
+          "cleanup_first_fill_after_start_seconds": 28.125,
+          "cleanup_last_fill_after_start_seconds": 28.125
+        }
+      },
+      "cleanup_mutations": [
+        {
+          "method": "DELETE",
+          "path": "/orders/7",
+          "body": null,
+          "started_at": 462.14223861694336,
+          "executed_at": 462.26723861694336,
+          "completed_at": 462.39223861694336
+        },
+        {
+          "method": "POST",
+          "path": "/orders",
+          "body": {
+            "symbol": "PORT",
+            "side": "buy",
+            "order_type": "limit",
+            "quantity": 20,
+            "price": 71.44
+          },
+          "started_at": 466.14223861694336,
+          "executed_at": 466.26723861694336,
+          "completed_at": 466.39223861694336
+        },
+        {
+          "method": "POST",
+          "path": "/orders",
+          "body": {
+            "symbol": "ISLE",
+            "side": "buy",
+            "order_type": "limit",
+            "quantity": 30,
+            "price": 54.54
+          },
+          "started_at": 471.14223861694336,
+          "executed_at": 471.26723861694336,
+          "completed_at": 471.39223861694336
+        },
+        {
+          "method": "POST",
+          "path": "/orders",
+          "body": {
+            "symbol": "AQUA",
+            "side": "buy",
+            "order_type": "limit",
+            "quantity": 50,
+            "price": 29.95
+          },
+          "started_at": 476.14223861694336,
+          "executed_at": 476.26723861694336,
+          "completed_at": 476.39223861694336
+        },
+        {
+          "method": "POST",
+          "path": "/orders",
+          "body": {
+            "symbol": "GRID",
+            "side": "buy",
+            "order_type": "limit",
+            "quantity": 40,
+            "price": 38.43
+          },
+          "started_at": 481.14223861694336,
+          "executed_at": 481.26723861694336,
+          "completed_at": 481.39223861694336
+        },
+        {
+          "method": "POST",
+          "path": "/orders",
+          "body": {
+            "symbol": "REIN",
+            "side": "buy",
+            "order_type": "limit",
+            "quantity": 20,
+            "price": 90.48
+          },
+          "started_at": 487.89223861694336,
+          "executed_at": 488.01723861694336,
+          "completed_at": 488.14223861694336
+        },
+        {
+          "method": "POST",
+          "path": "/orders",
+          "body": {
+            "symbol": "FERRY",
+            "side": "sell",
+            "order_type": "limit",
+            "quantity": 2,
+            "price": 20.16
+          },
+          "started_at": 496.89223861694336,
+          "executed_at": 497.01723861694336,
+          "completed_at": 497.14223861694336
+        }
+      ]
+    },
+    {
+      "variant": "baseline",
+      "rtt_seconds": 0.25,
+      "displayed_depth_fraction": 0.5,
+      "basket_enabled": true,
+      "source_directory": "/var/folders/5_/4_9w4ch971l2mm9c6fqtg5400000gn/T/repeat-prefix-independent-baseline-ihx0dkmp/capture-244-0.25-0.5-1",
+      "source_sha256": {
+        "result.json": "4527242264797bbc5d1b2dbc72f5de198e154fbd6cac6fb2a0f5c02555b68e5e",
+        "request-trace.json": "d4cba3d8dd56f4719b7616616ce89c929bfc3da2279b4a235d63d89783f42efb",
+        "fill-trace.json": "2d5b0430b54a10f9e6a4d1617e5012899fba1548b81175c0c295bf1594f66cd5",
+        "last-quote-observations.json": "bc3c0827a1e2c9183a269765213e6d7b17992e3109621e4e8f2f9a2a1918156c",
+        "observations.json": "7b0d519bf2b697a6f7a70db3825830a245165d94468426f30d52e665f25dd85b",
+        "final-receipt.json": "5c143ac9c14e8572f49496704919161815c0a43fb3a6710c2be68c4b40cba1e5",
+        "cleanup-profile.json": "6b4dee1db4f8efd985a7a4d789a46dfaa13fa0c67b06685dd0d92ce1d40f063a",
+        "repeat-profile.json": "260f2399137d8130ab90ff9b0e369fb3003ffc76422df4441141fbe0d7a10d70"
+      },
+      "producer_result_fields_match": true,
+      "stop_at": 458.14223861694336,
+      "first_loss_observation": {
+        "observed_at": 458.14223861694336,
+        "positions_started_at": 456.89223861694336,
+        "positions_executed_at": 457.01723861694336,
+        "positions_completed_at": 457.14223861694336,
+        "pnl": -257.6999999999997,
+        "server_pnl": -257.6999999999998,
+        "stop_reason": "cumulative simulated P&L reached loss trigger (-257.70)"
+      },
+      "last_pre_cleanup_position_snapshot_at": 458.76723861694336,
+      "last_pre_cleanup_position_snapshot_pnl": -258.2999999999997,
+      "cleanup_started_at": 459.89223861694336,
+      "first_cleanup_position_snapshot_at": 460.76723861694336,
+      "first_cleanup_position_snapshot_pnl": -245.54999999999998,
+      "cleanup_completed_at": 504.89223861694336,
+      "cleanup_duration_seconds": 45.0,
+      "pre_cleanup_fills": 10,
+      "cleanup_fills": 14,
+      "conversions": 0,
+      "pre_cleanup_cash": 7524.88,
+      "cleanup_cash_flow": -7828.22,
+      "inventory_mark_removed_at_flat": 7770.43,
+      "pnl_change_first_cleanup_snapshot_to_flat": -57.79000000000005,
+      "final_flat_cash_pnl": -303.34000000000003,
+      "ex_post_frozen_inventory_diagnostic": {
+        "inventory_value_at_contemporaneous_mark": -7770.43,
+        "inventory_value_at_terminal_settlement": -7402.9,
+        "pre_cleanup_cash_plus_terminal_payoff": 121.98000000000047,
+        "terminal_payoff_minus_contemporaneous_mark": 367.53000000000065,
+        "terminal_cash_plus_payoff_minus_actual_flat_cash": 425.3200000000005
+      },
+      "lowest_marked_pnl": -303.3399999999989,
+      "cached_last_callback": {
+        "at": 455.89223861694336,
+        "round": 1,
+        "last_observed_age": 274,
+        "fair": {
+          "PORT": 56.80793766175753,
+          "ISLE": 52.93258386344478,
+          "AQUA": 29.21957929791386,
+          "GRID": 35.556968936241965,
+          "FERRY": 20.213423614490942,
+          "RECON": 53.90280153605535,
+          "MAT": 35.79249024800278,
+          "GEN": 40.24195308064947,
+          "HAVEN": 34.33193996139894,
+          "REIN": 85.81972945366519,
+          "ARCH": 278.4954362476529,
+          "REBLD": 219.63253664876567
+        },
+        "fair_sd": {
+          "PORT": 10.7470400835097,
+          "ISLE": 1.2161292192650217,
+          "AQUA": 0.720683179959879,
+          "GRID": 1.254835019324129,
+          "FERRY": 0.19641990130875278,
+          "RECON": 1.8012214607196317,
+          "MAT": 0.6697863941392095,
+          "GEN": 0.6356627341779489,
+          "HAVEN": 7.971864384520947,
+          "REIN": 1.7440838774579932,
+          "ARCH": 19.682494922086203,
+          "REBLD": 5.486815974042223
+        },
+        "future_sd": {
+          "PORT": 17.515249076307203,
+          "ISLE": 6.585706111267654,
+          "AQUA": 4.20842250978537,
+          "GRID": 4.476083753669155,
+          "FERRY": 2.7644884662198392,
+          "RECON": 3.427617936162187,
+          "MAT": 1.664476435916896,
+          "GEN": 2.0182523739327993,
+          "HAVEN": 12.674023465892386,
+          "REIN": 7.068687778604575,
+          "ARCH": 37.68272538389206,
+          "REBLD": 11.510453486700829
+        },
+        "repeat_match": null,
+        "history_ready": true
+      },
+      "repeat_profile": {
+        "calls": 47,
+        "recognized": 0,
+        "rows": {}
+      },
+      "by_symbol": {
+        "PORT": {
+          "quantity_at_first_cleanup_snapshot": -20,
+          "entry_vwap": 69.24,
+          "exit_vwap": 70.80499999999999,
+          "pre_cleanup_cash": 1384.8,
+          "cleanup_cash_flow": -1416.1,
+          "first_cleanup_snapshot_midpoint": 70.09,
+          "last_pre_cleanup_snapshot_pnl": -29.799999999999898,
+          "first_cleanup_snapshot_pnl": -17.00000000000017,
+          "mark_change_between_snapshots_no_fills": 12.799999999999727,
+          "inventory_mark_removed_at_flat": 1401.8000000000002,
+          "pnl_change_first_cleanup_snapshot_to_flat": -14.299999999999983,
+          "final_flat_pnl": -31.300000000000153,
+          "ex_post_frozen_inventory_diagnostic": {
+            "terminal_settlement_price": 44.69,
+            "inventory_value_at_contemporaneous_mark": -1401.8000000000002,
+            "inventory_value_at_terminal_settlement": -893.8,
+            "pre_cleanup_cash_plus_terminal_payoff": 491.0,
+            "terminal_payoff_minus_contemporaneous_mark": 508.0000000000001
+          },
+          "entry_fills": 4,
+          "cleanup_fills": 2,
+          "entry_first_at": 455.89223861694336,
+          "entry_last_at": 456.15813970565796,
+          "cleanup_first_fill_after_start_seconds": 6.375,
+          "cleanup_last_fill_after_start_seconds": 6.452315330505371
+        },
+        "ISLE": {
+          "quantity_at_first_cleanup_snapshot": -30,
+          "entry_vwap": 51.58,
+          "exit_vwap": 54.288,
+          "pre_cleanup_cash": 1547.3999999999999,
+          "cleanup_cash_flow": -1628.6399999999999,
+          "first_cleanup_snapshot_midpoint": 53.974999999999994,
+          "last_pre_cleanup_snapshot_pnl": -71.84999999999988,
+          "first_cleanup_snapshot_pnl": -71.84999999999988,
+          "mark_change_between_snapshots_no_fills": 0.0,
+          "inventory_mark_removed_at_flat": 1619.2499999999998,
+          "pnl_change_first_cleanup_snapshot_to_flat": -9.3900000000002,
+          "final_flat_pnl": -81.24000000000008,
+          "ex_post_frozen_inventory_diagnostic": {
+            "terminal_settlement_price": 58.55,
+            "inventory_value_at_contemporaneous_mark": -1619.2499999999998,
+            "inventory_value_at_terminal_settlement": -1756.5,
+            "pre_cleanup_cash_plus_terminal_payoff": -209.10000000000014,
+            "terminal_payoff_minus_contemporaneous_mark": -137.25000000000009
+          },
+          "entry_fills": 1,
+          "cleanup_fills": 3,
+          "entry_first_at": 225.20623064041138,
+          "entry_last_at": 225.20623064041138,
+          "cleanup_first_fill_after_start_seconds": 11.375,
+          "cleanup_last_fill_after_start_seconds": 13.601703405380249
+        },
+        "AQUA": {
+          "quantity_at_first_cleanup_snapshot": -50,
+          "entry_vwap": 27.84,
+          "exit_vwap": 29.846,
+          "pre_cleanup_cash": 1392.0,
+          "cleanup_cash_flow": -1492.3,
+          "first_cleanup_snapshot_midpoint": 29.65,
+          "last_pre_cleanup_snapshot_pnl": -90.49999999999994,
+          "first_cleanup_snapshot_pnl": -90.49999999999994,
+          "mark_change_between_snapshots_no_fills": 0.0,
+          "inventory_mark_removed_at_flat": 1482.5,
+          "pnl_change_first_cleanup_snapshot_to_flat": -9.800000000000068,
+          "final_flat_pnl": -100.30000000000001,
+          "ex_post_frozen_inventory_diagnostic": {
+            "terminal_settlement_price": 34.03,
+            "inventory_value_at_contemporaneous_mark": -1482.5,
+            "inventory_value_at_terminal_settlement": -1701.5,
+            "pre_cleanup_cash_plus_terminal_payoff": -309.5,
+            "terminal_payoff_minus_contemporaneous_mark": -219.0000000000001
+          },
+          "entry_fills": 1,
+          "cleanup_fills": 3,
+          "entry_first_at": 230.85201978683472,
+          "entry_last_at": 230.85201978683472,
+          "cleanup_first_fill_after_start_seconds": 16.375,
+          "cleanup_last_fill_after_start_seconds": 18.135032176971436
+        },
+        "GRID": {
+          "quantity_at_first_cleanup_snapshot": -40,
+          "entry_vwap": 36.494,
+          "exit_vwap": 38.25,
+          "pre_cleanup_cash": 1459.76,
+          "cleanup_cash_flow": -1530.0,
+          "first_cleanup_snapshot_midpoint": 37.935,
+          "last_pre_cleanup_snapshot_pnl": -57.6400000000001,
+          "first_cleanup_snapshot_pnl": -57.6400000000001,
+          "mark_change_between_snapshots_no_fills": 0.0,
+          "inventory_mark_removed_at_flat": 1517.4,
+          "pnl_change_first_cleanup_snapshot_to_flat": -12.599999999999909,
+          "final_flat_pnl": -70.24000000000001,
+          "ex_post_frozen_inventory_diagnostic": {
+            "terminal_settlement_price": 32.3,
+            "inventory_value_at_contemporaneous_mark": -1517.4,
+            "inventory_value_at_terminal_settlement": -1292.0,
+            "pre_cleanup_cash_plus_terminal_payoff": 167.76,
+            "terminal_payoff_minus_contemporaneous_mark": 225.4000000000002
+          },
+          "entry_fills": 2,
+          "cleanup_fills": 2,
+          "entry_first_at": 211.93803191184998,
+          "entry_last_at": 212.33794260025024,
+          "cleanup_first_fill_after_start_seconds": 21.375,
+          "cleanup_last_fill_after_start_seconds": 21.682469129562378
+        },
+        "FERRY": {
+          "quantity_at_first_cleanup_snapshot": 2,
+          "entry_vwap": 19.94,
+          "exit_vwap": 20.36,
+          "pre_cleanup_cash": -39.88,
+          "cleanup_cash_flow": 40.72,
+          "first_cleanup_snapshot_midpoint": 20.41,
+          "last_pre_cleanup_snapshot_pnl": 0.990000000000002,
+          "first_cleanup_snapshot_pnl": 0.9399999999999977,
+          "mark_change_between_snapshots_no_fills": -0.05000000000000426,
+          "inventory_mark_removed_at_flat": -40.82,
+          "pnl_change_first_cleanup_snapshot_to_flat": -0.10000000000000142,
+          "final_flat_pnl": 0.8399999999999963,
+          "ex_post_frozen_inventory_diagnostic": {
+            "terminal_settlement_price": 20.45,
+            "inventory_value_at_contemporaneous_mark": 40.82,
+            "inventory_value_at_terminal_settlement": 40.9,
+            "pre_cleanup_cash_plus_terminal_payoff": 1.019999999999996,
+            "terminal_payoff_minus_contemporaneous_mark": 0.0799999999999983
+          },
+          "entry_fills": 1,
+          "cleanup_fills": 1,
+          "entry_first_at": 333.02910590171814,
+          "entry_last_at": 333.02910590171814,
+          "cleanup_first_fill_after_start_seconds": 37.125,
+          "cleanup_last_fill_after_start_seconds": 37.125
+        },
+        "REIN": {
+          "quantity_at_first_cleanup_snapshot": -20,
+          "entry_vwap": 89.04,
+          "exit_vwap": 90.095,
+          "pre_cleanup_cash": 1780.8000000000002,
+          "cleanup_cash_flow": -1801.8999999999999,
+          "first_cleanup_snapshot_midpoint": 89.515,
+          "last_pre_cleanup_snapshot_pnl": -9.499999999999886,
+          "first_cleanup_snapshot_pnl": -9.499999999999886,
+          "mark_change_between_snapshots_no_fills": 0.0,
+          "inventory_mark_removed_at_flat": 1790.3,
+          "pnl_change_first_cleanup_snapshot_to_flat": -11.599999999999895,
+          "final_flat_pnl": -21.09999999999978,
+          "ex_post_frozen_inventory_diagnostic": {
+            "terminal_settlement_price": 90.0,
+            "inventory_value_at_contemporaneous_mark": -1790.3,
+            "inventory_value_at_terminal_settlement": -1800.0,
+            "pre_cleanup_cash_plus_terminal_payoff": -19.199999999999818,
+            "terminal_payoff_minus_contemporaneous_mark": -9.699999999999989
+          },
+          "entry_fills": 1,
+          "cleanup_fills": 3,
+          "entry_first_at": 224.6174328327179,
+          "entry_last_at": 224.6174328327179,
+          "cleanup_first_fill_after_start_seconds": 28.125,
+          "cleanup_last_fill_after_start_seconds": 30.352745056152344
+        }
+      },
+      "cleanup_mutations": [
+        {
+          "method": "DELETE",
+          "path": "/orders/7",
+          "body": null,
+          "started_at": 462.14223861694336,
+          "executed_at": 462.26723861694336,
+          "completed_at": 462.39223861694336
+        },
+        {
+          "method": "POST",
+          "path": "/orders",
+          "body": {
+            "symbol": "PORT",
+            "side": "buy",
+            "order_type": "limit",
+            "quantity": 20,
+            "price": 71.44
+          },
+          "started_at": 466.14223861694336,
+          "executed_at": 466.26723861694336,
+          "completed_at": 466.39223861694336
+        },
+        {
+          "method": "POST",
+          "path": "/orders",
+          "body": {
+            "symbol": "ISLE",
+            "side": "buy",
+            "order_type": "limit",
+            "quantity": 30,
+            "price": 54.54
+          },
+          "started_at": 471.14223861694336,
+          "executed_at": 471.26723861694336,
+          "completed_at": 471.39223861694336
+        },
+        {
+          "method": "POST",
+          "path": "/orders",
+          "body": {
+            "symbol": "AQUA",
+            "side": "buy",
+            "order_type": "limit",
+            "quantity": 50,
+            "price": 29.95
+          },
+          "started_at": 476.14223861694336,
+          "executed_at": 476.26723861694336,
+          "completed_at": 476.39223861694336
+        },
+        {
+          "method": "POST",
+          "path": "/orders",
+          "body": {
+            "symbol": "GRID",
+            "side": "buy",
+            "order_type": "limit",
+            "quantity": 40,
+            "price": 38.43
+          },
+          "started_at": 481.14223861694336,
+          "executed_at": 481.26723861694336,
+          "completed_at": 481.39223861694336
+        },
+        {
+          "method": "POST",
+          "path": "/orders",
+          "body": {
+            "symbol": "REIN",
+            "side": "buy",
+            "order_type": "limit",
+            "quantity": 20,
+            "price": 90.48
+          },
+          "started_at": 487.89223861694336,
+          "executed_at": 488.01723861694336,
+          "completed_at": 488.14223861694336
+        },
+        {
+          "method": "POST",
+          "path": "/orders",
+          "body": {
+            "symbol": "FERRY",
+            "side": "sell",
+            "order_type": "limit",
+            "quantity": 2,
+            "price": 20.16
+          },
+          "started_at": 496.89223861694336,
+          "executed_at": 497.01723861694336,
+          "completed_at": 497.14223861694336
+        }
+      ]
+    },
+    {
+      "variant": "candidate",
+      "rtt_seconds": 0.25,
+      "displayed_depth_fraction": 1.0,
+      "basket_enabled": true,
+      "source_directory": "/var/folders/5_/4_9w4ch971l2mm9c6fqtg5400000gn/T/repeat-prefix-independent-candidate-tvc8zp_t/capture-244-0.25-1.0-1",
+      "source_sha256": {
+        "result.json": "678982c20a972b7afe6b7cd78b88763c7ccf14bc0107ea47d36d63cde92c4beb",
+        "request-trace.json": "3daf92c381a502bb36f8dc62e6efae28c763ae8790172d3272c9dca97fa75804",
+        "fill-trace.json": "89184624a4f7d1c184a3bf65c1677f95d6200b15d959edfcd21c024163519732",
+        "last-quote-observations.json": "11a7edd5c1f0039b2f78c187325f4fbe4e7ed30309cf9c946333d6f9c9ce2d4f",
+        "observations.json": "f4253f04e2b24eb8fb01a15df6055d8bbe994325aa61fe4cfa0e2c0522b9f908",
+        "final-receipt.json": "153b0a7ed0d27bfe39be5ad88f1cc8fad37bb067ff61f91eb05285ca6712e139",
+        "cleanup-profile.json": "87f65b02dd78d6d099718cbca997495d6d39e9b1334f4309b60634c025b82687",
+        "repeat-profile.json": "c437bded67947d2f693eedeb3bff48613f7a74591b9daa5e5661dddced025622"
+      },
+      "producer_result_fields_match": true,
+      "stop_at": 257.6670718193054,
+      "first_loss_observation": {
+        "observed_at": 257.6670718193054,
+        "positions_started_at": 256.4170718193054,
+        "positions_executed_at": 256.5420718193054,
+        "positions_completed_at": 256.6670718193054,
+        "pnl": -256.7199999999999,
+        "server_pnl": -235.61000000000013,
+        "stop_reason": "cumulative simulated P&L reached loss trigger (-256.72)"
+      },
+      "last_pre_cleanup_position_snapshot_at": 256.5420718193054,
+      "last_pre_cleanup_position_snapshot_pnl": -256.7199999999999,
+      "cleanup_started_at": 257.75,
+      "first_cleanup_position_snapshot_at": 258.625,
+      "first_cleanup_position_snapshot_pnl": -267.28499999999974,
+      "cleanup_completed_at": 311.75,
+      "cleanup_duration_seconds": 54.0,
+      "pre_cleanup_fills": 9,
+      "cleanup_fills": 12,
+      "conversions": 0,
+      "pre_cleanup_cash": -2249.0600000000004,
+      "cleanup_cash_flow": 1773.2299999999998,
+      "inventory_mark_removed_at_flat": -1981.7750000000003,
+      "pnl_change_first_cleanup_snapshot_to_flat": -208.54500000000058,
+      "final_flat_cash_pnl": -475.8300000000003,
+      "ex_post_frozen_inventory_diagnostic": {
+        "inventory_value_at_contemporaneous_mark": 1981.7750000000003,
+        "inventory_value_at_terminal_settlement": 3867.35,
+        "pre_cleanup_cash_plus_terminal_payoff": 1618.2899999999995,
+        "terminal_payoff_minus_contemporaneous_mark": 1885.5749999999996,
+        "terminal_cash_plus_payoff_minus_actual_flat_cash": 2094.12
+      },
+      "lowest_marked_pnl": -503.70500000000106,
+      "cached_last_callback": {
+        "at": 257.6670718193054,
+        "round": 1,
+        "last_observed_age": 76,
+        "fair": {
+          "PORT": 49.78831685370237,
+          "ISLE": 52.93737295185918,
+          "AQUA": 29.227575598661215,
+          "GRID": 34.978557299148925,
+          "FERRY": 20.190543325406416,
+          "RECON": 54.98571462407776,
+          "MAT": 36.18163780234811,
+          "GEN": 40.66888795173884,
+          "HAVEN": 29.62773949294024,
+          "REIN": 84.59695283002846,
+          "ARCH": 266.16822444578594,
+          "REBLD": 223.0035928045905
+        },
+        "fair_sd": {
+          "PORT": 3.463152040216684,
+          "ISLE": 1.216008610196134,
+          "AQUA": 0.719919690778184,
+          "GRID": 0.870641485102567,
+          "FERRY": 0.19186302722209803,
+          "RECON": 0.8606700289782275,
+          "MAT": 0.3554349203886412,
+          "GEN": 0.0973184521853625,
+          "HAVEN": 3.943885652331381,
+          "REIN": 0.0,
+          "ARCH": 7.922654459531821,
+          "REBLD": 2.4052946796389927
+        },
+        "future_sd": {
+          "PORT": 17.522379315926745,
+          "ISLE": 6.5857059009611865,
+          "AQUA": 4.208421132551255,
+          "GRID": 4.474875752357924,
+          "FERRY": 2.764525474882381,
+          "RECON": 3.1779172239441174,
+          "MAT": 1.551988942327278,
+          "GEN": 2.0031429221232147,
+          "HAVEN": 10.514941879422349,
+          "REIN": 8.43843079142901,
+          "ARCH": 35.327254695484804,
+          "REBLD": 10.799512278364784
+        },
+        "repeat_match": 729,
+        "history_ready": true
+      },
+      "repeat_profile": {
+        "calls": 18,
+        "recognized": 11,
+        "rows": {
+          "729": {
+            "calls": 11,
+            "first_age": 42,
+            "last_age": 62
+          }
+        }
+      },
+      "by_symbol": {
+        "PORT": {
+          "quantity_at_first_cleanup_snapshot": -20,
+          "entry_vwap": 66.07,
+          "exit_vwap": 74.095,
+          "pre_cleanup_cash": 1321.3999999999999,
+          "cleanup_cash_flow": -1481.9,
+          "first_cleanup_snapshot_midpoint": 72.83,
+          "last_pre_cleanup_snapshot_pnl": -142.7000000000001,
+          "first_cleanup_snapshot_pnl": -135.2000000000001,
+          "mark_change_between_snapshots_no_fills": 7.5,
+          "inventory_mark_removed_at_flat": 1456.6,
+          "pnl_change_first_cleanup_snapshot_to_flat": -25.300000000000125,
+          "final_flat_pnl": -160.50000000000023,
+          "ex_post_frozen_inventory_diagnostic": {
+            "terminal_settlement_price": 44.69,
+            "inventory_value_at_contemporaneous_mark": -1456.6,
+            "inventory_value_at_terminal_settlement": -893.8,
+            "pre_cleanup_cash_plus_terminal_payoff": 427.5999999999999,
+            "terminal_payoff_minus_contemporaneous_mark": 562.8
+          },
+          "entry_fills": 1,
+          "cleanup_fills": 2,
+          "entry_first_at": 224.1174328327179,
+          "entry_last_at": 224.1174328327179,
+          "cleanup_first_fill_after_start_seconds": 5.625,
+          "cleanup_last_fill_after_start_seconds": 6.618153810501099
+        },
+        "ISLE": {
+          "quantity_at_first_cleanup_snapshot": 8,
+          "entry_vwap": 51.58,
+          "exit_vwap": 51.34,
+          "pre_cleanup_cash": -412.64,
+          "cleanup_cash_flow": 410.72,
+          "first_cleanup_snapshot_midpoint": 51.875,
+          "last_pre_cleanup_snapshot_pnl": -3.1999999999999886,
+          "first_cleanup_snapshot_pnl": 2.3600000000000136,
+          "mark_change_between_snapshots_no_fills": 5.560000000000002,
+          "inventory_mark_removed_at_flat": -415.0,
+          "pnl_change_first_cleanup_snapshot_to_flat": -4.279999999999973,
+          "final_flat_pnl": -1.919999999999959,
+          "ex_post_frozen_inventory_diagnostic": {
+            "terminal_settlement_price": 58.55,
+            "inventory_value_at_contemporaneous_mark": 415.0,
+            "inventory_value_at_terminal_settlement": 468.4,
+            "pre_cleanup_cash_plus_terminal_payoff": 55.75999999999999,
+            "terminal_payoff_minus_contemporaneous_mark": 53.39999999999998
+          },
+          "entry_fills": 1,
+          "cleanup_fills": 1,
+          "entry_first_at": 235.87287759780884,
+          "entry_last_at": 235.87287759780884,
+          "cleanup_first_fill_after_start_seconds": 10.625,
+          "cleanup_last_fill_after_start_seconds": 10.625
+        },
+        "AQUA": {
+          "quantity_at_first_cleanup_snapshot": 50,
+          "entry_vwap": 28.118000000000002,
+          "exit_vwap": 28.0352,
+          "pre_cleanup_cash": -1405.9,
+          "cleanup_cash_flow": 1401.76,
+          "first_cleanup_snapshot_midpoint": 27.85,
+          "last_pre_cleanup_snapshot_pnl": -17.39999999999995,
+          "first_cleanup_snapshot_pnl": -13.400000000000034,
+          "mark_change_between_snapshots_no_fills": 3.9999999999999147,
+          "inventory_mark_removed_at_flat": -1392.5,
+          "pnl_change_first_cleanup_snapshot_to_flat": 9.25999999999982,
+          "final_flat_pnl": -4.140000000000214,
+          "ex_post_frozen_inventory_diagnostic": {
+            "terminal_settlement_price": 34.03,
+            "inventory_value_at_contemporaneous_mark": 1392.5,
+            "inventory_value_at_terminal_settlement": 1701.5,
+            "pre_cleanup_cash_plus_terminal_payoff": 295.5999999999999,
+            "terminal_payoff_minus_contemporaneous_mark": 309.0
+          },
+          "entry_fills": 2,
+          "cleanup_fills": 2,
+          "entry_first_at": 228.1174328327179,
+          "entry_last_at": 229.23476886749268,
+          "cleanup_first_fill_after_start_seconds": 15.625,
+          "cleanup_last_fill_after_start_seconds": 18.651659727096558
+        },
+        "GRID": {
+          "quantity_at_first_cleanup_snapshot": -40,
+          "entry_vwap": 36.53,
+          "exit_vwap": 38.3475,
+          "pre_cleanup_cash": 1461.2,
+          "cleanup_cash_flow": -1533.8999999999999,
+          "first_cleanup_snapshot_midpoint": 37.53,
+          "last_pre_cleanup_snapshot_pnl": -33.000000000000114,
+          "first_cleanup_snapshot_pnl": -40.0,
+          "mark_change_between_snapshots_no_fills": -6.999999999999886,
+          "inventory_mark_removed_at_flat": 1501.2,
+          "pnl_change_first_cleanup_snapshot_to_flat": -32.699999999999875,
+          "final_flat_pnl": -72.69999999999987,
+          "ex_post_frozen_inventory_diagnostic": {
+            "terminal_settlement_price": 32.3,
+            "inventory_value_at_contemporaneous_mark": -1501.2,
+            "inventory_value_at_terminal_settlement": -1292.0,
+            "pre_cleanup_cash_plus_terminal_payoff": 169.20000000000005,
+            "terminal_payoff_minus_contemporaneous_mark": 209.20000000000016
+          },
+          "entry_fills": 1,
+          "cleanup_fills": 3,
+          "entry_first_at": 211.93803191184998,
+          "entry_last_at": 211.93803191184998,
+          "cleanup_first_fill_after_start_seconds": 23.519606828689575,
+          "cleanup_last_fill_after_start_seconds": 31.47304368019104
+        },
+        "FERRY": {
+          "quantity_at_first_cleanup_snapshot": 80,
+          "entry_vwap": 19.476499999999998,
+          "exit_vwap": 19.66,
+          "pre_cleanup_cash": -1558.12,
+          "cleanup_cash_flow": 1572.8,
+          "first_cleanup_snapshot_midpoint": 19.365000000000002,
+          "last_pre_cleanup_snapshot_pnl": -8.919999999999675,
+          "first_cleanup_snapshot_pnl": -8.919999999999675,
+          "mark_change_between_snapshots_no_fills": 0.0,
+          "inventory_mark_removed_at_flat": -1549.2000000000003,
+          "pnl_change_first_cleanup_snapshot_to_flat": 23.599999999999625,
+          "final_flat_pnl": 14.67999999999995,
+          "ex_post_frozen_inventory_diagnostic": {
+            "terminal_settlement_price": 20.45,
+            "inventory_value_at_contemporaneous_mark": 1549.2000000000003,
+            "inventory_value_at_terminal_settlement": 1636.0,
+            "pre_cleanup_cash_plus_terminal_payoff": 77.88000000000011,
+            "terminal_payoff_minus_contemporaneous_mark": 86.79999999999978
+          },
+          "entry_fills": 2,
+          "cleanup_fills": 1,
+          "entry_first_at": 242.24320483207703,
+          "entry_last_at": 242.29818487167358,
+          "cleanup_first_fill_after_start_seconds": 36.125,
+          "cleanup_last_fill_after_start_seconds": 36.125
+        },
+        "RECON": {
+          "quantity_at_first_cleanup_snapshot": 50,
+          "entry_vwap": 52.82,
+          "exit_vwap": 51.07,
+          "pre_cleanup_cash": -2641.0,
+          "cleanup_cash_flow": 2553.5,
+          "first_cleanup_snapshot_midpoint": 52.49,
+          "last_pre_cleanup_snapshot_pnl": 1.249999999999929,
+          "first_cleanup_snapshot_pnl": -16.499999999999915,
+          "mark_change_between_snapshots_no_fills": -17.749999999999844,
+          "inventory_mark_removed_at_flat": -2624.5,
+          "pnl_change_first_cleanup_snapshot_to_flat": -71.00000000000009,
+          "final_flat_pnl": -87.5,
+          "ex_post_frozen_inventory_diagnostic": {
+            "terminal_settlement_price": 56.89,
+            "inventory_value_at_contemporaneous_mark": 2624.5,
+            "inventory_value_at_terminal_settlement": 2844.5,
+            "pre_cleanup_cash_plus_terminal_payoff": 203.5,
+            "terminal_payoff_minus_contemporaneous_mark": 219.99999999999994
+          },
+          "entry_fills": 1,
+          "cleanup_fills": 1,
+          "entry_first_at": 244.2525119781494,
+          "entry_last_at": 244.2525119781494,
+          "cleanup_first_fill_after_start_seconds": 41.125,
+          "cleanup_last_fill_after_start_seconds": 41.125
+        },
+        "HAVEN": {
+          "quantity_at_first_cleanup_snapshot": -25,
+          "entry_vwap": 39.44,
+          "exit_vwap": 45.99,
+          "pre_cleanup_cash": 986.0,
+          "cleanup_cash_flow": -1149.75,
+          "first_cleanup_snapshot_midpoint": 41.665,
+          "last_pre_cleanup_snapshot_pnl": -52.749999999999986,
+          "first_cleanup_snapshot_pnl": -55.625000000000036,
+          "mark_change_between_snapshots_no_fills": -2.8750000000000497,
+          "inventory_mark_removed_at_flat": 1041.625,
+          "pnl_change_first_cleanup_snapshot_to_flat": -108.12499999999997,
+          "final_flat_pnl": -163.75,
+          "ex_post_frozen_inventory_diagnostic": {
+            "terminal_settlement_price": 23.89,
+            "inventory_value_at_contemporaneous_mark": -1041.625,
+            "inventory_value_at_terminal_settlement": -597.25,
+            "pre_cleanup_cash_plus_terminal_payoff": 388.75,
+            "terminal_payoff_minus_contemporaneous_mark": 444.37499999999994
+          },
+          "entry_fills": 1,
+          "cleanup_fills": 2,
+          "entry_first_at": 244.49320483207703,
+          "entry_last_at": 244.49320483207703,
+          "cleanup_first_fill_after_start_seconds": 46.125,
+          "cleanup_last_fill_after_start_seconds": 46.63501763343811
+        }
+      },
+      "cleanup_mutations": [
+        {
+          "method": "POST",
+          "path": "/orders",
+          "body": {
+            "symbol": "PORT",
+            "side": "buy",
+            "order_type": "limit",
+            "quantity": 20,
+            "price": 74.93
+          },
+          "started_at": 263.25,
+          "executed_at": 263.375,
+          "completed_at": 263.5
+        },
+        {
+          "method": "POST",
+          "path": "/orders",
+          "body": {
+            "symbol": "ISLE",
+            "side": "sell",
+            "order_type": "limit",
+            "quantity": 8,
+            "price": 50.46
+          },
+          "started_at": 268.25,
+          "executed_at": 268.375,
+          "completed_at": 268.5
+        },
+        {
+          "method": "POST",
+          "path": "/orders",
+          "body": {
+            "symbol": "AQUA",
+            "side": "sell",
+            "order_type": "limit",
+            "quantity": 50,
+            "price": 27.8
+          },
+          "started_at": 273.25,
+          "executed_at": 273.375,
+          "completed_at": 273.5
+        },
+        {
+          "method": "POST",
+          "path": "/orders",
+          "body": {
+            "symbol": "GRID",
+            "side": "buy",
+            "order_type": "limit",
+            "quantity": 40,
+            "price": 37.98
+          },
+          "started_at": 278.25,
+          "executed_at": 278.375,
+          "completed_at": 278.5
+        },
+        {
+          "method": "DELETE",
+          "path": "/orders/11",
+          "body": null,
+          "started_at": 284.75,
+          "executed_at": 284.875,
+          "completed_at": 285.0
+        },
+        {
+          "method": "POST",
+          "path": "/orders",
+          "body": {
+            "symbol": "GRID",
+            "side": "buy",
+            "order_type": "limit",
+            "quantity": 35,
+            "price": 38.6
+          },
+          "started_at": 288.75,
+          "executed_at": 288.875,
+          "completed_at": 289.0
+        },
+        {
+          "method": "POST",
+          "path": "/orders",
+          "body": {
+            "symbol": "FERRY",
+            "side": "sell",
+            "order_type": "limit",
+            "quantity": 80,
+            "price": 19.47
+          },
+          "started_at": 293.75,
+          "executed_at": 293.875,
+          "completed_at": 294.0
+        },
+        {
+          "method": "POST",
+          "path": "/orders",
+          "body": {
+            "symbol": "RECON",
+            "side": "sell",
+            "order_type": "limit",
+            "quantity": 50,
+            "price": 50.56
+          },
+          "started_at": 298.75,
+          "executed_at": 298.875,
+          "completed_at": 299.0
+        },
+        {
+          "method": "POST",
+          "path": "/orders",
+          "body": {
+            "symbol": "HAVEN",
+            "side": "buy",
+            "order_type": "limit",
+            "quantity": 25,
+            "price": 46.35
+          },
+          "started_at": 303.75,
+          "executed_at": 303.875,
+          "completed_at": 304.0
+        }
+      ]
+    },
+    {
+      "variant": "candidate",
+      "rtt_seconds": 0.25,
+      "displayed_depth_fraction": 0.5,
+      "basket_enabled": true,
+      "source_directory": "/var/folders/5_/4_9w4ch971l2mm9c6fqtg5400000gn/T/repeat-prefix-independent-candidate-tvc8zp_t/capture-244-0.25-0.5-1",
+      "source_sha256": {
+        "result.json": "ac87472610d403f51c18225d59ba53c486a77e0d23a301e5c1265e1147a9817f",
+        "request-trace.json": "20eed6b0c3efdee16b0bad79a9e2a3c612b3fdf20dc62e8599674693b020c46f",
+        "fill-trace.json": "3066dcebaa2f5c7c007603ef8ff325417ffa0f33ab19eee66490c098d2be6e5d",
+        "last-quote-observations.json": "11a7edd5c1f0039b2f78c187325f4fbe4e7ed30309cf9c946333d6f9c9ce2d4f",
+        "observations.json": "efaf5011df9ad24bb80bfc169e56605c9b254c3d199c40109e08df1bb6b806ba",
+        "final-receipt.json": "7c3412bd7c5d3283bfc8b11b235b04063e963f960153913b1102f4c8783f1c71",
+        "cleanup-profile.json": "51897d4aff904a52f015e5334bd989edba577962cbd5c8165c7ff18a0c62d700",
+        "repeat-profile.json": "c437bded67947d2f693eedeb3bff48613f7a74591b9daa5e5661dddced025622"
+      },
+      "producer_result_fields_match": true,
+      "stop_at": 257.6670718193054,
+      "first_loss_observation": {
+        "observed_at": 257.6670718193054,
+        "positions_started_at": 256.4170718193054,
+        "positions_executed_at": 256.5420718193054,
+        "positions_completed_at": 256.6670718193054,
+        "pnl": -268.94000000000005,
+        "server_pnl": -247.82999999999993,
+        "stop_reason": "cumulative simulated P&L reached loss trigger (-268.94)"
+      },
+      "last_pre_cleanup_position_snapshot_at": 256.5420718193054,
+      "last_pre_cleanup_position_snapshot_pnl": -268.94000000000005,
+      "cleanup_started_at": 257.75,
+      "first_cleanup_position_snapshot_at": 258.625,
+      "first_cleanup_position_snapshot_pnl": -279.50499999999994,
+      "cleanup_completed_at": 311.75,
+      "cleanup_duration_seconds": 54.0,
+      "pre_cleanup_fills": 15,
+      "cleanup_fills": 16,
+      "conversions": 0,
+      "pre_cleanup_cash": -2261.28,
+      "cleanup_cash_flow": 1746.3999999999999,
+      "inventory_mark_removed_at_flat": -1981.7750000000003,
+      "pnl_change_first_cleanup_snapshot_to_flat": -235.3750000000005,
+      "final_flat_cash_pnl": -514.8800000000005,
+      "ex_post_frozen_inventory_diagnostic": {
+        "inventory_value_at_contemporaneous_mark": 1981.7750000000003,
+        "inventory_value_at_terminal_settlement": 3867.35,
+        "pre_cleanup_cash_plus_terminal_payoff": 1606.0699999999997,
+        "terminal_payoff_minus_contemporaneous_mark": 1885.5749999999996,
+        "terminal_cash_plus_payoff_minus_actual_flat_cash": 2120.9500000000003
+      },
+      "lowest_marked_pnl": -538.2550000000008,
+      "cached_last_callback": {
+        "at": 257.6670718193054,
+        "round": 1,
+        "last_observed_age": 76,
+        "fair": {
+          "PORT": 49.78831685370237,
+          "ISLE": 52.93737295185918,
+          "AQUA": 29.227575598661215,
+          "GRID": 34.978557299148925,
+          "FERRY": 20.190543325406416,
+          "RECON": 54.98571462407776,
+          "MAT": 36.18163780234811,
+          "GEN": 40.66888795173884,
+          "HAVEN": 29.62773949294024,
+          "REIN": 84.59695283002846,
+          "ARCH": 266.16822444578594,
+          "REBLD": 223.0035928045905
+        },
+        "fair_sd": {
+          "PORT": 3.463152040216684,
+          "ISLE": 1.216008610196134,
+          "AQUA": 0.719919690778184,
+          "GRID": 0.870641485102567,
+          "FERRY": 0.19186302722209803,
+          "RECON": 0.8606700289782275,
+          "MAT": 0.3554349203886412,
+          "GEN": 0.0973184521853625,
+          "HAVEN": 3.943885652331381,
+          "REIN": 0.0,
+          "ARCH": 7.922654459531821,
+          "REBLD": 2.4052946796389927
+        },
+        "future_sd": {
+          "PORT": 17.522379315926745,
+          "ISLE": 6.5857059009611865,
+          "AQUA": 4.208421132551255,
+          "GRID": 4.474875752357924,
+          "FERRY": 2.764525474882381,
+          "RECON": 3.1779172239441174,
+          "MAT": 1.551988942327278,
+          "GEN": 2.0031429221232147,
+          "HAVEN": 10.514941879422349,
+          "REIN": 8.43843079142901,
+          "ARCH": 35.327254695484804,
+          "REBLD": 10.799512278364784
+        },
+        "repeat_match": 729,
+        "history_ready": true
+      },
+      "repeat_profile": {
+        "calls": 18,
+        "recognized": 11,
+        "rows": {
+          "729": {
+            "calls": 11,
+            "first_age": 42,
+            "last_age": 62
+          }
+        }
+      },
+      "by_symbol": {
+        "PORT": {
+          "quantity_at_first_cleanup_snapshot": -20,
+          "entry_vwap": 66.07,
+          "exit_vwap": 74.5125,
+          "pre_cleanup_cash": 1321.3999999999999,
+          "cleanup_cash_flow": -1490.25,
+          "first_cleanup_snapshot_midpoint": 72.83,
+          "last_pre_cleanup_snapshot_pnl": -142.7000000000001,
+          "first_cleanup_snapshot_pnl": -135.2000000000001,
+          "mark_change_between_snapshots_no_fills": 7.5,
+          "inventory_mark_removed_at_flat": 1456.6,
+          "pnl_change_first_cleanup_snapshot_to_flat": -33.65000000000009,
+          "final_flat_pnl": -168.8500000000002,
+          "ex_post_frozen_inventory_diagnostic": {
+            "terminal_settlement_price": 44.69,
+            "inventory_value_at_contemporaneous_mark": -1456.6,
+            "inventory_value_at_terminal_settlement": -893.8,
+            "pre_cleanup_cash_plus_terminal_payoff": 427.5999999999999,
+            "terminal_payoff_minus_contemporaneous_mark": 562.8
+          },
+          "entry_fills": 1,
+          "cleanup_fills": 4,
+          "entry_first_at": 224.1174328327179,
+          "entry_last_at": 224.1174328327179,
+          "cleanup_first_fill_after_start_seconds": 5.625,
+          "cleanup_last_fill_after_start_seconds": 7.564799785614014
+        },
+        "ISLE": {
+          "quantity_at_first_cleanup_snapshot": 8,
+          "entry_vwap": 51.58,
+          "exit_vwap": 51.34,
+          "pre_cleanup_cash": -412.64,
+          "cleanup_cash_flow": 410.72,
+          "first_cleanup_snapshot_midpoint": 51.875,
+          "last_pre_cleanup_snapshot_pnl": -3.1999999999999886,
+          "first_cleanup_snapshot_pnl": 2.3600000000000136,
+          "mark_change_between_snapshots_no_fills": 5.560000000000002,
+          "inventory_mark_removed_at_flat": -415.0,
+          "pnl_change_first_cleanup_snapshot_to_flat": -4.279999999999987,
+          "final_flat_pnl": -1.9199999999999733,
+          "ex_post_frozen_inventory_diagnostic": {
+            "terminal_settlement_price": 58.55,
+            "inventory_value_at_contemporaneous_mark": 415.0,
+            "inventory_value_at_terminal_settlement": 468.4,
+            "pre_cleanup_cash_plus_terminal_payoff": 55.75999999999999,
+            "terminal_payoff_minus_contemporaneous_mark": 53.39999999999998
+          },
+          "entry_fills": 2,
+          "cleanup_fills": 1,
+          "entry_first_at": 235.87287759780884,
+          "entry_last_at": 236.42809867858887,
+          "cleanup_first_fill_after_start_seconds": 10.625,
+          "cleanup_last_fill_after_start_seconds": 10.625
+        },
+        "AQUA": {
+          "quantity_at_first_cleanup_snapshot": 50,
+          "entry_vwap": 28.16,
+          "exit_vwap": 27.917599999999997,
+          "pre_cleanup_cash": -1408.0,
+          "cleanup_cash_flow": 1395.8799999999999,
+          "first_cleanup_snapshot_midpoint": 27.85,
+          "last_pre_cleanup_snapshot_pnl": -19.49999999999985,
+          "first_cleanup_snapshot_pnl": -15.499999999999936,
+          "mark_change_between_snapshots_no_fills": 3.9999999999999147,
+          "inventory_mark_removed_at_flat": -1392.5,
+          "pnl_change_first_cleanup_snapshot_to_flat": 3.379999999999889,
+          "final_flat_pnl": -12.120000000000047,
+          "ex_post_frozen_inventory_diagnostic": {
+            "terminal_settlement_price": 34.03,
+            "inventory_value_at_contemporaneous_mark": 1392.5,
+            "inventory_value_at_terminal_settlement": 1701.5,
+            "pre_cleanup_cash_plus_terminal_payoff": 293.5,
+            "terminal_payoff_minus_contemporaneous_mark": 309.0
+          },
+          "entry_fills": 3,
+          "cleanup_fills": 3,
+          "entry_first_at": 228.1174328327179,
+          "entry_last_at": 229.52651071548462,
+          "cleanup_first_fill_after_start_seconds": 15.625,
+          "cleanup_last_fill_after_start_seconds": 18.887906789779663
+        },
+        "GRID": {
+          "quantity_at_first_cleanup_snapshot": -40,
+          "entry_vwap": 36.494,
+          "exit_vwap": 38.36,
+          "pre_cleanup_cash": 1459.76,
+          "cleanup_cash_flow": -1534.4,
+          "first_cleanup_snapshot_midpoint": 37.53,
+          "last_pre_cleanup_snapshot_pnl": -34.44000000000017,
+          "first_cleanup_snapshot_pnl": -41.440000000000055,
+          "mark_change_between_snapshots_no_fills": -6.999999999999886,
+          "inventory_mark_removed_at_flat": 1501.2,
+          "pnl_change_first_cleanup_snapshot_to_flat": -33.200000000000045,
+          "final_flat_pnl": -74.6400000000001,
+          "ex_post_frozen_inventory_diagnostic": {
+            "terminal_settlement_price": 32.3,
+            "inventory_value_at_contemporaneous_mark": -1501.2,
+            "inventory_value_at_terminal_settlement": -1292.0,
+            "pre_cleanup_cash_plus_terminal_payoff": 167.76,
+            "terminal_payoff_minus_contemporaneous_mark": 209.20000000000016
+          },
+          "entry_fills": 2,
+          "cleanup_fills": 2,
+          "entry_first_at": 211.93803191184998,
+          "entry_last_at": 212.33794260025024,
+          "cleanup_first_fill_after_start_seconds": 28.75705885887146,
+          "cleanup_last_fill_after_start_seconds": 29.854528665542603
+        },
+        "FERRY": {
+          "quantity_at_first_cleanup_snapshot": 80,
+          "entry_vwap": 19.585,
+          "exit_vwap": 19.564999999999998,
+          "pre_cleanup_cash": -1566.8,
+          "cleanup_cash_flow": 1565.1999999999998,
+          "first_cleanup_snapshot_midpoint": 19.365000000000002,
+          "last_pre_cleanup_snapshot_pnl": -17.59999999999991,
+          "first_cleanup_snapshot_pnl": -17.59999999999991,
+          "mark_change_between_snapshots_no_fills": 0.0,
+          "inventory_mark_removed_at_flat": -1549.2000000000003,
+          "pnl_change_first_cleanup_snapshot_to_flat": 15.99999999999983,
+          "final_flat_pnl": -1.6000000000000796,
+          "ex_post_frozen_inventory_diagnostic": {
+            "terminal_settlement_price": 20.45,
+            "inventory_value_at_contemporaneous_mark": 1549.2000000000003,
+            "inventory_value_at_terminal_settlement": 1636.0,
+            "pre_cleanup_cash_plus_terminal_payoff": 69.20000000000005,
+            "terminal_payoff_minus_contemporaneous_mark": 86.79999999999978
+          },
+          "entry_fills": 3,
+          "cleanup_fills": 2,
+          "entry_first_at": 242.24320483207703,
+          "entry_last_at": 242.34421467781067,
+          "cleanup_first_fill_after_start_seconds": 36.125,
+          "cleanup_last_fill_after_start_seconds": 36.39929676055908
+        },
+        "RECON": {
+          "quantity_at_first_cleanup_snapshot": 50,
+          "entry_vwap": 52.82,
+          "exit_vwap": 51.07,
+          "pre_cleanup_cash": -2641.0,
+          "cleanup_cash_flow": 2553.5,
+          "first_cleanup_snapshot_midpoint": 52.49,
+          "last_pre_cleanup_snapshot_pnl": 1.249999999999929,
+          "first_cleanup_snapshot_pnl": -16.499999999999915,
+          "mark_change_between_snapshots_no_fills": -17.749999999999844,
+          "inventory_mark_removed_at_flat": -2624.5,
+          "pnl_change_first_cleanup_snapshot_to_flat": -71.00000000000014,
+          "final_flat_pnl": -87.50000000000006,
+          "ex_post_frozen_inventory_diagnostic": {
+            "terminal_settlement_price": 56.89,
+            "inventory_value_at_contemporaneous_mark": 2624.5,
+            "inventory_value_at_terminal_settlement": 2844.5,
+            "pre_cleanup_cash_plus_terminal_payoff": 203.5,
+            "terminal_payoff_minus_contemporaneous_mark": 219.99999999999994
+          },
+          "entry_fills": 3,
+          "cleanup_fills": 1,
+          "entry_first_at": 244.2525119781494,
+          "entry_last_at": 245.9860737323761,
+          "cleanup_first_fill_after_start_seconds": 41.125,
+          "cleanup_last_fill_after_start_seconds": 41.125
+        },
+        "HAVEN": {
+          "quantity_at_first_cleanup_snapshot": -25,
+          "entry_vwap": 39.44,
+          "exit_vwap": 46.17,
+          "pre_cleanup_cash": 986.0,
+          "cleanup_cash_flow": -1154.25,
+          "first_cleanup_snapshot_midpoint": 41.665,
+          "last_pre_cleanup_snapshot_pnl": -52.749999999999986,
+          "first_cleanup_snapshot_pnl": -55.625000000000036,
+          "mark_change_between_snapshots_no_fills": -2.8750000000000497,
+          "inventory_mark_removed_at_flat": 1041.625,
+          "pnl_change_first_cleanup_snapshot_to_flat": -112.62499999999997,
+          "final_flat_pnl": -168.25,
+          "ex_post_frozen_inventory_diagnostic": {
+            "terminal_settlement_price": 23.89,
+            "inventory_value_at_contemporaneous_mark": -1041.625,
+            "inventory_value_at_terminal_settlement": -597.25,
+            "pre_cleanup_cash_plus_terminal_payoff": 388.75,
+            "terminal_payoff_minus_contemporaneous_mark": 444.37499999999994
+          },
+          "entry_fills": 1,
+          "cleanup_fills": 3,
+          "entry_first_at": 244.49320483207703,
+          "entry_last_at": 244.49320483207703,
+          "cleanup_first_fill_after_start_seconds": 46.125,
+          "cleanup_last_fill_after_start_seconds": 46.860880851745605
+        }
+      },
+      "cleanup_mutations": [
+        {
+          "method": "POST",
+          "path": "/orders",
+          "body": {
+            "symbol": "PORT",
+            "side": "buy",
+            "order_type": "limit",
+            "quantity": 20,
+            "price": 74.93
+          },
+          "started_at": 263.25,
+          "executed_at": 263.375,
+          "completed_at": 263.5
+        },
+        {
+          "method": "POST",
+          "path": "/orders",
+          "body": {
+            "symbol": "ISLE",
+            "side": "sell",
+            "order_type": "limit",
+            "quantity": 8,
+            "price": 50.46
+          },
+          "started_at": 268.25,
+          "executed_at": 268.375,
+          "completed_at": 268.5
+        },
+        {
+          "method": "POST",
+          "path": "/orders",
+          "body": {
+            "symbol": "AQUA",
+            "side": "sell",
+            "order_type": "limit",
+            "quantity": 50,
+            "price": 27.8
+          },
+          "started_at": 273.25,
+          "executed_at": 273.375,
+          "completed_at": 273.5
+        },
+        {
+          "method": "POST",
+          "path": "/orders",
+          "body": {
+            "symbol": "GRID",
+            "side": "buy",
+            "order_type": "limit",
+            "quantity": 40,
+            "price": 38.36
+          },
+          "started_at": 284.0,
+          "executed_at": 284.125,
+          "completed_at": 284.25
+        },
+        {
+          "method": "POST",
+          "path": "/orders",
+          "body": {
+            "symbol": "FERRY",
+            "side": "sell",
+            "order_type": "limit",
+            "quantity": 80,
+            "price": 19.47
+          },
+          "started_at": 293.75,
+          "executed_at": 293.875,
+          "completed_at": 294.0
+        },
+        {
+          "method": "POST",
+          "path": "/orders",
+          "body": {
+            "symbol": "RECON",
+            "side": "sell",
+            "order_type": "limit",
+            "quantity": 50,
+            "price": 50.56
+          },
+          "started_at": 298.75,
+          "executed_at": 298.875,
+          "completed_at": 299.0
+        },
+        {
+          "method": "POST",
+          "path": "/orders",
+          "body": {
+            "symbol": "HAVEN",
+            "side": "buy",
+            "order_type": "limit",
+            "quantity": 25,
+            "price": 46.35
+          },
+          "started_at": 303.75,
+          "executed_at": 303.875,
+          "completed_at": 304.0
+        }
+      ]
+    }
+  ],
+  "closed_capture_source": {
+    "path": "/var/folders/5_/4_9w4ch971l2mm9c6fqtg5400000gn/T/practice-independent-audit-471iu5fj/244.json",
+    "sha256": "99226507701f6ba1b368d9e3190245195cb1bc0048fb2ddd5120682d10080b91",
+    "matches_frozen_spec": true,
+    "receipt": {
+      "at": 1792826305.620034,
+      "kind": "settlement",
+      "source": "read_only_market_observer",
+      "competition_id": "2cf67e88-9081-4258-aa6a-3648c41925de",
+      "year": "1783",
+      "clock": {
+        "competition_id": "2cf67e88-9081-4258-aa6a-3648c41925de",
+        "state": "ready",
+        "fictional_time": "1783-06-04T16:00:00",
+        "elapsed_active_seconds": 2460
+      },
+      "end_clock": {
+        "competition_id": "2cf67e88-9081-4258-aa6a-3648c41925de",
+        "state": "ready",
+        "fictional_time": "1783-06-04T16:00:00",
+        "elapsed_active_seconds": 2460
+      },
+      "prices": {
+        "PORT": 44.69,
+        "ISLE": 58.55,
+        "AQUA": 34.03,
+        "GRID": 32.3,
+        "FERRY": 20.45,
+        "RECON": 56.89,
+        "MAT": 37.07,
+        "GEN": 42.02,
+        "HAVEN": 23.89,
+        "REIN": 90.0,
+        "ARCH": 268.39,
+        "REBLD": 229.94
+      },
+      "coverage": {
+        "first_at": 1792823479.5663402,
+        "last_at": 1792826304.268478,
+        "seq_count": 871,
+        "last_seq": 870,
+        "advertised_last_seq": 870,
+        "contiguous": true,
+        "final_rounds": [
+          1,
+          2,
+          3
+        ],
+        "conflicting_sequences": false
+      }
+    }
+  },
+  "comparisons": [
+    {
+      "displayed_depth_fraction": 1.0,
+      "candidate_minus_baseline_final_pnl": -214.83000000000027,
+      "by_symbol_final_pnl_delta": {
+        "AQUA": 90.95999999999992,
+        "FERRY": 13.839999999999954,
+        "GRID": -11.099999999999966,
+        "HAVEN": -163.75,
+        "ISLE": 71.22000000000017,
+        "PORT": -141.89999999999998,
+        "RECON": -87.5,
+        "REIN": 13.399999999999636
+      }
+    },
+    {
+      "displayed_depth_fraction": 0.5,
+      "candidate_minus_baseline_final_pnl": -211.54000000000042,
+      "by_symbol_final_pnl_delta": {
+        "AQUA": 88.17999999999996,
+        "FERRY": -2.440000000000076,
+        "GRID": -4.400000000000091,
+        "HAVEN": -168.25,
+        "ISLE": 79.3200000000001,
+        "PORT": -137.55000000000004,
+        "RECON": -87.50000000000006,
+        "REIN": 21.09999999999978
+      }
+    }
+  ],
+  "candidate_half_minus_full": {
+    "final_pnl": -39.050000000000125,
+    "pre_cleanup_cash": -12.2199999999998,
+    "cleanup_cash_flow": -26.829999999999927,
+    "same_inventory_at_first_cleanup_snapshot": true
+  },
+  "limitations": [
+    "Position-response marks are stamped at request execution, not at response observation or cleanup entry.",
+    "The first cleanup snapshot follows cleanup entry; its clock and the last pre-cleanup snapshot are explicit.",
+    "Mark-to-flat changes combine intervening prices, spread, partial fills and serialized cleanup; they are not pure slippage.",
+    "Baseline and candidate stops/cached forecasts occur at different times; these caches are not a same-time ablation.",
+    "Fill traces have no order ID. This audit does not invent per-fill order associations.",
+    "All four runs finish flat with zero conversions; symbol cashflows therefore reconcile without settlement prices.",
+    "The separate ex-post frozen-inventory diagnostic values first-cleanup holdings at the existing closed receipt. It permits no later trading and is not a realizable alternative policy or a measured cleanup saving.",
+    "A positive terminal payoff diagnostic does not establish feasible interim risk, forecast calibration, or future performance.",
+    "These are modeled executions on one reused captured path, not actual account profits or proof of future performance."
+  ]
+}

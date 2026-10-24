@@ -1,0 +1,8 @@
+{
+  "audit.json": "fdf339d900ce25251b3d17a686f2f88a1a212db8e12a0c1eee8daab6d8ad2c6f",
+  "independent-review.tar.gz": "8930064de48813f53025be67a6d0db6e00019e86631b36b6e176d38dc9329b93",
+  "observations.jsonl": "9e98c0fe5b5a503dc6c6f1566b785572896c5e35ba0be8f8fcfae49dd273b195",
+  "serialized-attempts.jsonl": "428d0e8a63900085b5e56e39296938813c2677e893e48e41db5a736eb9e1025c",
+  "spec.json": "1a8ff4ca6e93bd30d48e80f214774668b883ad6bd352ef82901916227b08fc73",
+  "supervised-attempts.jsonl": "535870c10eca34ff68adeb68a1bccf661bc7f13012a5d235a425ee722ec0da0f"
+}

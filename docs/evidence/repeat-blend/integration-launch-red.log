@@ -1,0 +1,749 @@
+FFFF....FFFFFFFFFFFFF.                                                   [100%]
+=================================== FAILURES ===================================
+________________ test_cli_switch_reaches_runner[False-practice] ________________
+
+tmp_path = PosixPath('/private/var/folders/5_/4_9w4ch971l2mm9c6fqtg5400000gn/T/pytest-of-arjunhans/pytest-283/test_cli_switch_reaches_runner0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x10778d810>
+launcher = 'practice', enabled = False
+
+    @pytest.mark.parametrize('launcher', ['practice', 'live'])
+    @pytest.mark.parametrize('enabled', [False, True])
+    def test_cli_switch_reaches_runner(tmp_path, monkeypatch, launcher, enabled):
+        observed = {}
+    
+        async def capture(args, *unused):
+            observed['enabled'] = args.repeat_prefix_blend
+    
+        if launcher == 'practice':
+            module = practice
+            argv = ['practice', '--out', str(tmp_path / 'out'), '--feed-log', 'unused']
+            monkeypatch.setattr(module, 'practice', capture)
+            monkeypatch.setattr(module, 'Journal', lambda *a: SimpleNamespace(stop=lambda reason: None))
+            monkeypatch.setattr(module, 'finish', lambda journal: None)
+        else:
+            module = live
+            argv = ['live', '--key', 'test-only']
+            monkeypatch.setattr(module, 'run', capture)
+        if enabled:
+            argv.append('--repeat-prefix-blend')
+        monkeypatch.setattr(sys, 'argv', argv)
+>       module.main()
+
+tests/test_repeat_blend_launch.py:41: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+bot/practice.py:734: in main
+    asyncio.run(practice(args, journal))
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/asyncio/runners.py:205: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/asyncio/runners.py:128: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/asyncio/base_events.py:720: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+args = Namespace(url='https://cornelltradingcompetition.org', key_file='.botkey', reuse_http=False, out='/private/var/folders...st-283/test_cli_switch_reaches_runner0/out', feed_log='unused', fraction=0.1, loss_trigger=250.0, seasons=3, hours=3.0)
+unused = (namespace(stop=<function test_cli_switch_reaches_runner.<locals>.<lambda>.<locals>.<lambda> at 0x106beb530>),)
+
+    async def capture(args, *unused):
+>       observed['enabled'] = args.repeat_prefix_blend
+                              ^^^^^^^^^^^^^^^^^^^^^^^^
+E       AttributeError: 'Namespace' object has no attribute 'repeat_prefix_blend'
+
+tests/test_repeat_blend_launch.py:26: AttributeError
+__________________ test_cli_switch_reaches_runner[False-live] __________________
+
+tmp_path = PosixPath('/private/var/folders/5_/4_9w4ch971l2mm9c6fqtg5400000gn/T/pytest-of-arjunhans/pytest-283/test_cli_switch_reaches_runner1')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x10778d480>
+launcher = 'live', enabled = False
+
+    @pytest.mark.parametrize('launcher', ['practice', 'live'])
+    @pytest.mark.parametrize('enabled', [False, True])
+    def test_cli_switch_reaches_runner(tmp_path, monkeypatch, launcher, enabled):
+        observed = {}
+    
+        async def capture(args, *unused):
+            observed['enabled'] = args.repeat_prefix_blend
+    
+        if launcher == 'practice':
+            module = practice
+            argv = ['practice', '--out', str(tmp_path / 'out'), '--feed-log', 'unused']
+            monkeypatch.setattr(module, 'practice', capture)
+            monkeypatch.setattr(module, 'Journal', lambda *a: SimpleNamespace(stop=lambda reason: None))
+            monkeypatch.setattr(module, 'finish', lambda journal: None)
+        else:
+            module = live
+            argv = ['live', '--key', 'test-only']
+            monkeypatch.setattr(module, 'run', capture)
+        if enabled:
+            argv.append('--repeat-prefix-blend')
+        monkeypatch.setattr(sys, 'argv', argv)
+>       module.main()
+
+tests/test_repeat_blend_launch.py:41: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+bot/live.py:788: in main
+    asyncio.run(run(ap.parse_args()))
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/asyncio/runners.py:205: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/asyncio/runners.py:128: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/asyncio/base_events.py:720: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+args = Namespace(url='https://cornelltradingcompetition.org', key='test-only', dry_run=False, reuse_http=False, min_edge=0.02...5, cone_w=1.0, cone_s0=20.0, cone_nu=0.0, isl_w=0.0, ent_cut=1.2, announce_wait=60.0, control='recordings/control.txt')
+unused = ()
+
+    async def capture(args, *unused):
+>       observed['enabled'] = args.repeat_prefix_blend
+                              ^^^^^^^^^^^^^^^^^^^^^^^^
+E       AttributeError: 'Namespace' object has no attribute 'repeat_prefix_blend'
+
+tests/test_repeat_blend_launch.py:26: AttributeError
+________________ test_cli_switch_reaches_runner[True-practice] _________________
+
+tmp_path = PosixPath('/private/var/folders/5_/4_9w4ch971l2mm9c6fqtg5400000gn/T/pytest-of-arjunhans/pytest-283/test_cli_switch_reaches_runner2')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x107e21b50>
+launcher = 'practice', enabled = True
+
+    @pytest.mark.parametrize('launcher', ['practice', 'live'])
+    @pytest.mark.parametrize('enabled', [False, True])
+    def test_cli_switch_reaches_runner(tmp_path, monkeypatch, launcher, enabled):
+        observed = {}
+    
+        async def capture(args, *unused):
+            observed['enabled'] = args.repeat_prefix_blend
+    
+        if launcher == 'practice':
+            module = practice
+            argv = ['practice', '--out', str(tmp_path / 'out'), '--feed-log', 'unused']
+            monkeypatch.setattr(module, 'practice', capture)
+            monkeypatch.setattr(module, 'Journal', lambda *a: SimpleNamespace(stop=lambda reason: None))
+            monkeypatch.setattr(module, 'finish', lambda journal: None)
+        else:
+            module = live
+            argv = ['live', '--key', 'test-only']
+            monkeypatch.setattr(module, 'run', capture)
+        if enabled:
+            argv.append('--repeat-prefix-blend')
+        monkeypatch.setattr(sys, 'argv', argv)
+>       module.main()
+
+tests/test_repeat_blend_launch.py:41: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+bot/practice.py:729: in main
+    args = parser.parse_args()
+           ^^^^^^^^^^^^^^^^^^^
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/argparse.py:2012: in parse_args
+    self.error(msg)
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/argparse.py:2785: in error
+    self.exit(2, _('%(prog)s: error: %(message)s\n') % args)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = ArgumentParser(prog='practice', usage=None, description='Bounded simulated-exchange practice. Reads .botkey locally; n... guards remain in force.\n', formatter_class=<class 'argparse.HelpFormatter'>, conflict_handler='error', add_help=True)
+status = 2
+message = 'practice: error: unrecognized arguments: --repeat-prefix-blend\n'
+
+    def exit(self, status=0, message=None):
+        if message:
+            self._print_message(message, _sys.stderr)
+>       _sys.exit(status)
+E       SystemExit: 2
+
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/argparse.py:2772: SystemExit
+----------------------------- Captured stderr call -----------------------------
+usage: practice [-h] [--url URL] [--key-file KEY_FILE] [--reuse-http]
+                --out OUT --feed-log FEED_LOG [--fraction FRACTION]
+                [--loss-trigger LOSS_TRIGGER] [--seasons SEASONS]
+                [--hours HOURS]
+practice: error: unrecognized arguments: --repeat-prefix-blend
+__________________ test_cli_switch_reaches_runner[True-live] ___________________
+
+tmp_path = PosixPath('/private/var/folders/5_/4_9w4ch971l2mm9c6fqtg5400000gn/T/pytest-of-arjunhans/pytest-283/test_cli_switch_reaches_runner3')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x107702be0>
+launcher = 'live', enabled = True
+
+    @pytest.mark.parametrize('launcher', ['practice', 'live'])
+    @pytest.mark.parametrize('enabled', [False, True])
+    def test_cli_switch_reaches_runner(tmp_path, monkeypatch, launcher, enabled):
+        observed = {}
+    
+        async def capture(args, *unused):
+            observed['enabled'] = args.repeat_prefix_blend
+    
+        if launcher == 'practice':
+            module = practice
+            argv = ['practice', '--out', str(tmp_path / 'out'), '--feed-log', 'unused']
+            monkeypatch.setattr(module, 'practice', capture)
+            monkeypatch.setattr(module, 'Journal', lambda *a: SimpleNamespace(stop=lambda reason: None))
+            monkeypatch.setattr(module, 'finish', lambda journal: None)
+        else:
+            module = live
+            argv = ['live', '--key', 'test-only']
+            monkeypatch.setattr(module, 'run', capture)
+        if enabled:
+            argv.append('--repeat-prefix-blend')
+        monkeypatch.setattr(sys, 'argv', argv)
+>       module.main()
+
+tests/test_repeat_blend_launch.py:41: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+bot/live.py:788: in main
+    asyncio.run(run(ap.parse_args()))
+                    ^^^^^^^^^^^^^^^
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/argparse.py:2012: in parse_args
+    self.error(msg)
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/argparse.py:2785: in error
+    self.exit(2, _('%(prog)s: error: %(message)s\n') % args)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = ArgumentParser(prog='live', usage=None, description='Live bot for the Hurricane Season exchange (testnet or competitio... not sent.\n', formatter_class=<class 'argparse.RawDescriptionHelpFormatter'>, conflict_handler='error', add_help=True)
+status = 2
+message = 'live: error: unrecognized arguments: --repeat-prefix-blend\n'
+
+    def exit(self, status=0, message=None):
+        if message:
+            self._print_message(message, _sys.stderr)
+>       _sys.exit(status)
+E       SystemExit: 2
+
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/argparse.py:2772: SystemExit
+----------------------------- Captured stderr call -----------------------------
+usage: live [-h] [--url URL] --key KEY [--dry-run] [--reuse-http]
+            [--min-edge MIN_EDGE] [--edge-full EDGE_FULL]
+            [--basket-edge BASKET_EDGE]
+            [--basket-participation BASKET_PARTICIPATION]
+            [--final-exact | --no-final-exact] [--final-edge FINAL_EDGE]
+            [--final-edge-full FINAL_EDGE_FULL] [--sync SYNC] [--ws WS]
+            [--rate RATE] [--nowcast] [--sd-mult SD_MULT] [--sigma SIGMA]
+            [--k K] [--passive PASSIVE] [--warmup WARMUP]
+            [--max-cross MAX_CROSS] [--feed-log FEED_LOG] [--carry CARRY]
+            [--cone-w CONE_W] [--cone-s0 CONE_S0] [--cone-nu CONE_NU]
+            [--isl-w ISL_W] [--ent-cut ENT_CUT]
+            [--announce-wait ANNOUNCE_WAIT] [--control CONTROL]
+live: error: unrecognized arguments: --repeat-prefix-blend
+_____________ test_launcher_constructs_fixed_blend[True-practice] ______________
+
+tmp_path = PosixPath('/private/var/folders/5_/4_9w4ch971l2mm9c6fqtg5400000gn/T/pytest-of-arjunhans/pytest-283/test_launcher_constructs_fixed4')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x107edd400>
+launcher = 'practice', selection = True
+
+    @pytest.mark.parametrize('launcher', ['practice', 'live'])
+    @pytest.mark.parametrize('selection', ['absent', False, True])
+    def test_launcher_constructs_fixed_blend(tmp_path, monkeypatch, launcher, selection):
+        exchange = ColdExchange()
+        exchange.responses['/positions'] = {'positions': []}
+        exchange.responses['/system/bot-trading'] = {'mode': 'full'}
+        args = arguments(tmp_path)
+        if selection != 'absent':
+            args.repeat_prefix_blend = selection
+        observed = {}
+    
+        class HandoffComplete(Exception):
+            pass
+    
+        def inspect_model(ex, trader, *unused, **kwargs):
+            model = trader.model.ensemble
+            observed.update(enabled=model.repeat_prefix, weight=model.repeat_weight,
+                            strategy_identity=trader.competition_id,
+                            account_identity=ex.competition_id)
+            raise HandoffComplete
+    
+        monkeypatch.setattr(live, 'replay_feed_log', lambda *a: ('', 0, 0))
+        if launcher == 'practice':
+            key = tmp_path / 'test-key'
+            key.write_text('test-only')
+            args.key_file, args.url = str(key), 'http://example.invalid'
+            journal = SimpleNamespace(event=lambda *a, **k: None)
+            monkeypatch.setattr(practice, 'PracticeExchange', lambda *a, **k: exchange)
+            monkeypatch.setattr(practice, 'PracticeSession', inspect_model)
+            run = practice.practice(args, journal)
+        else:
+            monkeypatch.setattr(live, 'LiveSession', inspect_model)
+            run = live.run_exchange(args, exchange)
+        with pytest.raises(HandoffComplete):
+            asyncio.run(run)
+        enabled = selection is True
+>       assert observed == {'enabled': enabled, 'weight': .5 if enabled else 1.,
+                            'strategy_identity': 'season-1', 'account_identity': 'season-1'}
+E       AssertionError: assert {'enabled': F...': 'season-1'} == {'enabled': T...': 'season-1'}
+E         
+E         Omitting 2 identical items, use -vv to show
+E         Differing items:
+E         {'weight': 1.0} != {'weight': 0.5}
+E         {'enabled': False} != {'enabled': True}
+E         Use -v to get more diff
+
+tests/test_repeat_blend_launch.py:81: AssertionError
+_______________ test_launcher_constructs_fixed_blend[True-live] ________________
+
+tmp_path = PosixPath('/private/var/folders/5_/4_9w4ch971l2mm9c6fqtg5400000gn/T/pytest-of-arjunhans/pytest-283/test_launcher_constructs_fixed5')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x1083dab30>
+launcher = 'live', selection = True
+
+    @pytest.mark.parametrize('launcher', ['practice', 'live'])
+    @pytest.mark.parametrize('selection', ['absent', False, True])
+    def test_launcher_constructs_fixed_blend(tmp_path, monkeypatch, launcher, selection):
+        exchange = ColdExchange()
+        exchange.responses['/positions'] = {'positions': []}
+        exchange.responses['/system/bot-trading'] = {'mode': 'full'}
+        args = arguments(tmp_path)
+        if selection != 'absent':
+            args.repeat_prefix_blend = selection
+        observed = {}
+    
+        class HandoffComplete(Exception):
+            pass
+    
+        def inspect_model(ex, trader, *unused, **kwargs):
+            model = trader.model.ensemble
+            observed.update(enabled=model.repeat_prefix, weight=model.repeat_weight,
+                            strategy_identity=trader.competition_id,
+                            account_identity=ex.competition_id)
+            raise HandoffComplete
+    
+        monkeypatch.setattr(live, 'replay_feed_log', lambda *a: ('', 0, 0))
+        if launcher == 'practice':
+            key = tmp_path / 'test-key'
+            key.write_text('test-only')
+            args.key_file, args.url = str(key), 'http://example.invalid'
+            journal = SimpleNamespace(event=lambda *a, **k: None)
+            monkeypatch.setattr(practice, 'PracticeExchange', lambda *a, **k: exchange)
+            monkeypatch.setattr(practice, 'PracticeSession', inspect_model)
+            run = practice.practice(args, journal)
+        else:
+            monkeypatch.setattr(live, 'LiveSession', inspect_model)
+            run = live.run_exchange(args, exchange)
+        with pytest.raises(HandoffComplete):
+            asyncio.run(run)
+        enabled = selection is True
+>       assert observed == {'enabled': enabled, 'weight': .5 if enabled else 1.,
+                            'strategy_identity': 'season-1', 'account_identity': 'season-1'}
+E       AssertionError: assert {'enabled': F...': 'season-1'} == {'enabled': T...': 'season-1'}
+E         
+E         Omitting 2 identical items, use -vv to show
+E         Differing items:
+E         {'weight': 1.0} != {'weight': 0.5}
+E         {'enabled': False} != {'enabled': True}
+E         Use -v to get more diff
+
+tests/test_repeat_blend_launch.py:81: AssertionError
+----------------------------- Captured stdout call -----------------------------
+HTTP connection reuse=False
+strategy analog min_edge 0.025 edge_full 0.03 sd_mult 0.7 sigma 15 k 100 passive 0.75 warmup 20 max_cross 0.02 carry 0.5 ent_cut 1.2 cone_w 1 cone_s0 20 cone_nu 0 isl_w 0
+final phase exact=True entry=0.005 full=0.005
+basket edge=0.01 participation=0.5 max_lot=10
+announcements: pause named symbols, re-anchor to the house mid after 60 s; commands from /private/var/folders/5_/4_9w4ch971l2mm9c6fqtg5400000gn/T/pytest-of-arjunhans/pytest-283/test_launcher_constructs_fixed5/commands
+________ test_invalid_programmatic_selection_precedes_io[yes-practice] _________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x1083da0b0>
+launcher = 'practice', invalid = 'yes'
+
+    @pytest.mark.parametrize('launcher', ['practice', 'live', 'live_run'])
+    @pytest.mark.parametrize('invalid', ['yes', 1, None])
+    def test_invalid_programmatic_selection_precedes_io(monkeypatch, launcher, invalid):
+        args = SimpleNamespace(repeat_prefix_blend=invalid, nowcast=False)
+        run = (practice.practice(args, object()) if launcher == 'practice' else
+               live.run_exchange(args, object()) if launcher == 'live' else live.run(args))
+        with pytest.raises(ValueError, match='repeat_prefix_blend must be a bool'):
+>           asyncio.run(run)
+
+tests/test_repeat_blend_launch.py:92: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/asyncio/runners.py:205: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/asyncio/runners.py:128: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/asyncio/base_events.py:720: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+args = namespace(repeat_prefix_blend='yes', nowcast=False)
+journal = <object object at 0x1083989b0>
+
+    async def practice(args, journal):
+>       key = Path(args.key_file).read_text().strip()
+                   ^^^^^^^^^^^^^
+E       AttributeError: 'types.SimpleNamespace' object has no attribute 'key_file'
+
+bot/practice.py:426: AttributeError
+__________ test_invalid_programmatic_selection_precedes_io[yes-live] ___________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x107eac7a0>
+launcher = 'live', invalid = 'yes'
+
+    @pytest.mark.parametrize('launcher', ['practice', 'live', 'live_run'])
+    @pytest.mark.parametrize('invalid', ['yes', 1, None])
+    def test_invalid_programmatic_selection_precedes_io(monkeypatch, launcher, invalid):
+        args = SimpleNamespace(repeat_prefix_blend=invalid, nowcast=False)
+        run = (practice.practice(args, object()) if launcher == 'practice' else
+               live.run_exchange(args, object()) if launcher == 'live' else live.run(args))
+        with pytest.raises(ValueError, match='repeat_prefix_blend must be a bool'):
+>           asyncio.run(run)
+
+tests/test_repeat_blend_launch.py:92: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/asyncio/runners.py:205: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/asyncio/runners.py:128: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/asyncio/base_events.py:720: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+args = namespace(repeat_prefix_blend='yes', nowcast=False)
+ex = <object object at 0x107505bf0>
+
+    async def run_exchange(args: argparse.Namespace, ex: LiveExchange) -> None:
+>       print(f"HTTP connection reuse={ex.http_reuse_enabled}", flush=True)
+                                       ^^^^^^^^^^^^^^^^^^^^^
+E       AttributeError: 'object' object has no attribute 'http_reuse_enabled'
+
+bot/live.py:698: AttributeError
+________ test_invalid_programmatic_selection_precedes_io[yes-live_run] _________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x107e1f710>
+launcher = 'live_run', invalid = 'yes'
+
+    @pytest.mark.parametrize('launcher', ['practice', 'live', 'live_run'])
+    @pytest.mark.parametrize('invalid', ['yes', 1, None])
+    def test_invalid_programmatic_selection_precedes_io(monkeypatch, launcher, invalid):
+        args = SimpleNamespace(repeat_prefix_blend=invalid, nowcast=False)
+        run = (practice.practice(args, object()) if launcher == 'practice' else
+               live.run_exchange(args, object()) if launcher == 'live' else live.run(args))
+        with pytest.raises(ValueError, match='repeat_prefix_blend must be a bool'):
+>           asyncio.run(run)
+
+tests/test_repeat_blend_launch.py:92: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/asyncio/runners.py:205: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/asyncio/runners.py:128: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/asyncio/base_events.py:720: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+args = namespace(repeat_prefix_blend='yes', nowcast=False)
+
+    async def run(args: argparse.Namespace) -> None:
+>       ex = LiveExchange(args.url, args.key, args.dry_run, rate_limit=args.rate,
+                          ^^^^^^^^
+                          reuse_http=getattr(args, 'reuse_http', False))
+E       AttributeError: 'types.SimpleNamespace' object has no attribute 'url'
+
+bot/live.py:689: AttributeError
+_________ test_invalid_programmatic_selection_precedes_io[1-practice] __________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x107e1fc50>
+launcher = 'practice', invalid = 1
+
+    @pytest.mark.parametrize('launcher', ['practice', 'live', 'live_run'])
+    @pytest.mark.parametrize('invalid', ['yes', 1, None])
+    def test_invalid_programmatic_selection_precedes_io(monkeypatch, launcher, invalid):
+        args = SimpleNamespace(repeat_prefix_blend=invalid, nowcast=False)
+        run = (practice.practice(args, object()) if launcher == 'practice' else
+               live.run_exchange(args, object()) if launcher == 'live' else live.run(args))
+        with pytest.raises(ValueError, match='repeat_prefix_blend must be a bool'):
+>           asyncio.run(run)
+
+tests/test_repeat_blend_launch.py:92: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/asyncio/runners.py:205: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/asyncio/runners.py:128: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/asyncio/base_events.py:720: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+args = namespace(repeat_prefix_blend=1, nowcast=False)
+journal = <object object at 0x1075059a0>
+
+    async def practice(args, journal):
+>       key = Path(args.key_file).read_text().strip()
+                   ^^^^^^^^^^^^^
+E       AttributeError: 'types.SimpleNamespace' object has no attribute 'key_file'
+
+bot/practice.py:426: AttributeError
+___________ test_invalid_programmatic_selection_precedes_io[1-live] ____________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x107ee3540>
+launcher = 'live', invalid = 1
+
+    @pytest.mark.parametrize('launcher', ['practice', 'live', 'live_run'])
+    @pytest.mark.parametrize('invalid', ['yes', 1, None])
+    def test_invalid_programmatic_selection_precedes_io(monkeypatch, launcher, invalid):
+        args = SimpleNamespace(repeat_prefix_blend=invalid, nowcast=False)
+        run = (practice.practice(args, object()) if launcher == 'practice' else
+               live.run_exchange(args, object()) if launcher == 'live' else live.run(args))
+        with pytest.raises(ValueError, match='repeat_prefix_blend must be a bool'):
+>           asyncio.run(run)
+
+tests/test_repeat_blend_launch.py:92: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/asyncio/runners.py:205: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/asyncio/runners.py:128: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/asyncio/base_events.py:720: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+args = namespace(repeat_prefix_blend=1, nowcast=False)
+ex = <object object at 0x1083992c0>
+
+    async def run_exchange(args: argparse.Namespace, ex: LiveExchange) -> None:
+>       print(f"HTTP connection reuse={ex.http_reuse_enabled}", flush=True)
+                                       ^^^^^^^^^^^^^^^^^^^^^
+E       AttributeError: 'object' object has no attribute 'http_reuse_enabled'
+
+bot/live.py:698: AttributeError
+_________ test_invalid_programmatic_selection_precedes_io[1-live_run] __________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x107ee2d00>
+launcher = 'live_run', invalid = 1
+
+    @pytest.mark.parametrize('launcher', ['practice', 'live', 'live_run'])
+    @pytest.mark.parametrize('invalid', ['yes', 1, None])
+    def test_invalid_programmatic_selection_precedes_io(monkeypatch, launcher, invalid):
+        args = SimpleNamespace(repeat_prefix_blend=invalid, nowcast=False)
+        run = (practice.practice(args, object()) if launcher == 'practice' else
+               live.run_exchange(args, object()) if launcher == 'live' else live.run(args))
+        with pytest.raises(ValueError, match='repeat_prefix_blend must be a bool'):
+>           asyncio.run(run)
+
+tests/test_repeat_blend_launch.py:92: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/asyncio/runners.py:205: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/asyncio/runners.py:128: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/asyncio/base_events.py:720: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+args = namespace(repeat_prefix_blend=1, nowcast=False)
+
+    async def run(args: argparse.Namespace) -> None:
+>       ex = LiveExchange(args.url, args.key, args.dry_run, rate_limit=args.rate,
+                          ^^^^^^^^
+                          reuse_http=getattr(args, 'reuse_http', False))
+E       AttributeError: 'types.SimpleNamespace' object has no attribute 'url'
+
+bot/live.py:689: AttributeError
+________ test_invalid_programmatic_selection_precedes_io[None-practice] ________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x107eda030>
+launcher = 'practice', invalid = None
+
+    @pytest.mark.parametrize('launcher', ['practice', 'live', 'live_run'])
+    @pytest.mark.parametrize('invalid', ['yes', 1, None])
+    def test_invalid_programmatic_selection_precedes_io(monkeypatch, launcher, invalid):
+        args = SimpleNamespace(repeat_prefix_blend=invalid, nowcast=False)
+        run = (practice.practice(args, object()) if launcher == 'practice' else
+               live.run_exchange(args, object()) if launcher == 'live' else live.run(args))
+        with pytest.raises(ValueError, match='repeat_prefix_blend must be a bool'):
+>           asyncio.run(run)
+
+tests/test_repeat_blend_launch.py:92: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/asyncio/runners.py:205: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/asyncio/runners.py:128: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/asyncio/base_events.py:720: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+args = namespace(repeat_prefix_blend=None, nowcast=False)
+journal = <object object at 0x108022230>
+
+    async def practice(args, journal):
+>       key = Path(args.key_file).read_text().strip()
+                   ^^^^^^^^^^^^^
+E       AttributeError: 'types.SimpleNamespace' object has no attribute 'key_file'
+
+bot/practice.py:426: AttributeError
+__________ test_invalid_programmatic_selection_precedes_io[None-live] __________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x107ed96d0>
+launcher = 'live', invalid = None
+
+    @pytest.mark.parametrize('launcher', ['practice', 'live', 'live_run'])
+    @pytest.mark.parametrize('invalid', ['yes', 1, None])
+    def test_invalid_programmatic_selection_precedes_io(monkeypatch, launcher, invalid):
+        args = SimpleNamespace(repeat_prefix_blend=invalid, nowcast=False)
+        run = (practice.practice(args, object()) if launcher == 'practice' else
+               live.run_exchange(args, object()) if launcher == 'live' else live.run(args))
+        with pytest.raises(ValueError, match='repeat_prefix_blend must be a bool'):
+>           asyncio.run(run)
+
+tests/test_repeat_blend_launch.py:92: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/asyncio/runners.py:205: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/asyncio/runners.py:128: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/asyncio/base_events.py:720: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+args = namespace(repeat_prefix_blend=None, nowcast=False)
+ex = <object object at 0x107506460>
+
+    async def run_exchange(args: argparse.Namespace, ex: LiveExchange) -> None:
+>       print(f"HTTP connection reuse={ex.http_reuse_enabled}", flush=True)
+                                       ^^^^^^^^^^^^^^^^^^^^^
+E       AttributeError: 'object' object has no attribute 'http_reuse_enabled'
+
+bot/live.py:698: AttributeError
+________ test_invalid_programmatic_selection_precedes_io[None-live_run] ________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x107ed5400>
+launcher = 'live_run', invalid = None
+
+    @pytest.mark.parametrize('launcher', ['practice', 'live', 'live_run'])
+    @pytest.mark.parametrize('invalid', ['yes', 1, None])
+    def test_invalid_programmatic_selection_precedes_io(monkeypatch, launcher, invalid):
+        args = SimpleNamespace(repeat_prefix_blend=invalid, nowcast=False)
+        run = (practice.practice(args, object()) if launcher == 'practice' else
+               live.run_exchange(args, object()) if launcher == 'live' else live.run(args))
+        with pytest.raises(ValueError, match='repeat_prefix_blend must be a bool'):
+>           asyncio.run(run)
+
+tests/test_repeat_blend_launch.py:92: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/asyncio/runners.py:205: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/asyncio/runners.py:128: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/asyncio/base_events.py:720: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+args = namespace(repeat_prefix_blend=None, nowcast=False)
+
+    async def run(args: argparse.Namespace) -> None:
+>       ex = LiveExchange(args.url, args.key, args.dry_run, rate_limit=args.rate,
+                          ^^^^^^^^
+                          reuse_http=getattr(args, 'reuse_http', False))
+E       AttributeError: 'types.SimpleNamespace' object has no attribute 'url'
+
+bot/live.py:689: AttributeError
+_______________ test_nowcast_conflict_precedes_account_io[False] _______________
+
+direct = False
+
+    @pytest.mark.parametrize('direct', [False, True])
+    def test_nowcast_conflict_precedes_account_io(direct):
+        args = SimpleNamespace(repeat_prefix_blend=True, nowcast=True)
+        with pytest.raises(ValueError, match='requires the analog model'):
+>           asyncio.run(live.run(args) if direct else live.run_exchange(args, object()))
+
+tests/test_repeat_blend_launch.py:99: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/asyncio/runners.py:205: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/asyncio/runners.py:128: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/asyncio/base_events.py:720: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+args = namespace(repeat_prefix_blend=True, nowcast=True)
+ex = <object object at 0x107507890>
+
+    async def run_exchange(args: argparse.Namespace, ex: LiveExchange) -> None:
+>       print(f"HTTP connection reuse={ex.http_reuse_enabled}", flush=True)
+                                       ^^^^^^^^^^^^^^^^^^^^^
+E       AttributeError: 'object' object has no attribute 'http_reuse_enabled'
+
+bot/live.py:698: AttributeError
+_______________ test_nowcast_conflict_precedes_account_io[True] ________________
+
+direct = True
+
+    @pytest.mark.parametrize('direct', [False, True])
+    def test_nowcast_conflict_precedes_account_io(direct):
+        args = SimpleNamespace(repeat_prefix_blend=True, nowcast=True)
+        with pytest.raises(ValueError, match='requires the analog model'):
+>           asyncio.run(live.run(args) if direct else live.run_exchange(args, object()))
+
+tests/test_repeat_blend_launch.py:99: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/asyncio/runners.py:205: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/asyncio/runners.py:128: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/asyncio/base_events.py:720: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+args = namespace(repeat_prefix_blend=True, nowcast=True)
+
+    async def run(args: argparse.Namespace) -> None:
+>       ex = LiveExchange(args.url, args.key, args.dry_run, rate_limit=args.rate,
+                          ^^^^^^^^
+                          reuse_http=getattr(args, 'reuse_http', False))
+E       AttributeError: 'types.SimpleNamespace' object has no attribute 'url'
+
+bot/live.py:689: AttributeError
+=========================== short test summary info ============================
+FAILED tests/test_repeat_blend_launch.py::test_cli_switch_reaches_runner[False-practice]
+FAILED tests/test_repeat_blend_launch.py::test_cli_switch_reaches_runner[False-live]
+FAILED tests/test_repeat_blend_launch.py::test_cli_switch_reaches_runner[True-practice]
+FAILED tests/test_repeat_blend_launch.py::test_cli_switch_reaches_runner[True-live]
+FAILED tests/test_repeat_blend_launch.py::test_launcher_constructs_fixed_blend[True-practice]
+FAILED tests/test_repeat_blend_launch.py::test_launcher_constructs_fixed_blend[True-live]
+FAILED tests/test_repeat_blend_launch.py::test_invalid_programmatic_selection_precedes_io[yes-practice]
+FAILED tests/test_repeat_blend_launch.py::test_invalid_programmatic_selection_precedes_io[yes-live]
+FAILED tests/test_repeat_blend_launch.py::test_invalid_programmatic_selection_precedes_io[yes-live_run]
+FAILED tests/test_repeat_blend_launch.py::test_invalid_programmatic_selection_precedes_io[1-practice]
+FAILED tests/test_repeat_blend_launch.py::test_invalid_programmatic_selection_precedes_io[1-live]
+FAILED tests/test_repeat_blend_launch.py::test_invalid_programmatic_selection_precedes_io[1-live_run]
+FAILED tests/test_repeat_blend_launch.py::test_invalid_programmatic_selection_precedes_io[None-practice]
+FAILED tests/test_repeat_blend_launch.py::test_invalid_programmatic_selection_precedes_io[None-live]
+FAILED tests/test_repeat_blend_launch.py::test_invalid_programmatic_selection_precedes_io[None-live_run]
+FAILED tests/test_repeat_blend_launch.py::test_nowcast_conflict_precedes_account_io[False]
+FAILED tests/test_repeat_blend_launch.py::test_nowcast_conflict_precedes_account_io[True]
+17 failed, 5 passed in 0.47s

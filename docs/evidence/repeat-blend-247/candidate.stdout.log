@@ -1,0 +1,17 @@
+{"setting": [247, 0.0, 1.0, false], "status": "ok", "comparison": "candidate_evaluated", "error": null}
+{"setting": [247, 0.0, 1.0, true], "status": "ok", "comparison": "candidate_evaluated", "error": null}
+{"setting": [247, 0.0, 0.5, false], "status": "ok", "comparison": "candidate_evaluated", "error": null}
+{"setting": [247, 0.0, 0.5, true], "status": "ok", "comparison": "candidate_evaluated", "error": null}
+{"setting": [247, 0.05, 1.0, false], "status": "ok", "comparison": "candidate_evaluated", "error": null}
+{"setting": [247, 0.05, 1.0, true], "status": "ok", "comparison": "candidate_evaluated", "error": null}
+{"setting": [247, 0.05, 0.5, false], "status": "ok", "comparison": "candidate_evaluated", "error": null}
+{"setting": [247, 0.05, 0.5, true], "status": "ok", "comparison": "candidate_evaluated", "error": null}
+{"setting": [247, 0.25, 1.0, false], "status": "ok", "comparison": "candidate_evaluated", "error": null}
+{"setting": [247, 0.25, 1.0, true], "status": "ok", "comparison": "candidate_evaluated", "error": null}
+{"setting": [247, 0.25, 0.5, false], "status": "ok", "comparison": "candidate_evaluated", "error": null}
+{"setting": [247, 0.25, 0.5, true], "status": "ok", "comparison": "candidate_evaluated", "error": null}
+{"setting": [247, 1.0, 1.0, false], "status": "ok", "comparison": "candidate_evaluated", "error": null}
+{"setting": [247, 1.0, 1.0, true], "status": "ok", "comparison": "candidate_evaluated", "error": null}
+{"setting": [247, 1.0, 0.5, false], "status": "ok", "comparison": "candidate_evaluated", "error": null}
+{"setting": [247, 1.0, 0.5, true], "status": "ok", "comparison": "candidate_evaluated", "error": null}
+{"runs": 16, "errors": 0, "changed_sources": [], "forbidden_attempts": [], "finished_at": 1792835769.874679, "results_sha256": "ac5faae13c4b1ee7848746ba5f233654551af2fdc35ca9e151b9e852d4d28753"}

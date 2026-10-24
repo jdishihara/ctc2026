@@ -1,0 +1,1174 @@
+{
+  "capture": 247,
+  "competition_id": "fd1ebff9-0f96-4533-b283-bc0a5c60cd4b",
+  "completed_at": 1792835796.533196,
+  "receipt": {
+    "at": 1792835136.260472,
+    "kind": "settlement",
+    "source": "read_only_market_observer",
+    "competition_id": "fd1ebff9-0f96-4533-b283-bc0a5c60cd4b",
+    "year": "1780",
+    "clock": {
+      "competition_id": "fd1ebff9-0f96-4533-b283-bc0a5c60cd4b",
+      "state": "ready",
+      "fictional_time": "1780-06-07T16:00:00",
+      "elapsed_active_seconds": 2460
+    },
+    "end_clock": {
+      "competition_id": "fd1ebff9-0f96-4533-b283-bc0a5c60cd4b",
+      "state": "ready",
+      "fictional_time": "1780-06-07T16:00:00",
+      "elapsed_active_seconds": 2460
+    },
+    "prices": {
+      "PORT": 85.35,
+      "ISLE": 55.12,
+      "AQUA": 28.37,
+      "GRID": 40.62,
+      "FERRY": 17.18,
+      "RECON": 49.48,
+      "MAT": 33.94,
+      "GEN": 37.11,
+      "HAVEN": 59.23,
+      "REIN": 90.0,
+      "ARCH": 331.42,
+      "REBLD": 203.95
+    },
+    "coverage": {
+      "first_at": 1792832314.241528,
+      "last_at": 1792835108.182863,
+      "seq_count": 872,
+      "last_seq": 871,
+      "advertised_last_seq": 871,
+      "contiguous": true,
+      "final_rounds": [
+        1,
+        2,
+        3
+      ],
+      "conflicting_sequences": false
+    }
+  },
+  "cache": {
+    "path": "/Users/arjunhans/Documents/ctc2026/out/capture-247-independent-review-20261024/247.json",
+    "file_sha256": "905e7bf98dbd13c913340a9a1999d49a00b6cd6a9209602e089fe20f88d3698e",
+    "frames_value_sha256": "711f1675a430b10276f5ef35332fef47f6230bb9ee8be145d2dbdc85fdd9e5c5",
+    "receipt_value_sha256": "49a7b2b53528fc5c2f5ea990eb40bda4b480593955c18e6db2a797b4069d3b63",
+    "frame_count": 21974,
+    "first_at": 1792832314.241528,
+    "last_at": 1792835135.096904,
+    "receipt_at": 1792835136.260472,
+    "coverage": {
+      "news_count": 872,
+      "advertised_last_seq": 871,
+      "quote_count": 21008,
+      "quote_count_by_round": {
+        "1": {
+          "PORT": 999,
+          "ISLE": 544,
+          "AQUA": 521,
+          "GRID": 599,
+          "FERRY": 678,
+          "RECON": 686,
+          "MAT": 489,
+          "GEN": 511,
+          "HAVEN": 918,
+          "REIN": 309,
+          "ARCH": 619,
+          "REBLD": 433
+        },
+        "2": {
+          "PORT": 843,
+          "ISLE": 630,
+          "AQUA": 659,
+          "GRID": 581,
+          "FERRY": 716,
+          "RECON": 336,
+          "MAT": 366,
+          "GEN": 439,
+          "HAVEN": 1245,
+          "REIN": 209,
+          "ARCH": 802,
+          "REBLD": 376
+        },
+        "3": {
+          "PORT": 687,
+          "ISLE": 646,
+          "AQUA": 815,
+          "GRID": 601,
+          "FERRY": 583,
+          "RECON": 446,
+          "MAT": 398,
+          "GEN": 438,
+          "HAVEN": 752,
+          "REIN": 235,
+          "ARCH": 496,
+          "REBLD": 352
+        }
+      },
+      "observed_quote_gaps": {
+        "1": {
+          "PORT": {
+            "max_seconds": 121.2956748008728,
+            "over_five_seconds": 25
+          },
+          "ISLE": {
+            "max_seconds": 121.29540395736694,
+            "over_five_seconds": 39
+          },
+          "AQUA": {
+            "max_seconds": 121.29512596130371,
+            "over_five_seconds": 39
+          },
+          "GRID": {
+            "max_seconds": 121.29534602165222,
+            "over_five_seconds": 31
+          },
+          "FERRY": {
+            "max_seconds": 121.2955961227417,
+            "over_five_seconds": 28
+          },
+          "RECON": {
+            "max_seconds": 121.29548001289368,
+            "over_five_seconds": 26
+          },
+          "MAT": {
+            "max_seconds": 121.29553580284119,
+            "over_five_seconds": 38
+          },
+          "GEN": {
+            "max_seconds": 121.29550909996033,
+            "over_five_seconds": 32
+          },
+          "HAVEN": {
+            "max_seconds": 121.29543876647949,
+            "over_five_seconds": 23
+          },
+          "REIN": {
+            "max_seconds": 121.29562401771545,
+            "over_five_seconds": 46
+          },
+          "ARCH": {
+            "max_seconds": 121.29556679725647,
+            "over_five_seconds": 28
+          },
+          "REBLD": {
+            "max_seconds": 121.29565000534058,
+            "over_five_seconds": 35
+          }
+        },
+        "2": {
+          "PORT": {
+            "max_seconds": 30.40442705154419,
+            "over_five_seconds": 25
+          },
+          "ISLE": {
+            "max_seconds": 29.64296293258667,
+            "over_five_seconds": 30
+          },
+          "AQUA": {
+            "max_seconds": 20.53131103515625,
+            "over_five_seconds": 28
+          },
+          "GRID": {
+            "max_seconds": 23.3652560710907,
+            "over_five_seconds": 33
+          },
+          "FERRY": {
+            "max_seconds": 31.245562314987183,
+            "over_five_seconds": 25
+          },
+          "RECON": {
+            "max_seconds": 23.54696774482727,
+            "over_five_seconds": 48
+          },
+          "MAT": {
+            "max_seconds": 28.720659971237183,
+            "over_five_seconds": 41
+          },
+          "GEN": {
+            "max_seconds": 22.627746105194092,
+            "over_five_seconds": 40
+          },
+          "HAVEN": {
+            "max_seconds": 17.069615840911865,
+            "over_five_seconds": 19
+          },
+          "REIN": {
+            "max_seconds": 41.95947194099426,
+            "over_five_seconds": 50
+          },
+          "ARCH": {
+            "max_seconds": 32.664427042007446,
+            "over_five_seconds": 26
+          },
+          "REBLD": {
+            "max_seconds": 30.147490739822388,
+            "over_five_seconds": 37
+          }
+        },
+        "3": {
+          "PORT": {
+            "max_seconds": 33.84234309196472,
+            "over_five_seconds": 34
+          },
+          "ISLE": {
+            "max_seconds": 39.63089895248413,
+            "over_five_seconds": 31
+          },
+          "AQUA": {
+            "max_seconds": 28.996673107147217,
+            "over_five_seconds": 29
+          },
+          "GRID": {
+            "max_seconds": 34.097108125686646,
+            "over_five_seconds": 30
+          },
+          "FERRY": {
+            "max_seconds": 33.95592999458313,
+            "over_five_seconds": 29
+          },
+          "RECON": {
+            "max_seconds": 39.78358721733093,
+            "over_five_seconds": 44
+          },
+          "MAT": {
+            "max_seconds": 27.13125705718994,
+            "over_five_seconds": 46
+          },
+          "GEN": {
+            "max_seconds": 31.282010078430176,
+            "over_five_seconds": 41
+          },
+          "HAVEN": {
+            "max_seconds": 38.69703388214111,
+            "over_five_seconds": 29
+          },
+          "REIN": {
+            "max_seconds": 36.68098998069763,
+            "over_five_seconds": 47
+          },
+          "ARCH": {
+            "max_seconds": 26.63310718536377,
+            "over_five_seconds": 31
+          },
+          "REBLD": {
+            "max_seconds": 29.482537984848022,
+            "over_five_seconds": 46
+          }
+        }
+      },
+      "round_windows": {
+        "1": {
+          "first_at": 1792832314.241528,
+          "closed_at": 1792833217.790548,
+          "close_source": "news_snapshot"
+        },
+        "2": {
+          "first_at": 1792833395.934997,
+          "closed_at": 1792834179.093025,
+          "close_source": "news_snapshot"
+        },
+        "3": {
+          "first_at": 1792834355.5923898,
+          "closed_at": 1792835136.260472,
+          "close_source": "official_receipt"
+        }
+      },
+      "unusable_quotes": 38,
+      "recorded_disconnect_frames": 0,
+      "disconnect_count_known": false,
+      "subscription_acknowledgements": [],
+      "disconnect_note": "The recorder may log disconnects only to its text log. Subscription acknowledgements may indicate reconnections but do not determine disconnect onset or reconstruct missed frames. Only explicit disconnect frames are applied to the replay.",
+      "quote_path_completeness_proven": false,
+      "gap_note": "Receive-time gaps include delays in observing round opens/closes; they do not prove missing server events."
+    }
+  },
+  "source_sha256": {
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/serialized-forward/bot/control.py": "b33ba64f8110eb59ce4a16e8cd987be8365bf0c3db98810f06c58333d4104401",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/serialized-forward/bot/http_transport.py": "5cc2dd41e418b794eac9dde2548fd40abcef605af303057ff633bd11d8b92162",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/serialized-forward/bot/live.py": "bdfe8ecd489cdcd42d7e6687cbb34511d75f6503c55ad195bc22b0451f1be72e",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/serialized-forward/ctc/__init__.py": "e178e73a3b0452a098d1cfa7f909ad65a3463457389018ab626ac281e1b634fe",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/serialized-forward/ctc/accounting.py": "b9cddb93959b277fe9ab7c6089e84dee2c092a2d049c466212878a5531ff0f99",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/serialized-forward/ctc/analog.py": "c606eefeab7cd0b5015b7b46cd831496d995f4b50030784ff2dd8171636938b2",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/serialized-forward/ctc/analog_library.npz": "22694387c3b612f5c20853feb9143e1bf8b8f5722a845da8ed584ab1b30bdf09",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/serialized-forward/ctc/basket.py": "ad08208095eb32a51fe19625b0e0929060a35bc4846ff4f8843e316f87d9a522",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/serialized-forward/ctc/damage_params.json": "c274463749d70b6ae85b6981fb029423c76e6fe5db0224e0d1aec83a70d22415",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/serialized-forward/ctc/history.py": "c9a93c117e4df869a4e8a34b03f0b656ada231bdf41864778d536ce129b91521",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/serialized-forward/ctc/ladder.json": "b70e7a8c5672dc6e4955c39fac62a70709ba29b39f00eead9add3cb4feeba5a4",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/serialized-forward/ctc/ladder.py": "da0c82abb297719dc1ea6d244558703072c881d3bd3b3fa43dc0885ae07f1f25",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/serialized-forward/ctc/price_signal.json": "3d421c258d939b6a0adc5db9f764b416c15be47cc684accc2187e074f11750f8",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/serialized-forward/ctc/price_signal.py": "aeb4b06e402231ac82e3b34ea7d1244346ee9b029036c4ffeb926112513b1fa4",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/serialized-forward/ctc/sim.py": "91da5850c313b94835364dabd7622fb8282382a710cf324c99471d9c29021273",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/serialized-forward/ctc/storm_sample.npz": "76da0f456aaadb8baee99920619db79c6f16e928dfab82ad33aade297a4b7c0f",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/serialized-forward/ctc/strategies.py": "4c667bebeb84dfe11883205656702bb3f66545661f01a0685c1e4c24f6b2680c",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/serialized-forward/ctc/valuation.py": "e19ceef5dc38154d1889065c4a85aae0d99b159267a0503a4c4fc3c7054292cd",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/serialized-forward/ctc/valuation_params.json": "06439094fc54318a8bfd1854fc2765d6ef542d1acad23de1836a4db47bf3b80b",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/serialized-forward/ctc/wind.py": "2e91425031bae6c2d60bb92a2e529cfc1222778820f126a29be836a4ec026f84",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/serialized-forward/data/case.json": "bcd0eb79c5a89b6625c17f2c233a686a04fafc75093e8a57d3c90f3b09972839",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/serialized-forward/docs/serialized-forward-plan.md": "2b9e7bafae7437f2c23e5c510d7cf7aad343df6d57e69331658f8d71562816ec",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/serialized-forward/docs/serialized-replay-plan.md": "8fdf3271d88e02ab132d172d0aaee9034e267a7d51322a7949e0f45182254776",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/serialized-forward/scripts/evaluate_observed_season.py": "f7f9113f5dba6e81bba35e5aed50f72b0df4d2853c4cae4d9565407846861576",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/serialized-forward/scripts/experiment_execution_costs.py": "f947346da806425aa4c5a810ffa9f775f3c13a4bd33fe5fdbe4cf97d45b009d1",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/serialized-forward/scripts/observe_market_seasons.py": "7290d9fa0fb902a1904f49a7927779517e6edcc77aa4f0ded9b57858d9627e96",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/serialized-forward/scripts/replay_captured_market.py": "10741686ba5ebbff2758bc488fb2a34ef61183b2d57ec3d91d895b1981784ef9",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/serialized-forward/scripts/replay_serialized_client.py": "b3babf6c986a95a5cf905099f88d9a4d3c6f156de0cd9a7b26cdca332f7389d3",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/supervised-forward/scripts/compare_practice_supervisor.py": "afff0aa65676b6cd0294873498aadfb84ea6d04fa9b6eda6291e2405dc03dcc3",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/supervised-forward/docs/supervised-replay-plan.md": "06fda0af47b149a57e14c00ef13fe9636325ae84d0a4d52787b0fbeca2aa4a3e",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/supervised-forward/docs/practice-round-transition-plan.md": "9d249097e928ff8586f61d31df31790cd7d19716877101d6fed2a7b8941f6709",
+    "/Users/arjunhans/Documents/ctc2026/recordings/consistency-20261024/supervised-forward/fd1ebff9-0f96-4533-b283-bc0a5c60cd4b/attempt-01/spec.json": "1a8ff4ca6e93bd30d48e80f214774668b883ad6bd352ef82901916227b08fc73",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/supervised-forward/docs/supervised-forward-plan.md": "0c0551dea53bfbc9e52efcaedb4d2a88f9472957b30a904d4b415d004ef41c1e",
+    "/Users/arjunhans/Documents/ctc2026/recordings/consistency-20261024/supervised-forward/scans/scan-003.observations.jsonl": "9e98c0fe5b5a503dc6c6f1566b785572896c5e35ba0be8f8fcfae49dd273b195",
+    "/Users/arjunhans/Documents/ctc2026/recordings/consistency-20261024/supervised-forward/fd1ebff9-0f96-4533-b283-bc0a5c60cd4b/attempt-01/feed.jsonl": "0df79451a59a031710d63271c1558f2711a7d28458b064ae4c4c0340877352f7",
+    "/Users/arjunhans/Documents/ctc2026/recordings/consistency-20261024/serialized-forward/fd1ebff9-0f96-4533-b283-bc0a5c60cd4b/results.jsonl": "3a8a90b4bd16819471954b28a88cb86e89223a6b01fb9dd489c351538951d831",
+    "/Users/arjunhans/Documents/ctc2026/recordings/consistency-20261024/serialized-forward/fd1ebff9-0f96-4533-b283-bc0a5c60cd4b/metadata.json": "3f5b037a82fc93f302bf755de8c8970daccd08f20c416c9caacd8c92976de732",
+    "/Users/arjunhans/Documents/ctc2026/recordings/consistency-20261024/serialized-forward/fd1ebff9-0f96-4533-b283-bc0a5c60cd4b/summary.json": "dfcc2dc561f31b2b8aa94497c623c3a242e2ba171adac30b912dd8b1658cf8dd",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/supervised-forward/bot/control.py": "b33ba64f8110eb59ce4a16e8cd987be8365bf0c3db98810f06c58333d4104401",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/supervised-forward/bot/http_transport.py": "5cc2dd41e418b794eac9dde2548fd40abcef605af303057ff633bd11d8b92162",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/supervised-forward/bot/live.py": "bdfe8ecd489cdcd42d7e6687cbb34511d75f6503c55ad195bc22b0451f1be72e",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/supervised-forward/ctc/__init__.py": "e178e73a3b0452a098d1cfa7f909ad65a3463457389018ab626ac281e1b634fe",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/supervised-forward/ctc/accounting.py": "b9cddb93959b277fe9ab7c6089e84dee2c092a2d049c466212878a5531ff0f99",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/supervised-forward/ctc/analog.py": "c606eefeab7cd0b5015b7b46cd831496d995f4b50030784ff2dd8171636938b2",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/supervised-forward/ctc/analog_library.npz": "22694387c3b612f5c20853feb9143e1bf8b8f5722a845da8ed584ab1b30bdf09",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/supervised-forward/ctc/basket.py": "ad08208095eb32a51fe19625b0e0929060a35bc4846ff4f8843e316f87d9a522",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/supervised-forward/ctc/damage_params.json": "c274463749d70b6ae85b6981fb029423c76e6fe5db0224e0d1aec83a70d22415",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/supervised-forward/ctc/history.py": "c9a93c117e4df869a4e8a34b03f0b656ada231bdf41864778d536ce129b91521",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/supervised-forward/ctc/ladder.json": "b70e7a8c5672dc6e4955c39fac62a70709ba29b39f00eead9add3cb4feeba5a4",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/supervised-forward/ctc/ladder.py": "da0c82abb297719dc1ea6d244558703072c881d3bd3b3fa43dc0885ae07f1f25",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/supervised-forward/ctc/price_signal.json": "3d421c258d939b6a0adc5db9f764b416c15be47cc684accc2187e074f11750f8",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/supervised-forward/ctc/price_signal.py": "aeb4b06e402231ac82e3b34ea7d1244346ee9b029036c4ffeb926112513b1fa4",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/supervised-forward/ctc/sim.py": "91da5850c313b94835364dabd7622fb8282382a710cf324c99471d9c29021273",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/supervised-forward/ctc/storm_sample.npz": "76da0f456aaadb8baee99920619db79c6f16e928dfab82ad33aade297a4b7c0f",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/supervised-forward/ctc/strategies.py": "4c667bebeb84dfe11883205656702bb3f66545661f01a0685c1e4c24f6b2680c",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/supervised-forward/ctc/valuation.py": "e19ceef5dc38154d1889065c4a85aae0d99b159267a0503a4c4fc3c7054292cd",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/supervised-forward/ctc/valuation_params.json": "06439094fc54318a8bfd1854fc2765d6ef542d1acad23de1836a4db47bf3b80b",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/supervised-forward/ctc/wind.py": "2e91425031bae6c2d60bb92a2e529cfc1222778820f126a29be836a4ec026f84",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/supervised-forward/data/case.json": "bcd0eb79c5a89b6625c17f2c233a686a04fafc75093e8a57d3c90f3b09972839",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/supervised-forward/scripts/evaluate_observed_season.py": "f7f9113f5dba6e81bba35e5aed50f72b0df4d2853c4cae4d9565407846861576",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/supervised-forward/scripts/experiment_execution_costs.py": "f947346da806425aa4c5a810ffa9f775f3c13a4bd33fe5fdbe4cf97d45b009d1",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/supervised-forward/scripts/observe_market_seasons.py": "7290d9fa0fb902a1904f49a7927779517e6edcc77aa4f0ded9b57858d9627e96",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/supervised-forward/scripts/replay_captured_market.py": "10741686ba5ebbff2758bc488fb2a34ef61183b2d57ec3d91d895b1981784ef9",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/supervised-forward/scripts/replay_serialized_client.py": "2b976be6688b8df93f8508b38bbf02510d233533ece6a7d32d0bc1dfb6bcdfb3",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/supervised-forward/bot/practice.py": "37432996c01466ceb8c9394ea49908d0ffc0716200ad730f5395d43cc5cb9353",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/supervised-forward/scripts/replay_practice_supervisor.py": "77c9195a286a4ffb1395539879b3f1ee81b20ce8badd3edd25442787a97acd27",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/supervised-forward/docs/serialized-forward-plan.md": "2b9e7bafae7437f2c23e5c510d7cf7aad343df6d57e69331658f8d71562816ec",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/supervised-forward/docs/serialized-replay-plan.md": "8fdf3271d88e02ab132d172d0aaee9034e267a7d51322a7949e0f45182254776",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/closed-season-evaluation/ctc/analog.py": "c606eefeab7cd0b5015b7b46cd831496d995f4b50030784ff2dd8171636938b2",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/closed-season-evaluation/ctc/sim.py": "91da5850c313b94835364dabd7622fb8282382a710cf324c99471d9c29021273",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/closed-season-evaluation/ctc/accounting.py": "b9cddb93959b277fe9ab7c6089e84dee2c092a2d049c466212878a5531ff0f99",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/closed-season-evaluation/ctc/strategies.py": "4c667bebeb84dfe11883205656702bb3f66545661f01a0685c1e4c24f6b2680c",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/closed-season-evaluation/ctc/wind.py": "2e91425031bae6c2d60bb92a2e529cfc1222778820f126a29be836a4ec026f84",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/closed-season-evaluation/ctc/__init__.py": "e178e73a3b0452a098d1cfa7f909ad65a3463457389018ab626ac281e1b634fe",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/closed-season-evaluation/ctc/price_signal.py": "aeb4b06e402231ac82e3b34ea7d1244346ee9b029036c4ffeb926112513b1fa4",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/closed-season-evaluation/ctc/valuation.py": "e19ceef5dc38154d1889065c4a85aae0d99b159267a0503a4c4fc3c7054292cd",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/closed-season-evaluation/ctc/basket.py": "ad08208095eb32a51fe19625b0e0929060a35bc4846ff4f8843e316f87d9a522",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/closed-season-evaluation/ctc/history.py": "c9a93c117e4df869a4e8a34b03f0b656ada231bdf41864778d536ce129b91521",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/closed-season-evaluation/ctc/ladder.py": "da0c82abb297719dc1ea6d244558703072c881d3bd3b3fa43dc0885ae07f1f25",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/closed-season-evaluation/ctc/price_signal.json": "3d421c258d939b6a0adc5db9f764b416c15be47cc684accc2187e074f11750f8",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/closed-season-evaluation/ctc/valuation_params.json": "06439094fc54318a8bfd1854fc2765d6ef542d1acad23de1836a4db47bf3b80b",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/closed-season-evaluation/ctc/ladder.json": "b70e7a8c5672dc6e4955c39fac62a70709ba29b39f00eead9add3cb4feeba5a4",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/closed-season-evaluation/ctc/damage_params.json": "c274463749d70b6ae85b6981fb029423c76e6fe5db0224e0d1aec83a70d22415",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/closed-season-evaluation/ctc/storm_sample.npz": "76da0f456aaadb8baee99920619db79c6f16e928dfab82ad33aade297a4b7c0f",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/closed-season-evaluation/ctc/analog_library.npz": "22694387c3b612f5c20853feb9143e1bf8b8f5722a845da8ed584ab1b30bdf09",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/closed-season-evaluation/bot/live.py": "ae8de45ad40896e72a6d1cd1097eab0e5235d4213429871b52029e76830cd828",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/closed-season-evaluation/data/case.json": "bcd0eb79c5a89b6625c17f2c233a686a04fafc75093e8a57d3c90f3b09972839",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/closed-season-evaluation/scripts/evaluate_closed_seasons.py": "caff9791c554c13915b48a7bd0060e40760493733b7e2a269f81c1a7d2361b91",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/closed-season-evaluation/scripts/replay_captured_market.py": "10741686ba5ebbff2758bc488fb2a34ef61183b2d57ec3d91d895b1981784ef9",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/closed-season-evaluation/scripts/evaluate_observed_season.py": "f7f9113f5dba6e81bba35e5aed50f72b0df4d2853c4cae4d9565407846861576",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/closed-season-evaluation/scripts/observe_market_seasons.py": "7290d9fa0fb902a1904f49a7927779517e6edcc77aa4f0ded9b57858d9627e96"
+  },
+  "spec_sha256": "1a8ff4ca6e93bd30d48e80f214774668b883ad6bd352ef82901916227b08fc73",
+  "worker24": {
+    "runs": 24,
+    "negative": 24,
+    "positive": 0,
+    "mean": -690.8974999999995,
+    "worst": -799.8399999999981,
+    "best": -507.4699999999998
+  },
+  "serialized16": {
+    "runs": 16,
+    "negative": 14,
+    "positive": 2,
+    "mean": -400.5981249999989,
+    "worst": -738.4599999999987,
+    "best": 132.47000000000116
+  },
+  "supervised16": {
+    "runs": 16,
+    "negative": 15,
+    "positive": 1,
+    "mean": -332.11374999999845,
+    "worst": -573.9099999999964,
+    "best": 15.360000000000582
+  },
+  "trial_states": {
+    "incomplete_trial": 12,
+    "completed": 4
+  },
+  "cleanup_states": {
+    "attention": 3,
+    "flat": 9,
+    "settled": 4
+  },
+  "attention": [
+    {
+      "rtt_seconds": 0.0,
+      "displayed_depth_fraction": 1.0,
+      "basket_enabled": false,
+      "cleanup": {
+        "state": "attention",
+        "observed_at": 1792834486.741528,
+        "reason": "cleanup retry limit",
+        "positions": {
+          "PORT": 0,
+          "ISLE": 0,
+          "AQUA": 0,
+          "GRID": 0,
+          "FERRY": 0,
+          "RECON": 0,
+          "MAT": 0,
+          "GEN": 0,
+          "HAVEN": 0,
+          "REIN": -6,
+          "ARCH": 0,
+          "REBLD": 0
+        },
+        "open_orders": []
+      },
+      "final_receipt": {
+        "competition_id": "fd1ebff9-0f96-4533-b283-bc0a5c60cd4b",
+        "pnl": -404.2099999999999,
+        "verified": true,
+        "history_ownership_clear": true,
+        "flat": false,
+        "reopened_after_flat": false,
+        "nonzero_positions": 1,
+        "open_orders": 0
+      },
+      "terminal_settlement_pnl": -403.969999999998,
+      "final_positions": {
+        "PORT": 0,
+        "ISLE": 0,
+        "AQUA": 0,
+        "GRID": 0,
+        "FERRY": 0,
+        "RECON": 0,
+        "MAT": 0,
+        "GEN": 0,
+        "HAVEN": 0,
+        "REIN": -6,
+        "ARCH": 0,
+        "REBLD": 0
+      },
+      "fills_after_final_receipt_requests": 0
+    },
+    {
+      "rtt_seconds": 0.0,
+      "displayed_depth_fraction": 0.5,
+      "basket_enabled": false,
+      "cleanup": {
+        "state": "attention",
+        "observed_at": 1792834486.741528,
+        "reason": "cleanup retry limit",
+        "positions": {
+          "PORT": 0,
+          "ISLE": 0,
+          "AQUA": 0,
+          "GRID": 0,
+          "FERRY": 0,
+          "RECON": 0,
+          "MAT": 0,
+          "GEN": 0,
+          "HAVEN": 0,
+          "REIN": -6,
+          "ARCH": 0,
+          "REBLD": 0
+        },
+        "open_orders": []
+      },
+      "final_receipt": {
+        "competition_id": "fd1ebff9-0f96-4533-b283-bc0a5c60cd4b",
+        "pnl": -522.6200000000003,
+        "verified": true,
+        "history_ownership_clear": true,
+        "flat": false,
+        "reopened_after_flat": false,
+        "nonzero_positions": 1,
+        "open_orders": 0
+      },
+      "terminal_settlement_pnl": -522.3799999999983,
+      "final_positions": {
+        "PORT": 0,
+        "ISLE": 0,
+        "AQUA": 0,
+        "GRID": 0,
+        "FERRY": 0,
+        "RECON": 0,
+        "MAT": 0,
+        "GEN": 0,
+        "HAVEN": 0,
+        "REIN": -6,
+        "ARCH": 0,
+        "REBLD": 0
+      },
+      "fills_after_final_receipt_requests": 0
+    },
+    {
+      "rtt_seconds": 0.0,
+      "displayed_depth_fraction": 0.5,
+      "basket_enabled": true,
+      "cleanup": {
+        "state": "attention",
+        "observed_at": 1792834486.741528,
+        "reason": "cleanup retry limit",
+        "positions": {
+          "PORT": 0,
+          "ISLE": 0,
+          "AQUA": 0,
+          "GRID": 0,
+          "FERRY": 0,
+          "RECON": 0,
+          "MAT": 0,
+          "GEN": 0,
+          "HAVEN": 0,
+          "REIN": -6,
+          "ARCH": 0,
+          "REBLD": 0
+        },
+        "open_orders": []
+      },
+      "final_receipt": {
+        "competition_id": "fd1ebff9-0f96-4533-b283-bc0a5c60cd4b",
+        "pnl": -490.94999999999965,
+        "verified": true,
+        "history_ownership_clear": true,
+        "flat": false,
+        "reopened_after_flat": false,
+        "nonzero_positions": 1,
+        "open_orders": 0
+      },
+      "terminal_settlement_pnl": -490.7099999999973,
+      "final_positions": {
+        "PORT": 0,
+        "ISLE": 0,
+        "AQUA": 0,
+        "GRID": 0,
+        "FERRY": 0,
+        "RECON": 0,
+        "MAT": 0,
+        "GEN": 0,
+        "HAVEN": 0,
+        "REIN": -6,
+        "ARCH": 0,
+        "REBLD": 0
+      },
+      "fills_after_final_receipt_requests": 0
+    }
+  ],
+  "journal_files": 112,
+  "journals": [
+    {
+      "setting": [
+        0.0,
+        1.0,
+        false
+      ],
+      "file_sha256": {
+        "observations.json": "73f81a9b74cb572d136aad4faf756ebfff0bbcac3ba436ba7d03ccaf76a0965f",
+        "actions.jsonl": "3029455c9de55b3b32d930a7844a6b3a66bf2ef132f7ff08dad71a638d641455",
+        "status.json": "d626c16b63f07e28d21af69a0954ccd02de046a6b7c30ccd85dc9753e2d17f73",
+        "final-receipt.json": "aac40fbdd02367a760a9e3dc0ad5692f014a7dea8606a6c021c23fdfec18e8b4",
+        "startup-feed.jsonl": "5efc5e8a990f4889b5b607bbefe76b1518741272dddae13ea5d5077833f7c3b3",
+        "result.json": "cbb90f315c35597bc598e624b869394fd2e9c17ff8b8d0f56ced796f34e8c34b",
+        "run.lock": "91da0d56cb90fa65e15bf93b8552029e906c72f877222af438f2f00fce0ddbd3"
+      },
+      "observations": 746,
+      "actions": 151
+    },
+    {
+      "setting": [
+        0.0,
+        1.0,
+        true
+      ],
+      "file_sha256": {
+        "observations.json": "a1ddec8d5088d0f1d73b02c42911857e2eeeba4ce67826046d20ca22c0c95a9e",
+        "actions.jsonl": "f2055f0149ff4b147d7f603fd133bcbde986c1e46bf59fe3187894711769f4aa",
+        "status.json": "987211ba06e9a990cb161a18a0257cb40d3b75a561669ccdf33c67f965800cfe",
+        "final-receipt.json": "ab8e0ec49e92f85776e44b26c6d7172e92bec1fb4e8ac2fd177772e8eb04c397",
+        "startup-feed.jsonl": "5efc5e8a990f4889b5b607bbefe76b1518741272dddae13ea5d5077833f7c3b3",
+        "result.json": "cc6b377b5e815114a86dbaae8dbe3bb4f4a697e76a59b7976feba65c2769ad88",
+        "run.lock": "91da0d56cb90fa65e15bf93b8552029e906c72f877222af438f2f00fce0ddbd3"
+      },
+      "observations": 779,
+      "actions": 216
+    },
+    {
+      "setting": [
+        0.0,
+        0.5,
+        false
+      ],
+      "file_sha256": {
+        "observations.json": "5db53dadedff1d4729b41934bd6dbfe6dd6d6dbc89362929ffbf9d4803e0e59e",
+        "actions.jsonl": "01ffc0684f391f827e29ec4c7af46a7b770512d96b39c9ea2afac732dfee648b",
+        "status.json": "8e72709d82357ccfecde8fe61c394d2583af0137ec62da0235480b38bf737d81",
+        "final-receipt.json": "62acabe660e0006053646ca274d41a40bb4fb2a1bd9ed584883e1f2f03720f53",
+        "startup-feed.jsonl": "5efc5e8a990f4889b5b607bbefe76b1518741272dddae13ea5d5077833f7c3b3",
+        "result.json": "e5753e9b4592f1040f88f8821c43390b025df8540d5f57b33924e83e5a762bed",
+        "run.lock": "91da0d56cb90fa65e15bf93b8552029e906c72f877222af438f2f00fce0ddbd3"
+      },
+      "observations": 748,
+      "actions": 157
+    },
+    {
+      "setting": [
+        0.0,
+        0.5,
+        true
+      ],
+      "file_sha256": {
+        "observations.json": "8e6b5155a4d42d1b632f3e746fd0d83dce80dea22336ef8e8754caef7e3d6932",
+        "actions.jsonl": "8efe623ed225e26e85f62b400c9002244a7ce06fb6cf3c3d8add9162d5e37c86",
+        "status.json": "d061a828c98b5107be090f86fea1f9abb69992423a71bdc9d7089dd55918049f",
+        "final-receipt.json": "c53d179ebf74aaa41ca1f5effa1e10744e8881fcefb566da2deab55aa3b3f668",
+        "startup-feed.jsonl": "5efc5e8a990f4889b5b607bbefe76b1518741272dddae13ea5d5077833f7c3b3",
+        "result.json": "b443714cfb11b80881975f282297eb749beb13699bcdfcdd8a82dc4a83d1b94b",
+        "run.lock": "91da0d56cb90fa65e15bf93b8552029e906c72f877222af438f2f00fce0ddbd3"
+      },
+      "observations": 772,
+      "actions": 205
+    },
+    {
+      "setting": [
+        0.05,
+        1.0,
+        false
+      ],
+      "file_sha256": {
+        "observations.json": "25007fdae3d8a0a73d9a2146c2ab39b28bccf7129bdf3e26600f7868fe95ff03",
+        "actions.jsonl": "4d4e63b64cb5e15a00cd995bd719ff01b38f9ba04d224f10e35bd2bbccf6206c",
+        "status.json": "4730884c9fb9f84e2e7b4187bb2b6ae4c2f5b82ac812fc04b812b6192593c0ca",
+        "final-receipt.json": "c02c33faf61b113e7442a2f120cd2513c636a24a6dd4db022ba1a72b26c6e742",
+        "startup-feed.jsonl": "5efc5e8a990f4889b5b607bbefe76b1518741272dddae13ea5d5077833f7c3b3",
+        "result.json": "8dda759d0848f6e3cf31a764e1ade873d166da0674d025efc7928ee3dfe5ecf3",
+        "run.lock": "91da0d56cb90fa65e15bf93b8552029e906c72f877222af438f2f00fce0ddbd3"
+      },
+      "observations": 668,
+      "actions": 137
+    },
+    {
+      "setting": [
+        0.05,
+        1.0,
+        true
+      ],
+      "file_sha256": {
+        "observations.json": "25007fdae3d8a0a73d9a2146c2ab39b28bccf7129bdf3e26600f7868fe95ff03",
+        "actions.jsonl": "4d4e63b64cb5e15a00cd995bd719ff01b38f9ba04d224f10e35bd2bbccf6206c",
+        "status.json": "4730884c9fb9f84e2e7b4187bb2b6ae4c2f5b82ac812fc04b812b6192593c0ca",
+        "final-receipt.json": "c02c33faf61b113e7442a2f120cd2513c636a24a6dd4db022ba1a72b26c6e742",
+        "startup-feed.jsonl": "5efc5e8a990f4889b5b607bbefe76b1518741272dddae13ea5d5077833f7c3b3",
+        "result.json": "54a00d4100732378de0665f586e1e8489396b9397a16b7cce6099d4fb2b788a3",
+        "run.lock": "91da0d56cb90fa65e15bf93b8552029e906c72f877222af438f2f00fce0ddbd3"
+      },
+      "observations": 668,
+      "actions": 137
+    },
+    {
+      "setting": [
+        0.05,
+        0.5,
+        false
+      ],
+      "file_sha256": {
+        "observations.json": "53916de35dbba089e528b3f306d490ee9be0f4f8f1472270f05935a0d72b9d49",
+        "actions.jsonl": "6bca6c0c87839a2c058cada16dfc3cf51d3b78dd8743defe54f6ba4015b38c07",
+        "status.json": "558d6ed20dda1c85982333f0e880f00f8603b4e9ee2050bcb9f68261ee8a6907",
+        "final-receipt.json": "b472f6c4826e97f87419d2e9562ff8400acc58c6301e2bd7f5af2aa7a16d8c49",
+        "startup-feed.jsonl": "5efc5e8a990f4889b5b607bbefe76b1518741272dddae13ea5d5077833f7c3b3",
+        "result.json": "982b7f0a34ad1ebf1551aaa17f15428efb42fbd9c1587d23c6824d358eff276a",
+        "run.lock": "91da0d56cb90fa65e15bf93b8552029e906c72f877222af438f2f00fce0ddbd3"
+      },
+      "observations": 672,
+      "actions": 150
+    },
+    {
+      "setting": [
+        0.05,
+        0.5,
+        true
+      ],
+      "file_sha256": {
+        "observations.json": "53916de35dbba089e528b3f306d490ee9be0f4f8f1472270f05935a0d72b9d49",
+        "actions.jsonl": "6bca6c0c87839a2c058cada16dfc3cf51d3b78dd8743defe54f6ba4015b38c07",
+        "status.json": "558d6ed20dda1c85982333f0e880f00f8603b4e9ee2050bcb9f68261ee8a6907",
+        "final-receipt.json": "b472f6c4826e97f87419d2e9562ff8400acc58c6301e2bd7f5af2aa7a16d8c49",
+        "startup-feed.jsonl": "5efc5e8a990f4889b5b607bbefe76b1518741272dddae13ea5d5077833f7c3b3",
+        "result.json": "58de734f98d5d36721c90b2201e71418f96e6a649b9a91005474b2671ce887e3",
+        "run.lock": "91da0d56cb90fa65e15bf93b8552029e906c72f877222af438f2f00fce0ddbd3"
+      },
+      "observations": 672,
+      "actions": 150
+    },
+    {
+      "setting": [
+        0.25,
+        1.0,
+        false
+      ],
+      "file_sha256": {
+        "observations.json": "77a326f27a2bf068afb39c69f0649e27e340f85591265c8b567ac634bceb0b7e",
+        "actions.jsonl": "1c93b86289219a8f6df5205f5fae537c1f00672b4b4cad21e00e87c0aafdf1b8",
+        "status.json": "3be5d7c132e0d31f0a732fc69d3588d8b5a82e458f3da65209bb08f54d20a7ed",
+        "final-receipt.json": "3c0d9c7bbf046f5d4ef2531d55a63b8278d30485480925133fc38646dd4bac63",
+        "startup-feed.jsonl": "5efc5e8a990f4889b5b607bbefe76b1518741272dddae13ea5d5077833f7c3b3",
+        "result.json": "5e23486ccfe4abb7b4d3c6b2255d8297f906851d360e779919413a2ac82133b2",
+        "run.lock": "91da0d56cb90fa65e15bf93b8552029e906c72f877222af438f2f00fce0ddbd3"
+      },
+      "observations": 601,
+      "actions": 107
+    },
+    {
+      "setting": [
+        0.25,
+        1.0,
+        true
+      ],
+      "file_sha256": {
+        "observations.json": "29af401ade608f7ddaa330176ac699fb1a123ec265711e01c9129b61c6f9efde",
+        "actions.jsonl": "c014aec3bc4ecacc939ce18f36c23d37558d4d0f507602959256234533268df8",
+        "status.json": "262a96685fca159e4a0903194cbbf749f339113caaa71defcfcf7728a9b88c02",
+        "final-receipt.json": "057efe06cbd318edecb33d26f90d793091757daa0af14cb6e0695f1daaeccf4d",
+        "startup-feed.jsonl": "5efc5e8a990f4889b5b607bbefe76b1518741272dddae13ea5d5077833f7c3b3",
+        "result.json": "b7024e874708c5a412cf7e3705457b34d8a07568875a793a9af2a634340b857f",
+        "run.lock": "91da0d56cb90fa65e15bf93b8552029e906c72f877222af438f2f00fce0ddbd3"
+      },
+      "observations": 601,
+      "actions": 110
+    },
+    {
+      "setting": [
+        0.25,
+        0.5,
+        false
+      ],
+      "file_sha256": {
+        "observations.json": "d454610005e610eb6b0b2371f4f8f01bcb5274c4c27800be3901a9927465b127",
+        "actions.jsonl": "8dc7fd0f38b1420954780cd449e70a35821ee6dd69dc5106b68fe14661aa40f8",
+        "status.json": "040a17b09d6db992d88ed9ba2825dab5ab09d156054816c97711da55572b4c09",
+        "final-receipt.json": "0b694436e1e1f720cd903cb2b89ea15a2de89647776fde90a694fedee2786580",
+        "startup-feed.jsonl": "5efc5e8a990f4889b5b607bbefe76b1518741272dddae13ea5d5077833f7c3b3",
+        "result.json": "81e8e09ba6588509c4258b341f8c9e5425978faa090c576a6eba1419cd43329c",
+        "run.lock": "91da0d56cb90fa65e15bf93b8552029e906c72f877222af438f2f00fce0ddbd3"
+      },
+      "observations": 493,
+      "actions": 105
+    },
+    {
+      "setting": [
+        0.25,
+        0.5,
+        true
+      ],
+      "file_sha256": {
+        "observations.json": "1fbeefe8c704a10a0d842ab4810d649d44799be542f4ab3c080e602ed1a0514c",
+        "actions.jsonl": "a8d464e8e0ac4c0236bc9634ed2b3eaa68db02aeabdebc384b36c5703aa498a0",
+        "status.json": "a42058e38117b5f0b0a5d6af2e9cc1bce22498f03066c208000b7726d5578e83",
+        "final-receipt.json": "317afeb15d7e097e538e528d5ac0d0c8a49cec75381e9363e6406f76245cc815",
+        "startup-feed.jsonl": "5efc5e8a990f4889b5b607bbefe76b1518741272dddae13ea5d5077833f7c3b3",
+        "result.json": "df1e143e659150f032bbd4bff151fa5e0bfe95a1f5f5daaef058f24db86fde97",
+        "run.lock": "91da0d56cb90fa65e15bf93b8552029e906c72f877222af438f2f00fce0ddbd3"
+      },
+      "observations": 484,
+      "actions": 107
+    },
+    {
+      "setting": [
+        1.0,
+        1.0,
+        false
+      ],
+      "file_sha256": {
+        "observations.json": "81ffcf76e0b5f01a94b29340ffdacc5617515b49b0f89987ecbc76fdce614c80",
+        "actions.jsonl": "046c43851beb666a6e5d4c22aaef2f004910778f0a9b1b02d4bd2fd5bbc3e6cb",
+        "status.json": "0c907ec85080fd11aaf7ad92ba1f8c311b5dcac464622c695df9e2e193558710",
+        "final-receipt.json": "34664885fb5e69be84a8345943f617ba2179e0aac303f8cf429996eecaa4269b",
+        "startup-feed.jsonl": "5efc5e8a990f4889b5b607bbefe76b1518741272dddae13ea5d5077833f7c3b3",
+        "result.json": "1d3bbd3f8feed237d9e3edd6eff6a5257aefd3992b98ed4c2eca4a00820a4ef9",
+        "run.lock": "91da0d56cb90fa65e15bf93b8552029e906c72f877222af438f2f00fce0ddbd3"
+      },
+      "observations": 296,
+      "actions": 106
+    },
+    {
+      "setting": [
+        1.0,
+        1.0,
+        true
+      ],
+      "file_sha256": {
+        "observations.json": "72290a45c2c0b04d181926179d7d2ccde36a6cd21829e675dc9ae9aa17e42e2d",
+        "actions.jsonl": "22dabd2cfa2638b9dd7f88ffb753873fd0cdeaf09ab200a225f69711319830b1",
+        "status.json": "0685182d3dee524bf85fb488af85de89565a876b0adef887c9c8701641eb2a43",
+        "final-receipt.json": "6cf92aeab6acbf404e79570fe9db1a655c121465eee0f96462e3d454d5ba2183",
+        "startup-feed.jsonl": "5efc5e8a990f4889b5b607bbefe76b1518741272dddae13ea5d5077833f7c3b3",
+        "result.json": "dc8df83fe2513cc2c11631c38cd1fdd683c5571bfd2be5c5370723870858486f",
+        "run.lock": "91da0d56cb90fa65e15bf93b8552029e906c72f877222af438f2f00fce0ddbd3"
+      },
+      "observations": 295,
+      "actions": 100
+    },
+    {
+      "setting": [
+        1.0,
+        0.5,
+        false
+      ],
+      "file_sha256": {
+        "observations.json": "52c97330adcd4fbbcdea6bb5abf4bed2c2a87e3895e757852a870ea62b46d523",
+        "actions.jsonl": "b735cf1a59474e5a756229e1a3ff47391c9b1ce000a3e56f1ae50d52c7d9d198",
+        "status.json": "fc29a1921ff54f25039bd0eaf2c4d4f0fa8a791beb1d1d4c4e6d0503ede95bc5",
+        "final-receipt.json": "d0629674f1ca7cbc7dc6ac2e8f8bdfe94383b1c7115abff9778908434da9b0f6",
+        "startup-feed.jsonl": "5efc5e8a990f4889b5b607bbefe76b1518741272dddae13ea5d5077833f7c3b3",
+        "result.json": "4254f300dd5ccc09f423eac2af5c95c16abe503ffeb5ea2fbc11a6abe28b23c0",
+        "run.lock": "91da0d56cb90fa65e15bf93b8552029e906c72f877222af438f2f00fce0ddbd3"
+      },
+      "observations": 295,
+      "actions": 94
+    },
+    {
+      "setting": [
+        1.0,
+        0.5,
+        true
+      ],
+      "file_sha256": {
+        "observations.json": "b4b3367dac96c6bd3b7674b95980884a28e7923d16895ae12275629d7241f5e1",
+        "actions.jsonl": "b735cf1a59474e5a756229e1a3ff47391c9b1ce000a3e56f1ae50d52c7d9d198",
+        "status.json": "fc29a1921ff54f25039bd0eaf2c4d4f0fa8a791beb1d1d4c4e6d0503ede95bc5",
+        "final-receipt.json": "d0629674f1ca7cbc7dc6ac2e8f8bdfe94383b1c7115abff9778908434da9b0f6",
+        "startup-feed.jsonl": "5efc5e8a990f4889b5b607bbefe76b1518741272dddae13ea5d5077833f7c3b3",
+        "result.json": "b5e25c4e0f9449f225c61aa5768b1dcf73af3eaec0b0bbda08b26008f11c084e",
+        "run.lock": "91da0d56cb90fa65e15bf93b8552029e906c72f877222af438f2f00fce0ddbd3"
+      },
+      "observations": 295,
+      "actions": 94
+    }
+  ],
+  "phase_events": [
+    {
+      "kind": "forward_frozen",
+      "recorded_at": 1792829285.329844,
+      "runtime_freeze_at": 1792828815,
+      "eligibility_start_at": 1792828815,
+      "driver_freeze_at": 1792829252,
+      "initial_plan_declared_at": 1792828859,
+      "cutoff_at": 1792843200,
+      "runtime_revision": "cd3eb239bd7bad97b34f10a8f2bb0b2e1c0f5026",
+      "driver_revision": "c5c35a30e0c5f521f12324eec854f405b681b8c0",
+      "driver_sha256": "afff0aa65676b6cd0294873498aadfb84ea6d04fa9b6eda6291e2405dc03dcc3",
+      "reference_revision": "505a5ad2d5a6f81e7c711cb550871ce7aa7f3734",
+      "worktree": "/Users/arjunhans/Documents/ctc2026/.worktrees/supervised-forward",
+      "plan": "/Users/arjunhans/Documents/ctc2026/.worktrees/supervised-forward/docs/supervised-forward-plan.md",
+      "plan_revision": "c5c35a30e0c5f521f12324eec854f405b681b8c0",
+      "plan_sha256": "0c0551dea53bfbc9e52efcaedb4d2a88f9472957b30a904d4b415d004ef41c1e",
+      "primary_scenario": {
+        "rtt_seconds": 0.25,
+        "displayed_depth_fraction": 1,
+        "basket_enabled": true
+      },
+      "rtts": [
+        0,
+        0.05,
+        0.25,
+        1
+      ],
+      "depths": [
+        1,
+        0.5
+      ],
+      "baskets": [
+        false,
+        true
+      ],
+      "fraction": 0.1,
+      "rate_limit": 90,
+      "loss_trigger": 250,
+      "prior_pnl": 0,
+      "final_boundary": "first sealed complete-line observation prefix scanned at or after cutoff"
+    },
+    {
+      "kind": "eligibility_scan",
+      "at": 1792835193.367959,
+      "prefix_bytes": 221524,
+      "prefix_sha256": "9e98c0fe5b5a503dc6c6f1566b785572896c5e35ba0be8f8fcfae49dd273b195",
+      "snapshot": "/Users/arjunhans/Documents/ctc2026/recordings/consistency-20261024/supervised-forward/scans/scan-003.observations.jsonl",
+      "prefix_matches_original": true,
+      "effective_freeze_at": 1792828815,
+      "cutoff_at": 1792843200,
+      "final_boundary": false,
+      "eligible": [
+        {
+          "competition_id": "a7e77935-0ddd-4c77-8ce9-5494a9941962",
+          "year": "1782",
+          "receipt_at": 1792829250.818968,
+          "receipt_sha256": "e2e47d411f0530d943185c64b210cb3fcf534fc0b9ed243f4da51f37ac8ee7c1"
+        },
+        {
+          "competition_id": "83fc18b9-e9fd-4634-bc8e-c7a1a77768a7",
+          "year": "1781",
+          "receipt_at": 1792832203.4848561,
+          "receipt_sha256": "dd8bb77cdf53d26457baa75631d634de42339ac2f06329e73bfdfd6b76e0d8e3"
+        },
+        {
+          "competition_id": "fd1ebff9-0f96-4533-b283-bc0a5c60cd4b",
+          "year": "1780",
+          "receipt_at": 1792835136.260472,
+          "receipt_sha256": "49a7b2b53528fc5c2f5ea990eb40bda4b480593955c18e6db2a797b4069d3b63"
+        }
+      ],
+      "rejected": [
+        {
+          "competition_id": "0d7afac2-6acd-4223-aa8a-8c1a067091f0",
+          "year": "1785",
+          "receipt_at": 1792820424.18974,
+          "receipt_sha256": "482237fa8fe616422977281e8f0b7c13027d18acc665472bd1e180e17548519a",
+          "reason": "outside effective freeze/cutoff window or not ready"
+        },
+        {
+          "competition_id": "5edc122c-e97d-4d59-ada5-658c02c3c0da",
+          "year": "1784",
+          "receipt_at": 1792823359.863008,
+          "receipt_sha256": "8f92306b15696ed4046594b3118a749ae86e5ee259657b528350c5554c74b04a",
+          "reason": "outside effective freeze/cutoff window or not ready"
+        },
+        {
+          "competition_id": "2cf67e88-9081-4258-aa6a-3648c41925de",
+          "year": "1783",
+          "receipt_at": 1792826305.620034,
+          "receipt_sha256": "275a4573727610c4b2f91c861aedce858c6eed0f0c199fba51b804c04f675690",
+          "reason": "outside effective freeze/cutoff window or not ready"
+        }
+      ],
+      "malformed_receipt_lines": []
+    },
+    {
+      "kind": "attempt_started",
+      "at": 1792835278.518325,
+      "capture": 247,
+      "competition_id": "fd1ebff9-0f96-4533-b283-bc0a5c60cd4b",
+      "year": "1780",
+      "attempt": 1,
+      "receipt_at": 1792835136.260472,
+      "receipt_sha256": "49a7b2b53528fc5c2f5ea990eb40bda4b480593955c18e6db2a797b4069d3b63",
+      "runtime_revision": "cd3eb239bd7bad97b34f10a8f2bb0b2e1c0f5026",
+      "driver_revision": "c5c35a30e0c5f521f12324eec854f405b681b8c0",
+      "reference_revision": "505a5ad2d5a6f81e7c711cb550871ce7aa7f3734",
+      "spec_path": "/Users/arjunhans/Documents/ctc2026/recordings/consistency-20261024/supervised-forward/fd1ebff9-0f96-4533-b283-bc0a5c60cd4b/attempt-01/spec.json",
+      "spec_sha256": "1a8ff4ca6e93bd30d48e80f214774668b883ad6bd352ef82901916227b08fc73",
+      "output_path": "/Users/arjunhans/Documents/ctc2026/recordings/consistency-20261024/supervised-forward/fd1ebff9-0f96-4533-b283-bc0a5c60cd4b/attempt-01",
+      "timing_label": "selected interval follows runtime and driver freezes; weather independence not established",
+      "phases": {
+        "reference": "/Users/arjunhans/Documents/ctc2026/recordings/consistency-20261024/supervised-forward/fd1ebff9-0f96-4533-b283-bc0a5c60cd4b/attempt-01/reference",
+        "baseline": "/Users/arjunhans/Documents/ctc2026/recordings/consistency-20261024/supervised-forward/fd1ebff9-0f96-4533-b283-bc0a5c60cd4b/attempt-01/baseline",
+        "supervised": "/Users/arjunhans/Documents/ctc2026/recordings/consistency-20261024/supervised-forward/fd1ebff9-0f96-4533-b283-bc0a5c60cd4b/attempt-01/supervised"
+      }
+    },
+    {
+      "kind": "phase_started",
+      "at": 1792835278.518325,
+      "competition_id": "fd1ebff9-0f96-4533-b283-bc0a5c60cd4b",
+      "attempt": 1,
+      "phase": "reference",
+      "output": "/Users/arjunhans/Documents/ctc2026/recordings/consistency-20261024/supervised-forward/fd1ebff9-0f96-4533-b283-bc0a5c60cd4b/attempt-01/reference",
+      "stdout": "/Users/arjunhans/Documents/ctc2026/recordings/consistency-20261024/supervised-forward/fd1ebff9-0f96-4533-b283-bc0a5c60cd4b/attempt-01/reference.stdout.log",
+      "stderr": "/Users/arjunhans/Documents/ctc2026/recordings/consistency-20261024/supervised-forward/fd1ebff9-0f96-4533-b283-bc0a5c60cd4b/attempt-01/reference.stderr.log"
+    },
+    {
+      "kind": "phase_completed",
+      "at": 1792835326.3516648,
+      "competition_id": "fd1ebff9-0f96-4533-b283-bc0a5c60cd4b",
+      "attempt": 1,
+      "phase": "reference",
+      "exit_status": 0,
+      "summary": {
+        "runs": 16,
+        "errors": 0,
+        "mismatches": 0,
+        "changed_sources": [],
+        "finished_at": 1792835300.370789,
+        "results_sha256": "2b2ca30740a62348d7bae2c808351dd5371db51780bf6cec20a7e2cf6db402b6"
+      },
+      "artifact_sha256": {
+        "metadata.json": "d89f2eb9e2cd969ce1efb54bd7a3b45197443cce3fd841bba6407df1bf14169b",
+        "results.jsonl": "2b2ca30740a62348d7bae2c808351dd5371db51780bf6cec20a7e2cf6db402b6",
+        "summary.json": "51c1233c510dea130af88c059163761446390561bc9700eaa0a1d814e89c01b2"
+      }
+    },
+    {
+      "kind": "phase_started",
+      "at": 1792835326.3516648,
+      "competition_id": "fd1ebff9-0f96-4533-b283-bc0a5c60cd4b",
+      "attempt": 1,
+      "phase": "baseline",
+      "output": "/Users/arjunhans/Documents/ctc2026/recordings/consistency-20261024/supervised-forward/fd1ebff9-0f96-4533-b283-bc0a5c60cd4b/attempt-01/baseline",
+      "stdout": "/Users/arjunhans/Documents/ctc2026/recordings/consistency-20261024/supervised-forward/fd1ebff9-0f96-4533-b283-bc0a5c60cd4b/attempt-01/baseline.stdout.log",
+      "stderr": "/Users/arjunhans/Documents/ctc2026/recordings/consistency-20261024/supervised-forward/fd1ebff9-0f96-4533-b283-bc0a5c60cd4b/attempt-01/baseline.stderr.log"
+    },
+    {
+      "kind": "phase_completed",
+      "at": 1792835375.318437,
+      "competition_id": "fd1ebff9-0f96-4533-b283-bc0a5c60cd4b",
+      "attempt": 1,
+      "phase": "baseline",
+      "exit_status": 0,
+      "summary": {
+        "runs": 16,
+        "errors": 0,
+        "mismatches": 0,
+        "changed_sources": [],
+        "finished_at": 1792835350.1912,
+        "results_sha256": "a157463650ece2e52f2042600cbb26447f2e5e54f1c73ffa64a6549aa3e40381"
+      },
+      "artifact_sha256": {
+        "metadata.json": "0eda5a48368d910bdb392befdcdbe14db191156dd8a68c3a5548ed4fe2bcb198",
+        "results.jsonl": "a157463650ece2e52f2042600cbb26447f2e5e54f1c73ffa64a6549aa3e40381",
+        "summary.json": "42c2ea37bb5c4eca6610a6bf41c0d411dad162ce0465ddbee3b03d62cc87ea0a"
+      }
+    },
+    {
+      "kind": "phase_started",
+      "at": 1792835375.318437,
+      "competition_id": "fd1ebff9-0f96-4533-b283-bc0a5c60cd4b",
+      "attempt": 1,
+      "phase": "supervised",
+      "output": "/Users/arjunhans/Documents/ctc2026/recordings/consistency-20261024/supervised-forward/fd1ebff9-0f96-4533-b283-bc0a5c60cd4b/attempt-01/supervised",
+      "stdout": "/Users/arjunhans/Documents/ctc2026/recordings/consistency-20261024/supervised-forward/fd1ebff9-0f96-4533-b283-bc0a5c60cd4b/attempt-01/supervised.stdout.log",
+      "stderr": "/Users/arjunhans/Documents/ctc2026/recordings/consistency-20261024/supervised-forward/fd1ebff9-0f96-4533-b283-bc0a5c60cd4b/attempt-01/supervised.stderr.log"
+    },
+    {
+      "kind": "phase_completed",
+      "at": 1792835459.264875,
+      "competition_id": "fd1ebff9-0f96-4533-b283-bc0a5c60cd4b",
+      "attempt": 1,
+      "phase": "supervised",
+      "exit_status": 0,
+      "summary": {
+        "runs": 16,
+        "errors": 0,
+        "mismatches": 0,
+        "changed_sources": [],
+        "finished_at": 1792835400.327147,
+        "results_sha256": "9f49c0207913893e2fa1ac1dd836e459f8604bcf42f1016d57507921109ff00a"
+      },
+      "artifact_sha256": {
+        "metadata.json": "1eaf35352d50a1f873224cf98512c54a207bdebf0937777521a8bbf8c686c425",
+        "results.jsonl": "9f49c0207913893e2fa1ac1dd836e459f8604bcf42f1016d57507921109ff00a",
+        "summary.json": "cffb9844d8adec2d12609793054de24e104b73a012ae314c3b0bff717f2af4fa"
+      }
+    },
+    {
+      "kind": "attempt_completed",
+      "at": 1792835459.264875,
+      "capture": 247,
+      "competition_id": "fd1ebff9-0f96-4533-b283-bc0a5c60cd4b",
+      "attempt": 1,
+      "status": "completed",
+      "primary_scenario": {
+        "capture": 247,
+        "rtt_seconds": 0.25,
+        "displayed_depth_fraction": 1,
+        "basket_enabled": true,
+        "status": "ok",
+        "errors": [],
+        "trial_state": "incomplete_trial",
+        "stop_reason": "cumulative simulated P&L reached loss trigger (-269.88)",
+        "stop_at": 2783.305048942566,
+        "cleanup": {
+          "state": "flat",
+          "observed_at": 1792835135.991528,
+          "competition_id": "fd1ebff9-0f96-4533-b283-bc0a5c60cd4b"
+        },
+        "terminal_settlement_pnl": -239.98999999999802,
+        "orders": 52,
+        "fills": 53,
+        "conversions": 0,
+        "lowest_marked_pnl": -315.8299999999988,
+        "maximum_marked_drawdown": 544.3450000000003,
+        "final_positions": {
+          "PORT": 0,
+          "ISLE": 0,
+          "AQUA": 0,
+          "GRID": 0,
+          "FERRY": 0,
+          "RECON": 0,
+          "MAT": 0,
+          "GEN": 0,
+          "HAVEN": 0,
+          "REIN": 0,
+          "ARCH": 0,
+          "REBLD": 0
+        }
+      },
+      "aggregate": {
+        "positive": 1,
+        "negative": 15,
+        "complete": 4,
+        "mean": -332.11374999999845,
+        "worst": -573.9099999999964,
+        "cleanup_states": {
+          "attention": 3,
+          "flat": 9,
+          "settled": 4
+        }
+      },
+      "independent_review": "pending",
+      "timing_label": "selected interval follows frozen runtime and driver; weather independence not established"
+    }
+  ],
+  "overlap": [
+    {
+      "round": 1,
+      "observations": 241,
+      "repeated_identical": 0,
+      "exact_library_rows_zero_based": [
+        738
+      ],
+      "closest_rmse": 0.0,
+      "track_sha256_float64le": "d108d93b94bd34ff8df16ce7cb31bbd11f3c74032014f59ca191c8bebba80f98"
+    },
+    {
+      "round": 2,
+      "observations": 241,
+      "repeated_identical": 0,
+      "exact_library_rows_zero_based": [
+        739
+      ],
+      "closest_rmse": 0.0,
+      "track_sha256_float64le": "29a59d27fe9a8a6ac7c48f8b9c2d4a371d71d7699347914381bde5d091d388e8"
+    },
+    {
+      "round": 3,
+      "observations": 241,
+      "repeated_identical": 0,
+      "exact_library_rows_zero_based": [
+        740
+      ],
+      "closest_rmse": 0.0,
+      "track_sha256_float64le": "88f7f0b29046bd8e805df73031e8aebd170bb4f72ce3cf7fd7a0ced902cb3fd9"
+    }
+  ],
+  "npz_sha256": "22694387c3b612f5c20853feb9143e1bf8b8f5722a845da8ed584ab1b30bdf09",
+  "forbidden_attempts": [],
+  "receipt_frame_hashes_match_all_phases": true,
+  "all_88_result_rows_checked": true,
+  "limitations": [
+    "Variants of one captured path are not independent seasons.",
+    "Quote path completeness and disconnect counts remain unknown.",
+    "Chronological source freezes do not establish absence of fitted-weather overlap.",
+    "Attention terminal settlement marks are not flat completed outcomes.",
+    "No live account P&L, market impact or unobserved quote path is verified."
+  ]
+}

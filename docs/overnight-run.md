@@ -1,5 +1,27 @@
 # Overnight practice — October 24, 2026
 
+## 10:02 UTC — capture 247 and fixed half-blend rejection verified
+
+The frozen full supervisor loses in 15 of 16 capture-247 settings; primary
+−$239.99, mean −$332.11, worst −$573.91. Four complete, nine finish flat and
+three retain REIN −6. Independent review checks all 88 worker/core/comparison
+rows and eleven representative reruns. All three weather tracks repeat fitted
+library rows 738–740, bringing the known overlap to 21 tracks across seven
+captures. See [observed-season-247.md](observed-season-247.md).
+
+The unchanged fixed 50/50 recognition blend passed its initial 96-setting
+comparison, but its supplemental capture-247 comparison has twelve losses,
+a −$319.63 primary and two cases with increased residual exposure. Three exact
+independent reruns and complete fill accounting confirm rejection. The optional
+integration remains unmerged; both initial and supplemental results are
+preserved in [repeat-blend.md](repeat-blend.md).
+
+Diagnosis finds that the three original zero-RTT cleanup failures exhaust five
+passes less than a second before a usable recorded REIN quote arrives. This is
+an execution hypothesis for a separate bounded experiment, not a proven P&L
+improvement. The production runtime and frozen forward evaluators are unchanged.
+No owned live trading resumed; shared-account ownership is still unresolved.
+
 ## 09:33 UTC — one-hot repeated-weather candidate rejected
 
 Independent review confirms all 96 capture pairs and 75 development pairs.
