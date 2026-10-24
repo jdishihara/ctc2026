@@ -1,6 +1,6 @@
 # Competition readiness — 2026-10-24
 
-Status recorded at 06:08 UTC (02:08 EDT). One complete small-size live season
+Status recorded after the 06:29 UTC season closure (02:29 EDT). One complete small-size live season
 has a verified settlement receipt. The next trial contains mixed activity.
 Live practice remains stopped pending shared-account ownership clarification.
 Market recording and offline evaluations continue.
@@ -117,8 +117,21 @@ has not been demonstrated.
   diagnostic. It gives up most profit and still loses in some scenarios, so it
   does not replace the competition strategy. Future evaluation manifests now
   include model NPZ hashes; the older manifest limitation is documented.
+- [PR 10](https://github.com/jdishihara/ctc2026/pull/10) adds the fixed closed-season
+  worker, with source/output integrity checks and a final drain at the deadline.
+- [PR 11](https://github.com/jdishihara/ctc2026/pull/11) adds optional HTTP connection
+  reuse, with no automatic retries, proxy compatibility, and connection cleanup.
+  It remains **off by default**. Read-only clock benchmarks and local failure
+  tests are documented in [http-connection-reuse.md](http-connection-reuse.md);
+  they do not demonstrate higher profit.
+- [PR 12](https://github.com/jdishihara/ctc2026/pull/12) audits all 150 development
+  scenarios at two delays. Every fill contribution reconciles with the unchanged
+  baseline. HAVEN contributes the most to the worst loss and also has the largest
+  positive average contribution. This does not justify removing it based on
+  selected losses. See [loss-contributions.md](loss-contributions.md).
 
-The integrated branch suite passes **390 tests**, including the offline worker's
+After integrating the teammate's Mario/Derivatives commit `aca0ec4`, the combined
+branch passes **460 Python tests**, including the offline worker's
 restart-integrity and cutoff checks. Independent reviews reproduced
 representative results and checked every stored scenario pair. Neither the
 entry correction nor final-report-only research has a new attributable live
@@ -150,6 +163,12 @@ completed capture. These are simulated results on already examined markets.
 | --- | ---: | ---: | --- |
 | 241 | −$21.70 to +$88.19 | 3 / 12 | +$141.16 on earlier runtime |
 | 242 | +$1,462.74 to +$2,172.95 | 0 / 12 | None; shared account activity |
+| 243 | +$156.65 to +$389.27 | 0 / 12 | None; no owned live trial |
+
+Capture 243 was evaluated by the frozen worker after its official 06:29 UTC
+closing receipt. All 24 preselected scenarios, including older snapshot
+behavior, were positive. News sequences 0–859 are complete; quote-path
+completeness remains unproven. [Receipt, all results, and capture limits](observed-season-243.md).
 
 The full older-snapshot ablations and unfavorable changes are also preserved in
 [executable-entry.md](executable-entry.md). Waiting for all final reports earns
