@@ -202,10 +202,11 @@ def completed_capture(batch, feed, cid, symbols):
     return status, trial, receipt, frames, len(sequences)
 
 
-def replay(case, frames, year, settlement, fraction, latency, depth_scale, basket, reset_each_snapshot):
+def replay(case, frames, year, settlement, fraction, latency, depth_scale, basket, reset_each_snapshot,
+           *, strategy_type=FairValueTrader):
     ex = ReplayExchange(case, fraction, latency, depth_scale)
     ex.season_year = year
-    strat = FairValueTrader(analog=True, min_edge=.025, edge_full=.03, sd_mult=.7,
+    strat = strategy_type(analog=True, min_edge=.025, edge_full=.03, sd_mult=.7,
         sigma=15, k=100, passive=.75, warmup=20, max_cross=.02, carry=.5, ent_cut=1.2,
         cone_w=1, cone_s0=20, cone_nu=0, isl_w=0, final_exact=True, final_edge=.005,
         final_edge_full=.005, basket_edge=.01 if basket else 0,
