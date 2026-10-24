@@ -108,7 +108,7 @@ Three levels, all in Config under `auto` and toggled on the Config tab:
 
 Flatten behaviour (2026-10-24 drills): flatten tickets are priced up to `thresholds.flattenThroughPct` (2%) or
 `flattenThroughTicks` (5) through the touch, may be re-sent for the same contract after `auto.flattenResubmitMs` (6 s)
-net of resting orders, run in the WAITING phase as well as after the snap, and edge tickets stop when the rolling minute
+net of resting orders (0.8 s apart, `auto.flattenIntervalMs`), run in the WAITING phase as well as after the snap, and edge tickets stop when the rolling minute
 reaches `submitRateCap - auto.flattenReserve` (36 - 12) so the 30 s after the snap always has order budget. During an
 event with a delta or vega cap breached (a book carried in), the auto-pilot works risk-reducing flatten tickets instead
 of idling.

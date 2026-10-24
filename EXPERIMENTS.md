@@ -6,9 +6,36 @@ overlay says "needs you") and the tool says exactly what to click. Testnet check
 page, so the real Derivatives and Mario pages stay unseen until the morning; robustness to unknown formats ranks above tuning.
 Baseline at 99b530a: 17 Mario tests pass; overlay 131/132 (the autopilot integration test is a timing flake, passes alone).
 
+## Morning summary (written 04:25; everything below is pushed to origin/main; both suites green: 144 overlay, 80 Mario)
+
+What changed on the Derivatives desk (35% of the score), all behind the existing flags, auto-submit still OFF by default:
+1. The auto-pilot now trades Round 1 from the headline instead of waiting for the +60 s move (a phase-timing bug: 0 orders
+   in the first minute of every Round 1 event before, 18-23 after).
+2. It gets flat: flatten orders go through the touch, are re-sent after 6 s net of resting orders, run before a day's first
+   news too, keep 12 orders a minute in reserve and go out 0.8 s apart; with a risk cap breached during an event it works
+   the closing tickets instead of idling. Same-seed mock drills at real speed: 19,795 -> 21,604 -> 23,967 -> 24,622
+   (fifth run with the faster flatten below). Gross carried into the next event fell from 288-1,154 to roughly 50-900.
+3. "Ready n/m" box on the Edge tab: the first-live-minutes checklist made automatic, each red line naming the Config
+   field or key that fixes it. The real Derivatives page has never been seen (the testnet serves only Hurricane), so this
+   is the thing to look at first.
+4. Parser: plural vol cues, price cues next to the number, pipe-separated fields, "4.4% for OIL" phrasing, structured
+   {prices, ivs} containers, structured analyst messages. Round 3 converter identification verified for every kind.
+What changed on the Mario desk (20%):
+5. Edge margins widen to the model-uncertainty sd (fair under 8 parameter settings): better on 3/3 mock seeds
+   (66.6k -> 84.1k, 34.6k -> 43.5k, -37.0k -> -11.5k). Position cap at half the limit tried and rejected (worse 3/3).
+6. Symbol parser reads 48 plausible naming schemes (8 were UNMAPPED before); `race` takes names in any order.
+7. Drilled end to end: HTTP tap x7 runs and the browser tap (headless Chrome, prefill + click on the mock's copy of the
+   real form): 0 incomplete arbs, 0 session errors, 0 failures across ~2,000 orders.
+Human inputs on the day (docs/gameday-sheets.md): Derivatives: arm auto on ONE laptop if allowed, type a number only on
+"needs you", pick the Round 3 converter only if "not identified", Alt+P if in doubt. Mario: the `race ...` line after each
+race, `cpu 0` after race 1 if all humans finished behind several CPUs, click the prepared order unless --auto-execute.
+Decisions for Jayden: (a) ask the organisers whether a bot may click submit (Derivatives arm auto, Mario --auto-execute);
+(b) the overlay flattens after every snap, also after a day's last event (pays the spread; holding to the close would save
+it if marks are at mid, unknown); (c) nothing from tonight touched bot/ or ctc/.
+
 ## Plan (checked off as done; results under each item, accepted AND rejected)
 
-- [ ] D2 Derivatives: full 10-event mock run with auto-pilot armed (Playwright headless, mock --fast 4); PnL per event,
+- [x] D2 Derivatives: full 10-event mock run with auto-pilot armed (Playwright headless, mock --fast 4); PnL per event,
       orders, rejections, flat-between-events check. Baseline numbers before any change.
 - [x] M2 Mario: 8-race auto-execute drill against the mock (HTTP tap; then one pass with the browser tap headless):
       orders, fills, INCOMPLETE ARB lines, rate cap, PnL at settlements. Baseline.
