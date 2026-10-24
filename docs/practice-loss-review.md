@@ -69,6 +69,7 @@ Strategy parameters, sizing thresholds, fitted models, and research data were no
 
 - The snapshot regressions failed on the old recovery code; the new live regressions reproduced prohibited submissions before their fixes.
 - Full Python suite before upstream integration: **227 passed** (`.venv/bin/python -m pytest -q --tb=short`).
+- Full suite after integrating upstream `f3da303`: **238 passed** on `a49544a` (1.86 s); only this verification note was added afterward.
 - Offline replay of **all 4,375 captured frames**, seeded with the same three startup messages: **zero order or conversion requests**, no positions.
 - Independent review also replayed all **861** published messages of the recorded season through `LiveSession`; the complete-history path remained eligible across all three storms.
 - Independent review: **82 targeted tests passed**, all reported findings resolved, ready to merge subject to the full-suite check.
