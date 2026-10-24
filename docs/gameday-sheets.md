@@ -52,6 +52,20 @@ Commands while running (no restart): `echo "HAVEN -6%" >> recordings/control.txt
 
 Emergency: `bot/stop.sh` (cancels every order, prints positions). `bot/stop.sh --flatten` also closes positions.
 
+Backup recorder (second laptop, no bot): the recording is what lets a restarted bot rebuild the season exactly, so run a
+second copy of the feed recorder on another laptop from the first minute. It only reads the feed (one of the team's 25
+market-data connections, no order actions), so it may use the same key, typed into that laptop's git-ignored `.botkey`:
+
+```bash
+echo COMPETITION_KEY > .botkey
+nohup python3 data/starter_kit/record_feed.py --url wss://cornelltradingcompetition.org --key $(cat .botkey) \
+      --out recordings/competition_backup.jsonl --symbols PORT,ISLE,AQUA,GRID,FERRY,RECON,MAT,GEN,HAVEN,REIN,ARCH,REBLD > /dev/null 2>&1 &
+wc -l recordings/competition_backup.jsonl        # must grow every few seconds
+```
+
+If the bot Mac loses its recording, AirDrop or `scp` that file to it and restart with
+`FEED_LOG=recordings/competition_backup.jsonl zsh bot/run_live.sh`.
+
 Rules: nobody trades on the bot key (it uses 120 of the team's 180 actions a minute). Do not restart the bot during a
 storm unless it is broken: a restart during round 1 on the testnet missed half the storm's PnL.
 
