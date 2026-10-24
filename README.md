@@ -82,6 +82,9 @@ rounded to the 0.01 tick (buys down, sells up). On the testnet the fictional yea
 `bot/preflight.py` checks API/account connectivity; the running bot separately checks history and execution readiness.
 `bot/stop.sh` is the kill switch. See the [practice loss review](docs/practice-loss-review.md) for the late-start failure and verified fixes.
 
+For bounded simulated practice with smaller positions, explicit stop conditions,
+and settlement receipts, use [the controlled practice runner](docs/controlled-practice.md).
+
 ## Competition day runbook (Hurricane Season bot)
 
 One-page sheets for all three desks: [docs/gameday-sheets.md](docs/gameday-sheets.md).
