@@ -68,6 +68,8 @@ export interface AutoConfig {
   resubmitAfterMs: number;
   /** flatten tickets may be re-sent for the same contract/side after this many ms (they are re-sized from the position) */
   flattenResubmitMs: number;
+  /** edge tickets stop when the rolling-minute order count reaches submitRateCap - flattenReserve, so the snap always has orders left */
+  flattenReserve: number;
   /** a parsed spot must be within this % of the live (or pre-news) spot to auto-confirm */
   spotBoundPct: number;
   /** a parsed/blended vol must be inside [volMin, volMax] (decimals) to auto-confirm */
@@ -162,7 +164,7 @@ export const DEFAULT_CONFIG: Config = {
   focus: null,
   auto: {
     confirm: true, converter: true, converterTolPts: 8, converterTieMarginPts: 2,
-    submit: false, submitRateCap: 36, submitIntervalMs: 1500, resubmitAfterMs: 20_000, flattenResubmitMs: 6_000,
+    submit: false, submitRateCap: 36, submitIntervalMs: 1500, resubmitAfterMs: 20_000, flattenResubmitMs: 6_000, flattenReserve: 12,
     spotBoundPct: 40, volMin: 0.05, volMax: 3.0, switchTabs: true,
   },
 };
@@ -238,7 +240,7 @@ export function validateConfig(input: unknown): Validation {
   if (!isObj(a)) errors.push('auto must be an object');
   else {
     for (const k of ['confirm', 'converter', 'submit', 'switchTabs']) if (typeof a[k] !== 'boolean') errors.push(`auto.${k} must be true or false`);
-    for (const k of ['converterTolPts', 'converterTieMarginPts', 'submitRateCap', 'submitIntervalMs', 'resubmitAfterMs', 'flattenResubmitMs', 'spotBoundPct', 'volMin', 'volMax']) {
+    for (const k of ['converterTolPts', 'converterTieMarginPts', 'submitRateCap', 'submitIntervalMs', 'resubmitAfterMs', 'flattenResubmitMs', 'flattenReserve', 'spotBoundPct', 'volMin', 'volMax']) {
       if (typeof a[k] !== 'number' || !Number.isFinite(a[k] as number) || (a[k] as number) < 0) errors.push(`auto.${k} must be a number >= 0`);
     }
     if (typeof a.submitRateCap === 'number' && a.submitRateCap > 40) errors.push('auto.submitRateCap must not exceed the browser limit of 40');

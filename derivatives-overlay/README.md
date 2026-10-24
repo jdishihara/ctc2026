@@ -106,6 +106,13 @@ Three levels, all in Config under `auto` and toggled on the Config tab:
 | `auto.converter` | **on** | Round 3: on each analyst message, every converter is tried on the raw numbers; the one whose σ lands nearest the market IV wins if it is within `converterTolPts` (12) and beats the runner-up by `converterTieMarginPts` (3), or if the message names it (variance, straddle, daily move, …) and it is within tolerance. Otherwise the Vol tab says "not identified" with the ranked candidates and you pick by hand. A hand pick switches auto off until **re-run**. `$` or `%` in the quotes narrows the candidates to price-like or percent-like converters. |
 | `auto.submit` | **off** | The overlay runs the queue itself: edge tickets during NEWS/UNDERLYING_MOVED (once targets are confirmed), flatten tickets after the snap. Each step picks the next ticket, prefills the form exactly as `Alt+N` does, re-reads the form, and clicks the submit button through `safeSubmit`, which refuses unless armed, the form matches (contract, qty, price, and the button's own "Buy 50 OIL_…" text), and observed order actions are below `submitRateCap` (36/min). It also clicks the OIL/PLANE product tab when the chain shows the other underlying (`auto.switchTabs`). Arm with **arm auto** in the header or the Config checkbox; **Alt+P** pauses/resumes; the header shows a red **AUTO ON** badge. Every submission and the exchange's HTTP answer are listed on the Capture tab and in the capture file (`auto:submit`, `auto:result`). The same contract/side is not re-sent for `resubmitAfterMs` (20 s) unless the position changed; submissions are spaced by `submitIntervalMs` (1.5 s). |
 
+Flatten behaviour (2026-10-24 drills): flatten tickets are priced up to `thresholds.flattenThroughPct` (2%) or
+`flattenThroughTicks` (5) through the touch, may be re-sent for the same contract after `auto.flattenResubmitMs` (6 s)
+net of resting orders, run in the WAITING phase as well as after the snap, and edge tickets stop when the rolling minute
+reaches `submitRateCap - auto.flattenReserve` (36 - 12) so the 30 s after the snap always has order budget. During an
+event with a delta or vega cap breached (a book carried in), the auto-pilot works risk-reducing flatten tickets instead
+of idling.
+
 Turn `auto.submit` on only if the organisers confirm that a bot may click submit; the packet says trading is manual.
 The flow with everything on: news arrives → targets auto-confirm (or tell you why not) → tickets are submitted →
 the underlying moves and the live spot is accepted → the snap flips the queue to flatten tickets → flat before the
