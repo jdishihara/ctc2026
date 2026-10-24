@@ -1,9 +1,10 @@
 # Competition readiness — 2026-10-24
 
-Status updated after the 11:34 UTC capture-249 checks (07:34 EDT). One complete small-size live season
-has a verified settlement receipt. The next trial contains mixed activity.
+Status updated after the final evaluation boundary at 12:00:00.008254 UTC
+(08:00:00.008254 EDT). One completed clean small-size live trial remains
+at +$141.16. Later shared-account activity is mixed and not attributable.
 Live practice remains stopped pending shared-account ownership clarification.
-Market recording and offline evaluations continue.
+The overnight offline evaluation and recording are complete.
 
 **Validation limitation:** all 27 complete storm tracks in closed captures
 241–249 exactly match tracks in the fitted analog training library. Their
@@ -113,6 +114,17 @@ The selected interval follows all relevant freezes, but all three weather
 tracks match fitted rows 744–746. An initial retry invocation used a file
 where a directory was required and failed before evaluation; its logs and the
 corrected attempt remain retained. See [observed-season-249.md](observed-season-249.md).
+
+The final overnight review covers three frozen engines across the first
+post-cutoff receipt prefix: the earlier market replay has 7 seasons / 168
+settings (140 positive, 28 negative); the serialized client has 6 / 96 (82
+positive, 14 negative); and the full practice controller has 5 / 80 (65
+positive, 15 negative). The controller's primary setting averages +$881.54
+across these five seasons, with one losing season; its best single setting is
++$1,937.04. All 27 weather tracks still match the fitted training library.
+These outcomes are offline results at 10% position limits, not evidence of
+consistent live profitability. See [overnight-final-window.md](overnight-final-window.md)
+for every season, completion state, risk and boundary source hash.
 
 ## Other case tools
 

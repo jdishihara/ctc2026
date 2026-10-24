@@ -1,0 +1,32 @@
+{
+  "verdict": "APPROVED_READ_ONLY_BOUNDARY_COLLECTOR",
+  "reviewed_at_utc": "2026-10-24T11:43:37.905787+00:00",
+  "collector": "/Users/arjunhans/Documents/ctc2026/out/final-boundary-20261024/seal_final_boundary.py",
+  "collector_sha256": "525797b2b77c76f630aada632c673a0e2f6df4ba861b27e0bcb7aadcaf085f65",
+  "cutoff_at": 1792843200.0,
+  "cutoff_utc": "2026-10-24 12:00:00 UTC",
+  "plan_bindings": {
+    "serialized": {
+      "revision": "505a5ad2d5a6f81e7c711cb550871ce7aa7f3734",
+      "sha256": "2b9e7bafae7437f2c23e5c510d7cf7aad343df6d57e69331658f8d71562816ec"
+    },
+    "supervised": {
+      "revision": "c5c35a30e0c5f521f12324eec854f405b681b8c0",
+      "sha256": "0c0551dea53bfbc9e52efcaedb4d2a88f9472957b30a904d4b415d004ef41c1e"
+    }
+  },
+  "findings": [],
+  "verified_by_static_review": [
+    "Only observer-source metadata is checked before cutoff; content read occurs after the wall-clock wait and explicit cutoff check.",
+    "Snapshot keeps only bytes through the last newline, rejects an empty prefix, and records scan/finish times, byte count, SHA256, line count and discarded partial bytes.",
+    "Both output files use exclusive binary creation, flush and fsync; existing paths cannot be overwritten.",
+    "After snapshot write, the exact source prefix is reread and compared; a mismatch fails before successful receipt creation while preserving the snapshot.",
+    "No exchange/API/key/strategy/ledger operations, subprocesses, evaluator imports or receipt classification occur."
+  ],
+  "caller_responsibilities": [
+    "Use the first scan at or after cutoff as the final observation boundary; this utility does not inspect other scan ledgers.",
+    "Classify only qualifying receipts already inside this sealed prefix with receipt.at strictly before cutoff; later appends remain ineligible.",
+    "Append scan/eligibility records and retain failed or unfinished attempts under the frozen protocols."
+  ],
+  "review_execution": "Collector not executed or imported. No tests, observer content, network, live API, credentials, active-season outcomes or running processes accessed. Only this new local review receipt was written."
+}

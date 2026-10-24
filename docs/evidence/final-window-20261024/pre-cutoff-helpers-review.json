@@ -1,0 +1,274 @@
+{
+  "verdict": "APPROVE_PROVISIONAL_AGGREGATE_AND_WORKER_COUNTS",
+  "final_boundary_approved": false,
+  "helper_sha256": {
+    "aggregate_records.py": "488dedf44b8fc331a8b1795bc586666cde560e4098e55c36806a286e472e6512",
+    "worker_records.py": "b382a20fd4c5a1f7269b1fd664f7b47ab703b620cb5b2fcf651337b63ec83ec8"
+  },
+  "draft_sha256": "3f5fc269d9fe20bbf228656b1a843991c5c45516304507b37457319dc88a4e70",
+  "input_report_sha256": {
+    "pre-boundary-reconciliation.json": "4d1d07d273fc4f7850934daa2cfd0a32d98388bbe1ef43bf6a5e78e5ce84c466",
+    "pre-boundary-worker.json": "f41501579dbb469cec78e149fa1beccab97ce14866471cc18dd74ac0c4857599"
+  },
+  "pinned_ledger_prefixes": {
+    "/Users/arjunhans/Documents/ctc2026/recordings/consistency-20261024/serialized-forward/attempts.jsonl": {
+      "retained_copy": "/Users/arjunhans/Documents/ctc2026/.worktrees/capture-249-report/docs/evidence/observed-season-249/serialized-ledger-through-249.jsonl",
+      "bytes": 31125,
+      "sha256": "ec8eaba920ec37d45fa3acb158d66e0a9d5b6b381f6f3abd5846fa98231418b2"
+    },
+    "/Users/arjunhans/Documents/ctc2026/recordings/consistency-20261024/supervised-forward/attempts.jsonl": {
+      "retained_copy": "/Users/arjunhans/Documents/ctc2026/.worktrees/capture-249-report/docs/evidence/observed-season-249/supervised-ledger-through-249.jsonl",
+      "bytes": 47790,
+      "sha256": "8b851942638af0185d9a7773e9d64ab8c0468b169f16852b4d3d9a3e94746e0c"
+    },
+    "/Users/arjunhans/Documents/ctc2026/recordings/consistency-20261024/fixed-observed-evaluation/ledger.jsonl": {
+      "retained_copy": "/Users/arjunhans/Documents/ctc2026/out/capture-249-independent-review-20261024/worker-ledger-prefix.jsonl",
+      "bytes": 5657,
+      "sha256": "cc2718d5b3a21c9ac43f2126bdbe70d6f014c107f9f0b14861a0c20837c34c4f"
+    }
+  },
+  "aggregate_exactly_reproduced": true,
+  "worker_exactly_reproduced": true,
+  "aggregate_verified_sources": 92,
+  "aggregate_completed_artifact_bindings": 33,
+  "worker_verified_sources": 23,
+  "worker_verified_inputs": 9,
+  "worker_seasons": 7,
+  "worker_settings": 168,
+  "worker_positive": 140,
+  "worker_negative": 28,
+  "worker_worst": -799.8399999999981,
+  "worker_explicit_grid": [
+    [
+      0.25,
+      0.5,
+      false,
+      false
+    ],
+    [
+      0.25,
+      0.5,
+      false,
+      true
+    ],
+    [
+      0.25,
+      0.5,
+      true,
+      false
+    ],
+    [
+      0.25,
+      0.5,
+      true,
+      true
+    ],
+    [
+      0.25,
+      1,
+      false,
+      false
+    ],
+    [
+      0.25,
+      1,
+      false,
+      true
+    ],
+    [
+      0.25,
+      1,
+      true,
+      false
+    ],
+    [
+      0.25,
+      1,
+      true,
+      true
+    ],
+    [
+      1,
+      0.5,
+      false,
+      false
+    ],
+    [
+      1,
+      0.5,
+      false,
+      true
+    ],
+    [
+      1,
+      0.5,
+      true,
+      false
+    ],
+    [
+      1,
+      0.5,
+      true,
+      true
+    ],
+    [
+      1,
+      1,
+      false,
+      false
+    ],
+    [
+      1,
+      1,
+      false,
+      true
+    ],
+    [
+      1,
+      1,
+      true,
+      false
+    ],
+    [
+      1,
+      1,
+      true,
+      true
+    ],
+    [
+      3,
+      0.5,
+      false,
+      false
+    ],
+    [
+      3,
+      0.5,
+      false,
+      true
+    ],
+    [
+      3,
+      0.5,
+      true,
+      false
+    ],
+    [
+      3,
+      0.5,
+      true,
+      true
+    ],
+    [
+      3,
+      1,
+      false,
+      false
+    ],
+    [
+      3,
+      1,
+      false,
+      true
+    ],
+    [
+      3,
+      1,
+      true,
+      false
+    ],
+    [
+      3,
+      1,
+      true,
+      true
+    ]
+  ],
+  "worker_per_season": [
+    {
+      "capture": 243,
+      "competition_id": "5edc122c-e97d-4d59-ada5-658c02c3c0da",
+      "artifact_sha256": "cddaa6544ed12b9b2d3912beba02b2a5f1b85e1646ff50bc6ba9c5ae7db9818b",
+      "receipt_sha256": "8f92306b15696ed4046594b3118a749ae86e5ee259657b528350c5554c74b04a",
+      "positive": 24,
+      "negative": 0,
+      "zero": 0,
+      "worst": 156.6499999999951,
+      "best": 544.840000000002
+    },
+    {
+      "capture": 244,
+      "competition_id": "2cf67e88-9081-4258-aa6a-3648c41925de",
+      "artifact_sha256": "63e407c0ec4ce153c0f14ffd30b27f0895fb72a7ea5d77c611f2b2d2eee6791c",
+      "receipt_sha256": "275a4573727610c4b2f91c861aedce858c6eed0f0c199fba51b804c04f675690",
+      "positive": 24,
+      "negative": 0,
+      "zero": 0,
+      "worst": 1031.569999999998,
+      "best": 1215.8800000000037
+    },
+    {
+      "capture": 245,
+      "competition_id": "a7e77935-0ddd-4c77-8ce9-5494a9941962",
+      "artifact_sha256": "8a62ee97988e8bf949ccfd83d7fccbe6c00a6e03beb932f870f5b9c1c90300d3",
+      "receipt_sha256": "e2e47d411f0530d943185c64b210cb3fcf534fc0b9ed243f4da51f37ac8ee7c1",
+      "positive": 20,
+      "negative": 4,
+      "zero": 0,
+      "worst": -44.039999999999736,
+      "best": 503.0099999999999
+    },
+    {
+      "capture": 246,
+      "competition_id": "83fc18b9-e9fd-4634-bc8e-c7a1a77768a7",
+      "artifact_sha256": "e73b4210ca760c1849ee5b440824b38a49063198518bb474d374cd4685bef01b",
+      "receipt_sha256": "dd8bb77cdf53d26457baa75631d634de42339ac2f06329e73bfdfd6b76e0d8e3",
+      "positive": 24,
+      "negative": 0,
+      "zero": 0,
+      "worst": 1172.7800000000002,
+      "best": 1848.2100000000014
+    },
+    {
+      "capture": 247,
+      "competition_id": "fd1ebff9-0f96-4533-b283-bc0a5c60cd4b",
+      "artifact_sha256": "abfc116967d1d595abb75addc3e1ffc6d48842bfea8dec159e52a6f49fc47e27",
+      "receipt_sha256": "49a7b2b53528fc5c2f5ea990eb40bda4b480593955c18e6db2a797b4069d3b63",
+      "positive": 0,
+      "negative": 24,
+      "zero": 0,
+      "worst": -799.8399999999981,
+      "best": -507.4699999999998
+    },
+    {
+      "capture": 248,
+      "competition_id": "789097b1-a48b-4e68-95b4-5e15b047e149",
+      "artifact_sha256": "b64ab872857597fe1474e03543bb8071d851cae5c24c9fe0f86472089f12b7a4",
+      "receipt_sha256": "7b91d8fdaae8b25a125e9285cc8fb8a5a5d4cf60c69499f383965c6cc3480280",
+      "positive": 24,
+      "negative": 0,
+      "zero": 0,
+      "worst": 919.1199999999981,
+      "best": 1050.830000000002
+    },
+    {
+      "capture": 249,
+      "competition_id": "7d19a254-8c3b-4c4a-b4f3-32c84a138b79",
+      "artifact_sha256": "2b560e51643f56b2d44f828d5a7c7aae0f84199567e30bb009efcc267f48aaea",
+      "receipt_sha256": "b067d33043f12a2f8f11552f14b589a50f5130932a70eca59026a3a6b4d0bdcc",
+      "positive": 24,
+      "negative": 0,
+      "zero": 0,
+      "worst": 1162.7699999999986,
+      "best": 1556.0099999999998
+    }
+  ],
+  "new_performance_runs": 0,
+  "findings": [],
+  "limits": [
+    "Final scan006 eligibility, append-only ledger continuation, unfinished attempts and worker terminal status are pending.",
+    "No live ledger tails, active-season outcomes, credentials, network, strategy execution or process changes.",
+    "The helper intentionally reports worker terminal events without asserting stopped; current through-249 prefix has no stopped event.",
+    "Worker grid and capture uniqueness were independently checked explicitly, beyond helper cross-season grid equality."
+  ]
+}
