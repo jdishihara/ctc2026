@@ -107,6 +107,38 @@ describe('auto-confirm (Round 1: spot and IV in the news)', () => {
     st.acceptSuggestions(); // the human can still override
     expect(st.d.targetsConfirmed).toBe(true);
   });
+  it('a second, garbled copy of the same news (DOM bar glued "IV 0.") does not undo a sane confirmed vol', () => {
+    const { st, tick, at } = setup();
+    at('2026-06-01T11:39:00');
+    quoteAll(st, { OIL: 108.5, PLANE: 36.2 }, { OIL: 0.65, PLANE: 0.85 }, 20 / 252);
+    tick(100);
+    at('2026-06-01T11:40:02');
+    tick(100);
+    news(st, 3, 'Investigators find no mechanical fault in the NewAir crash. NewAir shares rise to 39.40 (IV: 60%). Crude oil: $106.10, IV 0.58');
+    expect(st.s.targets.OIL.vol).toMatchObject({ value: 0.58, confirmed: true });
+    st.handleDom({ clockSec: null, latest: 'Investigators find no mechanical fault in the NewAir crash. NewAir shares rise to 39.40 (IV: 60%). Crude oil: $106.10, IV 0.' });
+    expect(st.s.targets.OIL.vol).toMatchObject({ value: 0.58, confirmed: true });
+    expect(st.s.targets.OIL.vol.suggestion).toBeNull();
+    expect(st.d.targetsConfirmed).toBe(true);
+  });
+  it('one underlying waiting for its targets does not hold the other underlying\'s edge tickets', () => {
+    const { st, tick, at } = setup();
+    at('2026-06-01T09:29:00');
+    quoteAll(st, { OIL: 100, PLANE: 40 }, { OIL: 0.5, PLANE: 0.7 }, 20 / 252);
+    tick(100);
+    at('2026-06-01T09:30:02');
+    tick(100);
+    // OIL's vol is missing from the news; PLANE is complete and gets a vol jump worth trading
+    news(st, 1, 'Oiler threatens exports. OIL steady at 100.00. PLANE holds at 40.00, implied vol 95%.');
+    expect(st.s.auto.targets.OIL.status).toBe('idle');
+    expect(st.s.auto.targets.PLANE.status).toBe('confirmed');
+    expect(st.d.targetsConfirmed).toBe(false);
+    expect(st.d.confirmedUnderlyings).toEqual({ OIL: false, PLANE: true });
+    const plan = st.d.plan.filter((t) => !t.breach.length);
+    expect(plan.some((t) => t.underlying === 'PLANE')).toBe(true);
+    const t = st.pickNext('edge', { quiet: true });
+    expect(t?.underlying).toBe('PLANE');
+  });
   it('with auto.confirm off nothing changes', () => {
     const { st, tick, at } = setup({ confirm: false });
     at('2026-06-01T09:29:00');

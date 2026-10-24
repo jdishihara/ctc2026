@@ -237,6 +237,8 @@ export interface Derived {
   quoteAge: number | null;
   tick: number;
   targetsConfirmed: boolean;
+  /** per underlying: spot and vol of the current event confirmed (edge tickets of one underlying do not wait for the other) */
+  confirmedUnderlyings: Record<string, boolean>;
   /** auto-submit is on in Config, not paused, and this is the derivatives page */
   autoArmed: boolean;
 }
@@ -751,6 +753,17 @@ export class Store {
         const base = this.s.baselines[event]?.[u]?.oldSpot;
         if (base) this.suggest(u, 'spot', base * (1 + v.changePct / 100), `headline ${v.changePct > 0 ? '+' : ''}${v.changePct}%`, event);
       }
+      // a vol outside the sane band when this event already has a sane reading for the underlying is a mis-read of a second
+      // copy of the same news (a glued "0." from the DOM bar, 2026-10-24): drop it and keep what we had. With no sane
+      // reading yet it is still shown, so the human sees "vol 400% outside bounds" instead of nothing.
+      if (v.iv != null && !(v.iv >= this.cfg.auto.volMin && v.iv <= this.cfg.auto.volMax)) {
+        const cur = this.s.targets[u].vol;
+        const sane = (x: number | null | undefined) => x != null && x >= this.cfg.auto.volMin && x <= this.cfg.auto.volMax;
+        if (cur.event === event && (sane(cur.suggestion?.value) || (cur.confirmed && sane(cur.value)))) {
+          this.capture.add({ t: now, key: 'news:vol-ignored', dir: 'meta', raw: `${u} vol ${v.iv} (read "${v.ivRaw ?? v.iv}") outside ${this.cfg.auto.volMin}-${this.cfg.auto.volMax}, this event already has ${cur.suggestion?.value ?? cur.value}: ignored · ${clean.slice(0, 160)}`, highlights: [] });
+          v.iv = undefined;
+        }
+      }
       if (v.iv != null) {
         this.suggest(u, 'vol', v.iv, `announced IV (read "${v.ivRaw ?? v.iv}")`, event);
         const t = this.s.targets[u];
@@ -1246,7 +1259,8 @@ export class Store {
     const say = (text: string, level: 'info' | 'warn') => {
       if (!opts.quiet) this.toast(text, level);
     };
-    if (kind === 'edge' && !this.d.targetsConfirmed && !this.s.manualQueue.length) {
+    const anyConfirmed = Object.entries(this.d.confirmedUnderlyings).some(([u, ok]) => ok && this.s.targets[u]);
+    if (kind === 'edge' && !this.d.targetsConfirmed && !this.s.manualQueue.length && !anyConfirmed) {
       say('Targets not confirmed: press Alt+A (or Accept) first', 'warn');
       return null;
     }
@@ -1257,6 +1271,8 @@ export class Store {
       return null;
     }
     let list = kind === 'edge' ? this.d.plan.filter((t) => !t.breach.length) : this.d.flatten;
+    // one underlying still waiting for its targets (a mis-read, analysts arriving) must not hold the other one's tickets
+    if (kind === 'edge' && !this.d.targetsConfirmed) list = list.filter((t) => this.d.confirmedUnderlyings[t.underlying] !== false);
     if (opts.exclude) list = list.filter((t) => !opts.exclude?.(t));
     if (!list.length) {
       say(kind === 'edge' ? 'No tickets clear the robust edge threshold' : 'Nothing to flatten', 'info');
@@ -1415,10 +1431,12 @@ export class Store {
     const effTargets: Derived['effTargets'] = {};
     const blends: Record<string, BlendResult | null> = {};
     let targetsConfirmed = true;
+    const confirmedUnderlyings: Record<string, boolean> = {};
     for (const u of cfg.underlyings) {
       const t = s.targets[u];
       const sp = t?.spot.value ?? spot[u]?.value ?? null;
       const vol = t?.vol.value ?? mIV[u] ?? null;
+      confirmedUnderlyings[u] = !t || (t.spot.confirmed && t.vol.confirmed);
       if (t && (!t.spot.confirmed || !t.vol.confirmed) && (!cfg.focus || cfg.focus === u)) targetsConfirmed = false;
       if (sp != null && vol != null && sp > 0 && vol > 0) {
         let lo = t?.volLow ?? vol;
@@ -1491,7 +1509,7 @@ export class Store {
       r,
       now, mode, modeReason, simNow, clockSrc, clockStale, clockRate, replay: !!phase?.replay, phase, realToNext, round, T,
       chains, contracts, spot, marketIV: mIV, effTargets, blends, edges, synths, straddles: strads, arbs,
-      portfolio: pf, breaches, flattenNow, plan, flatten, flattenCost: fl.totalSpreadCost, rate, quoteAge, tick, targetsConfirmed,
+      portfolio: pf, breaches, flattenNow, plan, flatten, flattenCost: fl.totalSpreadCost, rate, quoteAge, tick, targetsConfirmed, confirmedUnderlyings,
       autoArmed: cfg.auto.submit && !s.auto.paused && mode === 'derivatives',
     };
   }

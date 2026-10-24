@@ -112,7 +112,9 @@ export class Autopilot {
     const rate = store.rate.count(now);
     if (!(rate < this.cfg.auto.submitRateCap)) return { action: 'idle', detail: `rate budget ${rate}/${this.cfg.auto.submitRateCap}` };
     if (store.d.quoteAge == null || store.d.quoteAge > this.cfg.thresholds.staleQuoteSec) return { action: 'idle', detail: 'quotes stale' };
-    if (mode === 'edge' && !store.d.targetsConfirmed) return { action: 'idle', detail: 'targets not confirmed' };
+    if (mode === 'edge' && !store.d.targetsConfirmed && !Object.entries(store.d.confirmedUnderlyings).some(([u, ok]) => ok && store.s.targets[u])) {
+      return { action: 'idle', detail: 'targets not confirmed' };
+    }
 
     // keep `flattenReserve` orders of the rolling minute for closing tickets: an edge ticket that leaves no budget to
     // flatten after the snap is a position carried into the next event

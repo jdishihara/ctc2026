@@ -51,7 +51,10 @@ for (let i = 0; i < 50; i++) {
   try { await fetch(`${BASE}/__mock/stats`); await sleep(200); } catch { break; }
 }
 // --mock-args "--rate-limit 8 --halt OIL_0626_C100 --ws-drop 40 --switch-after 30 --reject-every 7": hostile-exchange options passed to the mock
-const MOCK_ARGS = arg('mock-args', null) ? String(arg('mock-args')).split(/\s+/).filter(Boolean) : [];
+// (read directly: the value itself starts with "--", which the arg() helper treats as "flag without value")
+const mockArgsIdx = argv.indexOf('--mock-args');
+const MOCK_ARGS = mockArgsIdx >= 0 && argv[mockArgsIdx + 1] ? String(argv[mockArgsIdx + 1]).split(/\s+/).filter(Boolean) : [];
+if (MOCK_ARGS.length) console.log(`mock args: ${MOCK_ARGS.join(' ')}`);
 const server = spawn(process.execPath, [join(ROOT, 'mock-exchange/server.mjs'), '--port', String(PORT), '--fast', String(FAST), '--preroll', '8',
   '--start-event', String(START), '--seed', SEED, '--quiet', ...MOCK_ARGS], { stdio: 'inherit' });
 for (let i = 0; i < 100; i++) {
