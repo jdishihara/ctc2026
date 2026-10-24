@@ -1,0 +1,17 @@
+{"run": 1, "capture": 245, "setting": [0.0, 1.0, false], "status": "ok", "comparison": "matched_archive_and_trace"}
+{"run": 2, "capture": 245, "setting": [0.0, 1.0, true], "status": "ok", "comparison": "matched_archive_and_trace"}
+{"run": 3, "capture": 245, "setting": [0.0, 0.5, false], "status": "ok", "comparison": "matched_archive_and_trace"}
+{"run": 4, "capture": 245, "setting": [0.0, 0.5, true], "status": "ok", "comparison": "matched_archive_and_trace"}
+{"run": 5, "capture": 245, "setting": [0.05, 1.0, false], "status": "ok", "comparison": "matched_archive_and_trace"}
+{"run": 6, "capture": 245, "setting": [0.05, 1.0, true], "status": "ok", "comparison": "matched_archive_and_trace"}
+{"run": 7, "capture": 245, "setting": [0.05, 0.5, false], "status": "ok", "comparison": "matched_archive_and_trace"}
+{"run": 8, "capture": 245, "setting": [0.05, 0.5, true], "status": "ok", "comparison": "matched_archive_and_trace"}
+{"run": 9, "capture": 245, "setting": [0.25, 1.0, false], "status": "ok", "comparison": "matched_archive_and_trace"}
+{"run": 10, "capture": 245, "setting": [0.25, 1.0, true], "status": "ok", "comparison": "matched_archive_and_trace"}
+{"run": 11, "capture": 245, "setting": [0.25, 0.5, false], "status": "ok", "comparison": "matched_archive_and_trace"}
+{"run": 12, "capture": 245, "setting": [0.25, 0.5, true], "status": "ok", "comparison": "matched_archive_and_trace"}
+{"run": 13, "capture": 245, "setting": [1.0, 1.0, false], "status": "ok", "comparison": "matched_archive_and_trace"}
+{"run": 14, "capture": 245, "setting": [1.0, 1.0, true], "status": "ok", "comparison": "matched_archive_and_trace"}
+{"run": 15, "capture": 245, "setting": [1.0, 0.5, false], "status": "ok", "comparison": "matched_archive_and_trace"}
+{"run": 16, "capture": 245, "setting": [1.0, 0.5, true], "status": "ok", "comparison": "matched_archive_and_trace"}
+{"runs": 16, "errors": 0, "mismatches": 0, "changed_sources": [], "finished_at": 1792829525.3821912, "results_sha256": "02c17544e47fd5ecbb3150cec3b5bbd95c826f61e46f99c22f6ee8b222a79b30"}

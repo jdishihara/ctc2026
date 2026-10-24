@@ -1,6 +1,6 @@
 # Competition readiness — 2026-10-24
 
-Status updated after the 08:03 UTC corrected supervisor comparison (04:03 EDT). One complete small-size live season
+Status updated after the 08:12 UTC capture-245 supervisor evaluation (04:12 EDT). One complete small-size live season
 has a verified settlement receipt. The next trial contains mixed activity.
 Live practice remains stopped pending shared-account ownership clarification.
 Market recording and offline evaluations continue.
@@ -24,6 +24,14 @@ limitations are in [practice-round-transition.md](practice-round-transition.md).
 The independently reviewed original comparison remains in
 [supervised-client-replay.md](supervised-client-replay.md). These offline
 findings do not change the actual +$141.16 completed practice record.
+
+The next closed recorded path, capture 245, passed independent audit: its
+supervised primary earns +$362.85, all 16 settings finish positive, 15 complete
+and one hits the loss trigger then finishes flat at +$5.42. Its interval began
+before the corrected-runtime freeze, and the receipt precedes the separate
+forward-driver freeze by 1.181 seconds. This is not prospective evidence for
+the correction or an untouched holdout. Full results and timing are in
+[observed-season-245.md](observed-season-245.md).
 
 ## Historical data and evaluation
 

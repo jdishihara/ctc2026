@@ -5,6 +5,24 @@ around **08:00 EDT / 12:00 UTC on October 24**. Continue evaluating and fixing
 problems between bounded batches; a batch stop does not finish the overnight
 goal. Preserve every trial, loss, and cleanup cost.
 
+## 08:12 UTC: capture 245 evaluated with the full supervisor
+
+PR 20 merged the reviewed round-transition fix at 08:10:11 UTC. The next
+closed capture's separate supervised evaluation finishes at +$362.85 in the
+fixed primary setting. All 16 terminal outcomes are positive, but only 15
+complete; one loss-stopped trial finishes flat at +$5.42 after closing fills.
+All reference/baseline gates, supervised journals, representative reruns and
+archived artifacts passed independent review. See
+[observed-season-245.md](observed-season-245.md).
+
+The corrected runtime stays frozen at `cd3eb23`; the separately reviewed
+forward driver is frozen at `c5c35a3`. Its protocol records sealed input copies,
+upstream archive provenance, every eligible receipt/attempt, and the final
+complete-line prefix boundary at 12:00 UTC. Capture 245 began before the runtime
+freeze, and its receipt precedes the driver freeze by 1.181 seconds. Do not call
+it prospective evidence for the correction. The original frozen worker and
+serialized evaluation continue unchanged. No owned live trading restarted.
+
 ## 08:03 UTC: corrected round-transition comparison completed
 
 The reviewed narrow correction preserves valid waiting between a new storm's

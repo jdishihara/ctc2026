@@ -1,0 +1,33 @@
+{
+  "sources": {
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/closed-season-evaluation/ctc/analog.py": "c606eefeab7cd0b5015b7b46cd831496d995f4b50030784ff2dd8171636938b2",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/closed-season-evaluation/ctc/sim.py": "91da5850c313b94835364dabd7622fb8282382a710cf324c99471d9c29021273",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/closed-season-evaluation/ctc/accounting.py": "b9cddb93959b277fe9ab7c6089e84dee2c092a2d049c466212878a5531ff0f99",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/closed-season-evaluation/ctc/strategies.py": "4c667bebeb84dfe11883205656702bb3f66545661f01a0685c1e4c24f6b2680c",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/closed-season-evaluation/ctc/wind.py": "2e91425031bae6c2d60bb92a2e529cfc1222778820f126a29be836a4ec026f84",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/closed-season-evaluation/ctc/__init__.py": "e178e73a3b0452a098d1cfa7f909ad65a3463457389018ab626ac281e1b634fe",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/closed-season-evaluation/ctc/price_signal.py": "aeb4b06e402231ac82e3b34ea7d1244346ee9b029036c4ffeb926112513b1fa4",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/closed-season-evaluation/ctc/valuation.py": "e19ceef5dc38154d1889065c4a85aae0d99b159267a0503a4c4fc3c7054292cd",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/closed-season-evaluation/ctc/basket.py": "ad08208095eb32a51fe19625b0e0929060a35bc4846ff4f8843e316f87d9a522",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/closed-season-evaluation/ctc/history.py": "c9a93c117e4df869a4e8a34b03f0b656ada231bdf41864778d536ce129b91521",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/closed-season-evaluation/ctc/ladder.py": "da0c82abb297719dc1ea6d244558703072c881d3bd3b3fa43dc0885ae07f1f25",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/closed-season-evaluation/ctc/price_signal.json": "3d421c258d939b6a0adc5db9f764b416c15be47cc684accc2187e074f11750f8",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/closed-season-evaluation/ctc/valuation_params.json": "06439094fc54318a8bfd1854fc2765d6ef542d1acad23de1836a4db47bf3b80b",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/closed-season-evaluation/ctc/ladder.json": "b70e7a8c5672dc6e4955c39fac62a70709ba29b39f00eead9add3cb4feeba5a4",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/closed-season-evaluation/ctc/damage_params.json": "c274463749d70b6ae85b6981fb029423c76e6fe5db0224e0d1aec83a70d22415",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/closed-season-evaluation/ctc/storm_sample.npz": "76da0f456aaadb8baee99920619db79c6f16e928dfab82ad33aade297a4b7c0f",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/closed-season-evaluation/ctc/analog_library.npz": "22694387c3b612f5c20853feb9143e1bf8b8f5722a845da8ed584ab1b30bdf09",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/closed-season-evaluation/bot/live.py": "ae8de45ad40896e72a6d1cd1097eab0e5235d4213429871b52029e76830cd828",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/closed-season-evaluation/data/case.json": "bcd0eb79c5a89b6625c17f2c233a686a04fafc75093e8a57d3c90f3b09972839",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/closed-season-evaluation/scripts/evaluate_closed_seasons.py": "caff9791c554c13915b48a7bd0060e40760493733b7e2a269f81c1a7d2361b91",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/closed-season-evaluation/scripts/replay_captured_market.py": "10741686ba5ebbff2758bc488fb2a34ef61183b2d57ec3d91d895b1981784ef9",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/closed-season-evaluation/scripts/evaluate_observed_season.py": "f7f9113f5dba6e81bba35e5aed50f72b0df4d2853c4cae4d9565407846861576",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/closed-season-evaluation/scripts/observe_market_seasons.py": "7290d9fa0fb902a1904f49a7927779517e6edcc77aa4f0ded9b57858d9627e96"
+  },
+  "git_revision": "49a690efec04f7dcaf6a616de81da2838afbf149",
+  "start_at": 1792821960.0,
+  "until": 1792843200.0,
+  "observations": "/Users/arjunhans/Documents/ctc2026/recordings/consistency-20261024/market-observations.jsonl",
+  "feed": "/Users/arjunhans/Documents/ctc2026/recordings/consistency-20261024/feed.jsonl",
+  "limitation": "Frozen counterfactual replay; no actual account profit attribution."
+}
