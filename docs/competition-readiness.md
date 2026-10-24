@@ -146,6 +146,13 @@ are preserved in [uncertainty-guard-experiment.md](uncertainty-guard-experiment.
 The research branch, including teammate main `870d31f`, passes 497 Python tests.
 The candidate is offline only; the live strategy and frozen worker are unchanged.
 
+The direct launcher also had a startup identity bug: initializing the strategy
+before the first account refresh could erase loaded weather history on the
+first quote callback. It now confirms the account and season identity before
+initialization and refuses startup when that snapshot is unavailable. Supervised
+practice already used the correct order; this does not explain its earlier loss.
+See [startup-identity-fix.md](startup-identity-fix.md) for reproduction and scope.
+
 ## Why historical profit overstated the first live result
 
 On the completed first season, historical-price replay at the same 10% limits
