@@ -21,6 +21,8 @@ from unittest.mock import patch
 
 ROOT = Path(__file__).resolve().parents[1]
 GRID = list(itertools.product([0., .05, .25, 1.], [1., .5], [False, True]))
+FORWARD_RUNTIME_REVISION = 'cd3eb239bd7bad97b34f10a8f2bb0b2e1c0f5026'
+FORWARD_REFERENCE_REVISION = '505a5ad2d5a6f81e7c711cb550871ce7aa7f3734'
 
 
 def digest(path):
@@ -88,6 +90,75 @@ def source_files(root):
                    *(root / name for name in names)])
 
 
+def capture_numbers(spec, forward):
+    captures = [item['capture'] for item in spec['captures']]
+    if not forward:
+        if captures != [241, 242, 243, 244]:
+            raise ValueError('the frozen comparison requires captures 241–244 in order')
+    elif (len(captures) != 1 or type(captures[0]) is not int or not 245 <= captures[0] <= 600
+          or spec['captures'][0].get('mode') != 'observed'):
+        raise ValueError('forward comparison requires one observed capture numbered 245–600')
+    return captures
+
+
+def sealed_forward_inputs(item):
+    paths = []
+    for field in ('observations', 'feed'):
+        path = Path(item[field])
+        data = path.read_bytes()
+        if (type(item.get(field + '_bytes')) is not int or len(data) != item[field + '_bytes']
+                or not data.endswith(b'\n')
+                or hashlib.sha256(data).hexdigest() != item.get(field + '_sha256')):
+            raise ValueError(f'{field} is not the declared sealed complete-line input')
+        paths.append(path)
+    return paths
+
+
+def forward_receipt_in_window(receipt):
+    at = receipt.get('at')
+    if type(at) not in (int, float) or not math.isfinite(at) or not 1792828815 <= at < 1792843200:
+        raise ValueError('receipt lies outside the declared forward window')
+
+
+def verify_forward_runtime(root):
+    paths = [p for p in source_files(root) if p.relative_to(root).parts[0] != 'docs']
+    paths += [root / 'bot/practice.py', root / 'scripts/replay_practice_supervisor.py']
+    verified = {}
+    for path in paths:
+        relative = path.relative_to(root).as_posix()
+        frozen = subprocess.check_output(['git', 'show', f'{FORWARD_RUNTIME_REVISION}:{relative}'], cwd=root)
+        expected = hashlib.sha256(frozen).hexdigest()
+        if digest(path) != expected:
+            raise ValueError(f'forward runtime differs from reviewed correction: {relative}')
+        verified[str(path)] = expected
+    return verified
+
+
+def verify_forward_archive(item, receipt, frames, reference_sources, parameters, *, reference_revision):
+    path = Path(item['archive_results'])
+    for name in ('results', 'metadata', 'summary'):
+        artifact = path if name == 'results' else path.parent / (name + '.json')
+        if digest(artifact) != item.get('archive_' + name + '_sha256'):
+            raise ValueError('upstream archive bytes differ from the declared completed artifacts')
+    metadata = json.loads((path.parent / 'metadata.json').read_text())
+    summary = json.loads((path.parent / 'summary.json').read_text())
+    rows = [json.loads(line) for line in path.read_text().splitlines()]
+    actual_grid = {(r['rtt_seconds'], r['displayed_depth_fraction'], r['basket_enabled']) for r in rows}
+    expected = dict(mode='observed', competition_id=item['competition_id'], year=str(2027 - item['capture']),
+        source_revision=reference_revision, source_sha256=reference_sources,
+        receipt_sha256=value_hash(receipt), frames_sha256=value_hash(frames), official_receipt=receipt,
+        frame_count=len(frames), first_at=frames[0]['received_at'], last_at=frames[-1]['received_at'],
+        receipt_at=receipt['at'], fraction=.1, parameters=parameters,
+        rtts=[0., .05, .25, 1.], depths=[1., .5], baskets=[False, True])
+    if (summary.get('runs') != len(GRID) or summary.get('errors') != 0
+            or type(summary.get('elapsed_seconds')) not in (int, float)
+            or not math.isfinite(summary['elapsed_seconds']) or summary['elapsed_seconds'] < 0
+            or len(rows) != len(GRID) or actual_grid != set(GRID)
+            or any(row.get('status') != 'ok' for row in rows)
+            or any(metadata.get(k) != v for k, v in expected.items())):
+        raise ValueError('upstream archive completion, source, identity or input provenance failed')
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--phase', choices=['reference', 'baseline', 'supervised'], required=True)
@@ -95,10 +166,25 @@ def main():
     parser.add_argument('--out', type=Path, required=True)
     parser.add_argument('--reference-results', type=Path)
     parser.add_argument('--baseline-results', type=Path)
+    parser.add_argument('--forward', action='store_true', help='evaluate one later closed capture under the fixed forward protocol')
     args = parser.parse_args()
     spec = json.loads(args.spec.read_text())
-    if [item['capture'] for item in spec['captures']] != [241, 242, 243, 244]:
-        raise ValueError('the frozen comparison requires captures 241–244 in order')
+    captures = capture_numbers(spec, args.forward)
+    driver_revision = subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=ROOT, text=True).strip()
+    runtime_hashes, forward_dependencies = {}, []
+    if args.forward:
+        if spec['reference_revision'] != FORWARD_REFERENCE_REVISION:
+            raise ValueError('forward reference must remain at its declared frozen revision')
+        reference_head = subprocess.check_output(['git', 'rev-parse', 'HEAD'],
+            cwd=spec['reference_root'], text=True).strip()
+        if reference_head != FORWARD_REFERENCE_REVISION:
+            raise ValueError('forward reference checkout revision changed')
+        runtime_hashes = verify_forward_runtime(ROOT)
+        forward_dependencies = [ROOT / 'docs/supervised-forward-plan.md']
+        for item in spec['captures']:
+            forward_dependencies += sealed_forward_inputs(item)
+            archive = Path(item['archive_results'])
+            forward_dependencies += [archive, archive.parent / 'metadata.json', archive.parent / 'summary.json']
     source_root = Path(spec['reference_root']) if args.phase == 'reference' else ROOT
     revision = subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=source_root, text=True).strip()
     if args.phase == 'reference' and revision != spec['reference_revision']:
@@ -114,8 +200,11 @@ def main():
         dependencies += [ROOT / 'bot/practice.py', ROOT / 'scripts/replay_practice_supervisor.py']
     dependencies += [Path(__file__), ROOT / 'docs/supervised-replay-plan.md',
                      ROOT / 'docs/practice-round-transition-plan.md', args.spec]
+    dependencies += forward_dependencies
+    if args.forward:
+        dependencies += [Path(p) for p in runtime_hashes]
     source_hashes = {str(p): digest(p) for p in dependencies}
-    required = {(capture, rtt, depth, basket) for capture in [241, 242, 243, 244]
+    required = {(capture, rtt, depth, basket) for capture in captures
                 for rtt, depth, basket in GRID}
     references, predecessor = {}, None
     if args.phase == 'baseline':
@@ -129,12 +218,23 @@ def main():
     if predecessor is not None:
         if predecessor['spec'] != spec or any(digest(name) != value for name, value in predecessor['source_sha256'].items()):
             raise ValueError('prerequisite source or declared inputs changed')
+        if args.forward and (predecessor.get('forward') is not True
+                             or predecessor.get('driver_revision') != driver_revision
+                             or predecessor.get('runtime_sha256') != runtime_hashes):
+            raise ValueError('forward driver or reviewed runtime changed between phases')
     args.out.mkdir(parents=True, exist_ok=False)
     metadata = dict(phase=args.phase, source_revision=revision, source_sha256=source_hashes,
         spec=spec, grid=GRID, fraction=.1, loss_trigger=250., prior_pnl=0., captures=[],
         reference_results_sha256=digest(args.reference_results) if args.reference_results else None,
         baseline_results_sha256=digest(args.baseline_results) if args.baseline_results else None,
         started_at=time.time())
+    if args.forward:
+        metadata.update(forward=True, driver_revision=driver_revision,
+            driver_sha256=digest(__file__), runtime_revision=FORWARD_RUNTIME_REVISION,
+            runtime_sha256=runtime_hashes,
+            forward_plan_sha256=digest(ROOT / 'docs/supervised-forward-plan.md'),
+            forward_plan_revision=subprocess.check_output(['git', 'log', '-1', '--format=%H', '--',
+                'docs/supervised-forward-plan.md'], cwd=ROOT, text=True).strip())
     case = json.loads((source_root / 'data/case.json').read_text())
     loaded, archives = [], {}
     for item in spec['captures']:
@@ -150,6 +250,13 @@ def main():
             raise ValueError('capture year does not match its declared historical identity')
         if not frames or type(receipt.get('at')) not in (int, float) or not math.isfinite(receipt['at']) or receipt['at'] < frames[-1]['received_at']:
             raise ValueError('official ready receipt must follow all captured frames')
+        if args.forward:
+            forward_receipt_in_window(receipt)
+            reference_root = Path(spec['reference_root'])
+            reference_sources = {str(p.relative_to(reference_root)): digest(p)
+                                 for p in source_files(reference_root)}
+            verify_forward_archive(item, receipt, frames, reference_sources, core.PARAMETERS,
+                                   reference_revision=spec['reference_revision'])
         archived = [json.loads(line) for line in Path(item['archive_results']).read_text().splitlines()]
         by_setting = {(r['rtt_seconds'], r['displayed_depth_fraction'], r['basket_enabled']): r for r in archived}
         if set(by_setting) != set(GRID) or len(archived) != len(GRID):
