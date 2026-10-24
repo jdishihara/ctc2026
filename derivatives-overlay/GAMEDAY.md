@@ -50,6 +50,10 @@ Order rate: header `orders n/40` (amber at 30, red at 36). ⏳ in the queue = pa
 - Read the first analyst message. In **Vol → Round 3 converter**, pick what it is: variance, daily move $ or %,
   move to expiry %, ATM straddle $, call/put price @K, P(ITM) @K, vega/pt @K, or a **custom formula** in `x S T K`
   (e.g. `sqrt(x)`, `x/100*sqrt(252)`).
+- If the converter says **not identified**, choose the unit named in the analyst message. A later unit label can
+  invalidate an earlier automatic selection and pause approval of analyst-derived targets. Re-check the converted
+  values before accepting them. A manual converter choice stays selected until you press **re-run**; re-run may
+  require approval again. An identification failure preserves literal spot/vol values you typed.
 - Use "try x =" to sanity-check: the σ it gives should be near the market IV (Vol tab, bottom).
 - Learning measures errors in σ, so the best-converting analyst earns the weight.
 

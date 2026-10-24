@@ -1,0 +1,55 @@
+{
+  "recorded_at": 1792840166.7568178,
+  "runtime_source": "4cc43247152264971b1d194647d91729113d38e7",
+  "base_main": "f8fda59f196aa61d107b28f0c565cf46d07aea63",
+  "python": {
+    "tests": 713,
+    "log": "competition-pr29-python.log"
+  },
+  "derivatives": {
+    "unit_tests": 152,
+    "unit_log": "derivatives-fix-unit-02.log",
+    "typecheck_exit": 0,
+    "typecheck_log": "derivatives-fix-typecheck-03.log",
+    "timezone_executions": 22,
+    "timezone_log": "derivatives-fix-timezones-02.log",
+    "browser": {
+      "startTime": "2026-10-24T11:06:03.975Z",
+      "duration": 154598.951,
+      "expected": 3,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0
+    },
+    "browser_log": "derivatives-e2e-05.json",
+    "prior_browser_logs": [
+      "derivatives-e2e.log",
+      "derivatives-e2e-02.json",
+      "derivatives-manual-03.json",
+      "derivatives-e2e-04.json"
+    ],
+    "package_sha256": "165f1cca044367f1576d58c3cfc4b23626706b3b7bd92d31dbb03b358a31d51c",
+    "independent_review_archive_sha256": "36c8a0fd3bdd2935d0135e42ce2b7ec5c8a664e44043f273f978300bf5dfd0d7",
+    "independent_focused_tests": 26,
+    "independent_safety_ownership_assertions": 11
+  },
+  "mario": {
+    "started_at": 1792838810.9982028,
+    "mode": "local mock only",
+    "auto_execute": false,
+    "status": "passed",
+    "samples": 34,
+    "contracts": 46,
+    "races_ingested": 8,
+    "unmapped": [],
+    "trades": {
+      "trades": []
+    },
+    "finished_at": 1792838844.811478,
+    "process_returncodes": [
+      -15,
+      -15
+    ]
+  },
+  "scope": "Local tests and mocks only; no live activation or competitive profit claim."
+}

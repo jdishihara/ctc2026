@@ -1,0 +1,45 @@
+{
+  "created_at": 1792840214.931437,
+  "runtime_revision": "4cc43247152264971b1d194647d91729113d38e7",
+  "python_sources_unchanged_from": "f8fda59f196aa61d107b28f0c565cf46d07aea63",
+  "files": {
+    "derivatives-overlay.zip": {
+      "bytes": 58449,
+      "sha256": "165f1cca044367f1576d58c3cfc4b23626706b3b7bd92d31dbb03b358a31d51c",
+      "source": "/Users/arjunhans/Documents/ctc2026/out/game-day-verification-20261024/derivatives-overlay.zip"
+    },
+    "independent-review.tar.gz": {
+      "bytes": 449925,
+      "sha256": "36c8a0fd3bdd2935d0135e42ce2b7ec5c8a664e44043f273f978300bf5dfd0d7",
+      "source_directory": "/Users/arjunhans/Documents/ctc2026/out/derivatives-converter-review-20261024",
+      "regular_files": 35
+    },
+    "initial-review.tar.gz": {
+      "bytes": 258598,
+      "sha256": "c276a00c435e685e896254269bc11134bf156831bf5f472a634d31432e21239f",
+      "source_directory": "/Users/arjunhans/Documents/ctc2026/out/derivatives-converter-review-20261024/initial-3bdc5cd",
+      "regular_files": 46
+    },
+    "local-checks.tar.gz": {
+      "bytes": 127478,
+      "sha256": "2212007c966fb0eb1bb9c3042f2b17e463bd1a533912cb29975726e4b148ceef",
+      "source_directory": "/Users/arjunhans/Documents/ctc2026/out/game-day-verification-20261024",
+      "regular_files": 49
+    },
+    "source-build-receipt.json": {
+      "bytes": 16506,
+      "sha256": "8cec3fbf2f6d7817fba1b888966b74896cb744fbd1c73a142c67cb01c379964f",
+      "source": "/Users/arjunhans/Documents/ctc2026/out/game-day-verification-20261024/source-build-receipt.json"
+    },
+    "verification-summary.json": {
+      "bytes": 1632,
+      "sha256": "956ae8ac2c7fcfa154764798b0cd0f6248a25805b3a6b94d2fd9afb64c1abb61",
+      "source": "/Users/arjunhans/Documents/ctc2026/out/game-day-verification-20261024/verification-summary.json"
+    }
+  },
+  "source_files_bound_by_receipt": 97,
+  "archive_members_compared_to_directories": 130,
+  "relative_links_checked_before_manifest": 54,
+  "packaging_note": "Initial manifest validation used an incorrect archive-root assumption for the independent review. The corrected check respects its final-4cc4324 member prefix; no artifact changed.",
+  "scope": "Local case-tool verification; no live account activation or profitability claim."
+}

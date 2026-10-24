@@ -1,5 +1,22 @@
 # Overnight practice — October 24, 2026
 
+## 11:09 UTC — local case-tool checks and derivatives correction verified
+
+PR 29 is merged and the competition checkout passes all 713 Python tests.
+Derivatives browser tests exposed a stale manual-test assumption and a real
+round-three conversion bug. The corrected helper retains explicit unit evidence,
+rejects unresolved named ambiguity, reconsiders contradicted automatic choices
+and revokes affected analyst approvals immediately. Manual converter choices
+and typed targets survive that invalidation. Independent review verifies the
+four reported failure paths and the ownership controls.
+
+All 152 derivatives unit tests, 22 timezone test executions, typecheck, production
+build/package and all three final browser scenarios pass. Initial skips and
+every failed assertion are preserved. The Mario mock smoke check maps 46
+contracts and ingests eight race results with no orders. These are local checks;
+no owned live trading resumes and capture 249 remains active. Details and the
+reviewed extension package are in [game-day-verification.md](game-day-verification.md).
+
 ## 10:52 UTC — capture 248 and unchanged retry confirmation verified
 
 Capture 248 is positive in all sixteen full-supervisor settings: mean $897.99,
