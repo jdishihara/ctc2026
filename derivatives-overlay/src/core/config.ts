@@ -166,7 +166,7 @@ export const DEFAULT_CONFIG: Config = {
   focus: null,
   auto: {
     confirm: true, converter: true, converterTolPts: 8, converterTieMarginPts: 2,
-    submit: false, submitRateCap: 36, submitIntervalMs: 1500, resubmitAfterMs: 20_000, flattenResubmitMs: 6_000, flattenReserve: 12, flattenIntervalMs: 800,
+    submit: false, submitRateCap: 36, submitIntervalMs: 1500, resubmitAfterMs: 20_000, flattenResubmitMs: 6_000, flattenReserve: 12, flattenIntervalMs: 1500,
     spotBoundPct: 40, volMin: 0.05, volMax: 3.0, switchTabs: true,
   },
 };
