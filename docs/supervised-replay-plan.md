@@ -45,13 +45,25 @@ it does not change pre-close decisions. Preserve real per-refresh observation
 and per-submission permission checks. Record the exact sampled mark and time
 that cause any stop; do not substitute the lowest server mark for a polled mark.
 
-The real supervisor checks completion every 0.5 seconds. After a stop is latched,
-wait until the current synchronous client step completes and that monitor's next
-half-second boundary before invoking production cleanup. All fills/arrivals
-during those waits continue at the server. No recursive strategy callback runs
-during a blocking request. Advance production cleanup sleeps on the virtual
-clock and retain its real retry limits, individual cancellations, ownership
-audits, and reduction-only order rules.
+The real supervisor checks completion every 0.5 seconds, anchored to monitor
+startup after the initial account checks and session construction. Model those
+monitor ticks during virtual clock advancement. A tick detecting a latched stop
+sets the session cancellation flag, but cannot kill an already running request
+or synchronous client step. Cleanup starts at the later of that detection tick
+and completion of its last worker. For example, a stop at 0.1, detection at 0.5,
+and worker completion at 0.8 starts cleanup at 0.8, not 1.0. If a step returns
+before detection, further refresh/cancel steps may begin before the monitor
+cancels the driver. Continue these steps with the existing submission veto.
+
+All fills/arrivals during requests and waits continue at the server. Monitor
+callbacks only change the stop flag; they never recursively invoke a strategy.
+An already submitted request can still execute after stop detection. At equal
+times, captured arrivals/terminal close precede the monitor tick, which precedes
+the next request operation or client step. Distinguish the positions snapshot's
+request midpoint from the later `Journal.observe` time after additional audits;
+the latter is when its stale or current mark can latch a stop. Advance production
+cleanup sleeps on the virtual clock and retain its real retry limits, individual
+cancellations, ownership audits, and reduction-only order rules.
 
 After cleanup, run the production final-receipt validation. Record its marked
 P&L, flat/settled/attention status, remaining positions/orders, and every stop
