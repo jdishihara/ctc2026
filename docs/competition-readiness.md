@@ -1,6 +1,6 @@
 # Competition readiness — 2026-10-24
 
-Status updated after the 10:52 UTC capture-248 audits (06:52 EDT). One complete small-size live season
+Status updated after the 11:16 UTC case-tool packaging correction (07:16 EDT). One complete small-size live season
 has a verified settlement receipt. The next trial contains mixed activity.
 Live practice remains stopped pending shared-account ownership clarification.
 Market recording and offline evaluations continue.
@@ -103,6 +103,19 @@ interval predates the retry declaration and freeze, although both precede its
 closing receipt. Capture 249 remains pending. Full results and limits are in
 [observed-season-248.md](observed-season-248.md) and
 [cleanup-retry-forward.md](cleanup-retry-forward.md).
+
+## Other case tools
+
+The other case tools have separate local checks: the derivatives extension
+passes 152 unit tests, 22 timezone test executions and all three browser
+scenarios after correction of unit identification and approval invalidation.
+Four additional build checks verify that the mock extension cannot inject into
+Cornell and that both packages disclose optional order submission. Saved
+auto-submit settings must be disarmed before the live manual dry run.
+The Mario desk maps all 46 mock contracts and receives all eight race results
+with automatic orders off. These checks establish the stated local behavior,
+not competitive returns. Builds, failures and reviews are retained in
+[game-day-verification.md](game-day-verification.md).
 
 ## Historical data and evaluation
 

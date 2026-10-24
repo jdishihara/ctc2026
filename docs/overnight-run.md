@@ -1,5 +1,35 @@
 # Overnight practice — October 24, 2026
 
+## 11:16 UTC — mock/live extension isolation corrected
+
+The final package review rejected the intermediate bundle's handoff: dev builds
+could also inject into Cornell, with saved mock auto-submit settings, and two
+descriptions incorrectly promised no submissions. The build now restricts dev
+to localhost and prod to Cornell. The four manifest checks first reproduced
+three failures, then all passed. The new package retains exactly the approved
+runtime and browser-test source. Install guidance requires disarming saved
+settings or clearing the old extension before opening live, and verifying
+auto-submit off before the manual dry run. The rejected review, original package,
+failing checks and replacement source/package bindings are retained. No live
+extension was installed or armed.
+
+## 11:09 UTC — local case-tool checks and derivatives correction verified
+
+PR 29 is merged and the competition checkout passes all 713 Python tests.
+Derivatives browser tests exposed a stale manual-test assumption and a real
+round-three conversion bug. The corrected helper retains explicit unit evidence,
+rejects unresolved named ambiguity, reconsiders contradicted automatic choices
+and revokes affected analyst approvals immediately. Manual converter choices
+and typed targets survive that invalidation. Independent review verifies the
+four reported failure paths and the ownership controls.
+
+All 152 derivatives unit tests, 22 timezone test executions, typecheck, production
+build/package and all three final browser scenarios pass. Initial skips and
+every failed assertion are preserved. The Mario mock smoke check maps 46
+contracts and ingests eight race results with no orders. These are local checks;
+no owned live trading resumes and capture 249 remains active. Details and the
+reviewed extension package are in [game-day-verification.md](game-day-verification.md).
+
 ## 10:52 UTC — capture 248 and unchanged retry confirmation verified
 
 Capture 248 is positive in all sixteen full-supervisor settings: mean $897.99,

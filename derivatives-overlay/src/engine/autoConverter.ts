@@ -54,6 +54,10 @@ const KEYWORDS: Partial<Record<ConverterId, RegExp>> = {
 const MONEY_IDS: ConverterId[] = ['dailyMoveAbs', 'atmStraddle', 'callPrice', 'putPrice', 'vegaPerPoint'];
 const PCT_IDS: ConverterId[] = ['iv', 'dailyMovePct', 'expiryMovePct', 'variance'];
 
+export function mentionedConverters(text: string): ConverterId[] {
+  return CONVERTERS.filter(({ id }) => KEYWORDS[id]?.test(text)).map(({ id }) => id);
+}
+
 const median = (xs: number[]) => {
   const a = [...xs].sort((x, y) => x - y);
   return a.length ? (a.length % 2 ? a[(a.length - 1) / 2] : (a[a.length / 2 - 1] + a[a.length / 2]) / 2) : NaN;
@@ -91,9 +95,18 @@ export function identifyConverter(inp: IdentifyInput): IdentifyResult {
     return { id: null, reason: `nothing within ${inp.tolPts} vol pts of the market IV; closest ${fmt(ranked[0])}. Pick the converter by hand.`, ranked };
   }
   const named = within.filter((c) => c.keyword);
+  const mentioned = mentionedConverters(text);
+  // Market IV can still reflect the previous event. A nearby raw number is not
+  // evidence that an explicitly named quantity has different units.
+  if (mentioned.length && !named.length) {
+    return { id: null, reason: `message names ${mentioned.join(', ')}, but no named converter is within ${inp.tolPts} vol pts of the market IV. Pick the converter by hand.`, ranked };
+  }
   if (named.length === 1) return { id: named[0].id, reason: `message names it and it matches the market IV: ${fmt(named[0])}`, ranked };
   if (named.length > 1 && named[1].errPts - named[0].errPts >= inp.tieMarginPts) {
     return { id: named[0].id, reason: `several named, nearest market IV: ${fmt(named[0])} vs ${fmt(named[1])}`, ranked };
+  }
+  if (named.length > 1) {
+    return { id: null, reason: `ambiguous named converters: ${fmt(named[0])} vs ${fmt(named[1])}. Pick the converter by hand.`, ranked };
   }
   const best = within[0];
   const second = ranked[1];

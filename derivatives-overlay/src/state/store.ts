@@ -7,7 +7,7 @@ import {
   buildChains, Chain, compileSymbolRegex, Contract, inferTick, marketIV, metaFromSymbolEntry, mid, OptionMeta,
   parityImpliedSpot, parseOptionSymbol, Quote,
 } from '../engine/chain';
-import { ConverterCandidate, ConverterSample, identifyConverter } from '../engine/autoConverter';
+import { ConverterCandidate, ConverterSample, identifyConverter, mentionedConverters } from '../engine/autoConverter';
 import { CONVERTERS, convertToSigma, ConverterId, normalizeVol } from '../engine/converters';
 import { Baseline, computeEdges, EdgeRow, Resting } from '../engine/fairValue';
 import { extractStructured, HeadlineParse, parseHeadline } from '../engine/headline';
@@ -769,7 +769,13 @@ export class Store {
   // ---------------- auto-pilot: Round 3 converter ----------------
   tryAutoConverter(event: number, text: string, parse: HeadlineParse) {
     const ac = this.s.auto.converter;
-    if (!this.cfg.auto.converter || ac.status !== 'idle') return;
+    if (!this.cfg.auto.converter || ac.status === 'manual') return;
+    // Samples accumulate across analysts; their unit labels must accumulate too.
+    const evidenceText = this.s.news.filter((n) => n.event === event && n.parse.analysts.length).map((n) => n.text).join(' ') || text;
+    const named = mentionedConverters(evidenceText);
+    // Keep an inferred choice stable across prices and unitless messages, but
+    // reconsider it when later explicit unit evidence contradicts that choice.
+    if (ac.status === 'chosen' && (!named.length || named.every((id) => id === ac.id))) return;
     const samples: ConverterSample[] = parse.analysts.filter((a) => this.s.targets[a.underlying]).map((a) => ({ underlying: a.underlying, raw: a.rawValue, rawStr: a.raw }));
     for (const [u, row] of Object.entries(this.s.analystInputs[event] ?? {})) {
       for (const a of ANALYSTS) {
@@ -784,7 +790,7 @@ export class Store {
       spot[u] = this.d?.spot[u]?.value ?? this.s.baselines[event]?.[u]?.oldSpot ?? null;
       strikes[u] = this.d?.chains[u]?.strikes;
     }
-    const res = identifyConverter({ samples, text, marketIV: this.d?.marketIV ?? {}, spot, T: this.d?.T.years ?? 20 / 252, strikes, tolPts: this.cfg.auto.converterTolPts, tieMarginPts: this.cfg.auto.converterTieMarginPts });
+    const res = identifyConverter({ samples, text: evidenceText, marketIV: this.d?.marketIV ?? {}, spot, T: this.d?.T.years ?? 20 / 252, strikes, tolPts: this.cfg.auto.converterTolPts, tieMarginPts: this.cfg.auto.converterTieMarginPts });
     ac.ranked = res.ranked;
     ac.event = event;
     ac.reason = res.reason;
@@ -794,8 +800,18 @@ export class Store {
       this.setConverter({ id: res.id, K: null }, 'auto');
       this.toast(`Round 3 quantity identified: ${CONVERTERS.find((c) => c.id === res.id)?.label ?? res.id} (${res.reason})`, 'info');
     } else {
+      ac.status = 'idle';
       ac.id = null;
+      // A previously approved analyst target may depend on the revoked unit.
+      // Literal targets typed by the trader retain their confirmation.
+      for (const [u, target] of Object.entries(this.s.targets)) {
+        if (target.vol.event === event && target.vol.src.startsWith('analysts')) {
+          target.vol.confirmed = false;
+          this.s.auto.targets[u] = { status: 'manual', reason: res.reason, event, t: this.nowFn() };
+        }
+      }
       this.toast(`Round 3 converter not identified: ${res.reason}`, 'warn');
+      this.changed(true);
     }
   }
 

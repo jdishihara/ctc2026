@@ -1,4 +1,4 @@
-// Builds dist/ (prod, exchange only) or dist-dev/ (also matches the localhost mock exchange).
+// Builds dist/ (Cornell only) or dist-dev/ (localhost mock only).
 import { build } from 'esbuild';
 import { readFileSync, writeFileSync, mkdirSync, rmSync } from 'node:fs';
 import { dirname, join } from 'node:path';
@@ -32,7 +32,8 @@ await build({ ...common, entryPoints: [join(root, 'src/content/index.ts')], outf
 const manifest = JSON.parse(readFileSync(join(root, 'manifest.base.json'), 'utf8'));
 if (dev) {
   manifest.name += ' (dev)';
-  for (const cs of manifest.content_scripts) cs.matches.push(MOCK_ORIGIN);
+  for (const cs of manifest.content_scripts) cs.matches = [MOCK_ORIGIN];
+  for (const resource of manifest.web_accessible_resources ?? []) resource.matches = [MOCK_ORIGIN];
 }
 writeFileSync(join(outdir, 'manifest.json'), JSON.stringify(manifest, null, 2));
 

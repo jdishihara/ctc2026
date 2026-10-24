@@ -1,7 +1,12 @@
 # Game day: Derivatives (Sat Oct 24)
 
 ## Before the case opens
+- [ ] Before opening/reloading the live page, disable/remove older dev builds and duplicate overlays. Only one
+      production copy should be enabled. Follow the [install checklist](README.md#install-competition-build) to
+      clear or disarm any previously saved auto-submit setting; reloading does not clear it.
 - [ ] Load the **prod** build (`dist/`) in `chrome://extensions` and **hard-reload** the exchange tab.
+- [ ] Config → **Auto-submit** is unchecked; header says **arm auto**, with no **AUTO ON** or **AUTO PAUSED**.
+      `Alt+P` only pauses; use **disarm** or the Config checkbox to save auto-submit off before the manual dry run.
 - [ ] Open the Derivatives page early. **Capture** tab: `ws:quote` is counting up for the 12 option symbols, and
       `http:GET /api/v1/competitions/current` is polling. Header says **DERIVATIVES** (not "capture only").
 - [ ] **Edge** tab: each underlying shows `spot: WS` (or `DOM`/`parity`), and the header shows `T 20.00d · DOM Fair tab`
@@ -50,6 +55,10 @@ Order rate: header `orders n/40` (amber at 30, red at 36). ⏳ in the queue = pa
 - Read the first analyst message. In **Vol → Round 3 converter**, pick what it is: variance, daily move $ or %,
   move to expiry %, ATM straddle $, call/put price @K, P(ITM) @K, vega/pt @K, or a **custom formula** in `x S T K`
   (e.g. `sqrt(x)`, `x/100*sqrt(252)`).
+- If the converter says **not identified**, choose the unit named in the analyst message. A later unit label can
+  invalidate an earlier automatic selection and pause approval of analyst-derived targets. Re-check the converted
+  values before accepting them. A manual converter choice stays selected until you press **re-run**; re-run may
+  require approval again. An identification failure preserves literal spot/vol values you typed.
 - Use "try x =" to sanity-check: the σ it gives should be near the market IV (Vol tab, bottom).
 - Learning measures errors in σ, so the best-converting analyst earns the weight.
 
