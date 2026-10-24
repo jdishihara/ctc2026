@@ -1,12 +1,12 @@
 # Competition readiness — 2026-10-24
 
-Status updated after the 11:16 UTC case-tool packaging correction (07:16 EDT). One complete small-size live season
+Status updated after the 11:34 UTC capture-249 checks (07:34 EDT). One complete small-size live season
 has a verified settlement receipt. The next trial contains mixed activity.
 Live practice remains stopped pending shared-account ownership clarification.
 Market recording and offline evaluations continue.
 
-**Validation limitation:** all 24 complete storm tracks in closed captures
-241–248 exactly match tracks in the fitted analog training library. Their
+**Validation limitation:** all 27 complete storm tracks in closed captures
+241–249 exactly match tracks in the fitted analog training library. Their
 replays and the +$141.16 actual completed trial therefore do not establish
 performance on unfamiliar weather. Source-freeze dates describe chronology,
 not independence from model training. See
@@ -100,9 +100,19 @@ and settle positive, with mean $897.99, worst $295.45 and primary $985.54.
 The bounded-retry runtime reproduces all sixteen outcomes unchanged; no extra
 cleanup was needed. Its three weather tracks also repeat training. The selected
 interval predates the retry declaration and freeze, although both precede its
-closing receipt. Capture 249 remains pending. Full results and limits are in
+closing receipt. Full results and limits are in
 [observed-season-248.md](observed-season-248.md) and
 [cleanup-retry-forward.md](cleanup-retry-forward.md).
+
+Capture 249 is also independently verified: all sixteen full-supervisor
+settings complete and settle positive, with mean $1,485.76, worst $1,014.34
+and primary $1,760.14. Six representative reruns reproduce the original
+evaluators exactly. The bounded retry preserves all sixteen outcomes, with
+no extra cleanup required. Its two representative reproductions also match.
+The selected interval follows all relevant freezes, but all three weather
+tracks match fitted rows 744–746. An initial retry invocation used a file
+where a directory was required and failed before evaluation; its logs and the
+corrected attempt remain retained. See [observed-season-249.md](observed-season-249.md).
 
 ## Other case tools
 

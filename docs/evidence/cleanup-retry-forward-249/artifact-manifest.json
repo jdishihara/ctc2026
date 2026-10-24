@@ -1,0 +1,66 @@
+{
+  "created_at": 1792841724.9312341,
+  "capture": 249,
+  "competition_id": "7d19a254-8c3b-4c4a-b4f3-32c84a138b79",
+  "source_bindings": {
+    "runtime": "27ab7c4b4784c9aabc92e791b0878d387cd4cc49",
+    "driver": "2c441aee5b5f828bc4c4e26461159a958c102067",
+    "baseline_runtime": "cd3eb239bd7bad97b34f10a8f2bb0b2e1c0f5026",
+    "cache_sha256": "dd90a0d5f2c8068478755c42195a230a83811a519a4ef4b28402fb6ec797ab4c",
+    "frames_sha256": "46c86a377736e0657c30f68cd1249ae85d0788981acacf7aa0794dc6639b1c2e",
+    "receipt_sha256": "b067d33043f12a2f8f11552f14b589a50f5130932a70eca59026a3a6b4d0bdcc"
+  },
+  "files": {
+    "analysis.json": {
+      "bytes": 40420,
+      "sha256": "24abffad40d8bac6c6c0d4949531eddd024540ed8df381ac0ebe8c7c1abcce44",
+      "source": "/Users/arjunhans/Documents/ctc2026/out/cleanup-retry-forward-20261024/capture-249/attempt-02/analysis.json"
+    },
+    "archive-receipt.json": {
+      "bytes": 404,
+      "sha256": "ee5d6bea33a9fb9075223551df5d6a5340ef61586df20df7303a1a020d2f05a0",
+      "source": "/Users/arjunhans/Documents/ctc2026/out/cleanup-retry-249-independent-review-20261024/archive-receipt.json"
+    },
+    "attempts-through-249.jsonl": {
+      "bytes": 8605,
+      "sha256": "9a824afc6a2cd3cf093a83b7d40c77aae9c3eaff4aa0113473b09c83526969f5",
+      "source": "/Users/arjunhans/Documents/ctc2026/out/cleanup-retry-forward-20261024/attempts.jsonl"
+    },
+    "independent-review.tar.gz": {
+      "bytes": 3878912,
+      "sha256": "1a647dd6e4898a0637e2dc41e8a0cd3443c3d8c80fe8e7ebf220671a0b38bcf7",
+      "source": "/Users/arjunhans/Documents/ctc2026/out/cleanup-retry-249-independent-review-20261024/independent-review.tar.gz",
+      "source_directory": "/Users/arjunhans/Documents/ctc2026/out/cleanup-retry-249-independent-review-20261024",
+      "regular_files": 375
+    },
+    "phase-artifacts.tar.gz": {
+      "bytes": 2146659,
+      "sha256": "a4dc303501ac57df798f9f63fea981424ba316e5903e3b4e3e7420b31072ef34",
+      "source_directory": "/Users/arjunhans/Documents/ctc2026/out/cleanup-retry-forward-20261024",
+      "regular_files": 450
+    },
+    "seal.stderr.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "/Users/arjunhans/Documents/ctc2026/out/cleanup-retry-forward-20261024/249-seal.stderr.log"
+    },
+    "seal.stdout.json": {
+      "bytes": 4423,
+      "sha256": "12baa0e20575d089f8ba4d716e4419b4380d67581c2e01e6ae56f93ba5a4a144",
+      "source": "/Users/arjunhans/Documents/ctc2026/out/cleanup-retry-forward-20261024/249-seal.stdout.json"
+    },
+    "spec.json": {
+      "bytes": 1061,
+      "sha256": "30cbabf63edbc24fe5107fa86c36cb918fb7b4205d05578f26dcf5df9ffdbb12",
+      "source": "/Users/arjunhans/Documents/ctc2026/out/cleanup-retry-forward-20261024/capture-249/spec.json"
+    },
+    "verdict.json": {
+      "bytes": 7936,
+      "sha256": "7404c2b2bf563bd42c6dd048c76bfc123a355dcc54defca68b6608309e2e06fd",
+      "source": "/Users/arjunhans/Documents/ctc2026/out/cleanup-retry-249-independent-review-20261024/verdict.json"
+    }
+  },
+  "archive_members_compared_to_source": 825,
+  "attempt_note": "Initial candidate invocation failed before output creation or replay. Successful attempt-02 uses a byte-identical 147-file copy of the original baseline, not another baseline run. Both invocation logs and the copy provenance remain retained.",
+  "scope": "Fixed 16-setting comparison and two authorized candidate reproductions on closed fitted weather; no extra cleanup exercised and no live trading."
+}

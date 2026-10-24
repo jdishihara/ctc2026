@@ -1,0 +1,252 @@
+{
+  "actual_mutations_per_phase": {
+    "baseline": {
+      "cleanup_mutations": 0,
+      "extra_mutations": 0,
+      "mutations": 1569
+    },
+    "candidate": {
+      "cleanup_mutations": 0,
+      "extra_mutations": 0,
+      "mutations": 1569
+    }
+  },
+  "affected_attention_settings": [],
+  "all_analyzer_fields_independently_recomputed": true,
+  "attention": 0,
+  "authorized_unique_candidate_reproductions": 2,
+  "baseline_was_copied_not_rerun": true,
+  "blockers": [],
+  "bound_baseline_artifacts": 147,
+  "candidate_replay_executions_by_reviewer": 2,
+  "cleanup_mutations": 0,
+  "cleanup_profiles_equal_except_source_lines": 16,
+  "completed": 16,
+  "copied_baseline_files_byte_exact": 147,
+  "declined_to_judge": [
+    "Live ownership, activation, account P&L, fill reliability or consistent profitability.",
+    "Extra-pass effectiveness on this capture; every setting settled without cleanup mutations.",
+    "Unseen-weather generalization: all three tracks match fitted rows 744-746.",
+    "True quote completeness, disconnect onset, live priority, latency and market impact.",
+    "Active capture 250 or later outcomes, additional settings, model changes or parameter variants."
+  ],
+  "duplicate_candidate_replay_executions": 0,
+  "evidence_sha256": {
+    "analysis-trace-check.json": "8e7445181924237dbd98dd8a03839a9fbe25a34598d7928c9f2d97ad131ecc37",
+    "authorized-reruns/independent-reruns.json": "d04a743d6bfafb817dfd67f9b0ea82b0d120f17d4c367570ae4c86bf3b24fbb7",
+    "candidate-audit.json": "b963bbd2b55fa764c956802712b2f02a0489c9f6365c46831232d6ef266cd3cd",
+    "original-audit-binding.json": "04d6e0d38ddec39ce498786b70d818f2d37c2406b363188932850fd19ffb7cd1",
+    "prerequisites.json": "a0d53b6d9aeb6d353e699e6330e432b54802f8cc9a6a44eb627b793f23a7db1b"
+  },
+  "extra_mutations": 0,
+  "forbidden_attempts": [],
+  "guard_counters": {
+    "cleanup_posts_at_true_server_position": 0,
+    "extra_budget_checks": 0,
+    "history_ready_strategy_posts": 111,
+    "settlement_value_reads": 72
+  },
+  "maximum_rolling_mutations": 27,
+  "metrics": {
+    "baseline": {
+      "cleanup": {
+        "settled": 16
+      },
+      "extra_pass_mutations": 0,
+      "finished_at": 1792841285.998842,
+      "loss_cleanup_mean": null,
+      "loss_stops": 0,
+      "lowest_marked_pnl": -105.42500000000018,
+      "maximum": 1795.949999999999,
+      "maximum_marked_drawdown": 416.53499999999985,
+      "maximum_rolling_mutations": 27,
+      "mean": 1485.758125,
+      "minimum": 1014.3399999999965,
+      "negative": 0,
+      "positive": 16,
+      "results_sha256": "c0a2293534d4b16ac68b9d9ab5aa8a35e44682ce74bc2bd4202ad5e255533711",
+      "trial": {
+        "completed": 16
+      }
+    },
+    "candidate": {
+      "cleanup": {
+        "settled": 16
+      },
+      "extra_pass_mutations": 0,
+      "finished_at": 1792841420.488076,
+      "loss_cleanup_mean": null,
+      "loss_stops": 0,
+      "lowest_marked_pnl": -105.42500000000018,
+      "maximum": 1795.949999999999,
+      "maximum_marked_drawdown": 416.53499999999985,
+      "maximum_rolling_mutations": 27,
+      "mean": 1485.758125,
+      "minimum": 1014.3399999999965,
+      "negative": 0,
+      "positive": 16,
+      "results_sha256": "e373c3f18bc539110876a1cb7823d42022ef5410dba333018ffb177609cd9033",
+      "trial": {
+        "completed": 16
+      }
+    }
+  },
+  "negative": 0,
+  "new_original_engine_performance_runs": 0,
+  "original_audit_archive_sha256": "4ec47a0b7d8ecce8b6c38008a8b4bfd2258c2fed1ddce04221caece7c4670729",
+  "original_audit_files": 222,
+  "original_audit_performance_reruns_reused": 6,
+  "original_journals_byte_exact": 112,
+  "original_rows_exact": 16,
+  "paired_mutation_profiles_byte_identical": 16,
+  "paired_runtime_results_identical": 16,
+  "paired_standard_journals_byte_identical": 112,
+  "positive": 16,
+  "primary_final_mark": 1755.6100000000001,
+  "primary_flat": false,
+  "primary_nonzero_settled_holdings": {
+    "AQUA": 14,
+    "ARCH": -5,
+    "FERRY": -80,
+    "GEN": 20,
+    "GRID": -40,
+    "HAVEN": -25,
+    "MAT": -70,
+    "RECON": -50,
+    "REIN": -5
+  },
+  "primary_terminal_pnl": 1760.1399999999994,
+  "produced_files_verified": 288,
+  "producer_initial_candidate_failure": {
+    "candidate_output_absent": true,
+    "performance_runs": 0,
+    "rejection_before_output_creation_and_replay": true,
+    "stderr_sha256": "e2530e9c9d2d9c0d17d4117b273b7f068db1b56ed1911cb9dca45a81af6b3451",
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "representative_cases": [
+    {
+      "cash": 11938.94,
+      "cleanup_mutations": 0,
+      "conversions": [],
+      "exact_files": 9,
+      "extra_budget_checks": 0,
+      "fill_hash": "f49ae0ac6635bb3f865e85758b6521d96d3bee1863c100a10071fdfd2bfff836",
+      "fills": 59,
+      "full_request_hash": "7ed04bae5234611698c00cce6c57d701b57aec647056a79530795117e4c009b5",
+      "maximum_rolling_mutations": 8,
+      "mutations": 88,
+      "pnl": 1760.1400000000012,
+      "positions": {
+        "AQUA": 14,
+        "ARCH": -5,
+        "FERRY": -80,
+        "GEN": 20,
+        "GRID": -40,
+        "HAVEN": -25,
+        "ISLE": 0,
+        "MAT": -70,
+        "PORT": 0,
+        "REBLD": 0,
+        "RECON": -50,
+        "REIN": -5
+      },
+      "request_count": 4523,
+      "setting": [
+        249,
+        0.25,
+        1.0,
+        true
+      ]
+    },
+    {
+      "cash": 14152.92,
+      "cleanup_mutations": 0,
+      "conversions": [],
+      "exact_files": 9,
+      "extra_budget_checks": 0,
+      "fill_hash": "9a66be2fb3d3d9ca10bc0c67980430814345bf6e137f0fb799eaa0c2d34a6e79",
+      "fills": 57,
+      "full_request_hash": "c52b14e94a24c115300b64a57358ebaee227730637dc41094f5e23a637fecb8e",
+      "maximum_rolling_mutations": 7,
+      "mutations": 59,
+      "pnl": 1348.5200000000004,
+      "positions": {
+        "AQUA": 20,
+        "ARCH": -5,
+        "FERRY": -80,
+        "GEN": 30,
+        "GRID": -40,
+        "HAVEN": -25,
+        "ISLE": 0,
+        "MAT": -70,
+        "PORT": -20,
+        "REBLD": -10,
+        "RECON": -50,
+        "REIN": -5
+      },
+      "request_count": 2159,
+      "setting": [
+        249,
+        1.0,
+        0.5,
+        false
+      ]
+    }
+  ],
+  "representative_exact_files": 18,
+  "reviewer_harness_or_replay_failures": [],
+  "rows_verified": 32,
+  "runtime_revision": "27ab7c4b4784c9aabc92e791b0878d387cd4cc49",
+  "settings_per_phase": 16,
+  "settled": 16,
+  "source_input_artifacts_verified": 244,
+  "source_revision": "2c441aee5b5f828bc4c4e26461159a958c102067",
+  "source_unchanged": true,
+  "timing": {
+    "baseline_finished_at": 1792841285.998842,
+    "baseline_started_at": 1792841258.740354,
+    "candidate_finished_at": 1792841420.488076,
+    "candidate_started_at": 1792841392.933404,
+    "declaration_at": 1792837693,
+    "driver_freeze_at": 1792838017,
+    "first_frame_at": 1792838203.06011,
+    "interval_after_all_retry_freezes": true,
+    "last_frame_at": 1792841024.083031,
+    "receipt_at": 1792841026.283543,
+    "runtime_freeze_at": 1792836560
+  },
+  "verdict": "PASS_PREDECLARED_CAPTURE_249_NO_OP_CONFIRMATION_NO_LIVE_ACTIVATION",
+  "weather_overlap": [
+    {
+      "closest_rmse": 0.0,
+      "exact_library_rows_zero_based": [
+        744
+      ],
+      "observations": 241,
+      "repeated_identical": 0,
+      "round": 1,
+      "track_sha256_float64le": "e8d2d302f186edd3e00cf7ad242ad33d363a91b67739aab8b379a193a671192d"
+    },
+    {
+      "closest_rmse": 0.0,
+      "exact_library_rows_zero_based": [
+        745
+      ],
+      "observations": 241,
+      "repeated_identical": 0,
+      "round": 2,
+      "track_sha256_float64le": "52455bbbd66f6ff38188d838eeee46eb1b4b0dbb89374c50727b2577455bec50"
+    },
+    {
+      "closest_rmse": 0.0,
+      "exact_library_rows_zero_based": [
+        746
+      ],
+      "observations": 241,
+      "repeated_identical": 0,
+      "round": 3,
+      "track_sha256_float64le": "f767f9cffb14191a2b83ce0be58fbd315c354231a8cbe912cac85d436b5bc999"
+    }
+  ]
+}
