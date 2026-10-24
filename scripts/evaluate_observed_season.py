@@ -200,9 +200,11 @@ def main():
     receipt, frames, coverage = observed_capture(args.observations, args.feed,
                                                args.competition_id, case['limits'])
     result = evaluate(case, receipt, frames, coverage)
-    result['source_sha256'] = {name: hashlib.sha256((ROOT / name).read_bytes()).hexdigest()
-        for name in ('scripts/evaluate_observed_season.py', 'scripts/replay_captured_market.py',
-                     'bot/live.py', 'ctc/strategies.py', 'ctc/sim.py', 'data/case.json')}
+    source_files = [*ROOT.glob('ctc/*.py'), *ROOT.glob('ctc/*.json'), *ROOT.glob('ctc/*.npz'),
+        ROOT / 'scripts/evaluate_observed_season.py', ROOT / 'scripts/replay_captured_market.py',
+        ROOT / 'scripts/observe_market_seasons.py', ROOT / 'bot/live.py', ROOT / 'data/case.json']
+    result['source_sha256'] = {str(path.relative_to(ROOT)): hashlib.sha256(path.read_bytes()).hexdigest()
+                               for path in source_files}
     print(json.dumps(result, indent=2))
 
 

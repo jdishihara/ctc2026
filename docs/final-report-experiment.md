@@ -77,3 +77,7 @@ and candidate manifests omit the two NPZ model artifacts. A
 [retrospective hash check](evidence/final-reports/model-artifact-audit.json)
 confirms the current files match the committed model blobs used by the branches;
 it is not a contemporaneous runtime measurement of those files.
+
+Commit `88c82cc` preserves the source used by these runs. Subsequent metadata-only
+changes include NPZ hashes in new final-report and observed-season evaluations.
+The original result files and their original manifests remain unchanged.

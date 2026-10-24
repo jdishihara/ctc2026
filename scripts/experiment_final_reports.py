@@ -128,7 +128,7 @@ def main():
         original = json.loads((ROOT / 'ctc/ladder.json').read_text())
         profiles, calibration = calibrated_profiles(frames, original)
         baseline = historical_baseline(args.baseline, profiles, args.competition_id)
-    source_files = [*ROOT.glob('ctc/*.py'), *ROOT.glob('ctc/*.json'),
+    source_files = [*ROOT.glob('ctc/*.py'), *ROOT.glob('ctc/*.json'), *ROOT.glob('ctc/*.npz'),
         ROOT / 'data/case.json', ROOT / 'bot/live.py', Path(__file__),
         ROOT / 'scripts/replay_captured_market.py', ROOT / 'scripts/evaluate_observed_season.py',
         ROOT / 'scripts/experiment_execution_costs.py']
