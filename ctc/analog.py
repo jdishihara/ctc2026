@@ -69,7 +69,17 @@ def build_library(root: Path, seasons: list[dict[str, Any]], out: Path = LIB) ->
 class AnalogEnsemble:
     def __init__(self, case: dict[str, Any], sigma: float = 25.0, tau_wire: float = 0.5, k: int = 50,
                  shift: bool = True, lib: Path = LIB, cone_w: float = 0.0, isl_w: float = 0.0, cone_s0: float = 10.0, cone_nu: float = 0.0, vel_w: float = 0.0, vel_sd: float = 0.3, cone_all: bool = False,
-                 wind_condition: float = 0.0, cone_center: float = 0.0):
+                 wind_condition: float = 0.0, cone_center: float = 0.0, repeat_prefix: bool = False,
+                 repeat_weight: float = 1.0):
+        if type(repeat_prefix) is not bool:
+            raise ValueError('repeat_prefix must be a boolean')
+        self.repeat_prefix = repeat_prefix
+        if (not isinstance(repeat_weight, (int, float, np.integer, np.floating))
+                or isinstance(repeat_weight, (bool, np.bool_)) or not math.isfinite(repeat_weight)
+                or not 0 <= repeat_weight <= 1):
+            raise ValueError('repeat_weight must be finite and between zero and one')
+        self.repeat_weight = float(repeat_weight)
+        self.repeat_match: int | None = None
         if not 0 <= wind_condition <= 1:
             raise ValueError("wind_condition must be between zero and one")
         self.wind_condition = wind_condition
@@ -94,6 +104,8 @@ class AnalogEnsemble:
         # can replace observations. Only new observations need an N-analog pass.
         self._observed = np.empty((0, 3))  # age, x, y; owned copy, never aliases feed objects
         self._track_error = np.zeros(len(self.tracks))
+        self._repeat_observed = np.empty((0, 5))  # age, x, y, radius, intensity
+        self._repeat_candidates = np.ones(len(self.tracks), dtype=bool)
         self.sites = {sym: np.array([[s["x"], s["y"], s["weight"]] for s in case["companies"][sym]["sites"]]) for sym in PHYS}
         isl: dict[str, list] = {i: [] for i in case["islands"]}
         for sym in PHYS:
@@ -120,6 +132,36 @@ class AnalogEnsemble:
             hi = np.minimum(lo + 1, len(GRID_AGES) - 1)
             positions = positions + fraction[None, :, None] * (self.tracks[:, hi, :2] - positions)
         return positions
+
+    def _repeat_index(self, obs: list[dict[str, Any]]) -> int | None:
+        """Recognize a unique complete prefix of already-observed historical weather.
+
+        A matching history is a forecast hypothesis, not a guarantee about its
+        continuation. Never compare library columns after the latest observation.
+        """
+        try:
+            values = [[o[key] for key in ('age', 'x', 'y', 'radius', 'intensity')] for o in obs]
+            numeric = all(isinstance(v, (int, float, np.integer, np.floating))
+                          and not isinstance(v, (bool, np.bool_)) for row in values for v in row)
+            current = np.array(values, dtype=float) if numeric else np.empty((0, 5))
+        except (KeyError, TypeError, ValueError, OverflowError):
+            current = np.empty((0, 5))
+        n = len(current)
+        if (not 21 <= n <= len(GRID_AGES) or not np.isfinite(current).all()
+                or not np.array_equal(current[:, 0], GRID_AGES[:n])):
+            self._repeat_observed = np.empty((0, 5))
+            self._repeat_candidates.fill(True)
+            return None
+        previous = len(self._repeat_observed)
+        if previous > n or not np.array_equal(current[:previous], self._repeat_observed):
+            previous = 0
+            self._repeat_candidates.fill(True)
+        if previous < n:
+            self._repeat_candidates &= np.all(
+                self.tracks[:, previous:n, :] == current[None, previous:n, 1:], axis=(1, 2))
+        self._repeat_observed = current  # owned values, never aliases feed dictionaries
+        matches = np.flatnonzero(self._repeat_candidates)
+        return int(matches[0]) if len(matches) == 1 else None
 
     def weights(self, obs: list[dict[str, Any]], official: list[tuple[int, str]], wire: list[tuple[int, str]],
                 adv: dict[str, Any] | None = None) -> np.ndarray:
@@ -178,7 +220,16 @@ class AnalogEnsemble:
         if self.k and self.k < len(w):
             cut = np.partition(w, -self.k)[-self.k]
             w = np.where(w >= cut, w, 0.0)
-        return w / w.sum()
+        ordinary = w / w.sum()
+        self.repeat_match = self._repeat_index(obs) if self.repeat_prefix else None
+        if self.repeat_match is not None:
+            if self.repeat_weight == 1:
+                ordinary.fill(0)
+                ordinary[self.repeat_match] = 1
+            elif self.repeat_weight:
+                ordinary *= 1 - self.repeat_weight
+                ordinary[self.repeat_match] += self.repeat_weight
+        return ordinary
 
     def pattern_posterior(self, w: np.ndarray) -> dict[str, float]:
         return {o: float(w[self.pattern == i].sum()) for o, i in OIDX.items()}

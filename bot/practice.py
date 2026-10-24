@@ -423,6 +423,7 @@ class PracticeSession(live.LiveSession):
 
 
 async def practice(args, journal):
+    repeat_options = live.repeat_prefix_options(args)
     key = Path(args.key_file).read_text().strip()
     ex = PracticeExchange(args.url, key, False, rate_limit=90, journal=journal,
                           reuse_http=getattr(args, 'reuse_http', False))
@@ -436,7 +437,10 @@ async def practice(args, journal):
     strat = FairValueTrader(analog=True, min_edge=.025, edge_full=.03, sd_mult=.7,
         sigma=15., k=100, passive=.75, warmup=20., max_cross=.02, carry=.5, ent_cut=1.2,
         cone_w=1., cone_s0=20., cone_nu=0., isl_w=0., final_exact=True, final_edge=.005,
-        final_edge_full=.005, basket_edge=.01, basket_participation=.5, announce_wait=60.)
+        final_edge_full=.005, basket_edge=.01, basket_participation=.5, announce_wait=60.,
+        **repeat_options)
+    journal.event('model_selection', repeat_prefix_blend=bool(repeat_options),
+                  repeat_weight=repeat_options.get('repeat_weight'))
     strat.on_start(ex)
     seen = set()
     year, rnd, count = live.replay_feed_log(args.feed_log, ex, strat, seen)
@@ -720,6 +724,8 @@ def main():
     parser.add_argument('--key-file', default='.botkey')
     parser.add_argument('--reuse-http', action='store_true',
                         help='experimental connection reuse during practice; respects configured proxies')
+    parser.add_argument('--repeat-prefix-blend', action='store_true',
+                        help='enable the evaluated 50/50 blend for uniquely matching complete weather prefixes')
     parser.add_argument('--out', required=True)
     parser.add_argument('--feed-log', required=True)
     parser.add_argument('--fraction', type=float, default=.1)

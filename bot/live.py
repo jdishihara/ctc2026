@@ -685,7 +685,18 @@ class LiveSession:
             self.last_log = now
 
 
+def repeat_prefix_options(args):
+    """Return the single evaluated blend configuration after validating intent."""
+    enabled = getattr(args, 'repeat_prefix_blend', False)
+    if not isinstance(enabled, bool):
+        raise ValueError('repeat_prefix_blend must be a bool')
+    if enabled and getattr(args, 'nowcast', False):
+        raise ValueError('repeat-prefix blend requires the analog model')
+    return {'repeat_prefix': True, 'repeat_weight': .5} if enabled else {}
+
+
 async def run(args: argparse.Namespace) -> None:
+    repeat_prefix_options(args)
     ex = LiveExchange(args.url, args.key, args.dry_run, rate_limit=args.rate,
                       reuse_http=getattr(args, 'reuse_http', False))
     try:
@@ -695,6 +706,7 @@ async def run(args: argparse.Namespace) -> None:
 
 
 async def run_exchange(args: argparse.Namespace, ex: LiveExchange) -> None:
+    repeat_options = repeat_prefix_options(args)
     print(f"HTTP connection reuse={ex.http_reuse_enabled}", flush=True)
     ex.refresh()
     if not ex.state_ready or not isinstance(ex.competition_id, str) or not ex.competition_id.strip():
@@ -709,7 +721,8 @@ async def run_exchange(args: argparse.Namespace, ex: LiveExchange) -> None:
                                   final_exact=args.final_exact, final_edge=args.final_edge, final_edge_full=args.final_edge_full,
                                   sigma=args.sigma, k=args.k, passive=args.passive, warmup=args.warmup, max_cross=args.max_cross,
                                   carry=args.carry, ent_cut=args.ent_cut, cone_w=args.cone_w, cone_s0=args.cone_s0, cone_nu=args.cone_nu, isl_w=args.isl_w,
-                                  announce_wait=args.announce_wait)
+                                  announce_wait=args.announce_wait, **repeat_options)
+    print(f'repeat-prefix blend={bool(repeat_options)} weight={repeat_options.get("repeat_weight")}', flush=True)
     print(f"strategy {'nowcast' if args.nowcast else 'analog'} min_edge {args.min_edge} edge_full {args.edge_full} sd_mult {args.sd_mult} sigma {args.sigma} k {args.k} passive {args.passive} warmup {args.warmup} max_cross {args.max_cross} carry {args.carry} ent_cut {args.ent_cut} cone_w {args.cone_w} cone_s0 {args.cone_s0} cone_nu {args.cone_nu} isl_w {args.isl_w}", flush=True)
     strat.on_start(ex)
     print(f"final phase exact={strat.final_exact} entry={strat.final_edge} full={strat.final_edge_full}", flush=True)
@@ -770,6 +783,8 @@ def main() -> None:
     ap.add_argument("--ws", default=None, help="override the market-data host, e.g. ws://localhost:8766 for the mock")
     ap.add_argument("--rate", type=int, default=120, help="max order actions per minute for this bot (team limit is 180)")
     ap.add_argument("--nowcast", action="store_true", help="constant-velocity nowcast instead of the analog ensemble (debug only)")
+    ap.add_argument('--repeat-prefix-blend', action='store_true',
+                    help='enable the evaluated 50/50 blend for uniquely matching complete weather prefixes')
     ap.add_argument("--sd-mult", type=float, default=0.7)
     ap.add_argument("--sigma", type=float, default=15.0)
     ap.add_argument("--k", type=int, default=100)
@@ -785,7 +800,12 @@ def main() -> None:
     ap.add_argument("--ent-cut", type=float, default=1.2, help="do not add while the pattern posterior entropy exceeds this, nats (0 = off)")
     ap.add_argument("--announce-wait", type=float, default=60.0, help="seconds after a live announcement before a paused symbol's fair is re-anchored to the house mid and trading resumes (0 = wait for a human command)")
     ap.add_argument("--control", default="recordings/control.txt", help="command file polled every --sync seconds: 'HAVEN -6%%', 'PORT =61.5', 'resume GEN', 'pause MAT', 'status' (see bot/control.py)")
-    asyncio.run(run(ap.parse_args()))
+    args = ap.parse_args()
+    try:
+        repeat_prefix_options(args)
+    except ValueError as exc:
+        ap.error(str(exc))
+    asyncio.run(run(args))
 
 
 if __name__ == "__main__":
