@@ -58,6 +58,8 @@ export interface AutoConfig {
   converterTolPts: number;
   /** the best candidate must beat the runner-up by this many vol points, unless a keyword names it */
   converterTieMarginPts: number;
+  /** Round 3: a quantity the analyst message names is trusted up to this many vol points from the (stale) market IV */
+  converterNamedTolPts: number;
   /** load, verify and click the exchange's submit button for each ticket (Alt+P pauses) */
   submit: boolean;
   /** our own cap on observed order actions per minute while auto-submitting (packet: 40 from the browser) */
@@ -194,7 +196,7 @@ export const DEFAULT_CONFIG: Config = {
   prefillEnabled: true,
   focus: null,
   auto: {
-    confirm: true, converter: true, converterTolPts: 8, converterTieMarginPts: 2,
+    confirm: true, converter: true, converterTolPts: 8, converterTieMarginPts: 2, converterNamedTolPts: 40,
     submit: false, submitRateCap: 36, submitIntervalMs: 1500, resubmitAfterMs: 20_000, flattenResubmitMs: 6_000, flattenReserve: 12, flattenIntervalMs: 1500,
     spotBoundPct: 40, volMin: 0.05, volMax: 3.0, switchTabs: true,
     submitVia: 'api', cancelOnSnap: true, cancelOnNews: true, backoffMs: 5000, haltedPauseMs: 30_000,
@@ -274,7 +276,7 @@ export function validateConfig(input: unknown): Validation {
   if (!isObj(a)) errors.push('auto must be an object');
   else {
     for (const k of ['confirm', 'converter', 'submit', 'switchTabs']) if (typeof a[k] !== 'boolean') errors.push(`auto.${k} must be true or false`);
-    for (const k of ['converterTolPts', 'converterTieMarginPts', 'submitRateCap', 'submitIntervalMs', 'resubmitAfterMs', 'flattenResubmitMs', 'flattenReserve', 'flattenIntervalMs', 'spotBoundPct', 'volMin', 'volMax']) {
+    for (const k of ['converterTolPts', 'converterTieMarginPts', 'converterNamedTolPts', 'submitRateCap', 'submitIntervalMs', 'resubmitAfterMs', 'flattenResubmitMs', 'flattenReserve', 'flattenIntervalMs', 'spotBoundPct', 'volMin', 'volMax']) {
       if (typeof a[k] !== 'number' || !Number.isFinite(a[k] as number) || (a[k] as number) < 0) errors.push(`auto.${k} must be a number >= 0`);
     }
     if (typeof a.submitRateCap === 'number' && a.submitRateCap > 40) errors.push('auto.submitRateCap must not exceed the browser limit of 40');

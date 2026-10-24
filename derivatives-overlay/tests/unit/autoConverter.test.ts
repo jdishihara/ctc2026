@@ -24,8 +24,13 @@ describe('Round 3 converter auto-identification', () => {
     });
     expect(r.ranked[0].id).toBe('iv');
     expect(r.ranked.find((c) => c.id === 'variance')!.errPts).toBeGreaterThan(8);
-    expect(r.id).toBeNull();
-    expect(r.reason).toMatch(/message names.*variance.*Pick the converter by hand/i);
+    // the name wins over the (stale) market IV as long as it is within namedTolPts (40): variance, not iv
+    expect(r.id).toBe('variance');
+    expect(r.reason).toMatch(/message names it.*variance/i);
+    // far beyond that it is left to the human, still naming what the message said
+    const far = identifyConverter({ ...base, tolPts: 8, marketIV: { OIL: 0.12, PLANE: 0.3 }, text: 'Analyst 1: OIL variance 0.5625, PLANE variance 1.21', samples: [{ underlying: 'OIL', raw: 0.5625 }, { underlying: 'PLANE', raw: 1.21 }] });
+    expect(far.id).toBeNull();
+    expect(far.reason).toMatch(/message names.*variance.*Pick the converter by hand/i);
   });
   it('daily move in percent', () => {
     // sigma 0.70 -> 0.70/sqrt(252) = 4.41% per day; 1.0 -> 6.30%

@@ -204,9 +204,11 @@ export function readLatest(root: ParentNode, hints: DomHints, skip?: (el: Elemen
   for (const l of labels) {
     const bar = l.parentElement;
     if (!bar) continue;
-    let t = textOf(bar);
+    // join the bar's pieces with spaces: textContent glues "IV 0.58" to a trailing "1 earlier" into "0.581 earlier"
+    // (real-speed drill 2026-10-24: the stripped tail left "IV 0." and a 0% vol suggestion)
+    let t = [...bar.childNodes].map((n) => (n.nodeType === 3 ? n.textContent ?? '' : textOf(n as Element))).join(' ').replace(/\s+/g, ' ');
     t = t.slice(t.toUpperCase().indexOf(hints.latestLabel.toUpperCase()) + hints.latestLabel.length);
-    t = t.replace(/^\s*\d{1,2}:\d{2}(:\d{2})?\s*/, '').replace(/\s*\d+\s+earlier\s*$/i, '').trim();
+    t = t.replace(/^\s*(?:\d{4}-\d{2}-\d{2}[T ])?\d{1,2}:\d{2}(:\d{2})?(?:\.\d+)?\s*/, '').replace(/\s+\d+\s+earlier\s*$/i, '').trim();
     if (t) return t;
   }
   return null;

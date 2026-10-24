@@ -20,6 +20,8 @@ export interface IdentifyInput {
   strikes?: Record<string, number[] | undefined>;
   tolPts: number;
   tieMarginPts: number;
+  /** a quantity the message names is trusted up to this many vol points from the market IV (default 40) */
+  namedTolPts?: number;
 }
 
 export interface ConverterCandidate {
@@ -89,8 +91,24 @@ export function identifyConverter(inp: IdentifyInput): IdentifyResult {
   }
   ranked.sort((a, b) => a.errPts - b.errPts);
   if (!ranked.length) return { id: null, reason: 'no converter could be evaluated (need a spot and a market IV)', ranked };
-  const within = ranked.filter((c) => c.errPts <= inp.tolPts);
   const fmt = (c: ConverterCandidate) => `${c.id} (σ ${(c.sigma * 100).toFixed(1)}%, off ${c.errPts.toFixed(1)} pts)`;
+  // The message names the quantity ("OIL variance 0.5625"): trust the name whenever it yields a sane vol, however far the
+  // market IV is. Before the snap the market IV still reflects the previous event, and vol jumps of 15-30 points are normal
+  // (real-speed drill 2026-10-24: "nothing within 8 pts" on a correctly named variance). Several names: nearest market IV.
+  const sane = (c: ConverterCandidate) => c.sigma >= 0.03 && c.sigma <= 3;
+  const namedTol = inp.namedTolPts ?? 40;
+  const namedSane = ranked.filter((c) => c.keyword && sane(c) && c.errPts <= namedTol);
+  if (namedSane.length === 1) {
+    const c = namedSane[0];
+    return { id: c.id, reason: `message names it: ${fmt(c)}${c.errPts > inp.tolPts ? ' (market IV still shows the previous event)' : ''}`, ranked };
+  }
+  if (namedSane.length > 1 && namedSane[1].errPts - namedSane[0].errPts >= inp.tieMarginPts) {
+    return { id: namedSane[0].id, reason: `several named, nearest market IV: ${fmt(namedSane[0])} vs ${fmt(namedSane[1])}`, ranked };
+  }
+  if (namedSane.length > 1) {
+    return { id: null, reason: `ambiguous named converters: ${fmt(namedSane[0])} vs ${fmt(namedSane[1])}. Pick the converter by hand.`, ranked };
+  }
+  const within = ranked.filter((c) => c.errPts <= inp.tolPts);
   if (!within.length) {
     return { id: null, reason: `nothing within ${inp.tolPts} vol pts of the market IV; closest ${fmt(ranked[0])}. Pick the converter by hand.`, ranked };
   }

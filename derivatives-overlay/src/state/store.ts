@@ -719,7 +719,10 @@ export class Store {
 
   ingestNews(text: string, src: NewsItem['src'], seq: number | null, kind: string, msg: Record<string, unknown> | null, structured: ReturnType<typeof extractStructured>, now = this.nowFn()) {
     const clean = text.replace(/\s+/g, ' ').trim();
-    if (clean && this.s.news.some((n) => n.text === clean && now - n.t < 10 * 60_000)) return;
+    // the same headline from the socket and the DOM may differ in spacing/punctuation or carry a time prefix: compare loosely
+    const key = (x: string) => x.toLowerCase().replace(/[^a-z0-9%$.]+/g, '');
+    const k = key(clean);
+    if (clean && this.s.news.some((n) => now - n.t < 10 * 60_000 && (n.text === clean || (k.length > 20 && (key(n.text).includes(k) || k.includes(key(n.text))))))) return;
     if (kind === 'snapshot' && !clean) return; // periodic price snapshot, nothing to suggest
     const event = this.newsEvent(msg);
     const parse = parseHeadline(clean, { aliases: this.cfg.headline.aliases });
@@ -827,7 +830,9 @@ export class Store {
       } else {
         const prev = this.s.auto.targets[u];
         if (prev?.status === 'confirmed' && prev.event === event && !this.s.targets[u].spot.suggestion && !this.s.targets[u].vol.suggestion) continue;
-        this.s.auto.targets[u] = { status: 'manual', reason: chk.reason, event, t: now };
+        // still collecting (analysts arriving, spot not yet in the news) is not a request for a human: show it as pending
+        const pending = /^(waiting for|no blended|Round 3 quantity not identified yet \(waiting)/.test(chk.reason);
+        this.s.auto.targets[u] = { status: pending ? 'idle' : 'manual', reason: chk.reason, event, t: now };
       }
     }
     if (accepted) {
@@ -879,7 +884,7 @@ export class Store {
       spot[u] = this.d?.spot[u]?.value ?? this.s.baselines[event]?.[u]?.oldSpot ?? null;
       strikes[u] = this.d?.chains[u]?.strikes;
     }
-    const res = identifyConverter({ samples, text: evidenceText, marketIV: this.d?.marketIV ?? {}, spot, T: this.d?.T.years ?? 20 / 252, strikes, tolPts: this.cfg.auto.converterTolPts, tieMarginPts: this.cfg.auto.converterTieMarginPts });
+    const res = identifyConverter({ samples, text: evidenceText, marketIV: this.d?.marketIV ?? {}, spot, T: this.d?.T.years ?? 20 / 252, strikes, tolPts: this.cfg.auto.converterTolPts, tieMarginPts: this.cfg.auto.converterTieMarginPts, namedTolPts: this.cfg.auto.converterNamedTolPts });
     ac.ranked = res.ranked;
     ac.event = event;
     ac.reason = res.reason;
@@ -1068,6 +1073,8 @@ export class Store {
       if (!t || b.vol == null) continue;
       // an announced IV for this event wins over analysts
       if (t.vol.src.startsWith('announced') && !t.vol.confirmed) continue;
+      // what the trader typed for this event stays (a converter change re-blends, but must not undo a typed number)
+      if (t.vol.confirmed && t.vol.src === 'typed' && t.vol.event === event) continue;
       this.suggest(u, 'vol', b.vol, `analysts ${b.mode}`, event);
       if (!(t.vol.confirmed && t.vol.src === 'typed')) {
         t.volLow = b.low;

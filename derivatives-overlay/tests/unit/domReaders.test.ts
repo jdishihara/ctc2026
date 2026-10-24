@@ -47,3 +47,12 @@ describe('DOM readers (by visible text)', () => {
     expect(ch.rows[0].P.ask.value).toBe(1.4);
   });
 });
+
+describe('LATEST bar pieces glued together', () => {
+  it('keeps "IV 0.58" intact when the bar ends with "1 earlier" and starts with a full timestamp', async () => {
+    const { readLatest } = await import('../../src/core/dom-readers');
+    const { cloneDefaults } = await import('../../src/core/config');
+    document.body.innerHTML = '<div class="latest"><span class="lbl">LATEST</span><span class="ltime">2026-06-01T11:40:00</span><span class="ltext">NewAir shares rise to 39.40 (IV: 60%). Crude oil: $106.10, IV 0.58</span><span class="learlier">1 earlier</span></div>';
+    expect(readLatest(document.body, cloneDefaults().dom, () => false)).toBe('NewAir shares rise to 39.40 (IV: 60%). Crude oil: $106.10, IV 0.58');
+  });
+});
