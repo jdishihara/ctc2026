@@ -182,18 +182,29 @@ and limitations: [serialized-client-replay.md](serialized-client-replay.md).
 
 The later research comparison reran the full strategy with current snapshot
 behavior, three delays, full/half depth, and basket off/on: 12 scenarios for each
-completed capture. These are simulated results on already examined markets.
+completed capture. The first three captures below were already examined;
+capture 244 was added after its official close by the frozen worker.
 
 | Captured season | Full-strategy range | Negative scenarios | Actual attributable result |
 | --- | ---: | ---: | --- |
 | 241 | −$21.70 to +$88.19 | 3 / 12 | +$141.16 on earlier runtime |
 | 242 | +$1,462.74 to +$2,172.95 | 0 / 12 | None; shared account activity |
 | 243 | +$156.65 to +$389.27 | 0 / 12 | None; no owned live trial |
+| 244 | +$1,031.57 to +$1,189.38 | 0 / 12 | None; no owned live trial |
 
 Capture 243 was evaluated by the frozen worker after its official 06:29 UTC
 closing receipt. All 24 preselected scenarios, including older snapshot
 behavior, were positive. News sequences 0–859 are complete; quote-path
 completeness remains unproven. [Receipt, all results, and capture limits](observed-season-243.md).
+
+Capture 244's selected interval begins at 06:31:19 UTC, after the earlier
+worker's actual 06:11:57 startup (06:06 is its configured eligibility-window
+start). All 24 of that worker's scenarios are positive. The serial REST grid
+also has 16 positive rows, from $533.32 to $1,238.28. Its predeclared primary
+scenario earns $628.14 but reaches a −$263.29 mark; supervisor loss stops and
+cleanup are not modeled. For that later serial plan, 244 is carryover whose
+receipt precedes its effective freeze, not prospective evidence. Both engines
+were independently checked. [Full results, timing, risk, and provenance](observed-season-244.md).
 
 The full older-snapshot ablations and unfavorable changes are also preserved in
 [executable-entry.md](executable-entry.md). Waiting for all final reports earns

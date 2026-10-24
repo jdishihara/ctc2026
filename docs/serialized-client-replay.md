@@ -84,7 +84,9 @@ two engines are not an isolated measurement of network latency.
   conversion execution. Strategy computation is instantaneous. No additional
   implicit refresh is added to the production conversion path.
 - The core direct client is modeled; practice-supervisor ownership/history
-  requests are excluded. HTTP connection reuse does not change the fixed RTT.
+  requests, cumulative loss stops, and supervisor cleanup are excluded. HTTP
+  connection reuse does not change the fixed RTT. Positive terminal P&L is not
+  a prediction for a supervised run that might stop earlier.
 - Matching stops at the last selected frame. The gaps to official closing
   receipts are **1.938 s (241), 8.273 s (242), and 2.652 s (243)**. This truncation
   can help or hurt results and is not a profit lower bound. Remaining holdings
