@@ -34,7 +34,7 @@ class FairValueTrader(Strategy):
                  edge_ramp: float = 0.0, final_exact: bool = False, final_edge: float = 0.0,
                  final_edge_full: float = 0.0, price_gate: float = 0.0,
                  price_drift: float = 0.0, basket_edge: float = 0.0,
-                 basket_participation: float = 0.0, announce_wait: float = 60.0, **analog_kw):
+                 basket_participation: float = 0.0, announce_wait: float = 60.0, final_every: float = 0.0, **analog_kw):
         for name, value in (("price_gate", price_gate), ("price_drift", price_drift), ("basket_edge", basket_edge)):
             if not math.isfinite(value) or value < 0:
                 raise ValueError(f"{name} must be finite and nonnegative")
@@ -68,6 +68,7 @@ class FairValueTrader(Strategy):
         self.passive = passive          # >0: when the edge is below the floor, rest an order inside the spread at the
                                         # price where the edge equals passive * floor (a passive fill does not pay the spread)
         self.min_edge, self.edge_full, self.every = min_edge, edge_full, rebalance_every
+        self.final_every = final_every      # >0: rebalance cadence once the exact final phase is active (0 = the normal cadence)
         self.loss_limit = loss_limit                        # per symbol per round: stop adding once this much is lost
         self.symbols = symbols or SYMS
         self.project, self.analog, self.sd_mult, self.analog_kw = project, analog, sd_mult, analog_kw
@@ -304,7 +305,8 @@ class FairValueTrader(Strategy):
             active = self.basket.on_quotes(sim, self.paused)
             if not self._same_competition(sim) or active:
                 return
-        if sim.t - self.last_trade_t < self.every or sim.t - self.round_open_t < self.warmup:
+        every = self.final_every if self.final_every > 0 and self.model.final_exact_ready else self.every
+        if sim.t - self.last_trade_t < every or sim.t - self.round_open_t < self.warmup:
             return
         self.last_trade_t = sim.t
         if self.model.storm_active:
