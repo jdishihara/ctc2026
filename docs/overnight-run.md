@@ -1,5 +1,15 @@
 # Overnight practice — October 24, 2026
 
+## 09:04 UTC — narrower cleanup refresh experiment rejected
+
+All 80 fixed comparisons and twelve independent representative reruns match.
+Skipping a redundant refresh after an empty cancellation pass shortened mean
+cleanup by 6.33 seconds, but worsened the worst terminal loss by $13.75 and
+increased negative settings from 12 to 13. This fails the rules declared before
+performance evaluation. The candidate remains on frozen experimental commit
+`74c81f4`; production and forward evaluators remain unchanged.
+See [cleanup-empty-cancel.md](cleanup-empty-cancel.md) for all outcomes and hashes.
+
 ## 08:53 UTC — training-overlap limitation discovered
 
 All 15 complete storm tracks in already-closed captures 241–245 exactly match

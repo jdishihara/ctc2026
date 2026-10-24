@@ -1,6 +1,6 @@
 # Competition readiness — 2026-10-24
 
-Status updated after the 08:53 UTC training-overlap discovery (04:53 EDT). One complete small-size live season
+Status updated after the 09:04 UTC cleanup-refresh review (05:04 EDT). One complete small-size live season
 has a verified settlement receipt. The next trial contains mixed activity.
 Live practice remains stopped pending shared-account ownership clarification.
 Market recording and offline evaluations continue.
@@ -48,6 +48,13 @@ terminal loss increased from $420.64 to $441.76. The current runtime and frozen
 forward evaluations are unchanged. See
 [cleanup-quote-ordering.md](cleanup-quote-ordering.md) for every outcome and
 the safety issue caught before the candidate evaluation.
+
+A narrower cleanup experiment also failed its predeclared promotion rules.
+Skipping one redundant refresh after an empty cancellation pass improved mean
+cleanup time from 96.00 to 89.67 seconds, but worsened the worst terminal loss
+from $420.64 to $434.39 and added one negative setting. Independent review
+reproduced all 80 pairs and twelve representative reruns. It remains out of
+production; see [cleanup-empty-cancel.md](cleanup-empty-cancel.md).
 
 ## Historical data and evaluation
 

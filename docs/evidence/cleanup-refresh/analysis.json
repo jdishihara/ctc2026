@@ -1,0 +1,6137 @@
+{
+  "summaries": {
+    "baseline": {
+      "positive": 68,
+      "negative": 12,
+      "mean": 478.1399999999998,
+      "minimum": -420.6400000000026,
+      "maximum": 2236.7600000000016,
+      "cleanup": {
+        "settled": 68,
+        "flat": 10,
+        "attention": 2
+      },
+      "trial": {
+        "completed": 68,
+        "incomplete_trial": 12
+      },
+      "loss_stops": 12,
+      "loss_cleanup_mean": 96.0,
+      "results_sha256": "1eebc590f7a191be75709f9bc467b05123d96fecc77e3bacea237b4cc2492f97",
+      "finished_at": 1792832092.677959
+    },
+    "candidate": {
+      "positive": 67,
+      "negative": 13,
+      "mean": 478.38199999999983,
+      "minimum": -434.3900000000035,
+      "maximum": 2236.7600000000016,
+      "cleanup": {
+        "settled": 68,
+        "flat": 10,
+        "attention": 2
+      },
+      "trial": {
+        "completed": 68,
+        "incomplete_trial": 12
+      },
+      "loss_stops": 12,
+      "loss_cleanup_mean": 89.66666666666667,
+      "results_sha256": "9fb5a90e27bdc2288f20443b3ff6e043e39d9e52b31b63909f3bf78355ca70b4",
+      "finished_at": 1792832224.074677
+    }
+  },
+  "pre_cleanup_pairs_equal": 80,
+  "improved_pnl": 2,
+  "worsened_pnl": 2,
+  "unchanged_pnl": 76,
+  "pairs": [
+    {
+      "setting": [
+        241,
+        0.0,
+        1.0,
+        false
+      ],
+      "baseline": {
+        "pnl": 102.09000000000015,
+        "cleanup": "settled",
+        "trial": "completed",
+        "stop": "requested complete practice seasons recorded",
+        "duration": 0.0,
+        "requests": 21,
+        "request_seconds": 0.0,
+        "request_counts": {
+          "GET /cases/hurricane.json": 1,
+          "GET /competitions/time": 7,
+          "GET /orders/open": 3,
+          "GET /positions": 3,
+          "GET /trades": 2,
+          "GET /orders": 4,
+          "GET /symbols": 1
+        },
+        "closing_orders": 0,
+        "min_book_age": null,
+        "max_book_age": null,
+        "first_closing_order_after": null,
+        "observed_cleanup_fills": 0,
+        "last_observed_cleanup_fill_after": null,
+        "positions_after_receipt": {
+          "ISLE": 30,
+          "AQUA": -50,
+          "GRID": -11,
+          "RECON": -25,
+          "HAVEN": 25
+        },
+        "orders_after_receipt": []
+      },
+      "candidate": {
+        "pnl": 102.09000000000015,
+        "cleanup": "settled",
+        "trial": "completed",
+        "stop": "requested complete practice seasons recorded",
+        "duration": 0.0,
+        "requests": 21,
+        "request_seconds": 0.0,
+        "request_counts": {
+          "GET /cases/hurricane.json": 1,
+          "GET /competitions/time": 7,
+          "GET /orders/open": 3,
+          "GET /positions": 3,
+          "GET /trades": 2,
+          "GET /orders": 4,
+          "GET /symbols": 1
+        },
+        "closing_orders": 0,
+        "min_book_age": null,
+        "max_book_age": null,
+        "first_closing_order_after": null,
+        "observed_cleanup_fills": 0,
+        "last_observed_cleanup_fill_after": null,
+        "positions_after_receipt": {
+          "ISLE": 30,
+          "AQUA": -50,
+          "GRID": -11,
+          "RECON": -25,
+          "HAVEN": 25
+        },
+        "orders_after_receipt": []
+      },
+      "pnl_delta": 0.0,
+      "duration_delta": 0.0
+    },
+    {
+      "setting": [
+        241,
+        0.0,
+        1.0,
+        true
+      ],
+      "baseline": {
+        "pnl": 131.61000000000058,
+        "cleanup": "settled",
+        "trial": "completed",
+        "stop": "requested complete practice seasons recorded",
+        "duration": 0.0,
+        "requests": 21,
+        "request_seconds": 0.0,
+        "request_counts": {
+          "GET /cases/hurricane.json": 1,
+          "GET /competitions/time": 7,
+          "GET /orders/open": 3,
+          "GET /positions": 3,
+          "GET /trades": 2,
+          "GET /orders": 4,
+          "GET /symbols": 1
+        },
+        "closing_orders": 0,
+        "min_book_age": null,
+        "max_book_age": null,
+        "first_closing_order_after": null,
+        "observed_cleanup_fills": 0,
+        "last_observed_cleanup_fill_after": null,
+        "positions_after_receipt": {
+          "ISLE": 30,
+          "AQUA": -50,
+          "GRID": -11,
+          "RECON": -25,
+          "HAVEN": 25
+        },
+        "orders_after_receipt": []
+      },
+      "candidate": {
+        "pnl": 131.61000000000058,
+        "cleanup": "settled",
+        "trial": "completed",
+        "stop": "requested complete practice seasons recorded",
+        "duration": 0.0,
+        "requests": 21,
+        "request_seconds": 0.0,
+        "request_counts": {
+          "GET /cases/hurricane.json": 1,
+          "GET /competitions/time": 7,
+          "GET /orders/open": 3,
+          "GET /positions": 3,
+          "GET /trades": 2,
+          "GET /orders": 4,
+          "GET /symbols": 1
+        },
+        "closing_orders": 0,
+        "min_book_age": null,
+        "max_book_age": null,
+        "first_closing_order_after": null,
+        "observed_cleanup_fills": 0,
+        "last_observed_cleanup_fill_after": null,
+        "positions_after_receipt": {
+          "ISLE": 30,
+          "AQUA": -50,
+          "GRID": -11,
+          "RECON": -25,
+          "HAVEN": 25
+        },
+        "orders_after_receipt": []
+      },
+      "pnl_delta": 0.0,
+      "duration_delta": 0.0
+    },
+    {
+      "setting": [
+        241,
+        0.0,
+        0.5,
+        false
+      ],
+      "baseline": {
+        "pnl": 70.12999999999988,
+        "cleanup": "settled",
+        "trial": "completed",
+        "stop": "requested complete practice seasons recorded",
+        "duration": 0.0,
+        "requests": 21,
+        "request_seconds": 0.0,
+        "request_counts": {
+          "GET /cases/hurricane.json": 1,
+          "GET /competitions/time": 7,
+          "GET /orders/open": 3,
+          "GET /positions": 3,
+          "GET /trades": 2,
+          "GET /orders": 4,
+          "GET /symbols": 1
+        },
+        "closing_orders": 0,
+        "min_book_age": null,
+        "max_book_age": null,
+        "first_closing_order_after": null,
+        "observed_cleanup_fills": 0,
+        "last_observed_cleanup_fill_after": null,
+        "positions_after_receipt": {
+          "ISLE": 30,
+          "AQUA": -50,
+          "GRID": -11,
+          "RECON": -25,
+          "HAVEN": 25
+        },
+        "orders_after_receipt": []
+      },
+      "candidate": {
+        "pnl": 70.12999999999988,
+        "cleanup": "settled",
+        "trial": "completed",
+        "stop": "requested complete practice seasons recorded",
+        "duration": 0.0,
+        "requests": 21,
+        "request_seconds": 0.0,
+        "request_counts": {
+          "GET /cases/hurricane.json": 1,
+          "GET /competitions/time": 7,
+          "GET /orders/open": 3,
+          "GET /positions": 3,
+          "GET /trades": 2,
+          "GET /orders": 4,
+          "GET /symbols": 1
+        },
+        "closing_orders": 0,
+        "min_book_age": null,
+        "max_book_age": null,
+        "first_closing_order_after": null,
+        "observed_cleanup_fills": 0,
+        "last_observed_cleanup_fill_after": null,
+        "positions_after_receipt": {
+          "ISLE": 30,
+          "AQUA": -50,
+          "GRID": -11,
+          "RECON": -25,
+          "HAVEN": 25
+        },
+        "orders_after_receipt": []
+      },
+      "pnl_delta": 0.0,
+      "duration_delta": 0.0
+    },
+    {
+      "setting": [
+        241,
+        0.0,
+        0.5,
+        true
+      ],
+      "baseline": {
+        "pnl": 81.11999999999966,
+        "cleanup": "settled",
+        "trial": "completed",
+        "stop": "requested complete practice seasons recorded",
+        "duration": 0.0,
+        "requests": 21,
+        "request_seconds": 0.0,
+        "request_counts": {
+          "GET /cases/hurricane.json": 1,
+          "GET /competitions/time": 7,
+          "GET /orders/open": 3,
+          "GET /positions": 3,
+          "GET /trades": 2,
+          "GET /orders": 4,
+          "GET /symbols": 1
+        },
+        "closing_orders": 0,
+        "min_book_age": null,
+        "max_book_age": null,
+        "first_closing_order_after": null,
+        "observed_cleanup_fills": 0,
+        "last_observed_cleanup_fill_after": null,
+        "positions_after_receipt": {
+          "ISLE": 30,
+          "AQUA": -50,
+          "GRID": -11,
+          "RECON": -25,
+          "HAVEN": 25
+        },
+        "orders_after_receipt": []
+      },
+      "candidate": {
+        "pnl": 81.11999999999966,
+        "cleanup": "settled",
+        "trial": "completed",
+        "stop": "requested complete practice seasons recorded",
+        "duration": 0.0,
+        "requests": 21,
+        "request_seconds": 0.0,
+        "request_counts": {
+          "GET /cases/hurricane.json": 1,
+          "GET /competitions/time": 7,
+          "GET /orders/open": 3,
+          "GET /positions": 3,
+          "GET /trades": 2,
+          "GET /orders": 4,
+          "GET /symbols": 1
+        },
+        "closing_orders": 0,
+        "min_book_age": null,
+        "max_book_age": null,
+        "first_closing_order_after": null,
+        "observed_cleanup_fills": 0,
+        "last_observed_cleanup_fill_after": null,
+        "positions_after_receipt": {
+          "ISLE": 30,
+          "AQUA": -50,
+          "GRID": -11,
+          "RECON": -25,
+          "HAVEN": 25
+        },
+        "orders_after_receipt": []
+      },
+      "pnl_delta": 0.0,
+      "duration_delta": 0.0
+    },
+    {
+      "setting": [
+        241,
+        0.05,
+        1.0,
+        false
+      ],
+      "baseline": {
+        "pnl": 54.86000000000024,
+        "cleanup": "settled",
+        "trial": "completed",
+        "stop": "requested complete practice seasons recorded",
+        "duration": 1.0500000000038199,
+        "requests": 21,
+        "request_seconds": 1.0500000000038199,
+        "request_counts": {
+          "GET /cases/hurricane.json": 1,
+          "GET /competitions/time": 7,
+          "GET /orders/open": 3,
+          "GET /positions": 3,
+          "GET /trades": 2,
+          "GET /orders": 4,
+          "GET /symbols": 1
+        },
+        "closing_orders": 0,
+        "min_book_age": null,
+        "max_book_age": null,
+        "first_closing_order_after": null,
+        "observed_cleanup_fills": 0,
+        "last_observed_cleanup_fill_after": null,
+        "positions_after_receipt": {
+          "ISLE": 30,
+          "AQUA": -50,
+          "GRID": -11,
+          "RECON": -25,
+          "HAVEN": 25
+        },
+        "orders_after_receipt": []
+      },
+      "candidate": {
+        "pnl": 54.86000000000024,
+        "cleanup": "settled",
+        "trial": "completed",
+        "stop": "requested complete practice seasons recorded",
+        "duration": 1.0500000000038199,
+        "requests": 21,
+        "request_seconds": 1.0500000000038199,
+        "request_counts": {
+          "GET /cases/hurricane.json": 1,
+          "GET /competitions/time": 7,
+          "GET /orders/open": 3,
+          "GET /positions": 3,
+          "GET /trades": 2,
+          "GET /orders": 4,
+          "GET /symbols": 1
+        },
+        "closing_orders": 0,
+        "min_book_age": null,
+        "max_book_age": null,
+        "first_closing_order_after": null,
+        "observed_cleanup_fills": 0,
+        "last_observed_cleanup_fill_after": null,
+        "positions_after_receipt": {
+          "ISLE": 30,
+          "AQUA": -50,
+          "GRID": -11,
+          "RECON": -25,
+          "HAVEN": 25
+        },
+        "orders_after_receipt": []
+      },
+      "pnl_delta": 0.0,
+      "duration_delta": 0.0
+    },
+    {
+      "setting": [
+        241,
+        0.05,
+        1.0,
+        true
+      ],
+      "baseline": {
+        "pnl": 62.680000000000405,
+        "cleanup": "settled",
+        "trial": "completed",
+        "stop": "requested complete practice seasons recorded",
+        "duration": 1.0500000000038199,
+        "requests": 21,
+        "request_seconds": 1.0500000000038199,
+        "request_counts": {
+          "GET /cases/hurricane.json": 1,
+          "GET /competitions/time": 7,
+          "GET /orders/open": 3,
+          "GET /positions": 3,
+          "GET /trades": 2,
+          "GET /orders": 4,
+          "GET /symbols": 1
+        },
+        "closing_orders": 0,
+        "min_book_age": null,
+        "max_book_age": null,
+        "first_closing_order_after": null,
+        "observed_cleanup_fills": 0,
+        "last_observed_cleanup_fill_after": null,
+        "positions_after_receipt": {
+          "ISLE": 30,
+          "AQUA": -50,
+          "GRID": -11,
+          "RECON": -25,
+          "HAVEN": 25
+        },
+        "orders_after_receipt": []
+      },
+      "candidate": {
+        "pnl": 62.680000000000405,
+        "cleanup": "settled",
+        "trial": "completed",
+        "stop": "requested complete practice seasons recorded",
+        "duration": 1.0500000000038199,
+        "requests": 21,
+        "request_seconds": 1.0500000000038199,
+        "request_counts": {
+          "GET /cases/hurricane.json": 1,
+          "GET /competitions/time": 7,
+          "GET /orders/open": 3,
+          "GET /positions": 3,
+          "GET /trades": 2,
+          "GET /orders": 4,
+          "GET /symbols": 1
+        },
+        "closing_orders": 0,
+        "min_book_age": null,
+        "max_book_age": null,
+        "first_closing_order_after": null,
+        "observed_cleanup_fills": 0,
+        "last_observed_cleanup_fill_after": null,
+        "positions_after_receipt": {
+          "ISLE": 30,
+          "AQUA": -50,
+          "GRID": -11,
+          "RECON": -25,
+          "HAVEN": 25
+        },
+        "orders_after_receipt": []
+      },
+      "pnl_delta": 0.0,
+      "duration_delta": 0.0
+    },
+    {
+      "setting": [
+        241,
+        0.05,
+        0.5,
+        false
+      ],
+      "baseline": {
+        "pnl": 26.220000000000084,
+        "cleanup": "settled",
+        "trial": "completed",
+        "stop": "requested complete practice seasons recorded",
+        "duration": 1.0500000000038199,
+        "requests": 21,
+        "request_seconds": 1.0500000000038199,
+        "request_counts": {
+          "GET /cases/hurricane.json": 1,
+          "GET /competitions/time": 7,
+          "GET /orders/open": 3,
+          "GET /positions": 3,
+          "GET /trades": 2,
+          "GET /orders": 4,
+          "GET /symbols": 1
+        },
+        "closing_orders": 0,
+        "min_book_age": null,
+        "max_book_age": null,
+        "first_closing_order_after": null,
+        "observed_cleanup_fills": 0,
+        "last_observed_cleanup_fill_after": null,
+        "positions_after_receipt": {
+          "ISLE": 30,
+          "AQUA": -50,
+          "GRID": -11,
+          "RECON": -25,
+          "HAVEN": 25
+        },
+        "orders_after_receipt": []
+      },
+      "candidate": {
+        "pnl": 26.220000000000084,
+        "cleanup": "settled",
+        "trial": "completed",
+        "stop": "requested complete practice seasons recorded",
+        "duration": 1.0500000000038199,
+        "requests": 21,
+        "request_seconds": 1.0500000000038199,
+        "request_counts": {
+          "GET /cases/hurricane.json": 1,
+          "GET /competitions/time": 7,
+          "GET /orders/open": 3,
+          "GET /positions": 3,
+          "GET /trades": 2,
+          "GET /orders": 4,
+          "GET /symbols": 1
+        },
+        "closing_orders": 0,
+        "min_book_age": null,
+        "max_book_age": null,
+        "first_closing_order_after": null,
+        "observed_cleanup_fills": 0,
+        "last_observed_cleanup_fill_after": null,
+        "positions_after_receipt": {
+          "ISLE": 30,
+          "AQUA": -50,
+          "GRID": -11,
+          "RECON": -25,
+          "HAVEN": 25
+        },
+        "orders_after_receipt": []
+      },
+      "pnl_delta": 0.0,
+      "duration_delta": 0.0
+    },
+    {
+      "setting": [
+        241,
+        0.05,
+        0.5,
+        true
+      ],
+      "baseline": {
+        "pnl": 30.12999999999994,
+        "cleanup": "settled",
+        "trial": "completed",
+        "stop": "requested complete practice seasons recorded",
+        "duration": 1.0500000000038199,
+        "requests": 21,
+        "request_seconds": 1.0500000000038199,
+        "request_counts": {
+          "GET /cases/hurricane.json": 1,
+          "GET /competitions/time": 7,
+          "GET /orders/open": 3,
+          "GET /positions": 3,
+          "GET /trades": 2,
+          "GET /orders": 4,
+          "GET /symbols": 1
+        },
+        "closing_orders": 0,
+        "min_book_age": null,
+        "max_book_age": null,
+        "first_closing_order_after": null,
+        "observed_cleanup_fills": 0,
+        "last_observed_cleanup_fill_after": null,
+        "positions_after_receipt": {
+          "ISLE": 30,
+          "AQUA": -50,
+          "GRID": -11,
+          "RECON": -25,
+          "HAVEN": 25
+        },
+        "orders_after_receipt": []
+      },
+      "candidate": {
+        "pnl": 30.12999999999994,
+        "cleanup": "settled",
+        "trial": "completed",
+        "stop": "requested complete practice seasons recorded",
+        "duration": 1.0500000000038199,
+        "requests": 21,
+        "request_seconds": 1.0500000000038199,
+        "request_counts": {
+          "GET /cases/hurricane.json": 1,
+          "GET /competitions/time": 7,
+          "GET /orders/open": 3,
+          "GET /positions": 3,
+          "GET /trades": 2,
+          "GET /orders": 4,
+          "GET /symbols": 1
+        },
+        "closing_orders": 0,
+        "min_book_age": null,
+        "max_book_age": null,
+        "first_closing_order_after": null,
+        "observed_cleanup_fills": 0,
+        "last_observed_cleanup_fill_after": null,
+        "positions_after_receipt": {
+          "ISLE": 30,
+          "AQUA": -50,
+          "GRID": -11,
+          "RECON": -25,
+          "HAVEN": 25
+        },
+        "orders_after_receipt": []
+      },
+      "pnl_delta": 0.0,
+      "duration_delta": 0.0
+    },
+    {
+      "setting": [
+        241,
+        0.25,
+        1.0,
+        false
+      ],
+      "baseline": {
+        "pnl": 55.72999999999956,
+        "cleanup": "settled",
+        "trial": "completed",
+        "stop": "requested complete practice seasons recorded",
+        "duration": 5.25,
+        "requests": 21,
+        "request_seconds": 5.25,
+        "request_counts": {
+          "GET /cases/hurricane.json": 1,
+          "GET /competitions/time": 7,
+          "GET /orders/open": 3,
+          "GET /positions": 3,
+          "GET /trades": 2,
+          "GET /orders": 4,
+          "GET /symbols": 1
+        },
+        "closing_orders": 0,
+        "min_book_age": null,
+        "max_book_age": null,
+        "first_closing_order_after": null,
+        "observed_cleanup_fills": 0,
+        "last_observed_cleanup_fill_after": null,
+        "positions_after_receipt": {
+          "ISLE": 30,
+          "AQUA": -50,
+          "GRID": -11,
+          "RECON": -25,
+          "HAVEN": -12
+        },
+        "orders_after_receipt": []
+      },
+      "candidate": {
+        "pnl": 55.72999999999956,
+        "cleanup": "settled",
+        "trial": "completed",
+        "stop": "requested complete practice seasons recorded",
+        "duration": 5.25,
+        "requests": 21,
+        "request_seconds": 5.25,
+        "request_counts": {
+          "GET /cases/hurricane.json": 1,
+          "GET /competitions/time": 7,
+          "GET /orders/open": 3,
+          "GET /positions": 3,
+          "GET /trades": 2,
+          "GET /orders": 4,
+          "GET /symbols": 1
+        },
+        "closing_orders": 0,
+        "min_book_age": null,
+        "max_book_age": null,
+        "first_closing_order_after": null,
+        "observed_cleanup_fills": 0,
+        "last_observed_cleanup_fill_after": null,
+        "positions_after_receipt": {
+          "ISLE": 30,
+          "AQUA": -50,
+          "GRID": -11,
+          "RECON": -25,
+          "HAVEN": -12
+        },
+        "orders_after_receipt": []
+      },
+      "pnl_delta": 0.0,
+      "duration_delta": 0.0
+    },
+    {
+      "setting": [
+        241,
+        0.25,
+        1.0,
+        true
+      ],
+      "baseline": {
+        "pnl": 52.930000000000064,
+        "cleanup": "settled",
+        "trial": "completed",
+        "stop": "requested complete practice seasons recorded",
+        "duration": 5.25,
+        "requests": 21,
+        "request_seconds": 5.25,
+        "request_counts": {
+          "GET /cases/hurricane.json": 1,
+          "GET /competitions/time": 7,
+          "GET /orders/open": 3,
+          "GET /positions": 3,
+          "GET /trades": 2,
+          "GET /orders": 4,
+          "GET /symbols": 1
+        },
+        "closing_orders": 0,
+        "min_book_age": null,
+        "max_book_age": null,
+        "first_closing_order_after": null,
+        "observed_cleanup_fills": 0,
+        "last_observed_cleanup_fill_after": null,
+        "positions_after_receipt": {
+          "ISLE": 30,
+          "AQUA": -50,
+          "GRID": -11,
+          "RECON": -25,
+          "HAVEN": -12
+        },
+        "orders_after_receipt": []
+      },
+      "candidate": {
+        "pnl": 52.930000000000064,
+        "cleanup": "settled",
+        "trial": "completed",
+        "stop": "requested complete practice seasons recorded",
+        "duration": 5.25,
+        "requests": 21,
+        "request_seconds": 5.25,
+        "request_counts": {
+          "GET /cases/hurricane.json": 1,
+          "GET /competitions/time": 7,
+          "GET /orders/open": 3,
+          "GET /positions": 3,
+          "GET /trades": 2,
+          "GET /orders": 4,
+          "GET /symbols": 1
+        },
+        "closing_orders": 0,
+        "min_book_age": null,
+        "max_book_age": null,
+        "first_closing_order_after": null,
+        "observed_cleanup_fills": 0,
+        "last_observed_cleanup_fill_after": null,
+        "positions_after_receipt": {
+          "ISLE": 30,
+          "AQUA": -50,
+          "GRID": -11,
+          "RECON": -25,
+          "HAVEN": -12
+        },
+        "orders_after_receipt": []
+      },
+      "pnl_delta": 0.0,
+      "duration_delta": 0.0
+    },
+    {
+      "setting": [
+        241,
+        0.25,
+        0.5,
+        false
+      ],
+      "baseline": {
+        "pnl": 41.850000000000136,
+        "cleanup": "settled",
+        "trial": "completed",
+        "stop": "requested complete practice seasons recorded",
+        "duration": 5.25,
+        "requests": 21,
+        "request_seconds": 5.25,
+        "request_counts": {
+          "GET /cases/hurricane.json": 1,
+          "GET /competitions/time": 7,
+          "GET /orders/open": 3,
+          "GET /positions": 3,
+          "GET /trades": 2,
+          "GET /orders": 4,
+          "GET /symbols": 1
+        },
+        "closing_orders": 0,
+        "min_book_age": null,
+        "max_book_age": null,
+        "first_closing_order_after": null,
+        "observed_cleanup_fills": 0,
+        "last_observed_cleanup_fill_after": null,
+        "positions_after_receipt": {
+          "ISLE": 30,
+          "AQUA": -50,
+          "GRID": -11,
+          "RECON": -25,
+          "HAVEN": -12
+        },
+        "orders_after_receipt": []
+      },
+      "candidate": {
+        "pnl": 41.850000000000136,
+        "cleanup": "settled",
+        "trial": "completed",
+        "stop": "requested complete practice seasons recorded",
+        "duration": 5.25,
+        "requests": 21,
+        "request_seconds": 5.25,
+        "request_counts": {
+          "GET /cases/hurricane.json": 1,
+          "GET /competitions/time": 7,
+          "GET /orders/open": 3,
+          "GET /positions": 3,
+          "GET /trades": 2,
+          "GET /orders": 4,
+          "GET /symbols": 1
+        },
+        "closing_orders": 0,
+        "min_book_age": null,
+        "max_book_age": null,
+        "first_closing_order_after": null,
+        "observed_cleanup_fills": 0,
+        "last_observed_cleanup_fill_after": null,
+        "positions_after_receipt": {
+          "ISLE": 30,
+          "AQUA": -50,
+          "GRID": -11,
+          "RECON": -25,
+          "HAVEN": -12
+        },
+        "orders_after_receipt": []
+      },
+      "pnl_delta": 0.0,
+      "duration_delta": 0.0
+    },
+    {
+      "setting": [
+        241,
+        0.25,
+        0.5,
+        true
+      ],
+      "baseline": {
+        "pnl": 39.24999999999977,
+        "cleanup": "settled",
+        "trial": "completed",
+        "stop": "requested complete practice seasons recorded",
+        "duration": 5.25,
+        "requests": 21,
+        "request_seconds": 5.25,
+        "request_counts": {
+          "GET /cases/hurricane.json": 1,
+          "GET /competitions/time": 7,
+          "GET /orders/open": 3,
+          "GET /positions": 3,
+          "GET /trades": 2,
+          "GET /orders": 4,
+          "GET /symbols": 1
+        },
+        "closing_orders": 0,
+        "min_book_age": null,
+        "max_book_age": null,
+        "first_closing_order_after": null,
+        "observed_cleanup_fills": 0,
+        "last_observed_cleanup_fill_after": null,
+        "positions_after_receipt": {
+          "ISLE": 30,
+          "AQUA": -50,
+          "GRID": -11,
+          "RECON": -25,
+          "HAVEN": -12
+        },
+        "orders_after_receipt": []
+      },
+      "candidate": {
+        "pnl": 39.24999999999977,
+        "cleanup": "settled",
+        "trial": "completed",
+        "stop": "requested complete practice seasons recorded",
+        "duration": 5.25,
+        "requests": 21,
+        "request_seconds": 5.25,
+        "request_counts": {
+          "GET /cases/hurricane.json": 1,
+          "GET /competitions/time": 7,
+          "GET /orders/open": 3,
+          "GET /positions": 3,
+          "GET /trades": 2,
+          "GET /orders": 4,
+          "GET /symbols": 1
+        },
+        "closing_orders": 0,
+        "min_book_age": null,
+        "max_book_age": null,
+        "first_closing_order_after": null,
+        "observed_cleanup_fills": 0,
+        "last_observed_cleanup_fill_after": null,
+        "positions_after_receipt": {
+          "ISLE": 30,
+          "AQUA": -50,
+          "GRID": -11,
+          "RECON": -25,
+          "HAVEN": -12
+        },
+        "orders_after_receipt": []
+      },
+      "pnl_delta": 0.0,
+      "duration_delta": 0.0
+    },
+    {
+      "setting": [
+        241,
+        1.0,
+        1.0,
+        false
+      ],
+      "baseline": {
+        "pnl": 157.8499999999999,
+        "cleanup": "settled",
+        "trial": "completed",
+        "stop": "requested complete practice seasons recorded",
+        "duration": 21.0,
+        "requests": 21,
+        "request_seconds": 21.0,
+        "request_counts": {
+          "GET /cases/hurricane.json": 1,
+          "GET /competitions/time": 7,
+          "GET /orders/open": 3,
+          "GET /positions": 3,
+          "GET /trades": 2,
+          "GET /orders": 4,
+          "GET /symbols": 1
+        },
+        "closing_orders": 0,
+        "min_book_age": null,
+        "max_book_age": null,
+        "first_closing_order_after": null,
+        "observed_cleanup_fills": 0,
+        "last_observed_cleanup_fill_after": null,
+        "positions_after_receipt": {
+          "ISLE": 4,
+          "AQUA": -50,
+          "GRID": -20,
+          "RECON": -25,
+          "REIN": -2
+        },
+        "orders_after_receipt": []
+      },
+      "candidate": {
+        "pnl": 157.8499999999999,
+        "cleanup": "settled",
+        "trial": "completed",
+        "stop": "requested complete practice seasons recorded",
+        "duration": 21.0,
+        "requests": 21,
+        "request_seconds": 21.0,
+        "request_counts": {
+          "GET /cases/hurricane.json": 1,
+          "GET /competitions/time": 7,
+          "GET /orders/open": 3,
+          "GET /positions": 3,
+          "GET /trades": 2,
+          "GET /orders": 4,
+          "GET /symbols": 1
+        },
+        "closing_orders": 0,
+        "min_book_age": null,
+        "max_book_age": null,
+        "first_closing_order_after": null,
+        "observed_cleanup_fills": 0,
+        "last_observed_cleanup_fill_after": null,
+        "positions_after_receipt": {
+          "ISLE": 4,
+          "AQUA": -50,
+          "GRID": -20,
+          "RECON": -25,
+          "REIN": -2
+        },
+        "orders_after_receipt": []
+      },
+      "pnl_delta": 0.0,
+      "duration_delta": 0.0
+    },
+    {
+      "setting": [
+        241,
+        1.0,
+        1.0,
+        true
+      ],
+      "baseline": {
+        "pnl": 148.01000000000067,
+        "cleanup": "settled",
+        "trial": "completed",
+        "stop": "requested complete practice seasons recorded",
+        "duration": 21.0,
+        "requests": 21,
+        "request_seconds": 21.0,
+        "request_counts": {
+          "GET /cases/hurricane.json": 1,
+          "GET /competitions/time": 7,
+          "GET /orders/open": 3,
+          "GET /positions": 3,
+          "GET /trades": 2,
+          "GET /orders": 4,
+          "GET /symbols": 1
+        },
+        "closing_orders": 0,
+        "min_book_age": null,
+        "max_book_age": null,
+        "first_closing_order_after": null,
+        "observed_cleanup_fills": 0,
+        "last_observed_cleanup_fill_after": null,
+        "positions_after_receipt": {
+          "GRID": -20,
+          "RECON": -25,
+          "REIN": -2
+        },
+        "orders_after_receipt": []
+      },
+      "candidate": {
+        "pnl": 148.01000000000067,
+        "cleanup": "settled",
+        "trial": "completed",
+        "stop": "requested complete practice seasons recorded",
+        "duration": 21.0,
+        "requests": 21,
+        "request_seconds": 21.0,
+        "request_counts": {
+          "GET /cases/hurricane.json": 1,
+          "GET /competitions/time": 7,
+          "GET /orders/open": 3,
+          "GET /positions": 3,
+          "GET /trades": 2,
+          "GET /orders": 4,
+          "GET /symbols": 1
+        },
+        "closing_orders": 0,
+        "min_book_age": null,
+        "max_book_age": null,
+        "first_closing_order_after": null,
+        "observed_cleanup_fills": 0,
+        "last_observed_cleanup_fill_after": null,
+        "positions_after_receipt": {
+          "GRID": -20,
+          "RECON": -25,
+          "REIN": -2
+        },
+        "orders_after_receipt": []
+      },
+      "pnl_delta": 0.0,
+      "duration_delta": 0.0
+    },
+    {
+      "setting": [
+        241,
+        1.0,
+        0.5,
+        false
+      ],
+      "baseline": {
+        "pnl": 155.32000000000016,
+        "cleanup": "settled",
+        "trial": "completed",
+        "stop": "requested complete practice seasons recorded",
+        "duration": 21.0,
+        "requests": 21,
+        "request_seconds": 21.0,
+        "request_counts": {
+          "GET /cases/hurricane.json": 1,
+          "GET /competitions/time": 7,
+          "GET /orders/open": 3,
+          "GET /positions": 3,
+          "GET /trades": 2,
+          "GET /orders": 4,
+          "GET /symbols": 1
+        },
+        "closing_orders": 0,
+        "min_book_age": null,
+        "max_book_age": null,
+        "first_closing_order_after": null,
+        "observed_cleanup_fills": 0,
+        "last_observed_cleanup_fill_after": null,
+        "positions_after_receipt": {
+          "ISLE": 4,
+          "AQUA": -50,
+          "GRID": -20,
+          "RECON": -25,
+          "REIN": -2
+        },
+        "orders_after_receipt": []
+      },
+      "candidate": {
+        "pnl": 155.32000000000016,
+        "cleanup": "settled",
+        "trial": "completed",
+        "stop": "requested complete practice seasons recorded",
+        "duration": 21.0,
+        "requests": 21,
+        "request_seconds": 21.0,
+        "request_counts": {
+          "GET /cases/hurricane.json": 1,
+          "GET /competitions/time": 7,
+          "GET /orders/open": 3,
+          "GET /positions": 3,
+          "GET /trades": 2,
+          "GET /orders": 4,
+          "GET /symbols": 1
+        },
+        "closing_orders": 0,
+        "min_book_age": null,
+        "max_book_age": null,
+        "first_closing_order_after": null,
+        "observed_cleanup_fills": 0,
+        "last_observed_cleanup_fill_after": null,
+        "positions_after_receipt": {
+          "ISLE": 4,
+          "AQUA": -50,
+          "GRID": -20,
+          "RECON": -25,
+          "REIN": -2
+        },
+        "orders_after_receipt": []
+      },
+      "pnl_delta": 0.0,
+      "duration_delta": 0.0
+    },
+    {
+      "setting": [
+        241,
+        1.0,
+        0.5,
+        true
+      ],
+      "baseline": {
+        "pnl": 127.30000000000064,
+        "cleanup": "settled",
+        "trial": "completed",
+        "stop": "requested complete practice seasons recorded",
+        "duration": 21.0,
+        "requests": 21,
+        "request_seconds": 21.0,
+        "request_counts": {
+          "GET /cases/hurricane.json": 1,
+          "GET /competitions/time": 7,
+          "GET /orders/open": 3,
+          "GET /positions": 3,
+          "GET /trades": 2,
+          "GET /orders": 4,
+          "GET /symbols": 1
+        },
+        "closing_orders": 0,
+        "min_book_age": null,
+        "max_book_age": null,
+        "first_closing_order_after": null,
+        "observed_cleanup_fills": 0,
+        "last_observed_cleanup_fill_after": null,
+        "positions_after_receipt": {
+          "GRID": -20,
+          "RECON": -25,
+          "REIN": -2
+        },
+        "orders_after_receipt": []
+      },
+      "candidate": {
+        "pnl": 127.30000000000064,
+        "cleanup": "settled",
+        "trial": "completed",
+        "stop": "requested complete practice seasons recorded",
+        "duration": 21.0,
+        "requests": 21,
+        "request_seconds": 21.0,
+        "request_counts": {
+          "GET /cases/hurricane.json": 1,
+          "GET /competitions/time": 7,
+          "GET /orders/open": 3,
+          "GET /positions": 3,
+          "GET /trades": 2,
+          "GET /orders": 4,
+          "GET /symbols": 1
+        },
+        "closing_orders": 0,
+        "min_book_age": null,
+        "max_book_age": null,
+        "first_closing_order_after": null,
+        "observed_cleanup_fills": 0,
+        "last_observed_cleanup_fill_after": null,
+        "positions_after_receipt": {
+          "GRID": -20,
+          "RECON": -25,
+          "REIN": -2
+        },
+        "orders_after_receipt": []
+      },
+      "pnl_delta": 0.0,
+      "duration_delta": 0.0
+    },
+    {
+      "setting": [
+        242,
+        0.0,
+        1.0,
+        false
+      ],
+      "baseline": {
+        "pnl": 2217.9100000000003,
+        "cleanup": "settled",
+        "trial": "completed",
+        "stop": "requested complete practice seasons recorded",
+        "duration": 0.0,
+        "requests": 21,
+        "request_seconds": 0.0,
+        "request_counts": {
+          "GET /cases/hurricane.json": 1,
+          "GET /competitions/time": 7,
+          "GET /orders/open": 3,
+          "GET /positions": 3,
+          "GET /trades": 2,
+          "GET /orders": 4,
+          "GET /symbols": 1
+        },
+        "closing_orders": 0,
+        "min_book_age": null,
+        "max_book_age": null,
+        "first_closing_order_after": null,
+        "observed_cleanup_fills": 0,
+        "last_observed_cleanup_fill_after": null,
+        "positions_after_receipt": {
+          "PORT": -10,
+          "GRID": -40,
+          "FERRY": -80,
+          "RECON": 25,
+          "GEN": 8,
+          "REIN": -10,
+          "ARCH": -2,
+          "REBLD": 5
+        },
+        "orders_after_receipt": []
+      },
+      "candidate": {
+        "pnl": 2217.9100000000003,
+        "cleanup": "settled",
+        "trial": "completed",
+        "stop": "requested complete practice seasons recorded",
+        "duration": 0.0,
+        "requests": 21,
+        "request_seconds": 0.0,
+        "request_counts": {
+          "GET /cases/hurricane.json": 1,
+          "GET /competitions/time": 7,
+          "GET /orders/open": 3,
+          "GET /positions": 3,
+          "GET /trades": 2,
+          "GET /orders": 4,
+          "GET /symbols": 1
+        },
+        "closing_orders": 0,
+        "min_book_age": null,
+        "max_book_age": null,
+        "first_closing_order_after": null,
+        "observed_cleanup_fills": 0,
+        "last_observed_cleanup_fill_after": null,
+        "positions_after_receipt": {
+          "PORT": -10,
+          "GRID": -40,
+          "FERRY": -80,
+          "RECON": 25,
+          "GEN": 8,
+          "REIN": -10,
+          "ARCH": -2,
+          "REBLD": 5
+        },
+        "orders_after_receipt": []
+      },
+      "pnl_delta": 0.0,
+      "duration_delta": 0.0
+    },
+    {
+      "setting": [
+        242,
+        0.0,
+        1.0,
+        true
+      ],
+      "baseline": {
+        "pnl": 2236.7600000000016,
+        "cleanup": "settled",
+        "trial": "completed",
+        "stop": "requested complete practice seasons recorded",
+        "duration": 0.0,
+        "requests": 21,
+        "request_seconds": 0.0,
+        "request_counts": {
+          "GET /cases/hurricane.json": 1,
+          "GET /competitions/time": 7,
+          "GET /orders/open": 3,
+          "GET /positions": 3,
+          "GET /trades": 2,
+          "GET /orders": 4,
+          "GET /symbols": 1
+        },
+        "closing_orders": 0,
+        "min_book_age": null,
+        "max_book_age": null,
+        "first_closing_order_after": null,
+        "observed_cleanup_fills": 0,
+        "last_observed_cleanup_fill_after": null,
+        "positions_after_receipt": {
+          "PORT": -10,
+          "GRID": -40,
+          "FERRY": -80,
+          "RECON": 25,
+          "GEN": 8,
+          "REIN": -10,
+          "ARCH": -2,
+          "REBLD": 5
+        },
+        "orders_after_receipt": []
+      },
+      "candidate": {
+        "pnl": 2236.7600000000016,
+        "cleanup": "settled",
+        "trial": "completed",
+        "stop": "requested complete practice seasons recorded",
+        "duration": 0.0,
+        "requests": 21,
+        "request_seconds": 0.0,
+        "request_counts": {
+          "GET /cases/hurricane.json": 1,
+          "GET /competitions/time": 7,
+          "GET /orders/open": 3,
+          "GET /positions": 3,
+          "GET /trades": 2,
+          "GET /orders": 4,
+          "GET /symbols": 1
+        },
+        "closing_orders": 0,
+        "min_book_age": null,
+        "max_book_age": null,
+        "first_closing_order_after": null,
+        "observed_cleanup_fills": 0,
+        "last_observed_cleanup_fill_after": null,
+        "positions_after_receipt": {
+          "PORT": -10,
+          "GRID": -40,
+          "FERRY": -80,
+          "RECON": 25,
+          "GEN": 8,
+          "REIN": -10,
+          "ARCH": -2,
+          "REBLD": 5
+        },
+        "orders_after_receipt": []
+      },
+      "pnl_delta": 0.0,
+      "duration_delta": 0.0
+    },
+    {
+      "setting": [
+        242,
+        0.0,
+        0.5,
+        false
+      ],
+      "baseline": {
+        "pnl": 2152.92,
+        "cleanup": "settled",
+        "trial": "completed",
+        "stop": "requested complete practice seasons recorded",
+        "duration": 0.0,
+        "requests": 21,
+        "request_seconds": 0.0,
+        "request_counts": {
+          "GET /cases/hurricane.json": 1,
+          "GET /competitions/time": 7,
+          "GET /orders/open": 3,
+          "GET /positions": 3,
+          "GET /trades": 2,
+          "GET /orders": 4,
+          "GET /symbols": 1
+        },
+        "closing_orders": 0,
+        "min_book_age": null,
+        "max_book_age": null,
+        "first_closing_order_after": null,
+        "observed_cleanup_fills": 0,
+        "last_observed_cleanup_fill_after": null,
+        "positions_after_receipt": {
+          "PORT": -10,
+          "GRID": -40,
+          "FERRY": -80,
+          "RECON": 25,
+          "GEN": 8,
+          "REIN": -10,
+          "ARCH": -2,
+          "REBLD": 5
+        },
+        "orders_after_receipt": []
+      },
+      "candidate": {
+        "pnl": 2152.92,
+        "cleanup": "settled",
+        "trial": "completed",
+        "stop": "requested complete practice seasons recorded",
+        "duration": 0.0,
+        "requests": 21,
+        "request_seconds": 0.0,
+        "request_counts": {
+          "GET /cases/hurricane.json": 1,
+          "GET /competitions/time": 7,
+          "GET /orders/open": 3,
+          "GET /positions": 3,
+          "GET /trades": 2,
+          "GET /orders": 4,
+          "GET /symbols": 1
+        },
+        "closing_orders": 0,
+        "min_book_age": null,
+        "max_book_age": null,
+        "first_closing_order_after": null,
+        "observed_cleanup_fills": 0,
+        "last_observed_cleanup_fill_after": null,
+        "positions_after_receipt": {
+          "PORT": -10,
+          "GRID": -40,
+          "FERRY": -80,
+          "RECON": 25,
+          "GEN": 8,
+          "REIN": -10,
+          "ARCH": -2,
+          "REBLD": 5
+        },
+        "orders_after_receipt": []
+      },
+      "pnl_delta": 0.0,
+      "duration_delta": 0.0
+    },
+    {
+      "setting": [
+        242,
+        0.0,
+        0.5,
+        true
+      ],
+      "baseline": {
+        "pnl": 2156.460000000001,
+        "cleanup": "settled",
+        "trial": "completed",
+        "stop": "requested complete practice seasons recorded",
+        "duration": 0.0,
+        "requests": 21,
+        "request_seconds": 0.0,
+        "request_counts": {
+          "GET /cases/hurricane.json": 1,
+          "GET /competitions/time": 7,
+          "GET /orders/open": 3,
+          "GET /positions": 3,
+          "GET /trades": 2,
+          "GET /orders": 4,
+          "GET /symbols": 1
+        },
+        "closing_orders": 0,
+        "min_book_age": null,
+        "max_book_age": null,
+        "first_closing_order_after": null,
+        "observed_cleanup_fills": 0,
+        "last_observed_cleanup_fill_after": null,
+        "positions_after_receipt": {
+          "PORT": -10,
+          "GRID": -40,
+          "FERRY": -80,
+          "RECON": 25,
+          "GEN": 8,
+          "REIN": -10,
+          "ARCH": -2,
+          "REBLD": 5
+        },
+        "orders_after_receipt": []
+      },
+      "candidate": {
+        "pnl": 2156.460000000001,
+        "cleanup": "settled",
+        "trial": "completed",
+        "stop": "requested complete practice seasons recorded",
+        "duration": 0.0,
+        "requests": 21,
+        "request_seconds": 0.0,
+        "request_counts": {
+          "GET /cases/hurricane.json": 1,
+          "GET /competitions/time": 7,
+          "GET /orders/open": 3,
+          "GET /positions": 3,
+          "GET /trades": 2,
+          "GET /orders": 4,
+          "GET /symbols": 1
+        },
+        "closing_orders": 0,
+        "min_book_age": null,
+        "max_book_age": null,
+        "first_closing_order_after": null,
+        "observed_cleanup_fills": 0,
+        "last_observed_cleanup_fill_after": null,
+        "positions_after_receipt": {
+          "PORT": -10,
+          "GRID": -40,
+          "FERRY": -80,
+          "RECON": 25,
+          "GEN": 8,
+          "REIN": -10,
+          "ARCH": -2,
+          "REBLD": 5
+        },
+        "orders_after_receipt": []
+      },
+      "pnl_delta": 0.0,
+      "duration_delta": 0.0
+    },
+    {
+      "setting": [
+        242,
+        0.05,
+        1.0,
+        false
+      ],
+      "baseline": {
+        "pnl": 1577.0900000000022,
+        "cleanup": "settled",
+        "trial": "completed",
+        "stop": "requested complete practice seasons recorded",
+        "duration": 1.0500000000038199,
+        "requests": 21,
+        "request_seconds": 1.0500000000038199,
+        "request_counts": {
+          "GET /cases/hurricane.json": 1,
+          "GET /competitions/time": 7,
+          "GET /orders/open": 3,
+          "GET /positions": 3,
+          "GET /trades": 2,
+          "GET /orders": 4,
+          "GET /symbols": 1
+        },
+        "closing_orders": 0,
+        "min_book_age": null,
+        "max_book_age": null,
+        "first_closing_order_after": null,
+        "observed_cleanup_fills": 0,
+        "last_observed_cleanup_fill_after": null,
+        "positions_after_receipt": {
+          "PORT": -10,
+          "GRID": -40,
+          "FERRY": -80,
+          "RECON": 25,
+          "GEN": 37,
+          "REIN": -10,
+          "ARCH": -2
+        },
+        "orders_after_receipt": []
+      },
+      "candidate": {
+        "pnl": 1577.0900000000022,
+        "cleanup": "settled",
+        "trial": "completed",
+        "stop": "requested complete practice seasons recorded",
+        "duration": 1.0500000000038199,
+        "requests": 21,
+        "request_seconds": 1.0500000000038199,
+        "request_counts": {
+          "GET /cases/hurricane.json": 1,
+          "GET /competitions/time": 7,
+          "GET /orders/open": 3,
+          "GET /positions": 3,
+          "GET /trades": 2,
+          "GET /orders": 4,
+          "GET /symbols": 1
+        },
+        "closing_orders": 0,
+        "min_book_age": null,
+        "max_book_age": null,
+        "first_closing_order_after": null,
+        "observed_cleanup_fills": 0,
+        "last_observed_cleanup_fill_after": null,
+        "positions_after_receipt": {
+          "PORT": -10,
+          "GRID": -40,
+          "FERRY": -80,
+          "RECON": 25,
+          "GEN": 37,
+          "REIN": -10,
+          "ARCH": -2
+        },
+        "orders_after_receipt": []
+      },
+      "pnl_delta": 0.0,
+      "duration_delta": 0.0
+    },
+    {
+      "setting": [
+        242,
+        0.05,
+        1.0,
+        true
+      ],
+      "baseline": {
+        "pnl": 1561.2900000000016,
+        "cleanup": "settled",
+        "trial": "completed",
+        "stop": "requested complete practice seasons recorded",
+        "duration": 1.0500000000038199,
+        "requests": 21,
+        "request_seconds": 1.0500000000038199,
+        "request_counts": {
+          "GET /cases/hurricane.json": 1,
+          "GET /competitions/time": 7,
+          "GET /orders/open": 3,
+          "GET /positions": 3,
+          "GET /trades": 2,
+          "GET /orders": 4,
+          "GET /symbols": 1
+        },
+        "closing_orders": 0,
+        "min_book_age": null,
+        "max_book_age": null,
+        "first_closing_order_after": null,
+        "observed_cleanup_fills": 0,
+        "last_observed_cleanup_fill_after": null,
+        "positions_after_receipt": {
+          "PORT": -10,
+          "GRID": -40,
+          "FERRY": -80,
+          "RECON": 25,
+          "GEN": 37,
+          "REIN": -10,
+          "ARCH": -2
+        },
+        "orders_after_receipt": []
+      },
+      "candidate": {
+        "pnl": 1561.2900000000016,
+        "cleanup": "settled",
+        "trial": "completed",
+        "stop": "requested complete practice seasons recorded",
+        "duration": 1.0500000000038199,
+        "requests": 21,
+        "request_seconds": 1.0500000000038199,
+        "request_counts": {
+          "GET /cases/hurricane.json": 1,
+          "GET /competitions/time": 7,
+          "GET /orders/open": 3,
+          "GET /positions": 3,
+          "GET /trades": 2,
+          "GET /orders": 4,
+          "GET /symbols": 1
+        },
+        "closing_orders": 0,
+        "min_book_age": null,
+        "max_book_age": null,
+        "first_closing_order_after": null,
+        "observed_cleanup_fills": 0,
+        "last_observed_cleanup_fill_after": null,
+        "positions_after_receipt": {
+          "PORT": -10,
+          "GRID": -40,
+          "FERRY": -80,
+          "RECON": 25,
+          "GEN": 37,
+          "REIN": -10,
+          "ARCH": -2
+        },
+        "orders_after_receipt": []
+      },
+      "pnl_delta": 0.0,
+      "duration_delta": 0.0
+    },
+    {
+      "setting": [
+        242,
+        0.05,
+        0.5,
+        false
+      ],
+      "baseline": {
+        "pnl": 1513.4699999999946,
+        "cleanup": "settled",
+        "trial": "completed",
+        "stop": "requested complete practice seasons recorded",
+        "duration": 1.0500000000038199,
+        "requests": 21,
+        "request_seconds": 1.0500000000038199,
+        "request_counts": {
+          "GET /cases/hurricane.json": 1,
+          "GET /competitions/time": 7,
+          "GET /orders/open": 3,
+          "GET /positions": 3,
+          "GET /trades": 2,
+          "GET /orders": 4,
+          "GET /symbols": 1
+        },
+        "closing_orders": 0,
+        "min_book_age": null,
+        "max_book_age": null,
+        "first_closing_order_after": null,
+        "observed_cleanup_fills": 0,
+        "last_observed_cleanup_fill_after": null,
+        "positions_after_receipt": {
+          "PORT": -10,
+          "GRID": -40,
+          "FERRY": -80,
+          "RECON": 25,
+          "GEN": 37,
+          "REIN": -10,
+          "ARCH": -2
+        },
+        "orders_after_receipt": []
+      },
+      "candidate": {
+        "pnl": 1513.4699999999946,
+        "cleanup": "settled",
+        "trial": "completed",
+        "stop": "requested complete practice seasons recorded",
+        "duration": 1.0500000000038199,
+        "requests": 21,
+        "request_seconds": 1.0500000000038199,
+        "request_counts": {
+          "GET /cases/hurricane.json": 1,
+          "GET /competitions/time": 7,
+          "GET /orders/open": 3,
+          "GET /positions": 3,
+          "GET /trades": 2,
+          "GET /orders": 4,
+          "GET /symbols": 1
+        },
+        "closing_orders": 0,
+        "min_book_age": null,
+        "max_book_age": null,
+        "first_closing_order_after": null,
+        "observed_cleanup_fills": 0,
+        "last_observed_cleanup_fill_after": null,
+        "positions_after_receipt": {
+          "PORT": -10,
+          "GRID": -40,
+          "FERRY": -80,
+          "RECON": 25,
+          "GEN": 37,
+          "REIN": -10,
+          "ARCH": -2
+        },
+        "orders_after_receipt": []
+      },
+      "pnl_delta": 0.0,
+      "duration_delta": 0.0
+    },
+    {
+      "setting": [
+        242,
+        0.05,
+        0.5,
+        true
+      ],
+      "baseline": {
+        "pnl": 1513.4699999999946,
+        "cleanup": "settled",
+        "trial": "completed",
+        "stop": "requested complete practice seasons recorded",
+        "duration": 1.0500000000038199,
+        "requests": 21,
+        "request_seconds": 1.0500000000038199,
+        "request_counts": {
+          "GET /cases/hurricane.json": 1,
+          "GET /competitions/time": 7,
+          "GET /orders/open": 3,
+          "GET /positions": 3,
+          "GET /trades": 2,
+          "GET /orders": 4,
+          "GET /symbols": 1
+        },
+        "closing_orders": 0,
+        "min_book_age": null,
+        "max_book_age": null,
+        "first_closing_order_after": null,
+        "observed_cleanup_fills": 0,
+        "last_observed_cleanup_fill_after": null,
+        "positions_after_receipt": {
+          "PORT": -10,
+          "GRID": -40,
+          "FERRY": -80,
+          "RECON": 25,
+          "GEN": 37,
+          "REIN": -10,
+          "ARCH": -2
+        },
+        "orders_after_receipt": []
+      },
+      "candidate": {
+        "pnl": 1513.4699999999946,
+        "cleanup": "settled",
+        "trial": "completed",
+        "stop": "requested complete practice seasons recorded",
+        "duration": 1.0500000000038199,
+        "requests": 21,
+        "request_seconds": 1.0500000000038199,
+        "request_counts": {
+          "GET /cases/hurricane.json": 1,
+          "GET /competitions/time": 7,
+          "GET /orders/open": 3,
+          "GET /positions": 3,
+          "GET /trades": 2,
+          "GET /orders": 4,
+          "GET /symbols": 1
+        },
+        "closing_orders": 0,
+        "min_book_age": null,
+        "max_book_age": null,
+        "first_closing_order_after": null,
+        "observed_cleanup_fills": 0,
+        "last_observed_cleanup_fill_after": null,
+        "positions_after_receipt": {
+          "PORT": -10,
+          "GRID": -40,
+          "FERRY": -80,
+          "RECON": 25,
+          "GEN": 37,
+          "REIN": -10,
+          "ARCH": -2
+        },
+        "orders_after_receipt": []
+      },
+      "pnl_delta": 0.0,
+      "duration_delta": 0.0
+    },
+    {
+      "setting": [
+        242,
+        0.25,
+        1.0,
+        false
+      ],
+      "baseline": {
+        "pnl": 1493.3499999999988,
+        "cleanup": "settled",
+        "trial": "completed",
+        "stop": "requested complete practice seasons recorded",
+        "duration": 5.25,
+        "requests": 21,
+        "request_seconds": 5.25,
+        "request_counts": {
+          "GET /cases/hurricane.json": 1,
+          "GET /competitions/time": 7,
+          "GET /orders/open": 3,
+          "GET /positions": 3,
+          "GET /trades": 2,
+          "GET /orders": 4,
+          "GET /symbols": 1
+        },
+        "closing_orders": 0,
+        "min_book_age": null,
+        "max_book_age": null,
+        "first_closing_order_after": null,
+        "observed_cleanup_fills": 0,
+        "last_observed_cleanup_fill_after": null,
+        "positions_after_receipt": {
+          "PORT": -10,
+          "GRID": -40,
+          "FERRY": -80,
+          "RECON": 25,
+          "GEN": 37,
+          "HAVEN": -1,
+          "REIN": -10,
+          "ARCH": -2
+        },
+        "orders_after_receipt": []
+      },
+      "candidate": {
+        "pnl": 1493.3499999999988,
+        "cleanup": "settled",
+        "trial": "completed",
+        "stop": "requested complete practice seasons recorded",
+        "duration": 5.25,
+        "requests": 21,
+        "request_seconds": 5.25,
+        "request_counts": {
+          "GET /cases/hurricane.json": 1,
+          "GET /competitions/time": 7,
+          "GET /orders/open": 3,
+          "GET /positions": 3,
+          "GET /trades": 2,
+          "GET /orders": 4,
+          "GET /symbols": 1
+        },
+        "closing_orders": 0,
+        "min_book_age": null,
+        "max_book_age": null,
+        "first_closing_order_after": null,
+        "observed_cleanup_fills": 0,
+        "last_observed_cleanup_fill_after": null,
+        "positions_after_receipt": {
+          "PORT": -10,
+          "GRID": -40,
+          "FERRY": -80,
+          "RECON": 25,
+          "GEN": 37,
+          "HAVEN": -1,
+          "REIN": -10,
+          "ARCH": -2
+        },
+        "orders_after_receipt": []
+      },
+      "pnl_delta": 0.0,
+      "duration_delta": 0.0
+    },
+    {
+      "setting": [
+        242,
+        0.25,
+        1.0,
+        true
+      ],
+      "baseline": {
+        "pnl": 1497.3999999999999,
+        "cleanup": "settled",
+        "trial": "completed",
+        "stop": "requested complete practice seasons recorded",
+        "duration": 5.25,
+        "requests": 21,
+        "request_seconds": 5.25,
+        "request_counts": {
+          "GET /cases/hurricane.json": 1,
+          "GET /competitions/time": 7,
+          "GET /orders/open": 3,
+          "GET /positions": 3,
+          "GET /trades": 2,
+          "GET /orders": 4,
+          "GET /symbols": 1
+        },
+        "closing_orders": 0,
+        "min_book_age": null,
+        "max_book_age": null,
+        "first_closing_order_after": null,
+        "observed_cleanup_fills": 0,
+        "last_observed_cleanup_fill_after": null,
+        "positions_after_receipt": {
+          "PORT": -10,
+          "GRID": -40,
+          "FERRY": -80,
+          "RECON": 25,
+          "GEN": 37,
+          "HAVEN": -1,
+          "REIN": -10,
+          "ARCH": -2
+        },
+        "orders_after_receipt": []
+      },
+      "candidate": {
+        "pnl": 1497.3999999999999,
+        "cleanup": "settled",
+        "trial": "completed",
+        "stop": "requested complete practice seasons recorded",
+        "duration": 5.25,
+        "requests": 21,
+        "request_seconds": 5.25,
+        "request_counts": {
+          "GET /cases/hurricane.json": 1,
+          "GET /competitions/time": 7,
+          "GET /orders/open": 3,
+          "GET /positions": 3,
+          "GET /trades": 2,
+          "GET /orders": 4,
+          "GET /symbols": 1
+        },
+        "closing_orders": 0,
+        "min_book_age": null,
+        "max_book_age": null,
+        "first_closing_order_after": null,
+        "observed_cleanup_fills": 0,
+        "last_observed_cleanup_fill_after": null,
+        "positions_after_receipt": {
+          "PORT": -10,
+          "GRID": -40,
+          "FERRY": -80,
+          "RECON": 25,
+          "GEN": 37,
+          "HAVEN": -1,
+          "REIN": -10,
+          "ARCH": -2
+        },
+        "orders_after_receipt": []
+      },
+      "pnl_delta": 0.0,
+      "duration_delta": 0.0
+    },
+    {
+      "setting": [
+        242,
+        0.25,
+        0.5,
+        false
+      ],
+      "baseline": {
+        "pnl": 1450.0599999999984,
+        "cleanup": "settled",
+        "trial": "completed",
+        "stop": "requested complete practice seasons recorded",
+        "duration": 5.25,
+        "requests": 21,
+        "request_seconds": 5.25,
+        "request_counts": {
+          "GET /cases/hurricane.json": 1,
+          "GET /competitions/time": 7,
+          "GET /orders/open": 3,
+          "GET /positions": 3,
+          "GET /trades": 2,
+          "GET /orders": 4,
+          "GET /symbols": 1
+        },
+        "closing_orders": 0,
+        "min_book_age": null,
+        "max_book_age": null,
+        "first_closing_order_after": null,
+        "observed_cleanup_fills": 0,
+        "last_observed_cleanup_fill_after": null,
+        "positions_after_receipt": {
+          "PORT": -10,
+          "GRID": -40,
+          "FERRY": -80,
+          "RECON": 25,
+          "GEN": 37,
+          "HAVEN": -1,
+          "REIN": -10,
+          "ARCH": -2
+        },
+        "orders_after_receipt": []
+      },
+      "candidate": {
+        "pnl": 1450.0599999999984,
+        "cleanup": "settled",
+        "trial": "completed",
+        "stop": "requested complete practice seasons recorded",
+        "duration": 5.25,
+        "requests": 21,
+        "request_seconds": 5.25,
+        "request_counts": {
+          "GET /cases/hurricane.json": 1,
+          "GET /competitions/time": 7,
+          "GET /orders/open": 3,
+          "GET /positions": 3,
+          "GET /trades": 2,
+          "GET /orders": 4,
+          "GET /symbols": 1
+        },
+        "closing_orders": 0,
+        "min_book_age": null,
+        "max_book_age": null,
+        "first_closing_order_after": null,
+        "observed_cleanup_fills": 0,
+        "last_observed_cleanup_fill_after": null,
+        "positions_after_receipt": {
+          "PORT": -10,
+          "GRID": -40,
+          "FERRY": -80,
+          "RECON": 25,
+          "GEN": 37,
+          "HAVEN": -1,
+          "REIN": -10,
+          "ARCH": -2
+        },
+        "orders_after_receipt": []
+      },
+      "pnl_delta": 0.0,
+      "duration_delta": 0.0
+    },
+    {
+      "setting": [
+        242,
+        0.25,
+        0.5,
+        true
+      ],
+      "baseline": {
+        "pnl": 1460.509999999999,
+        "cleanup": "settled",
+        "trial": "completed",
+        "stop": "requested complete practice seasons recorded",
+        "duration": 5.25,
+        "requests": 21,
+        "request_seconds": 5.25,
+        "request_counts": {
+          "GET /cases/hurricane.json": 1,
+          "GET /competitions/time": 7,
+          "GET /orders/open": 3,
+          "GET /positions": 3,
+          "GET /trades": 2,
+          "GET /orders": 4,
+          "GET /symbols": 1
+        },
+        "closing_orders": 0,
+        "min_book_age": null,
+        "max_book_age": null,
+        "first_closing_order_after": null,
+        "observed_cleanup_fills": 0,
+        "last_observed_cleanup_fill_after": null,
+        "positions_after_receipt": {
+          "PORT": -10,
+          "GRID": -40,
+          "FERRY": -80,
+          "RECON": 25,
+          "GEN": 37,
+          "HAVEN": -1,
+          "REIN": -10,
+          "ARCH": -2
+        },
+        "orders_after_receipt": []
+      },
+      "candidate": {
+        "pnl": 1460.509999999999,
+        "cleanup": "settled",
+        "trial": "completed",
+        "stop": "requested complete practice seasons recorded",
+        "duration": 5.25,
+        "requests": 21,
+        "request_seconds": 5.25,
+        "request_counts": {
+          "GET /cases/hurricane.json": 1,
+          "GET /competitions/time": 7,
+          "GET /orders/open": 3,
+          "GET /positions": 3,
+          "GET /trades": 2,
+          "GET /orders": 4,
+          "GET /symbols": 1
+        },
+        "closing_orders": 0,
+        "min_book_age": null,
+        "max_book_age": null,
+        "first_closing_order_after": null,
+        "observed_cleanup_fills": 0,
+        "last_observed_cleanup_fill_after": null,
+        "positions_after_receipt": {
+          "PORT": -10,
+          "GRID": -40,
+          "FERRY": -80,
+          "RECON": 25,
+          "GEN": 37,
+          "HAVEN": -1,
+          "REIN": -10,
+          "ARCH": -2
+        },
+        "orders_after_receipt": []
+      },
+      "pnl_delta": 0.0,
+      "duration_delta": 0.0
+    },
+    {
+      "setting": [
+        242,
+        1.0,
+        1.0,
+        false
+      ],
+      "baseline": {
+        "pnl": 1414.1800000000003,
+        "cleanup": "settled",
+        "trial": "completed",
+        "stop": "requested complete practice seasons recorded",
+        "duration": 21.0,
+        "requests": 21,
+        "request_seconds": 21.0,
+        "request_counts": {
+          "GET /cases/hurricane.json": 1,
+          "GET /competitions/time": 7,
+          "GET /orders/open": 3,
+          "GET /positions": 3,
+          "GET /trades": 2,
+          "GET /orders": 4,
+          "GET /symbols": 1
+        },
+        "closing_orders": 0,
+        "min_book_age": null,
+        "max_book_age": null,
+        "first_closing_order_after": null,
+        "observed_cleanup_fills": 0,
+        "last_observed_cleanup_fill_after": null,
+        "positions_after_receipt": {
+          "PORT": -10,
+          "AQUA": -25,
+          "GRID": -20,
+          "FERRY": -80,
+          "RECON": 25,
+          "GEN": 29,
+          "HAVEN": -12,
+          "REIN": -20,
+          "ARCH": -5
+        },
+        "orders_after_receipt": []
+      },
+      "candidate": {
+        "pnl": 1414.1800000000003,
+        "cleanup": "settled",
+        "trial": "completed",
+        "stop": "requested complete practice seasons recorded",
+        "duration": 21.0,
+        "requests": 21,
+        "request_seconds": 21.0,
+        "request_counts": {
+          "GET /cases/hurricane.json": 1,
+          "GET /competitions/time": 7,
+          "GET /orders/open": 3,
+          "GET /positions": 3,
+          "GET /trades": 2,
+          "GET /orders": 4,
+          "GET /symbols": 1
+        },
+        "closing_orders": 0,
+        "min_book_age": null,
+        "max_book_age": null,
+        "first_closing_order_after": null,
+        "observed_cleanup_fills": 0,
+        "last_observed_cleanup_fill_after": null,
+        "positions_after_receipt": {
+          "PORT": -10,
+          "AQUA": -25,
+          "GRID": -20,
+          "FERRY": -80,
+          "RECON": 25,
+          "GEN": 29,
+          "HAVEN": -12,
+          "REIN": -20,
+          "ARCH": -5
+        },
+        "orders_after_receipt": []
+      },
+      "pnl_delta": 0.0,
+      "duration_delta": 0.0
+    },
+    {
+      "setting": [
+        242,
+        1.0,
+        1.0,
+        true
+      ],
+      "baseline": {
+        "pnl": 1260.1000000000004,
+        "cleanup": "settled",
+        "trial": "completed",
+        "stop": "requested complete practice seasons recorded",
+        "duration": 21.0,
+        "requests": 21,
+        "request_seconds": 21.0,
+        "request_counts": {
+          "GET /cases/hurricane.json": 1,
+          "GET /competitions/time": 7,
+          "GET /orders/open": 3,
+          "GET /positions": 3,
+          "GET /trades": 2,
+          "GET /orders": 4,
+          "GET /symbols": 1
+        },
+        "closing_orders": 0,
+        "min_book_age": null,
+        "max_book_age": null,
+        "first_closing_order_after": null,
+        "observed_cleanup_fills": 0,
+        "last_observed_cleanup_fill_after": null,
+        "positions_after_receipt": {
+          "PORT": -10,
+          "GRID": -20,
+          "FERRY": -80,
+          "GEN": 29,
+          "HAVEN": -12,
+          "REIN": -20,
+          "ARCH": -5
+        },
+        "orders_after_receipt": []
+      },
+      "candidate": {
+        "pnl": 1260.1000000000004,
+        "cleanup": "settled",
+        "trial": "completed",
+        "stop": "requested complete practice seasons recorded",
+        "duration": 21.0,
+        "requests": 21,
+        "request_seconds": 21.0,
+        "request_counts": {
+          "GET /cases/hurricane.json": 1,
+          "GET /competitions/time": 7,
+          "GET /orders/open": 3,
+          "GET /positions": 3,
+          "GET /trades": 2,
+          "GET /orders": 4,
+          "GET /symbols": 1
+        },
+        "closing_orders": 0,
+        "min_book_age": null,
+        "max_book_age": null,
+        "first_closing_order_after": null,
+        "observed_cleanup_fills": 0,
+        "last_observed_cleanup_fill_after": null,
+        "positions_after_receipt": {
+          "PORT": -10,
+          "GRID": -20,
+          "FERRY": -80,
+          "GEN": 29,
+          "HAVEN": -12,
+          "REIN": -20,
+          "ARCH": -5
+        },
+        "orders_after_receipt": []
+      },
+      "pnl_delta": 0.0,
+      "duration_delta": 0.0
+    },
+    {
+      "setting": [
+        242,
+        1.0,
+        0.5,
+        false
+      ],
+      "baseline": {
+        "pnl": 1479.880000000001,
+        "cleanup": "settled",
+        "trial": "completed",
+        "stop": "requested complete practice seasons recorded",
+        "duration": 21.0,
+        "requests": 21,
+        "request_seconds": 21.0,
+        "request_counts": {
+          "GET /cases/hurricane.json": 1,
+          "GET /competitions/time": 7,
+          "GET /orders/open": 3,
+          "GET /positions": 3,
+          "GET /trades": 2,
+          "GET /orders": 4,
+          "GET /symbols": 1
+        },
+        "closing_orders": 0,
+        "min_book_age": null,
+        "max_book_age": null,
+        "first_closing_order_after": null,
+        "observed_cleanup_fills": 0,
+        "last_observed_cleanup_fill_after": null,
+        "positions_after_receipt": {
+          "PORT": -20,
+          "GRID": -20,
+          "FERRY": -80,
+          "RECON": 25,
+          "GEN": 29,
+          "HAVEN": -11,
+          "REIN": -10,
+          "ARCH": -5
+        },
+        "orders_after_receipt": []
+      },
+      "candidate": {
+        "pnl": 1479.880000000001,
+        "cleanup": "settled",
+        "trial": "completed",
+        "stop": "requested complete practice seasons recorded",
+        "duration": 21.0,
+        "requests": 21,
+        "request_seconds": 21.0,
+        "request_counts": {
+          "GET /cases/hurricane.json": 1,
+          "GET /competitions/time": 7,
+          "GET /orders/open": 3,
+          "GET /positions": 3,
+          "GET /trades": 2,
+          "GET /orders": 4,
+          "GET /symbols": 1
+        },
+        "closing_orders": 0,
+        "min_book_age": null,
+        "max_book_age": null,
+        "first_closing_order_after": null,
+        "observed_cleanup_fills": 0,
+        "last_observed_cleanup_fill_after": null,
+        "positions_after_receipt": {
+          "PORT": -20,
+          "GRID": -20,
+          "FERRY": -80,
+          "RECON": 25,
+          "GEN": 29,
+          "HAVEN": -11,
+          "REIN": -10,
+          "ARCH": -5
+        },
+        "orders_after_receipt": []
+      },
+      "pnl_delta": 0.0,
+      "duration_delta": 0.0
+    },
+    {
+      "setting": [
+        242,
+        1.0,
+        0.5,
+        true
+      ],
+      "baseline": {
+        "pnl": 1249.2799999999988,
+        "cleanup": "settled",
+        "trial": "completed",
+        "stop": "requested complete practice seasons recorded",
+        "duration": 21.0,
+        "requests": 21,
+        "request_seconds": 21.0,
+        "request_counts": {
+          "GET /cases/hurricane.json": 1,
+          "GET /competitions/time": 7,
+          "GET /orders/open": 3,
+          "GET /positions": 3,
+          "GET /trades": 2,
+          "GET /orders": 4,
+          "GET /symbols": 1
+        },
+        "closing_orders": 0,
+        "min_book_age": null,
+        "max_book_age": null,
+        "first_closing_order_after": null,
+        "observed_cleanup_fills": 0,
+        "last_observed_cleanup_fill_after": null,
+        "positions_after_receipt": {
+          "PORT": -10,
+          "GRID": -20,
+          "FERRY": -80,
+          "GEN": 29,
+          "HAVEN": -12,
+          "REIN": -20,
+          "ARCH": -5
+        },
+        "orders_after_receipt": []
+      },
+      "candidate": {
+        "pnl": 1249.2799999999988,
+        "cleanup": "settled",
+        "trial": "completed",
+        "stop": "requested complete practice seasons recorded",
+        "duration": 21.0,
+        "requests": 21,
+        "request_seconds": 21.0,
+        "request_counts": {
+          "GET /cases/hurricane.json": 1,
+          "GET /competitions/time": 7,
+          "GET /orders/open": 3,
+          "GET /positions": 3,
+          "GET /trades": 2,
+          "GET /orders": 4,
+          "GET /symbols": 1
+        },
+        "closing_orders": 0,
+        "min_book_age": null,
+        "max_book_age": null,
+        "first_closing_order_after": null,
+        "observed_cleanup_fills": 0,
+        "last_observed_cleanup_fill_after": null,
+        "positions_after_receipt": {
+          "PORT": -10,
+          "GRID": -20,
+          "FERRY": -80,
+          "GEN": 29,
+          "HAVEN": -12,
+          "REIN": -20,
+          "ARCH": -5
+        },
+        "orders_after_receipt": []
+      },
+      "pnl_delta": 0.0,
+      "duration_delta": 0.0
+    },
+    {
+      "setting": [
+        243,
+        0.0,
+        1.0,
+        false
+      ],
+      "baseline": {
+        "pnl": 533.3100000000045,
+        "cleanup": "settled",
+        "trial": "completed",
+        "stop": "requested complete practice seasons recorded",
+        "duration": 0.0,
+        "requests": 21,
+        "request_seconds": 0.0,
+        "request_counts": {
+          "GET /cases/hurricane.json": 1,
+          "GET /competitions/time": 7,
+          "GET /orders/open": 3,
+          "GET /positions": 3,
+          "GET /trades": 2,
+          "GET /orders": 4,
+          "GET /symbols": 1
+        },
+        "closing_orders": 0,
+        "min_book_age": null,
+        "max_book_age": null,
+        "first_closing_order_after": null,
+        "observed_cleanup_fills": 0,
+        "last_observed_cleanup_fill_after": null,
+        "positions_after_receipt": {
+          "PORT": -20,
+          "ISLE": -15,
+          "AQUA": -25,
+          "GRID": -40,
+          "FERRY": -80,
+          "RECON": 50,
+          "MAT": 70,
+          "GEN": 31,
+          "ARCH": -5
+        },
+        "orders_after_receipt": []
+      },
+      "candidate": {
+        "pnl": 533.3100000000045,
+        "cleanup": "settled",
+        "trial": "completed",
+        "stop": "requested complete practice seasons recorded",
+        "duration": 0.0,
+        "requests": 21,
+        "request_seconds": 0.0,
+        "request_counts": {
+          "GET /cases/hurricane.json": 1,
+          "GET /competitions/time": 7,
+          "GET /orders/open": 3,
+          "GET /positions": 3,
+          "GET /trades": 2,
+          "GET /orders": 4,
+          "GET /symbols": 1
+        },
+        "closing_orders": 0,
+        "min_book_age": null,
+        "max_book_age": null,
+        "first_closing_order_after": null,
+        "observed_cleanup_fills": 0,
+        "last_observed_cleanup_fill_after": null,
+        "positions_after_receipt": {
+          "PORT": -20,
+          "ISLE": -15,
+          "AQUA": -25,
+          "GRID": -40,
+          "FERRY": -80,
+          "RECON": 50,
+          "MAT": 70,
+          "GEN": 31,
+          "ARCH": -5
+        },
+        "orders_after_receipt": []
+      },
+      "pnl_delta": 0.0,
+      "duration_delta": 0.0
+    },
+    {
+      "setting": [
+        243,
+        0.0,
+        1.0,
+        true
+      ],
+      "baseline": {
+        "pnl": 597.1500000000019,
+        "cleanup": "settled",
+        "trial": "completed",
+        "stop": "requested complete practice seasons recorded",
+        "duration": 0.0,
+        "requests": 21,
+        "request_seconds": 0.0,
+        "request_counts": {
+          "GET /cases/hurricane.json": 1,
+          "GET /competitions/time": 7,
+          "GET /orders/open": 3,
+          "GET /positions": 3,
+          "GET /trades": 2,
+          "GET /orders": 4,
+          "GET /symbols": 1
+        },
+        "closing_orders": 0,
+        "min_book_age": null,
+        "max_book_age": null,
+        "first_closing_order_after": null,
+        "observed_cleanup_fills": 0,
+        "last_observed_cleanup_fill_after": null,
+        "positions_after_receipt": {
+          "PORT": -20,
+          "ISLE": -15,
+          "AQUA": -25,
+          "GRID": -40,
+          "FERRY": -80,
+          "RECON": 50,
+          "MAT": 70,
+          "GEN": 31,
+          "ARCH": -5
+        },
+        "orders_after_receipt": []
+      },
+      "candidate": {
+        "pnl": 597.1500000000019,
+        "cleanup": "settled",
+        "trial": "completed",
+        "stop": "requested complete practice seasons recorded",
+        "duration": 0.0,
+        "requests": 21,
+        "request_seconds": 0.0,
+        "request_counts": {
+          "GET /cases/hurricane.json": 1,
+          "GET /competitions/time": 7,
+          "GET /orders/open": 3,
+          "GET /positions": 3,
+          "GET /trades": 2,
+          "GET /orders": 4,
+          "GET /symbols": 1
+        },
+        "closing_orders": 0,
+        "min_book_age": null,
+        "max_book_age": null,
+        "first_closing_order_after": null,
+        "observed_cleanup_fills": 0,
+        "last_observed_cleanup_fill_after": null,
+        "positions_after_receipt": {
+          "PORT": -20,
+          "ISLE": -15,
+          "AQUA": -25,
+          "GRID": -40,
+          "FERRY": -80,
+          "RECON": 50,
+          "MAT": 70,
+          "GEN": 31,
+          "ARCH": -5
+        },
+        "orders_after_receipt": []
+      },
+      "pnl_delta": 0.0,
+      "duration_delta": 0.0
+    },
+    {
+      "setting": [
+        243,
+        0.0,
+        0.5,
+        false
+      ],
+      "baseline": {
+        "pnl": 409.39000000000215,
+        "cleanup": "settled",
+        "trial": "completed",
+        "stop": "requested complete practice seasons recorded",
+        "duration": 0.0,
+        "requests": 21,
+        "request_seconds": 0.0,
+        "request_counts": {
+          "GET /cases/hurricane.json": 1,
+          "GET /competitions/time": 7,
+          "GET /orders/open": 3,
+          "GET /positions": 3,
+          "GET /trades": 2,
+          "GET /orders": 4,
+          "GET /symbols": 1
+        },
+        "closing_orders": 0,
+        "min_book_age": null,
+        "max_book_age": null,
+        "first_closing_order_after": null,
+        "observed_cleanup_fills": 0,
+        "last_observed_cleanup_fill_after": null,
+        "positions_after_receipt": {
+          "PORT": -20,
+          "ISLE": -15,
+          "AQUA": -25,
+          "GRID": -40,
+          "FERRY": -80,
+          "RECON": 50,
+          "MAT": 70,
+          "GEN": 31,
+          "ARCH": -5
+        },
+        "orders_after_receipt": []
+      },
+      "candidate": {
+        "pnl": 409.39000000000215,
+        "cleanup": "settled",
+        "trial": "completed",
+        "stop": "requested complete practice seasons recorded",
+        "duration": 0.0,
+        "requests": 21,
+        "request_seconds": 0.0,
+        "request_counts": {
+          "GET /cases/hurricane.json": 1,
+          "GET /competitions/time": 7,
+          "GET /orders/open": 3,
+          "GET /positions": 3,
+          "GET /trades": 2,
+          "GET /orders": 4,
+          "GET /symbols": 1
+        },
+        "closing_orders": 0,
+        "min_book_age": null,
+        "max_book_age": null,
+        "first_closing_order_after": null,
+        "observed_cleanup_fills": 0,
+        "last_observed_cleanup_fill_after": null,
+        "positions_after_receipt": {
+          "PORT": -20,
+          "ISLE": -15,
+          "AQUA": -25,
+          "GRID": -40,
+          "FERRY": -80,
+          "RECON": 50,
+          "MAT": 70,
+          "GEN": 31,
+          "ARCH": -5
+        },
+        "orders_after_receipt": []
+      },
+      "pnl_delta": 0.0,
+      "duration_delta": 0.0
+    },
+    {
+      "setting": [
+        243,
+        0.0,
+        0.5,
+        true
+      ],
+      "baseline": {
+        "pnl": 468.1000000000031,
+        "cleanup": "settled",
+        "trial": "completed",
+        "stop": "requested complete practice seasons recorded",
+        "duration": 0.0,
+        "requests": 21,
+        "request_seconds": 0.0,
+        "request_counts": {
+          "GET /cases/hurricane.json": 1,
+          "GET /competitions/time": 7,
+          "GET /orders/open": 3,
+          "GET /positions": 3,
+          "GET /trades": 2,
+          "GET /orders": 4,
+          "GET /symbols": 1
+        },
+        "closing_orders": 0,
+        "min_book_age": null,
+        "max_book_age": null,
+        "first_closing_order_after": null,
+        "observed_cleanup_fills": 0,
+        "last_observed_cleanup_fill_after": null,
+        "positions_after_receipt": {
+          "PORT": -20,
+          "ISLE": -15,
+          "AQUA": -25,
+          "GRID": -40,
+          "FERRY": -80,
+          "RECON": 50,
+          "MAT": 70,
+          "GEN": 31,
+          "ARCH": -5
+        },
+        "orders_after_receipt": []
+      },
+      "candidate": {
+        "pnl": 468.1000000000031,
+        "cleanup": "settled",
+        "trial": "completed",
+        "stop": "requested complete practice seasons recorded",
+        "duration": 0.0,
+        "requests": 21,
+        "request_seconds": 0.0,
+        "request_counts": {
+          "GET /cases/hurricane.json": 1,
+          "GET /competitions/time": 7,
+          "GET /orders/open": 3,
+          "GET /positions": 3,
+          "GET /trades": 2,
+          "GET /orders": 4,
+          "GET /symbols": 1
+        },
+        "closing_orders": 0,
+        "min_book_age": null,
+        "max_book_age": null,
+        "first_closing_order_after": null,
+        "observed_cleanup_fills": 0,
+        "last_observed_cleanup_fill_after": null,
+        "positions_after_receipt": {
+          "PORT": -20,
+          "ISLE": -15,
+          "AQUA": -25,
+          "GRID": -40,
+          "FERRY": -80,
+          "RECON": 50,
+          "MAT": 70,
+          "GEN": 31,
+          "ARCH": -5
+        },
+        "orders_after_receipt": []
+      },
+      "pnl_delta": 0.0,
+      "duration_delta": 0.0
+    },
+    {
+      "setting": [
+        243,
+        0.05,
+        1.0,
+        false
+      ],
+      "baseline": {
+        "pnl": 207.4499999999971,
+        "cleanup": "settled",
+        "trial": "completed",
+        "stop": "requested complete practice seasons recorded",
+        "duration": 1.0500000000038199,
+        "requests": 21,
+        "request_seconds": 1.0500000000038199,
+        "request_counts": {
+          "GET /cases/hurricane.json": 1,
+          "GET /competitions/time": 7,
+          "GET /orders/open": 3,
+          "GET /positions": 3,
+          "GET /trades": 2,
+          "GET /orders": 4,
+          "GET /symbols": 1
+        },
+        "closing_orders": 0,
+        "min_book_age": null,
+        "max_book_age": null,
+        "first_closing_order_after": null,
+        "observed_cleanup_fills": 0,
+        "last_observed_cleanup_fill_after": null,
+        "positions_after_receipt": {
+          "PORT": -20,
+          "ISLE": -15,
+          "AQUA": -25,
+          "GRID": -40,
+          "FERRY": -80,
+          "RECON": 50,
+          "MAT": 70,
+          "GEN": 31,
+          "ARCH": -5
+        },
+        "orders_after_receipt": []
+      },
+      "candidate": {
+        "pnl": 207.4499999999971,
+        "cleanup": "settled",
+        "trial": "completed",
+        "stop": "requested complete practice seasons recorded",
+        "duration": 1.0500000000038199,
+        "requests": 21,
+        "request_seconds": 1.0500000000038199,
+        "request_counts": {
+          "GET /cases/hurricane.json": 1,
+          "GET /competitions/time": 7,
+          "GET /orders/open": 3,
+          "GET /positions": 3,
+          "GET /trades": 2,
+          "GET /orders": 4,
+          "GET /symbols": 1
+        },
+        "closing_orders": 0,
+        "min_book_age": null,
+        "max_book_age": null,
+        "first_closing_order_after": null,
+        "observed_cleanup_fills": 0,
+        "last_observed_cleanup_fill_after": null,
+        "positions_after_receipt": {
+          "PORT": -20,
+          "ISLE": -15,
+          "AQUA": -25,
+          "GRID": -40,
+          "FERRY": -80,
+          "RECON": 50,
+          "MAT": 70,
+          "GEN": 31,
+          "ARCH": -5
+        },
+        "orders_after_receipt": []
+      },
+      "pnl_delta": 0.0,
+      "duration_delta": 0.0
+    },
+    {
+      "setting": [
+        243,
+        0.05,
+        1.0,
+        true
+      ],
+      "baseline": {
+        "pnl": 260.34999999999945,
+        "cleanup": "settled",
+        "trial": "completed",
+        "stop": "requested complete practice seasons recorded",
+        "duration": 1.0500000000038199,
+        "requests": 21,
+        "request_seconds": 1.0500000000038199,
+        "request_counts": {
+          "GET /cases/hurricane.json": 1,
+          "GET /competitions/time": 7,
+          "GET /orders/open": 3,
+          "GET /positions": 3,
+          "GET /trades": 2,
+          "GET /orders": 4,
+          "GET /symbols": 1
+        },
+        "closing_orders": 0,
+        "min_book_age": null,
+        "max_book_age": null,
+        "first_closing_order_after": null,
+        "observed_cleanup_fills": 0,
+        "last_observed_cleanup_fill_after": null,
+        "positions_after_receipt": {
+          "PORT": -20,
+          "ISLE": -15,
+          "AQUA": -25,
+          "GRID": -40,
+          "FERRY": -80,
+          "RECON": 50,
+          "MAT": 70,
+          "GEN": 31,
+          "ARCH": -5
+        },
+        "orders_after_receipt": []
+      },
+      "candidate": {
+        "pnl": 260.34999999999945,
+        "cleanup": "settled",
+        "trial": "completed",
+        "stop": "requested complete practice seasons recorded",
+        "duration": 1.0500000000038199,
+        "requests": 21,
+        "request_seconds": 1.0500000000038199,
+        "request_counts": {
+          "GET /cases/hurricane.json": 1,
+          "GET /competitions/time": 7,
+          "GET /orders/open": 3,
+          "GET /positions": 3,
+          "GET /trades": 2,
+          "GET /orders": 4,
+          "GET /symbols": 1
+        },
+        "closing_orders": 0,
+        "min_book_age": null,
+        "max_book_age": null,
+        "first_closing_order_after": null,
+        "observed_cleanup_fills": 0,
+        "last_observed_cleanup_fill_after": null,
+        "positions_after_receipt": {
+          "PORT": -20,
+          "ISLE": -15,
+          "AQUA": -25,
+          "GRID": -40,
+          "FERRY": -80,
+          "RECON": 50,
+          "MAT": 70,
+          "GEN": 31,
+          "ARCH": -5
+        },
+        "orders_after_receipt": []
+      },
+      "pnl_delta": 0.0,
+      "duration_delta": 0.0
+    },
+    {
+      "setting": [
+        243,
+        0.05,
+        0.5,
+        false
+      ],
+      "baseline": {
+        "pnl": 116.81999999999925,
+        "cleanup": "settled",
+        "trial": "completed",
+        "stop": "requested complete practice seasons recorded",
+        "duration": 1.0500000000038199,
+        "requests": 21,
+        "request_seconds": 1.0500000000038199,
+        "request_counts": {
+          "GET /cases/hurricane.json": 1,
+          "GET /competitions/time": 7,
+          "GET /orders/open": 3,
+          "GET /positions": 3,
+          "GET /trades": 2,
+          "GET /orders": 4,
+          "GET /symbols": 1
+        },
+        "closing_orders": 0,
+        "min_book_age": null,
+        "max_book_age": null,
+        "first_closing_order_after": null,
+        "observed_cleanup_fills": 0,
+        "last_observed_cleanup_fill_after": null,
+        "positions_after_receipt": {
+          "PORT": -20,
+          "ISLE": -15,
+          "AQUA": -25,
+          "GRID": -40,
+          "FERRY": -80,
+          "RECON": 50,
+          "MAT": 70,
+          "GEN": 30,
+          "ARCH": -5
+        },
+        "orders_after_receipt": []
+      },
+      "candidate": {
+        "pnl": 116.81999999999925,
+        "cleanup": "settled",
+        "trial": "completed",
+        "stop": "requested complete practice seasons recorded",
+        "duration": 1.0500000000038199,
+        "requests": 21,
+        "request_seconds": 1.0500000000038199,
+        "request_counts": {
+          "GET /cases/hurricane.json": 1,
+          "GET /competitions/time": 7,
+          "GET /orders/open": 3,
+          "GET /positions": 3,
+          "GET /trades": 2,
+          "GET /orders": 4,
+          "GET /symbols": 1
+        },
+        "closing_orders": 0,
+        "min_book_age": null,
+        "max_book_age": null,
+        "first_closing_order_after": null,
+        "observed_cleanup_fills": 0,
+        "last_observed_cleanup_fill_after": null,
+        "positions_after_receipt": {
+          "PORT": -20,
+          "ISLE": -15,
+          "AQUA": -25,
+          "GRID": -40,
+          "FERRY": -80,
+          "RECON": 50,
+          "MAT": 70,
+          "GEN": 30,
+          "ARCH": -5
+        },
+        "orders_after_receipt": []
+      },
+      "pnl_delta": 0.0,
+      "duration_delta": 0.0
+    },
+    {
+      "setting": [
+        243,
+        0.05,
+        0.5,
+        true
+      ],
+      "baseline": {
+        "pnl": 168.21999999999798,
+        "cleanup": "settled",
+        "trial": "completed",
+        "stop": "requested complete practice seasons recorded",
+        "duration": 1.0500000000038199,
+        "requests": 21,
+        "request_seconds": 1.0500000000038199,
+        "request_counts": {
+          "GET /cases/hurricane.json": 1,
+          "GET /competitions/time": 7,
+          "GET /orders/open": 3,
+          "GET /positions": 3,
+          "GET /trades": 2,
+          "GET /orders": 4,
+          "GET /symbols": 1
+        },
+        "closing_orders": 0,
+        "min_book_age": null,
+        "max_book_age": null,
+        "first_closing_order_after": null,
+        "observed_cleanup_fills": 0,
+        "last_observed_cleanup_fill_after": null,
+        "positions_after_receipt": {
+          "PORT": -20,
+          "ISLE": -15,
+          "AQUA": -25,
+          "GRID": -40,
+          "FERRY": -80,
+          "RECON": 50,
+          "MAT": 70,
+          "GEN": 30,
+          "ARCH": -5
+        },
+        "orders_after_receipt": []
+      },
+      "candidate": {
+        "pnl": 168.21999999999798,
+        "cleanup": "settled",
+        "trial": "completed",
+        "stop": "requested complete practice seasons recorded",
+        "duration": 1.0500000000038199,
+        "requests": 21,
+        "request_seconds": 1.0500000000038199,
+        "request_counts": {
+          "GET /cases/hurricane.json": 1,
+          "GET /competitions/time": 7,
+          "GET /orders/open": 3,
+          "GET /positions": 3,
+          "GET /trades": 2,
+          "GET /orders": 4,
+          "GET /symbols": 1
+        },
+        "closing_orders": 0,
+        "min_book_age": null,
+        "max_book_age": null,
+        "first_closing_order_after": null,
+        "observed_cleanup_fills": 0,
+        "last_observed_cleanup_fill_after": null,
+        "positions_after_receipt": {
+          "PORT": -20,
+          "ISLE": -15,
+          "AQUA": -25,
+          "GRID": -40,
+          "FERRY": -80,
+          "RECON": 50,
+          "MAT": 70,
+          "GEN": 30,
+          "ARCH": -5
+        },
+        "orders_after_receipt": []
+      },
+      "pnl_delta": 0.0,
+      "duration_delta": 0.0
+    },
+    {
+      "setting": [
+        243,
+        0.25,
+        1.0,
+        false
+      ],
+      "baseline": {
+        "pnl": 286.35999999999945,
+        "cleanup": "settled",
+        "trial": "completed",
+        "stop": "requested complete practice seasons recorded",
+        "duration": 5.25,
+        "requests": 21,
+        "request_seconds": 5.25,
+        "request_counts": {
+          "GET /cases/hurricane.json": 1,
+          "GET /competitions/time": 7,
+          "GET /orders/open": 3,
+          "GET /positions": 3,
+          "GET /trades": 2,
+          "GET /orders": 4,
+          "GET /symbols": 1
+        },
+        "closing_orders": 0,
+        "min_book_age": null,
+        "max_book_age": null,
+        "first_closing_order_after": null,
+        "observed_cleanup_fills": 0,
+        "last_observed_cleanup_fill_after": null,
+        "positions_after_receipt": {
+          "PORT": -20,
+          "ISLE": -15,
+          "AQUA": -25,
+          "GRID": -40,
+          "FERRY": -40,
+          "RECON": 50,
+          "MAT": 70,
+          "REBLD": 5
+        },
+        "orders_after_receipt": []
+      },
+      "candidate": {
+        "pnl": 286.35999999999945,
+        "cleanup": "settled",
+        "trial": "completed",
+        "stop": "requested complete practice seasons recorded",
+        "duration": 5.25,
+        "requests": 21,
+        "request_seconds": 5.25,
+        "request_counts": {
+          "GET /cases/hurricane.json": 1,
+          "GET /competitions/time": 7,
+          "GET /orders/open": 3,
+          "GET /positions": 3,
+          "GET /trades": 2,
+          "GET /orders": 4,
+          "GET /symbols": 1
+        },
+        "closing_orders": 0,
+        "min_book_age": null,
+        "max_book_age": null,
+        "first_closing_order_after": null,
+        "observed_cleanup_fills": 0,
+        "last_observed_cleanup_fill_after": null,
+        "positions_after_receipt": {
+          "PORT": -20,
+          "ISLE": -15,
+          "AQUA": -25,
+          "GRID": -40,
+          "FERRY": -40,
+          "RECON": 50,
+          "MAT": 70,
+          "REBLD": 5
+        },
+        "orders_after_receipt": []
+      },
+      "pnl_delta": 0.0,
+      "duration_delta": 0.0
+    },
+    {
+      "setting": [
+        243,
+        0.25,
+        1.0,
+        true
+      ],
+      "baseline": {
+        "pnl": 286.35999999999945,
+        "cleanup": "settled",
+        "trial": "completed",
+        "stop": "requested complete practice seasons recorded",
+        "duration": 5.25,
+        "requests": 21,
+        "request_seconds": 5.25,
+        "request_counts": {
+          "GET /cases/hurricane.json": 1,
+          "GET /competitions/time": 7,
+          "GET /orders/open": 3,
+          "GET /positions": 3,
+          "GET /trades": 2,
+          "GET /orders": 4,
+          "GET /symbols": 1
+        },
+        "closing_orders": 0,
+        "min_book_age": null,
+        "max_book_age": null,
+        "first_closing_order_after": null,
+        "observed_cleanup_fills": 0,
+        "last_observed_cleanup_fill_after": null,
+        "positions_after_receipt": {
+          "PORT": -20,
+          "ISLE": -15,
+          "AQUA": -25,
+          "GRID": -40,
+          "FERRY": -40,
+          "RECON": 50,
+          "MAT": 70,
+          "REBLD": 5
+        },
+        "orders_after_receipt": []
+      },
+      "candidate": {
+        "pnl": 286.35999999999945,
+        "cleanup": "settled",
+        "trial": "completed",
+        "stop": "requested complete practice seasons recorded",
+        "duration": 5.25,
+        "requests": 21,
+        "request_seconds": 5.25,
+        "request_counts": {
+          "GET /cases/hurricane.json": 1,
+          "GET /competitions/time": 7,
+          "GET /orders/open": 3,
+          "GET /positions": 3,
+          "GET /trades": 2,
+          "GET /orders": 4,
+          "GET /symbols": 1
+        },
+        "closing_orders": 0,
+        "min_book_age": null,
+        "max_book_age": null,
+        "first_closing_order_after": null,
+        "observed_cleanup_fills": 0,
+        "last_observed_cleanup_fill_after": null,
+        "positions_after_receipt": {
+          "PORT": -20,
+          "ISLE": -15,
+          "AQUA": -25,
+          "GRID": -40,
+          "FERRY": -40,
+          "RECON": 50,
+          "MAT": 70,
+          "REBLD": 5
+        },
+        "orders_after_receipt": []
+      },
+      "pnl_delta": 0.0,
+      "duration_delta": 0.0
+    },
+    {
+      "setting": [
+        243,
+        0.25,
+        0.5,
+        false
+      ],
+      "baseline": {
+        "pnl": 215.1399999999988,
+        "cleanup": "settled",
+        "trial": "completed",
+        "stop": "requested complete practice seasons recorded",
+        "duration": 5.25,
+        "requests": 21,
+        "request_seconds": 5.25,
+        "request_counts": {
+          "GET /cases/hurricane.json": 1,
+          "GET /competitions/time": 7,
+          "GET /orders/open": 3,
+          "GET /positions": 3,
+          "GET /trades": 2,
+          "GET /orders": 4,
+          "GET /symbols": 1
+        },
+        "closing_orders": 0,
+        "min_book_age": null,
+        "max_book_age": null,
+        "first_closing_order_after": null,
+        "observed_cleanup_fills": 0,
+        "last_observed_cleanup_fill_after": null,
+        "positions_after_receipt": {
+          "PORT": -20,
+          "ISLE": -15,
+          "AQUA": -25,
+          "GRID": -40,
+          "FERRY": -40,
+          "RECON": 50,
+          "MAT": 70,
+          "REBLD": 5
+        },
+        "orders_after_receipt": []
+      },
+      "candidate": {
+        "pnl": 215.1399999999988,
+        "cleanup": "settled",
+        "trial": "completed",
+        "stop": "requested complete practice seasons recorded",
+        "duration": 5.25,
+        "requests": 21,
+        "request_seconds": 5.25,
+        "request_counts": {
+          "GET /cases/hurricane.json": 1,
+          "GET /competitions/time": 7,
+          "GET /orders/open": 3,
+          "GET /positions": 3,
+          "GET /trades": 2,
+          "GET /orders": 4,
+          "GET /symbols": 1
+        },
+        "closing_orders": 0,
+        "min_book_age": null,
+        "max_book_age": null,
+        "first_closing_order_after": null,
+        "observed_cleanup_fills": 0,
+        "last_observed_cleanup_fill_after": null,
+        "positions_after_receipt": {
+          "PORT": -20,
+          "ISLE": -15,
+          "AQUA": -25,
+          "GRID": -40,
+          "FERRY": -40,
+          "RECON": 50,
+          "MAT": 70,
+          "REBLD": 5
+        },
+        "orders_after_receipt": []
+      },
+      "pnl_delta": 0.0,
+      "duration_delta": 0.0
+    },
+    {
+      "setting": [
+        243,
+        0.25,
+        0.5,
+        true
+      ],
+      "baseline": {
+        "pnl": 215.1399999999988,
+        "cleanup": "settled",
+        "trial": "completed",
+        "stop": "requested complete practice seasons recorded",
+        "duration": 5.25,
+        "requests": 21,
+        "request_seconds": 5.25,
+        "request_counts": {
+          "GET /cases/hurricane.json": 1,
+          "GET /competitions/time": 7,
+          "GET /orders/open": 3,
+          "GET /positions": 3,
+          "GET /trades": 2,
+          "GET /orders": 4,
+          "GET /symbols": 1
+        },
+        "closing_orders": 0,
+        "min_book_age": null,
+        "max_book_age": null,
+        "first_closing_order_after": null,
+        "observed_cleanup_fills": 0,
+        "last_observed_cleanup_fill_after": null,
+        "positions_after_receipt": {
+          "PORT": -20,
+          "ISLE": -15,
+          "AQUA": -25,
+          "GRID": -40,
+          "FERRY": -40,
+          "RECON": 50,
+          "MAT": 70,
+          "REBLD": 5
+        },
+        "orders_after_receipt": []
+      },
+      "candidate": {
+        "pnl": 215.1399999999988,
+        "cleanup": "settled",
+        "trial": "completed",
+        "stop": "requested complete practice seasons recorded",
+        "duration": 5.25,
+        "requests": 21,
+        "request_seconds": 5.25,
+        "request_counts": {
+          "GET /cases/hurricane.json": 1,
+          "GET /competitions/time": 7,
+          "GET /orders/open": 3,
+          "GET /positions": 3,
+          "GET /trades": 2,
+          "GET /orders": 4,
+          "GET /symbols": 1
+        },
+        "closing_orders": 0,
+        "min_book_age": null,
+        "max_book_age": null,
+        "first_closing_order_after": null,
+        "observed_cleanup_fills": 0,
+        "last_observed_cleanup_fill_after": null,
+        "positions_after_receipt": {
+          "PORT": -20,
+          "ISLE": -15,
+          "AQUA": -25,
+          "GRID": -40,
+          "FERRY": -40,
+          "RECON": 50,
+          "MAT": 70,
+          "REBLD": 5
+        },
+        "orders_after_receipt": []
+      },
+      "pnl_delta": 0.0,
+      "duration_delta": 0.0
+    },
+    {
+      "setting": [
+        243,
+        1.0,
+        1.0,
+        false
+      ],
+      "baseline": {
+        "pnl": -226.31000000000085,
+        "cleanup": "settled",
+        "trial": "completed",
+        "stop": "requested complete practice seasons recorded",
+        "duration": 21.0,
+        "requests": 21,
+        "request_seconds": 21.0,
+        "request_counts": {
+          "GET /cases/hurricane.json": 1,
+          "GET /competitions/time": 7,
+          "GET /orders/open": 3,
+          "GET /positions": 3,
+          "GET /trades": 2,
+          "GET /orders": 4,
+          "GET /symbols": 1
+        },
+        "closing_orders": 0,
+        "min_book_age": null,
+        "max_book_age": null,
+        "first_closing_order_after": null,
+        "observed_cleanup_fills": 0,
+        "last_observed_cleanup_fill_after": null,
+        "positions_after_receipt": {
+          "PORT": -20,
+          "ISLE": -15,
+          "AQUA": -25,
+          "GRID": -40,
+          "FERRY": -80,
+          "RECON": 50,
+          "MAT": 70
+        },
+        "orders_after_receipt": []
+      },
+      "candidate": {
+        "pnl": -226.31000000000085,
+        "cleanup": "settled",
+        "trial": "completed",
+        "stop": "requested complete practice seasons recorded",
+        "duration": 21.0,
+        "requests": 21,
+        "request_seconds": 21.0,
+        "request_counts": {
+          "GET /cases/hurricane.json": 1,
+          "GET /competitions/time": 7,
+          "GET /orders/open": 3,
+          "GET /positions": 3,
+          "GET /trades": 2,
+          "GET /orders": 4,
+          "GET /symbols": 1
+        },
+        "closing_orders": 0,
+        "min_book_age": null,
+        "max_book_age": null,
+        "first_closing_order_after": null,
+        "observed_cleanup_fills": 0,
+        "last_observed_cleanup_fill_after": null,
+        "positions_after_receipt": {
+          "PORT": -20,
+          "ISLE": -15,
+          "AQUA": -25,
+          "GRID": -40,
+          "FERRY": -80,
+          "RECON": 50,
+          "MAT": 70
+        },
+        "orders_after_receipt": []
+      },
+      "pnl_delta": 0.0,
+      "duration_delta": 0.0
+    },
+    {
+      "setting": [
+        243,
+        1.0,
+        1.0,
+        true
+      ],
+      "baseline": {
+        "pnl": -381.0800000000013,
+        "cleanup": "flat",
+        "trial": "incomplete_trial",
+        "stop": "cumulative simulated P&L reached loss trigger (-272.39)",
+        "duration": 230.0,
+        "requests": 228,
+        "request_seconds": 228.0,
+        "request_counts": {
+          "GET /cases/hurricane.json": 1,
+          "GET /competitions/time": 70,
+          "GET /orders/open": 34,
+          "GET /positions": 34,
+          "GET /trades": 33,
+          "GET /orders": 36,
+          "GET /orderbook/*": 11,
+          "POST /orders": 9
+        },
+        "closing_orders": 9,
+        "min_book_age": 9.0,
+        "max_book_age": 9.0,
+        "first_closing_order_after": 22.5,
+        "observed_cleanup_fills": 12,
+        "last_observed_cleanup_fill_after": 201.5,
+        "positions_after_receipt": {},
+        "orders_after_receipt": []
+      },
+      "candidate": {
+        "pnl": -337.55000000000086,
+        "cleanup": "flat",
+        "trial": "incomplete_trial",
+        "stop": "cumulative simulated P&L reached loss trigger (-272.39)",
+        "duration": 247.0,
+        "requests": 244,
+        "request_seconds": 244.0,
+        "request_counts": {
+          "GET /cases/hurricane.json": 1,
+          "GET /competitions/time": 74,
+          "GET /orders/open": 37,
+          "GET /positions": 37,
+          "GET /trades": 36,
+          "GET /orders": 37,
+          "GET /orderbook/*": 13,
+          "POST /orders": 9
+        },
+        "closing_orders": 9,
+        "min_book_age": 9.0,
+        "max_book_age": 9.0,
+        "first_closing_order_after": 16.5,
+        "observed_cleanup_fills": 13,
+        "last_observed_cleanup_fill_after": 218.5,
+        "positions_after_receipt": {},
+        "orders_after_receipt": []
+      },
+      "pnl_delta": 43.53000000000043,
+      "duration_delta": 17.0
+    },
+    {
+      "setting": [
+        243,
+        1.0,
+        0.5,
+        false
+      ],
+      "baseline": {
+        "pnl": -391.47000000000367,
+        "cleanup": "flat",
+        "trial": "incomplete_trial",
+        "stop": "cumulative simulated P&L reached loss trigger (-255.10)",
+        "duration": 260.0,
+        "requests": 255,
+        "request_seconds": 255.0,
+        "request_counts": {
+          "GET /cases/hurricane.json": 1,
+          "GET /competitions/time": 79,
+          "GET /orders/open": 38,
+          "GET /positions": 38,
+          "GET /trades": 37,
+          "GET /orders": 41,
+          "GET /orderbook/*": 13,
+          "POST /orders": 8
+        },
+        "closing_orders": 8,
+        "min_book_age": 9.0,
+        "max_book_age": 9.0,
+        "first_closing_order_after": 22.5,
+        "observed_cleanup_fills": 21,
+        "last_observed_cleanup_fill_after": 237.5,
+        "positions_after_receipt": {},
+        "orders_after_receipt": []
+      },
+      "candidate": {
+        "pnl": -369.76000000000386,
+        "cleanup": "flat",
+        "trial": "incomplete_trial",
+        "stop": "cumulative simulated P&L reached loss trigger (-255.10)",
+        "duration": 235.0,
+        "requests": 232,
+        "request_seconds": 232.0,
+        "request_counts": {
+          "GET /cases/hurricane.json": 1,
+          "GET /competitions/time": 71,
+          "GET /orders/open": 34,
+          "GET /positions": 34,
+          "GET /trades": 33,
+          "GET /orders": 37,
+          "GET /orderbook/*": 13,
+          "POST /orders": 8,
+          "DELETE /orders/75": 1
+        },
+        "closing_orders": 8,
+        "min_book_age": 9.0,
+        "max_book_age": 9.0,
+        "first_closing_order_after": 37.5,
+        "observed_cleanup_fills": 18,
+        "last_observed_cleanup_fill_after": 216.47114491462708,
+        "positions_after_receipt": {},
+        "orders_after_receipt": []
+      },
+      "pnl_delta": 21.70999999999981,
+      "duration_delta": -25.0
+    },
+    {
+      "setting": [
+        243,
+        1.0,
+        0.5,
+        true
+      ],
+      "baseline": {
+        "pnl": -420.6400000000026,
+        "cleanup": "flat",
+        "trial": "incomplete_trial",
+        "stop": "cumulative simulated P&L reached loss trigger (-276.92)",
+        "duration": 238.0,
+        "requests": 236,
+        "request_seconds": 236.0,
+        "request_counts": {
+          "GET /cases/hurricane.json": 1,
+          "GET /competitions/time": 72,
+          "GET /orders/open": 36,
+          "GET /positions": 36,
+          "GET /trades": 35,
+          "GET /orders": 36,
+          "GET /orderbook/*": 11,
+          "POST /orders": 9
+        },
+        "closing_orders": 9,
+        "min_book_age": 9.0,
+        "max_book_age": 9.0,
+        "first_closing_order_after": 22.5,
+        "observed_cleanup_fills": 19,
+        "last_observed_cleanup_fill_after": 209.5,
+        "positions_after_receipt": {},
+        "orders_after_receipt": []
+      },
+      "candidate": {
+        "pnl": -434.3900000000035,
+        "cleanup": "flat",
+        "trial": "incomplete_trial",
+        "stop": "cumulative simulated P&L reached loss trigger (-276.92)",
+        "duration": 236.0,
+        "requests": 233,
+        "request_seconds": 233.0,
+        "request_counts": {
+          "GET /cases/hurricane.json": 1,
+          "GET /competitions/time": 71,
+          "GET /orders/open": 35,
+          "GET /positions": 35,
+          "GET /trades": 34,
+          "GET /orders": 36,
+          "GET /orderbook/*": 12,
+          "POST /orders": 9
+        },
+        "closing_orders": 9,
+        "min_book_age": 9.0,
+        "max_book_age": 9.0,
+        "first_closing_order_after": 16.5,
+        "observed_cleanup_fills": 22,
+        "last_observed_cleanup_fill_after": 207.5,
+        "positions_after_receipt": {},
+        "orders_after_receipt": []
+      },
+      "pnl_delta": -13.75000000000091,
+      "duration_delta": -2.0
+    },
+    {
+      "setting": [
+        244,
+        0.0,
+        1.0,
+        false
+      ],
+      "baseline": {
+        "pnl": -310.7400000000001,
+        "cleanup": "flat",
+        "trial": "incomplete_trial",
+        "stop": "cumulative simulated P&L reached loss trigger (-267.11)",
+        "duration": 3.0,
+        "requests": 217,
+        "request_seconds": 0.0,
+        "request_counts": {
+          "GET /cases/hurricane.json": 1,
+          "GET /competitions/time": 67,
+          "GET /orders/open": 32,
+          "GET /positions": 32,
+          "GET /trades": 31,
+          "GET /orders": 35,
+          "DELETE /orders/10": 1,
+          "DELETE /orders/11": 1,
+          "GET /orderbook/*": 9,
+          "POST /orders": 7,
+          "DELETE /orders/13": 1
+        },
+        "closing_orders": 7,
+        "min_book_age": 0.0,
+        "max_book_age": 0.0,
+        "first_closing_order_after": 0.0,
+        "observed_cleanup_fills": 7,
+        "last_observed_cleanup_fill_after": 2.0,
+        "positions_after_receipt": {},
+        "orders_after_receipt": []
+      },
+      "candidate": {
+        "pnl": -310.7400000000001,
+        "cleanup": "flat",
+        "trial": "incomplete_trial",
+        "stop": "cumulative simulated P&L reached loss trigger (-267.11)",
+        "duration": 3.0,
+        "requests": 211,
+        "request_seconds": 0.0,
+        "request_counts": {
+          "GET /cases/hurricane.json": 1,
+          "GET /competitions/time": 65,
+          "GET /orders/open": 31,
+          "GET /positions": 31,
+          "GET /trades": 30,
+          "GET /orders": 34,
+          "DELETE /orders/10": 1,
+          "DELETE /orders/11": 1,
+          "GET /orderbook/*": 9,
+          "POST /orders": 7,
+          "DELETE /orders/13": 1
+        },
+        "closing_orders": 7,
+        "min_book_age": 0.0,
+        "max_book_age": 0.0,
+        "first_closing_order_after": 0.0,
+        "observed_cleanup_fills": 7,
+        "last_observed_cleanup_fill_after": 2.0,
+        "positions_after_receipt": {},
+        "orders_after_receipt": []
+      },
+      "pnl_delta": 0.0,
+      "duration_delta": 0.0
+    },
+    {
+      "setting": [
+        244,
+        0.0,
+        1.0,
+        true
+      ],
+      "baseline": {
+        "pnl": -310.7400000000001,
+        "cleanup": "flat",
+        "trial": "incomplete_trial",
+        "stop": "cumulative simulated P&L reached loss trigger (-267.11)",
+        "duration": 3.0,
+        "requests": 217,
+        "request_seconds": 0.0,
+        "request_counts": {
+          "GET /cases/hurricane.json": 1,
+          "GET /competitions/time": 67,
+          "GET /orders/open": 32,
+          "GET /positions": 32,
+          "GET /trades": 31,
+          "GET /orders": 35,
+          "DELETE /orders/10": 1,
+          "DELETE /orders/11": 1,
+          "GET /orderbook/*": 9,
+          "POST /orders": 7,
+          "DELETE /orders/13": 1
+        },
+        "closing_orders": 7,
+        "min_book_age": 0.0,
+        "max_book_age": 0.0,
+        "first_closing_order_after": 0.0,
+        "observed_cleanup_fills": 7,
+        "last_observed_cleanup_fill_after": 2.0,
+        "positions_after_receipt": {},
+        "orders_after_receipt": []
+      },
+      "candidate": {
+        "pnl": -310.7400000000001,
+        "cleanup": "flat",
+        "trial": "incomplete_trial",
+        "stop": "cumulative simulated P&L reached loss trigger (-267.11)",
+        "duration": 3.0,
+        "requests": 211,
+        "request_seconds": 0.0,
+        "request_counts": {
+          "GET /cases/hurricane.json": 1,
+          "GET /competitions/time": 65,
+          "GET /orders/open": 31,
+          "GET /positions": 31,
+          "GET /trades": 30,
+          "GET /orders": 34,
+          "DELETE /orders/10": 1,
+          "DELETE /orders/11": 1,
+          "GET /orderbook/*": 9,
+          "POST /orders": 7,
+          "DELETE /orders/13": 1
+        },
+        "closing_orders": 7,
+        "min_book_age": 0.0,
+        "max_book_age": 0.0,
+        "first_closing_order_after": 0.0,
+        "observed_cleanup_fills": 7,
+        "last_observed_cleanup_fill_after": 2.0,
+        "positions_after_receipt": {},
+        "orders_after_receipt": []
+      },
+      "pnl_delta": 0.0,
+      "duration_delta": 0.0
+    },
+    {
+      "setting": [
+        244,
+        0.0,
+        0.5,
+        false
+      ],
+      "baseline": {
+        "pnl": -277.8600000000008,
+        "cleanup": "attention",
+        "trial": "incomplete_trial",
+        "stop": "cumulative simulated P&L reached loss trigger (-251.69)",
+        "duration": 5.0,
+        "requests": 267,
+        "request_seconds": 0.0,
+        "request_counts": {
+          "GET /cases/hurricane.json": 1,
+          "GET /competitions/time": 82,
+          "GET /orders/open": 39,
+          "GET /positions": 39,
+          "GET /trades": 38,
+          "GET /orders": 43,
+          "GET /orderbook/*": 15,
+          "POST /orders": 6,
+          "DELETE /orders/10": 1,
+          "DELETE /orders/11": 1,
+          "DELETE /orders/12": 1,
+          "DELETE /orders/13": 1
+        },
+        "closing_orders": 6,
+        "min_book_age": 0.0,
+        "max_book_age": 0.0,
+        "first_closing_order_after": 0.0,
+        "observed_cleanup_fills": 6,
+        "last_observed_cleanup_fill_after": 4.0,
+        "positions_after_receipt": {
+          "AQUA": -8,
+          "GRID": -5,
+          "REIN": -20
+        },
+        "orders_after_receipt": []
+      },
+      "candidate": {
+        "pnl": -277.8600000000008,
+        "cleanup": "attention",
+        "trial": "incomplete_trial",
+        "stop": "cumulative simulated P&L reached loss trigger (-251.69)",
+        "duration": 5.0,
+        "requests": 261,
+        "request_seconds": 0.0,
+        "request_counts": {
+          "GET /cases/hurricane.json": 1,
+          "GET /competitions/time": 80,
+          "GET /orders/open": 38,
+          "GET /positions": 38,
+          "GET /trades": 37,
+          "GET /orders": 42,
+          "GET /orderbook/*": 15,
+          "POST /orders": 6,
+          "DELETE /orders/10": 1,
+          "DELETE /orders/11": 1,
+          "DELETE /orders/12": 1,
+          "DELETE /orders/13": 1
+        },
+        "closing_orders": 6,
+        "min_book_age": 0.0,
+        "max_book_age": 0.0,
+        "first_closing_order_after": 0.0,
+        "observed_cleanup_fills": 6,
+        "last_observed_cleanup_fill_after": 4.0,
+        "positions_after_receipt": {
+          "AQUA": -8,
+          "GRID": -5,
+          "REIN": -20
+        },
+        "orders_after_receipt": []
+      },
+      "pnl_delta": 0.0,
+      "duration_delta": 0.0
+    },
+    {
+      "setting": [
+        244,
+        0.0,
+        0.5,
+        true
+      ],
+      "baseline": {
+        "pnl": -277.8600000000008,
+        "cleanup": "attention",
+        "trial": "incomplete_trial",
+        "stop": "cumulative simulated P&L reached loss trigger (-251.69)",
+        "duration": 5.0,
+        "requests": 267,
+        "request_seconds": 0.0,
+        "request_counts": {
+          "GET /cases/hurricane.json": 1,
+          "GET /competitions/time": 82,
+          "GET /orders/open": 39,
+          "GET /positions": 39,
+          "GET /trades": 38,
+          "GET /orders": 43,
+          "GET /orderbook/*": 15,
+          "POST /orders": 6,
+          "DELETE /orders/10": 1,
+          "DELETE /orders/11": 1,
+          "DELETE /orders/12": 1,
+          "DELETE /orders/13": 1
+        },
+        "closing_orders": 6,
+        "min_book_age": 0.0,
+        "max_book_age": 0.0,
+        "first_closing_order_after": 0.0,
+        "observed_cleanup_fills": 6,
+        "last_observed_cleanup_fill_after": 4.0,
+        "positions_after_receipt": {
+          "AQUA": -8,
+          "GRID": -5,
+          "REIN": -20
+        },
+        "orders_after_receipt": []
+      },
+      "candidate": {
+        "pnl": -277.8600000000008,
+        "cleanup": "attention",
+        "trial": "incomplete_trial",
+        "stop": "cumulative simulated P&L reached loss trigger (-251.69)",
+        "duration": 5.0,
+        "requests": 261,
+        "request_seconds": 0.0,
+        "request_counts": {
+          "GET /cases/hurricane.json": 1,
+          "GET /competitions/time": 80,
+          "GET /orders/open": 38,
+          "GET /positions": 38,
+          "GET /trades": 37,
+          "GET /orders": 42,
+          "GET /orderbook/*": 15,
+          "POST /orders": 6,
+          "DELETE /orders/10": 1,
+          "DELETE /orders/11": 1,
+          "DELETE /orders/12": 1,
+          "DELETE /orders/13": 1
+        },
+        "closing_orders": 6,
+        "min_book_age": 0.0,
+        "max_book_age": 0.0,
+        "first_closing_order_after": 0.0,
+        "observed_cleanup_fills": 6,
+        "last_observed_cleanup_fill_after": 4.0,
+        "positions_after_receipt": {
+          "AQUA": -8,
+          "GRID": -5,
+          "REIN": -20
+        },
+        "orders_after_receipt": []
+      },
+      "pnl_delta": 0.0,
+      "duration_delta": 0.0
+    },
+    {
+      "setting": [
+        244,
+        0.05,
+        1.0,
+        false
+      ],
+      "baseline": {
+        "pnl": 964.1300000000019,
+        "cleanup": "settled",
+        "trial": "completed",
+        "stop": "requested complete practice seasons recorded",
+        "duration": 1.0500000000038199,
+        "requests": 21,
+        "request_seconds": 1.0500000000038199,
+        "request_counts": {
+          "GET /cases/hurricane.json": 1,
+          "GET /competitions/time": 7,
+          "GET /orders/open": 3,
+          "GET /positions": 3,
+          "GET /trades": 2,
+          "GET /orders": 4,
+          "GET /symbols": 1
+        },
+        "closing_orders": 0,
+        "min_book_age": null,
+        "max_book_age": null,
+        "first_closing_order_after": null,
+        "observed_cleanup_fills": 0,
+        "last_observed_cleanup_fill_after": null,
+        "positions_after_receipt": {
+          "PORT": -10,
+          "ISLE": -30,
+          "AQUA": -50,
+          "GRID": -40,
+          "FERRY": -4,
+          "GEN": 60,
+          "REIN": -10,
+          "ARCH": -5
+        },
+        "orders_after_receipt": []
+      },
+      "candidate": {
+        "pnl": 964.1300000000019,
+        "cleanup": "settled",
+        "trial": "completed",
+        "stop": "requested complete practice seasons recorded",
+        "duration": 1.0500000000038199,
+        "requests": 21,
+        "request_seconds": 1.0500000000038199,
+        "request_counts": {
+          "GET /cases/hurricane.json": 1,
+          "GET /competitions/time": 7,
+          "GET /orders/open": 3,
+          "GET /positions": 3,
+          "GET /trades": 2,
+          "GET /orders": 4,
+          "GET /symbols": 1
+        },
+        "closing_orders": 0,
+        "min_book_age": null,
+        "max_book_age": null,
+        "first_closing_order_after": null,
+        "observed_cleanup_fills": 0,
+        "last_observed_cleanup_fill_after": null,
+        "positions_after_receipt": {
+          "PORT": -10,
+          "ISLE": -30,
+          "AQUA": -50,
+          "GRID": -40,
+          "FERRY": -4,
+          "GEN": 60,
+          "REIN": -10,
+          "ARCH": -5
+        },
+        "orders_after_receipt": []
+      },
+      "pnl_delta": 0.0,
+      "duration_delta": 0.0
+    },
+    {
+      "setting": [
+        244,
+        0.05,
+        1.0,
+        true
+      ],
+      "baseline": {
+        "pnl": 905.1300000000019,
+        "cleanup": "settled",
+        "trial": "completed",
+        "stop": "requested complete practice seasons recorded",
+        "duration": 1.0500000000038199,
+        "requests": 21,
+        "request_seconds": 1.0500000000038199,
+        "request_counts": {
+          "GET /cases/hurricane.json": 1,
+          "GET /competitions/time": 7,
+          "GET /orders/open": 3,
+          "GET /positions": 3,
+          "GET /trades": 2,
+          "GET /orders": 4,
+          "GET /symbols": 1
+        },
+        "closing_orders": 0,
+        "min_book_age": null,
+        "max_book_age": null,
+        "first_closing_order_after": null,
+        "observed_cleanup_fills": 0,
+        "last_observed_cleanup_fill_after": null,
+        "positions_after_receipt": {
+          "PORT": -10,
+          "ISLE": -30,
+          "AQUA": -50,
+          "GRID": -40,
+          "FERRY": -4,
+          "GEN": 60,
+          "REIN": -10,
+          "ARCH": -5
+        },
+        "orders_after_receipt": []
+      },
+      "candidate": {
+        "pnl": 905.1300000000019,
+        "cleanup": "settled",
+        "trial": "completed",
+        "stop": "requested complete practice seasons recorded",
+        "duration": 1.0500000000038199,
+        "requests": 21,
+        "request_seconds": 1.0500000000038199,
+        "request_counts": {
+          "GET /cases/hurricane.json": 1,
+          "GET /competitions/time": 7,
+          "GET /orders/open": 3,
+          "GET /positions": 3,
+          "GET /trades": 2,
+          "GET /orders": 4,
+          "GET /symbols": 1
+        },
+        "closing_orders": 0,
+        "min_book_age": null,
+        "max_book_age": null,
+        "first_closing_order_after": null,
+        "observed_cleanup_fills": 0,
+        "last_observed_cleanup_fill_after": null,
+        "positions_after_receipt": {
+          "PORT": -10,
+          "ISLE": -30,
+          "AQUA": -50,
+          "GRID": -40,
+          "FERRY": -4,
+          "GEN": 60,
+          "REIN": -10,
+          "ARCH": -5
+        },
+        "orders_after_receipt": []
+      },
+      "pnl_delta": 0.0,
+      "duration_delta": 0.0
+    },
+    {
+      "setting": [
+        244,
+        0.05,
+        0.5,
+        false
+      ],
+      "baseline": {
+        "pnl": 801.4000000000033,
+        "cleanup": "settled",
+        "trial": "completed",
+        "stop": "requested complete practice seasons recorded",
+        "duration": 1.0500000000038199,
+        "requests": 21,
+        "request_seconds": 1.0500000000038199,
+        "request_counts": {
+          "GET /cases/hurricane.json": 1,
+          "GET /competitions/time": 7,
+          "GET /orders/open": 3,
+          "GET /positions": 3,
+          "GET /trades": 2,
+          "GET /orders": 4,
+          "GET /symbols": 1
+        },
+        "closing_orders": 0,
+        "min_book_age": null,
+        "max_book_age": null,
+        "first_closing_order_after": null,
+        "observed_cleanup_fills": 0,
+        "last_observed_cleanup_fill_after": null,
+        "positions_after_receipt": {
+          "PORT": -10,
+          "ISLE": -30,
+          "AQUA": -50,
+          "GRID": -40,
+          "FERRY": -4,
+          "GEN": 60,
+          "REIN": -10,
+          "ARCH": -5
+        },
+        "orders_after_receipt": []
+      },
+      "candidate": {
+        "pnl": 801.4000000000033,
+        "cleanup": "settled",
+        "trial": "completed",
+        "stop": "requested complete practice seasons recorded",
+        "duration": 1.0500000000038199,
+        "requests": 21,
+        "request_seconds": 1.0500000000038199,
+        "request_counts": {
+          "GET /cases/hurricane.json": 1,
+          "GET /competitions/time": 7,
+          "GET /orders/open": 3,
+          "GET /positions": 3,
+          "GET /trades": 2,
+          "GET /orders": 4,
+          "GET /symbols": 1
+        },
+        "closing_orders": 0,
+        "min_book_age": null,
+        "max_book_age": null,
+        "first_closing_order_after": null,
+        "observed_cleanup_fills": 0,
+        "last_observed_cleanup_fill_after": null,
+        "positions_after_receipt": {
+          "PORT": -10,
+          "ISLE": -30,
+          "AQUA": -50,
+          "GRID": -40,
+          "FERRY": -4,
+          "GEN": 60,
+          "REIN": -10,
+          "ARCH": -5
+        },
+        "orders_after_receipt": []
+      },
+      "pnl_delta": 0.0,
+      "duration_delta": 0.0
+    },
+    {
+      "setting": [
+        244,
+        0.05,
+        0.5,
+        true
+      ],
+      "baseline": {
+        "pnl": 688.5600000000013,
+        "cleanup": "settled",
+        "trial": "completed",
+        "stop": "requested complete practice seasons recorded",
+        "duration": 1.0500000000038199,
+        "requests": 21,
+        "request_seconds": 1.0500000000038199,
+        "request_counts": {
+          "GET /cases/hurricane.json": 1,
+          "GET /competitions/time": 7,
+          "GET /orders/open": 3,
+          "GET /positions": 3,
+          "GET /trades": 2,
+          "GET /orders": 4,
+          "GET /symbols": 1
+        },
+        "closing_orders": 0,
+        "min_book_age": null,
+        "max_book_age": null,
+        "first_closing_order_after": null,
+        "observed_cleanup_fills": 0,
+        "last_observed_cleanup_fill_after": null,
+        "positions_after_receipt": {
+          "PORT": -10,
+          "ISLE": -30,
+          "AQUA": -50,
+          "GRID": -40,
+          "FERRY": -4,
+          "GEN": 60,
+          "REIN": -10,
+          "ARCH": -5
+        },
+        "orders_after_receipt": []
+      },
+      "candidate": {
+        "pnl": 688.5600000000013,
+        "cleanup": "settled",
+        "trial": "completed",
+        "stop": "requested complete practice seasons recorded",
+        "duration": 1.0500000000038199,
+        "requests": 21,
+        "request_seconds": 1.0500000000038199,
+        "request_counts": {
+          "GET /cases/hurricane.json": 1,
+          "GET /competitions/time": 7,
+          "GET /orders/open": 3,
+          "GET /positions": 3,
+          "GET /trades": 2,
+          "GET /orders": 4,
+          "GET /symbols": 1
+        },
+        "closing_orders": 0,
+        "min_book_age": null,
+        "max_book_age": null,
+        "first_closing_order_after": null,
+        "observed_cleanup_fills": 0,
+        "last_observed_cleanup_fill_after": null,
+        "positions_after_receipt": {
+          "PORT": -10,
+          "ISLE": -30,
+          "AQUA": -50,
+          "GRID": -40,
+          "FERRY": -4,
+          "GEN": 60,
+          "REIN": -10,
+          "ARCH": -5
+        },
+        "orders_after_receipt": []
+      },
+      "pnl_delta": 0.0,
+      "duration_delta": 0.0
+    },
+    {
+      "setting": [
+        244,
+        0.25,
+        1.0,
+        false
+      ],
+      "baseline": {
+        "pnl": -261.0000000000018,
+        "cleanup": "flat",
+        "trial": "incomplete_trial",
+        "stop": "cumulative simulated P&L reached loss trigger (-256.86)",
+        "duration": 45.0,
+        "requests": 172,
+        "request_seconds": 43.0,
+        "request_counts": {
+          "GET /cases/hurricane.json": 1,
+          "GET /competitions/time": 53,
+          "GET /orders/open": 26,
+          "GET /positions": 26,
+          "GET /trades": 25,
+          "GET /orders": 27,
+          "DELETE /orders/7": 1,
+          "GET /orderbook/*": 7,
+          "POST /orders": 6
+        },
+        "closing_orders": 6,
+        "min_book_age": 2.25,
+        "max_book_age": 2.25,
+        "first_closing_order_after": 6.375,
+        "observed_cleanup_fills": 8,
+        "last_observed_cleanup_fill_after": 37.125,
+        "positions_after_receipt": {},
+        "orders_after_receipt": []
+      },
+      "candidate": {
+        "pnl": -261.0000000000018,
+        "cleanup": "flat",
+        "trial": "incomplete_trial",
+        "stop": "cumulative simulated P&L reached loss trigger (-256.86)",
+        "duration": 43.5,
+        "requests": 166,
+        "request_seconds": 41.5,
+        "request_counts": {
+          "GET /cases/hurricane.json": 1,
+          "GET /competitions/time": 51,
+          "GET /orders/open": 25,
+          "GET /positions": 25,
+          "GET /trades": 24,
+          "GET /orders": 26,
+          "DELETE /orders/7": 1,
+          "GET /orderbook/*": 7,
+          "POST /orders": 6
+        },
+        "closing_orders": 6,
+        "min_book_age": 2.25,
+        "max_book_age": 2.25,
+        "first_closing_order_after": 6.375,
+        "observed_cleanup_fills": 8,
+        "last_observed_cleanup_fill_after": 35.625,
+        "positions_after_receipt": {},
+        "orders_after_receipt": []
+      },
+      "pnl_delta": 0.0,
+      "duration_delta": -1.5
+    },
+    {
+      "setting": [
+        244,
+        0.25,
+        1.0,
+        true
+      ],
+      "baseline": {
+        "pnl": -261.0000000000018,
+        "cleanup": "flat",
+        "trial": "incomplete_trial",
+        "stop": "cumulative simulated P&L reached loss trigger (-256.26)",
+        "duration": 45.0,
+        "requests": 172,
+        "request_seconds": 43.0,
+        "request_counts": {
+          "GET /cases/hurricane.json": 1,
+          "GET /competitions/time": 53,
+          "GET /orders/open": 26,
+          "GET /positions": 26,
+          "GET /trades": 25,
+          "GET /orders": 27,
+          "DELETE /orders/7": 1,
+          "GET /orderbook/*": 7,
+          "POST /orders": 6
+        },
+        "closing_orders": 6,
+        "min_book_age": 2.25,
+        "max_book_age": 2.25,
+        "first_closing_order_after": 6.375,
+        "observed_cleanup_fills": 8,
+        "last_observed_cleanup_fill_after": 37.125,
+        "positions_after_receipt": {},
+        "orders_after_receipt": []
+      },
+      "candidate": {
+        "pnl": -261.0000000000018,
+        "cleanup": "flat",
+        "trial": "incomplete_trial",
+        "stop": "cumulative simulated P&L reached loss trigger (-256.26)",
+        "duration": 43.5,
+        "requests": 166,
+        "request_seconds": 41.5,
+        "request_counts": {
+          "GET /cases/hurricane.json": 1,
+          "GET /competitions/time": 51,
+          "GET /orders/open": 25,
+          "GET /positions": 25,
+          "GET /trades": 24,
+          "GET /orders": 26,
+          "DELETE /orders/7": 1,
+          "GET /orderbook/*": 7,
+          "POST /orders": 6
+        },
+        "closing_orders": 6,
+        "min_book_age": 2.25,
+        "max_book_age": 2.25,
+        "first_closing_order_after": 6.375,
+        "observed_cleanup_fills": 8,
+        "last_observed_cleanup_fill_after": 35.625,
+        "positions_after_receipt": {},
+        "orders_after_receipt": []
+      },
+      "pnl_delta": 0.0,
+      "duration_delta": -1.5
+    },
+    {
+      "setting": [
+        244,
+        0.25,
+        0.5,
+        false
+      ],
+      "baseline": {
+        "pnl": -303.3399999999989,
+        "cleanup": "flat",
+        "trial": "incomplete_trial",
+        "stop": "cumulative simulated P&L reached loss trigger (-258.30)",
+        "duration": 45.0,
+        "requests": 172,
+        "request_seconds": 43.0,
+        "request_counts": {
+          "GET /cases/hurricane.json": 1,
+          "GET /competitions/time": 53,
+          "GET /orders/open": 26,
+          "GET /positions": 26,
+          "GET /trades": 25,
+          "GET /orders": 27,
+          "DELETE /orders/7": 1,
+          "GET /orderbook/*": 7,
+          "POST /orders": 6
+        },
+        "closing_orders": 6,
+        "min_book_age": 2.25,
+        "max_book_age": 2.25,
+        "first_closing_order_after": 6.375,
+        "observed_cleanup_fills": 14,
+        "last_observed_cleanup_fill_after": 37.125,
+        "positions_after_receipt": {},
+        "orders_after_receipt": []
+      },
+      "candidate": {
+        "pnl": -303.3399999999989,
+        "cleanup": "flat",
+        "trial": "incomplete_trial",
+        "stop": "cumulative simulated P&L reached loss trigger (-258.30)",
+        "duration": 43.5,
+        "requests": 166,
+        "request_seconds": 41.5,
+        "request_counts": {
+          "GET /cases/hurricane.json": 1,
+          "GET /competitions/time": 51,
+          "GET /orders/open": 25,
+          "GET /positions": 25,
+          "GET /trades": 24,
+          "GET /orders": 26,
+          "DELETE /orders/7": 1,
+          "GET /orderbook/*": 7,
+          "POST /orders": 6
+        },
+        "closing_orders": 6,
+        "min_book_age": 2.25,
+        "max_book_age": 2.25,
+        "first_closing_order_after": 6.375,
+        "observed_cleanup_fills": 14,
+        "last_observed_cleanup_fill_after": 35.625,
+        "positions_after_receipt": {},
+        "orders_after_receipt": []
+      },
+      "pnl_delta": 0.0,
+      "duration_delta": -1.5
+    },
+    {
+      "setting": [
+        244,
+        0.25,
+        0.5,
+        true
+      ],
+      "baseline": {
+        "pnl": -303.3399999999989,
+        "cleanup": "flat",
+        "trial": "incomplete_trial",
+        "stop": "cumulative simulated P&L reached loss trigger (-257.70)",
+        "duration": 45.0,
+        "requests": 172,
+        "request_seconds": 43.0,
+        "request_counts": {
+          "GET /cases/hurricane.json": 1,
+          "GET /competitions/time": 53,
+          "GET /orders/open": 26,
+          "GET /positions": 26,
+          "GET /trades": 25,
+          "GET /orders": 27,
+          "DELETE /orders/7": 1,
+          "GET /orderbook/*": 7,
+          "POST /orders": 6
+        },
+        "closing_orders": 6,
+        "min_book_age": 2.25,
+        "max_book_age": 2.25,
+        "first_closing_order_after": 6.375,
+        "observed_cleanup_fills": 14,
+        "last_observed_cleanup_fill_after": 37.125,
+        "positions_after_receipt": {},
+        "orders_after_receipt": []
+      },
+      "candidate": {
+        "pnl": -303.3399999999989,
+        "cleanup": "flat",
+        "trial": "incomplete_trial",
+        "stop": "cumulative simulated P&L reached loss trigger (-257.70)",
+        "duration": 43.5,
+        "requests": 166,
+        "request_seconds": 41.5,
+        "request_counts": {
+          "GET /cases/hurricane.json": 1,
+          "GET /competitions/time": 51,
+          "GET /orders/open": 25,
+          "GET /positions": 25,
+          "GET /trades": 24,
+          "GET /orders": 26,
+          "DELETE /orders/7": 1,
+          "GET /orderbook/*": 7,
+          "POST /orders": 6
+        },
+        "closing_orders": 6,
+        "min_book_age": 2.25,
+        "max_book_age": 2.25,
+        "first_closing_order_after": 6.375,
+        "observed_cleanup_fills": 14,
+        "last_observed_cleanup_fill_after": 35.625,
+        "positions_after_receipt": {},
+        "orders_after_receipt": []
+      },
+      "pnl_delta": 0.0,
+      "duration_delta": -1.5
+    },
+    {
+      "setting": [
+        244,
+        1.0,
+        1.0,
+        false
+      ],
+      "baseline": {
+        "pnl": 510.9200000000001,
+        "cleanup": "settled",
+        "trial": "completed",
+        "stop": "requested complete practice seasons recorded",
+        "duration": 21.0,
+        "requests": 21,
+        "request_seconds": 21.0,
+        "request_counts": {
+          "GET /cases/hurricane.json": 1,
+          "GET /competitions/time": 7,
+          "GET /orders/open": 3,
+          "GET /positions": 3,
+          "GET /trades": 2,
+          "GET /orders": 4,
+          "GET /symbols": 1
+        },
+        "closing_orders": 0,
+        "min_book_age": null,
+        "max_book_age": null,
+        "first_closing_order_after": null,
+        "observed_cleanup_fills": 0,
+        "last_observed_cleanup_fill_after": null,
+        "positions_after_receipt": {
+          "PORT": -10,
+          "ISLE": -30,
+          "AQUA": -50,
+          "GRID": -40,
+          "FERRY": -23,
+          "HAVEN": -25,
+          "REIN": -10,
+          "ARCH": -5
+        },
+        "orders_after_receipt": []
+      },
+      "candidate": {
+        "pnl": 510.9200000000001,
+        "cleanup": "settled",
+        "trial": "completed",
+        "stop": "requested complete practice seasons recorded",
+        "duration": 21.0,
+        "requests": 21,
+        "request_seconds": 21.0,
+        "request_counts": {
+          "GET /cases/hurricane.json": 1,
+          "GET /competitions/time": 7,
+          "GET /orders/open": 3,
+          "GET /positions": 3,
+          "GET /trades": 2,
+          "GET /orders": 4,
+          "GET /symbols": 1
+        },
+        "closing_orders": 0,
+        "min_book_age": null,
+        "max_book_age": null,
+        "first_closing_order_after": null,
+        "observed_cleanup_fills": 0,
+        "last_observed_cleanup_fill_after": null,
+        "positions_after_receipt": {
+          "PORT": -10,
+          "ISLE": -30,
+          "AQUA": -50,
+          "GRID": -40,
+          "FERRY": -23,
+          "HAVEN": -25,
+          "REIN": -10,
+          "ARCH": -5
+        },
+        "orders_after_receipt": []
+      },
+      "pnl_delta": 0.0,
+      "duration_delta": 0.0
+    },
+    {
+      "setting": [
+        244,
+        1.0,
+        1.0,
+        true
+      ],
+      "baseline": {
+        "pnl": 477.90999999999804,
+        "cleanup": "settled",
+        "trial": "completed",
+        "stop": "requested complete practice seasons recorded",
+        "duration": 21.0,
+        "requests": 21,
+        "request_seconds": 21.0,
+        "request_counts": {
+          "GET /cases/hurricane.json": 1,
+          "GET /competitions/time": 7,
+          "GET /orders/open": 3,
+          "GET /positions": 3,
+          "GET /trades": 2,
+          "GET /orders": 4,
+          "GET /symbols": 1
+        },
+        "closing_orders": 0,
+        "min_book_age": null,
+        "max_book_age": null,
+        "first_closing_order_after": null,
+        "observed_cleanup_fills": 0,
+        "last_observed_cleanup_fill_after": null,
+        "positions_after_receipt": {
+          "PORT": -10,
+          "ISLE": -27,
+          "AQUA": -50,
+          "GRID": -40,
+          "FERRY": -40,
+          "GEN": 60,
+          "HAVEN": -25,
+          "REIN": -10,
+          "ARCH": -5
+        },
+        "orders_after_receipt": []
+      },
+      "candidate": {
+        "pnl": 477.90999999999804,
+        "cleanup": "settled",
+        "trial": "completed",
+        "stop": "requested complete practice seasons recorded",
+        "duration": 21.0,
+        "requests": 21,
+        "request_seconds": 21.0,
+        "request_counts": {
+          "GET /cases/hurricane.json": 1,
+          "GET /competitions/time": 7,
+          "GET /orders/open": 3,
+          "GET /positions": 3,
+          "GET /trades": 2,
+          "GET /orders": 4,
+          "GET /symbols": 1
+        },
+        "closing_orders": 0,
+        "min_book_age": null,
+        "max_book_age": null,
+        "first_closing_order_after": null,
+        "observed_cleanup_fills": 0,
+        "last_observed_cleanup_fill_after": null,
+        "positions_after_receipt": {
+          "PORT": -10,
+          "ISLE": -27,
+          "AQUA": -50,
+          "GRID": -40,
+          "FERRY": -40,
+          "GEN": 60,
+          "HAVEN": -25,
+          "REIN": -10,
+          "ARCH": -5
+        },
+        "orders_after_receipt": []
+      },
+      "pnl_delta": 0.0,
+      "duration_delta": 0.0
+    },
+    {
+      "setting": [
+        244,
+        1.0,
+        0.5,
+        false
+      ],
+      "baseline": {
+        "pnl": 559.0100000000002,
+        "cleanup": "settled",
+        "trial": "completed",
+        "stop": "requested complete practice seasons recorded",
+        "duration": 21.0,
+        "requests": 21,
+        "request_seconds": 21.0,
+        "request_counts": {
+          "GET /cases/hurricane.json": 1,
+          "GET /competitions/time": 7,
+          "GET /orders/open": 3,
+          "GET /positions": 3,
+          "GET /trades": 2,
+          "GET /orders": 4,
+          "GET /symbols": 1
+        },
+        "closing_orders": 0,
+        "min_book_age": null,
+        "max_book_age": null,
+        "first_closing_order_after": null,
+        "observed_cleanup_fills": 0,
+        "last_observed_cleanup_fill_after": null,
+        "positions_after_receipt": {
+          "PORT": -10,
+          "ISLE": -30,
+          "AQUA": -50,
+          "GRID": -40,
+          "FERRY": -2,
+          "HAVEN": -25,
+          "REIN": -10,
+          "ARCH": -5
+        },
+        "orders_after_receipt": []
+      },
+      "candidate": {
+        "pnl": 559.0100000000002,
+        "cleanup": "settled",
+        "trial": "completed",
+        "stop": "requested complete practice seasons recorded",
+        "duration": 21.0,
+        "requests": 21,
+        "request_seconds": 21.0,
+        "request_counts": {
+          "GET /cases/hurricane.json": 1,
+          "GET /competitions/time": 7,
+          "GET /orders/open": 3,
+          "GET /positions": 3,
+          "GET /trades": 2,
+          "GET /orders": 4,
+          "GET /symbols": 1
+        },
+        "closing_orders": 0,
+        "min_book_age": null,
+        "max_book_age": null,
+        "first_closing_order_after": null,
+        "observed_cleanup_fills": 0,
+        "last_observed_cleanup_fill_after": null,
+        "positions_after_receipt": {
+          "PORT": -10,
+          "ISLE": -30,
+          "AQUA": -50,
+          "GRID": -40,
+          "FERRY": -2,
+          "HAVEN": -25,
+          "REIN": -10,
+          "ARCH": -5
+        },
+        "orders_after_receipt": []
+      },
+      "pnl_delta": 0.0,
+      "duration_delta": 0.0
+    },
+    {
+      "setting": [
+        244,
+        1.0,
+        0.5,
+        true
+      ],
+      "baseline": {
+        "pnl": 480.5799999999981,
+        "cleanup": "settled",
+        "trial": "completed",
+        "stop": "requested complete practice seasons recorded",
+        "duration": 21.0,
+        "requests": 21,
+        "request_seconds": 21.0,
+        "request_counts": {
+          "GET /cases/hurricane.json": 1,
+          "GET /competitions/time": 7,
+          "GET /orders/open": 3,
+          "GET /positions": 3,
+          "GET /trades": 2,
+          "GET /orders": 4,
+          "GET /symbols": 1
+        },
+        "closing_orders": 0,
+        "min_book_age": null,
+        "max_book_age": null,
+        "first_closing_order_after": null,
+        "observed_cleanup_fills": 0,
+        "last_observed_cleanup_fill_after": null,
+        "positions_after_receipt": {
+          "PORT": 20,
+          "ISLE": -25,
+          "AQUA": -50,
+          "GRID": -40,
+          "FERRY": -40,
+          "GEN": 60,
+          "REIN": -10,
+          "ARCH": -5
+        },
+        "orders_after_receipt": []
+      },
+      "candidate": {
+        "pnl": 480.5799999999981,
+        "cleanup": "settled",
+        "trial": "completed",
+        "stop": "requested complete practice seasons recorded",
+        "duration": 21.0,
+        "requests": 21,
+        "request_seconds": 21.0,
+        "request_counts": {
+          "GET /cases/hurricane.json": 1,
+          "GET /competitions/time": 7,
+          "GET /orders/open": 3,
+          "GET /positions": 3,
+          "GET /trades": 2,
+          "GET /orders": 4,
+          "GET /symbols": 1
+        },
+        "closing_orders": 0,
+        "min_book_age": null,
+        "max_book_age": null,
+        "first_closing_order_after": null,
+        "observed_cleanup_fills": 0,
+        "last_observed_cleanup_fill_after": null,
+        "positions_after_receipt": {
+          "PORT": 20,
+          "ISLE": -25,
+          "AQUA": -50,
+          "GRID": -40,
+          "FERRY": -40,
+          "GEN": 60,
+          "REIN": -10,
+          "ARCH": -5
+        },
+        "orders_after_receipt": []
+      },
+      "pnl_delta": 0.0,
+      "duration_delta": 0.0
+    },
+    {
+      "setting": [
+        245,
+        0.0,
+        1.0,
+        false
+      ],
+      "baseline": {
+        "pnl": 597.2000000000007,
+        "cleanup": "settled",
+        "trial": "completed",
+        "stop": "requested complete practice seasons recorded",
+        "duration": 0.0,
+        "requests": 21,
+        "request_seconds": 0.0,
+        "request_counts": {
+          "GET /cases/hurricane.json": 1,
+          "GET /competitions/time": 7,
+          "GET /orders/open": 3,
+          "GET /positions": 3,
+          "GET /trades": 2,
+          "GET /orders": 4,
+          "GET /symbols": 1
+        },
+        "closing_orders": 0,
+        "min_book_age": null,
+        "max_book_age": null,
+        "first_closing_order_after": null,
+        "observed_cleanup_fills": 0,
+        "last_observed_cleanup_fill_after": null,
+        "positions_after_receipt": {
+          "AQUA": 11,
+          "GRID": -40,
+          "FERRY": 40,
+          "GEN": 60,
+          "HAVEN": -25,
+          "ARCH": 5
+        },
+        "orders_after_receipt": []
+      },
+      "candidate": {
+        "pnl": 597.2000000000007,
+        "cleanup": "settled",
+        "trial": "completed",
+        "stop": "requested complete practice seasons recorded",
+        "duration": 0.0,
+        "requests": 21,
+        "request_seconds": 0.0,
+        "request_counts": {
+          "GET /cases/hurricane.json": 1,
+          "GET /competitions/time": 7,
+          "GET /orders/open": 3,
+          "GET /positions": 3,
+          "GET /trades": 2,
+          "GET /orders": 4,
+          "GET /symbols": 1
+        },
+        "closing_orders": 0,
+        "min_book_age": null,
+        "max_book_age": null,
+        "first_closing_order_after": null,
+        "observed_cleanup_fills": 0,
+        "last_observed_cleanup_fill_after": null,
+        "positions_after_receipt": {
+          "AQUA": 11,
+          "GRID": -40,
+          "FERRY": 40,
+          "GEN": 60,
+          "HAVEN": -25,
+          "ARCH": 5
+        },
+        "orders_after_receipt": []
+      },
+      "pnl_delta": 0.0,
+      "duration_delta": 0.0
+    },
+    {
+      "setting": [
+        245,
+        0.0,
+        1.0,
+        true
+      ],
+      "baseline": {
+        "pnl": 692.5100000000002,
+        "cleanup": "settled",
+        "trial": "completed",
+        "stop": "requested complete practice seasons recorded",
+        "duration": 0.0,
+        "requests": 21,
+        "request_seconds": 0.0,
+        "request_counts": {
+          "GET /cases/hurricane.json": 1,
+          "GET /competitions/time": 7,
+          "GET /orders/open": 3,
+          "GET /positions": 3,
+          "GET /trades": 2,
+          "GET /orders": 4,
+          "GET /symbols": 1
+        },
+        "closing_orders": 0,
+        "min_book_age": null,
+        "max_book_age": null,
+        "first_closing_order_after": null,
+        "observed_cleanup_fills": 0,
+        "last_observed_cleanup_fill_after": null,
+        "positions_after_receipt": {
+          "AQUA": 11,
+          "GRID": -40,
+          "FERRY": 40,
+          "GEN": 60,
+          "HAVEN": -25,
+          "ARCH": 5
+        },
+        "orders_after_receipt": []
+      },
+      "candidate": {
+        "pnl": 692.5100000000002,
+        "cleanup": "settled",
+        "trial": "completed",
+        "stop": "requested complete practice seasons recorded",
+        "duration": 0.0,
+        "requests": 21,
+        "request_seconds": 0.0,
+        "request_counts": {
+          "GET /cases/hurricane.json": 1,
+          "GET /competitions/time": 7,
+          "GET /orders/open": 3,
+          "GET /positions": 3,
+          "GET /trades": 2,
+          "GET /orders": 4,
+          "GET /symbols": 1
+        },
+        "closing_orders": 0,
+        "min_book_age": null,
+        "max_book_age": null,
+        "first_closing_order_after": null,
+        "observed_cleanup_fills": 0,
+        "last_observed_cleanup_fill_after": null,
+        "positions_after_receipt": {
+          "AQUA": 11,
+          "GRID": -40,
+          "FERRY": 40,
+          "GEN": 60,
+          "HAVEN": -25,
+          "ARCH": 5
+        },
+        "orders_after_receipt": []
+      },
+      "pnl_delta": 0.0,
+      "duration_delta": 0.0
+    },
+    {
+      "setting": [
+        245,
+        0.0,
+        0.5,
+        false
+      ],
+      "baseline": {
+        "pnl": 505.6500000000001,
+        "cleanup": "settled",
+        "trial": "completed",
+        "stop": "requested complete practice seasons recorded",
+        "duration": 0.0,
+        "requests": 21,
+        "request_seconds": 0.0,
+        "request_counts": {
+          "GET /cases/hurricane.json": 1,
+          "GET /competitions/time": 7,
+          "GET /orders/open": 3,
+          "GET /positions": 3,
+          "GET /trades": 2,
+          "GET /orders": 4,
+          "GET /symbols": 1
+        },
+        "closing_orders": 0,
+        "min_book_age": null,
+        "max_book_age": null,
+        "first_closing_order_after": null,
+        "observed_cleanup_fills": 0,
+        "last_observed_cleanup_fill_after": null,
+        "positions_after_receipt": {
+          "AQUA": 11,
+          "GRID": -40,
+          "FERRY": 40,
+          "GEN": 47,
+          "HAVEN": -25,
+          "ARCH": 5
+        },
+        "orders_after_receipt": []
+      },
+      "candidate": {
+        "pnl": 505.6500000000001,
+        "cleanup": "settled",
+        "trial": "completed",
+        "stop": "requested complete practice seasons recorded",
+        "duration": 0.0,
+        "requests": 21,
+        "request_seconds": 0.0,
+        "request_counts": {
+          "GET /cases/hurricane.json": 1,
+          "GET /competitions/time": 7,
+          "GET /orders/open": 3,
+          "GET /positions": 3,
+          "GET /trades": 2,
+          "GET /orders": 4,
+          "GET /symbols": 1
+        },
+        "closing_orders": 0,
+        "min_book_age": null,
+        "max_book_age": null,
+        "first_closing_order_after": null,
+        "observed_cleanup_fills": 0,
+        "last_observed_cleanup_fill_after": null,
+        "positions_after_receipt": {
+          "AQUA": 11,
+          "GRID": -40,
+          "FERRY": 40,
+          "GEN": 47,
+          "HAVEN": -25,
+          "ARCH": 5
+        },
+        "orders_after_receipt": []
+      },
+      "pnl_delta": 0.0,
+      "duration_delta": 0.0
+    },
+    {
+      "setting": [
+        245,
+        0.0,
+        0.5,
+        true
+      ],
+      "baseline": {
+        "pnl": 546.4600000000005,
+        "cleanup": "settled",
+        "trial": "completed",
+        "stop": "requested complete practice seasons recorded",
+        "duration": 0.0,
+        "requests": 21,
+        "request_seconds": 0.0,
+        "request_counts": {
+          "GET /cases/hurricane.json": 1,
+          "GET /competitions/time": 7,
+          "GET /orders/open": 3,
+          "GET /positions": 3,
+          "GET /trades": 2,
+          "GET /orders": 4,
+          "GET /symbols": 1
+        },
+        "closing_orders": 0,
+        "min_book_age": null,
+        "max_book_age": null,
+        "first_closing_order_after": null,
+        "observed_cleanup_fills": 0,
+        "last_observed_cleanup_fill_after": null,
+        "positions_after_receipt": {
+          "AQUA": 11,
+          "GRID": -40,
+          "FERRY": 40,
+          "GEN": 47,
+          "HAVEN": -25,
+          "ARCH": 5
+        },
+        "orders_after_receipt": []
+      },
+      "candidate": {
+        "pnl": 546.4600000000005,
+        "cleanup": "settled",
+        "trial": "completed",
+        "stop": "requested complete practice seasons recorded",
+        "duration": 0.0,
+        "requests": 21,
+        "request_seconds": 0.0,
+        "request_counts": {
+          "GET /cases/hurricane.json": 1,
+          "GET /competitions/time": 7,
+          "GET /orders/open": 3,
+          "GET /positions": 3,
+          "GET /trades": 2,
+          "GET /orders": 4,
+          "GET /symbols": 1
+        },
+        "closing_orders": 0,
+        "min_book_age": null,
+        "max_book_age": null,
+        "first_closing_order_after": null,
+        "observed_cleanup_fills": 0,
+        "last_observed_cleanup_fill_after": null,
+        "positions_after_receipt": {
+          "AQUA": 11,
+          "GRID": -40,
+          "FERRY": 40,
+          "GEN": 47,
+          "HAVEN": -25,
+          "ARCH": 5
+        },
+        "orders_after_receipt": []
+      },
+      "pnl_delta": 0.0,
+      "duration_delta": 0.0
+    },
+    {
+      "setting": [
+        245,
+        0.05,
+        1.0,
+        false
+      ],
+      "baseline": {
+        "pnl": 328.71000000000026,
+        "cleanup": "settled",
+        "trial": "completed",
+        "stop": "requested complete practice seasons recorded",
+        "duration": 1.0500000000038199,
+        "requests": 21,
+        "request_seconds": 1.0500000000038199,
+        "request_counts": {
+          "GET /cases/hurricane.json": 1,
+          "GET /competitions/time": 7,
+          "GET /orders/open": 3,
+          "GET /positions": 3,
+          "GET /trades": 2,
+          "GET /orders": 4,
+          "GET /symbols": 1
+        },
+        "closing_orders": 0,
+        "min_book_age": null,
+        "max_book_age": null,
+        "first_closing_order_after": null,
+        "observed_cleanup_fills": 0,
+        "last_observed_cleanup_fill_after": null,
+        "positions_after_receipt": {
+          "AQUA": 11,
+          "GRID": -40,
+          "FERRY": 40,
+          "HAVEN": -25,
+          "ARCH": 5
+        },
+        "orders_after_receipt": []
+      },
+      "candidate": {
+        "pnl": 328.71000000000026,
+        "cleanup": "settled",
+        "trial": "completed",
+        "stop": "requested complete practice seasons recorded",
+        "duration": 1.0500000000038199,
+        "requests": 21,
+        "request_seconds": 1.0500000000038199,
+        "request_counts": {
+          "GET /cases/hurricane.json": 1,
+          "GET /competitions/time": 7,
+          "GET /orders/open": 3,
+          "GET /positions": 3,
+          "GET /trades": 2,
+          "GET /orders": 4,
+          "GET /symbols": 1
+        },
+        "closing_orders": 0,
+        "min_book_age": null,
+        "max_book_age": null,
+        "first_closing_order_after": null,
+        "observed_cleanup_fills": 0,
+        "last_observed_cleanup_fill_after": null,
+        "positions_after_receipt": {
+          "AQUA": 11,
+          "GRID": -40,
+          "FERRY": 40,
+          "HAVEN": -25,
+          "ARCH": 5
+        },
+        "orders_after_receipt": []
+      },
+      "pnl_delta": 0.0,
+      "duration_delta": 0.0
+    },
+    {
+      "setting": [
+        245,
+        0.05,
+        1.0,
+        true
+      ],
+      "baseline": {
+        "pnl": 365.69999999999914,
+        "cleanup": "settled",
+        "trial": "completed",
+        "stop": "requested complete practice seasons recorded",
+        "duration": 1.0500000000038199,
+        "requests": 21,
+        "request_seconds": 1.0500000000038199,
+        "request_counts": {
+          "GET /cases/hurricane.json": 1,
+          "GET /competitions/time": 7,
+          "GET /orders/open": 3,
+          "GET /positions": 3,
+          "GET /trades": 2,
+          "GET /orders": 4,
+          "GET /symbols": 1
+        },
+        "closing_orders": 0,
+        "min_book_age": null,
+        "max_book_age": null,
+        "first_closing_order_after": null,
+        "observed_cleanup_fills": 0,
+        "last_observed_cleanup_fill_after": null,
+        "positions_after_receipt": {
+          "AQUA": 11,
+          "GRID": -40,
+          "FERRY": 40,
+          "HAVEN": -25,
+          "ARCH": 5
+        },
+        "orders_after_receipt": []
+      },
+      "candidate": {
+        "pnl": 365.69999999999914,
+        "cleanup": "settled",
+        "trial": "completed",
+        "stop": "requested complete practice seasons recorded",
+        "duration": 1.0500000000038199,
+        "requests": 21,
+        "request_seconds": 1.0500000000038199,
+        "request_counts": {
+          "GET /cases/hurricane.json": 1,
+          "GET /competitions/time": 7,
+          "GET /orders/open": 3,
+          "GET /positions": 3,
+          "GET /trades": 2,
+          "GET /orders": 4,
+          "GET /symbols": 1
+        },
+        "closing_orders": 0,
+        "min_book_age": null,
+        "max_book_age": null,
+        "first_closing_order_after": null,
+        "observed_cleanup_fills": 0,
+        "last_observed_cleanup_fill_after": null,
+        "positions_after_receipt": {
+          "AQUA": 11,
+          "GRID": -40,
+          "FERRY": 40,
+          "HAVEN": -25,
+          "ARCH": 5
+        },
+        "orders_after_receipt": []
+      },
+      "pnl_delta": 0.0,
+      "duration_delta": 0.0
+    },
+    {
+      "setting": [
+        245,
+        0.05,
+        0.5,
+        false
+      ],
+      "baseline": {
+        "pnl": 270.3400000000004,
+        "cleanup": "settled",
+        "trial": "completed",
+        "stop": "requested complete practice seasons recorded",
+        "duration": 1.0500000000038199,
+        "requests": 21,
+        "request_seconds": 1.0500000000038199,
+        "request_counts": {
+          "GET /cases/hurricane.json": 1,
+          "GET /competitions/time": 7,
+          "GET /orders/open": 3,
+          "GET /positions": 3,
+          "GET /trades": 2,
+          "GET /orders": 4,
+          "GET /symbols": 1
+        },
+        "closing_orders": 0,
+        "min_book_age": null,
+        "max_book_age": null,
+        "first_closing_order_after": null,
+        "observed_cleanup_fills": 0,
+        "last_observed_cleanup_fill_after": null,
+        "positions_after_receipt": {
+          "AQUA": 11,
+          "GRID": -40,
+          "FERRY": 40,
+          "HAVEN": -25,
+          "ARCH": 5
+        },
+        "orders_after_receipt": []
+      },
+      "candidate": {
+        "pnl": 270.3400000000004,
+        "cleanup": "settled",
+        "trial": "completed",
+        "stop": "requested complete practice seasons recorded",
+        "duration": 1.0500000000038199,
+        "requests": 21,
+        "request_seconds": 1.0500000000038199,
+        "request_counts": {
+          "GET /cases/hurricane.json": 1,
+          "GET /competitions/time": 7,
+          "GET /orders/open": 3,
+          "GET /positions": 3,
+          "GET /trades": 2,
+          "GET /orders": 4,
+          "GET /symbols": 1
+        },
+        "closing_orders": 0,
+        "min_book_age": null,
+        "max_book_age": null,
+        "first_closing_order_after": null,
+        "observed_cleanup_fills": 0,
+        "last_observed_cleanup_fill_after": null,
+        "positions_after_receipt": {
+          "AQUA": 11,
+          "GRID": -40,
+          "FERRY": 40,
+          "HAVEN": -25,
+          "ARCH": 5
+        },
+        "orders_after_receipt": []
+      },
+      "pnl_delta": 0.0,
+      "duration_delta": 0.0
+    },
+    {
+      "setting": [
+        245,
+        0.05,
+        0.5,
+        true
+      ],
+      "baseline": {
+        "pnl": 287.20000000000005,
+        "cleanup": "settled",
+        "trial": "completed",
+        "stop": "requested complete practice seasons recorded",
+        "duration": 1.0500000000038199,
+        "requests": 21,
+        "request_seconds": 1.0500000000038199,
+        "request_counts": {
+          "GET /cases/hurricane.json": 1,
+          "GET /competitions/time": 7,
+          "GET /orders/open": 3,
+          "GET /positions": 3,
+          "GET /trades": 2,
+          "GET /orders": 4,
+          "GET /symbols": 1
+        },
+        "closing_orders": 0,
+        "min_book_age": null,
+        "max_book_age": null,
+        "first_closing_order_after": null,
+        "observed_cleanup_fills": 0,
+        "last_observed_cleanup_fill_after": null,
+        "positions_after_receipt": {
+          "AQUA": 11,
+          "GRID": -40,
+          "FERRY": 40,
+          "HAVEN": -25,
+          "ARCH": 5
+        },
+        "orders_after_receipt": []
+      },
+      "candidate": {
+        "pnl": 287.20000000000005,
+        "cleanup": "settled",
+        "trial": "completed",
+        "stop": "requested complete practice seasons recorded",
+        "duration": 1.0500000000038199,
+        "requests": 21,
+        "request_seconds": 1.0500000000038199,
+        "request_counts": {
+          "GET /cases/hurricane.json": 1,
+          "GET /competitions/time": 7,
+          "GET /orders/open": 3,
+          "GET /positions": 3,
+          "GET /trades": 2,
+          "GET /orders": 4,
+          "GET /symbols": 1
+        },
+        "closing_orders": 0,
+        "min_book_age": null,
+        "max_book_age": null,
+        "first_closing_order_after": null,
+        "observed_cleanup_fills": 0,
+        "last_observed_cleanup_fill_after": null,
+        "positions_after_receipt": {
+          "AQUA": 11,
+          "GRID": -40,
+          "FERRY": 40,
+          "HAVEN": -25,
+          "ARCH": 5
+        },
+        "orders_after_receipt": []
+      },
+      "pnl_delta": 0.0,
+      "duration_delta": 0.0
+    },
+    {
+      "setting": [
+        245,
+        0.25,
+        1.0,
+        false
+      ],
+      "baseline": {
+        "pnl": 346.2899999999986,
+        "cleanup": "settled",
+        "trial": "completed",
+        "stop": "requested complete practice seasons recorded",
+        "duration": 5.25,
+        "requests": 21,
+        "request_seconds": 5.25,
+        "request_counts": {
+          "GET /cases/hurricane.json": 1,
+          "GET /competitions/time": 7,
+          "GET /orders/open": 3,
+          "GET /positions": 3,
+          "GET /trades": 2,
+          "GET /orders": 4,
+          "GET /symbols": 1
+        },
+        "closing_orders": 0,
+        "min_book_age": null,
+        "max_book_age": null,
+        "first_closing_order_after": null,
+        "observed_cleanup_fills": 0,
+        "last_observed_cleanup_fill_after": null,
+        "positions_after_receipt": {
+          "AQUA": 6,
+          "GRID": -40,
+          "FERRY": 40,
+          "HAVEN": -25,
+          "ARCH": 5,
+          "REBLD": -10
+        },
+        "orders_after_receipt": []
+      },
+      "candidate": {
+        "pnl": 346.2899999999986,
+        "cleanup": "settled",
+        "trial": "completed",
+        "stop": "requested complete practice seasons recorded",
+        "duration": 5.25,
+        "requests": 21,
+        "request_seconds": 5.25,
+        "request_counts": {
+          "GET /cases/hurricane.json": 1,
+          "GET /competitions/time": 7,
+          "GET /orders/open": 3,
+          "GET /positions": 3,
+          "GET /trades": 2,
+          "GET /orders": 4,
+          "GET /symbols": 1
+        },
+        "closing_orders": 0,
+        "min_book_age": null,
+        "max_book_age": null,
+        "first_closing_order_after": null,
+        "observed_cleanup_fills": 0,
+        "last_observed_cleanup_fill_after": null,
+        "positions_after_receipt": {
+          "AQUA": 6,
+          "GRID": -40,
+          "FERRY": 40,
+          "HAVEN": -25,
+          "ARCH": 5,
+          "REBLD": -10
+        },
+        "orders_after_receipt": []
+      },
+      "pnl_delta": 0.0,
+      "duration_delta": 0.0
+    },
+    {
+      "setting": [
+        245,
+        0.25,
+        1.0,
+        true
+      ],
+      "baseline": {
+        "pnl": 362.849999999999,
+        "cleanup": "settled",
+        "trial": "completed",
+        "stop": "requested complete practice seasons recorded",
+        "duration": 5.25,
+        "requests": 21,
+        "request_seconds": 5.25,
+        "request_counts": {
+          "GET /cases/hurricane.json": 1,
+          "GET /competitions/time": 7,
+          "GET /orders/open": 3,
+          "GET /positions": 3,
+          "GET /trades": 2,
+          "GET /orders": 4,
+          "GET /symbols": 1
+        },
+        "closing_orders": 0,
+        "min_book_age": null,
+        "max_book_age": null,
+        "first_closing_order_after": null,
+        "observed_cleanup_fills": 0,
+        "last_observed_cleanup_fill_after": null,
+        "positions_after_receipt": {
+          "PORT": 20,
+          "AQUA": 6,
+          "FERRY": 40,
+          "ARCH": -5,
+          "REBLD": -10
+        },
+        "orders_after_receipt": []
+      },
+      "candidate": {
+        "pnl": 362.849999999999,
+        "cleanup": "settled",
+        "trial": "completed",
+        "stop": "requested complete practice seasons recorded",
+        "duration": 5.25,
+        "requests": 21,
+        "request_seconds": 5.25,
+        "request_counts": {
+          "GET /cases/hurricane.json": 1,
+          "GET /competitions/time": 7,
+          "GET /orders/open": 3,
+          "GET /positions": 3,
+          "GET /trades": 2,
+          "GET /orders": 4,
+          "GET /symbols": 1
+        },
+        "closing_orders": 0,
+        "min_book_age": null,
+        "max_book_age": null,
+        "first_closing_order_after": null,
+        "observed_cleanup_fills": 0,
+        "last_observed_cleanup_fill_after": null,
+        "positions_after_receipt": {
+          "PORT": 20,
+          "AQUA": 6,
+          "FERRY": 40,
+          "ARCH": -5,
+          "REBLD": -10
+        },
+        "orders_after_receipt": []
+      },
+      "pnl_delta": 0.0,
+      "duration_delta": 0.0
+    },
+    {
+      "setting": [
+        245,
+        0.25,
+        0.5,
+        false
+      ],
+      "baseline": {
+        "pnl": 271.3399999999988,
+        "cleanup": "settled",
+        "trial": "completed",
+        "stop": "requested complete practice seasons recorded",
+        "duration": 5.25,
+        "requests": 21,
+        "request_seconds": 5.25,
+        "request_counts": {
+          "GET /cases/hurricane.json": 1,
+          "GET /competitions/time": 7,
+          "GET /orders/open": 3,
+          "GET /positions": 3,
+          "GET /trades": 2,
+          "GET /orders": 4,
+          "GET /symbols": 1
+        },
+        "closing_orders": 0,
+        "min_book_age": null,
+        "max_book_age": null,
+        "first_closing_order_after": null,
+        "observed_cleanup_fills": 0,
+        "last_observed_cleanup_fill_after": null,
+        "positions_after_receipt": {
+          "AQUA": 6,
+          "GRID": -40,
+          "FERRY": 40,
+          "HAVEN": -25,
+          "ARCH": 5,
+          "REBLD": -10
+        },
+        "orders_after_receipt": []
+      },
+      "candidate": {
+        "pnl": 271.3399999999988,
+        "cleanup": "settled",
+        "trial": "completed",
+        "stop": "requested complete practice seasons recorded",
+        "duration": 5.25,
+        "requests": 21,
+        "request_seconds": 5.25,
+        "request_counts": {
+          "GET /cases/hurricane.json": 1,
+          "GET /competitions/time": 7,
+          "GET /orders/open": 3,
+          "GET /positions": 3,
+          "GET /trades": 2,
+          "GET /orders": 4,
+          "GET /symbols": 1
+        },
+        "closing_orders": 0,
+        "min_book_age": null,
+        "max_book_age": null,
+        "first_closing_order_after": null,
+        "observed_cleanup_fills": 0,
+        "last_observed_cleanup_fill_after": null,
+        "positions_after_receipt": {
+          "AQUA": 6,
+          "GRID": -40,
+          "FERRY": 40,
+          "HAVEN": -25,
+          "ARCH": 5,
+          "REBLD": -10
+        },
+        "orders_after_receipt": []
+      },
+      "pnl_delta": 0.0,
+      "duration_delta": 0.0
+    },
+    {
+      "setting": [
+        245,
+        0.25,
+        0.5,
+        true
+      ],
+      "baseline": {
+        "pnl": 263.42999999999984,
+        "cleanup": "settled",
+        "trial": "completed",
+        "stop": "requested complete practice seasons recorded",
+        "duration": 5.25,
+        "requests": 21,
+        "request_seconds": 5.25,
+        "request_counts": {
+          "GET /cases/hurricane.json": 1,
+          "GET /competitions/time": 7,
+          "GET /orders/open": 3,
+          "GET /positions": 3,
+          "GET /trades": 2,
+          "GET /orders": 4,
+          "GET /symbols": 1
+        },
+        "closing_orders": 0,
+        "min_book_age": null,
+        "max_book_age": null,
+        "first_closing_order_after": null,
+        "observed_cleanup_fills": 0,
+        "last_observed_cleanup_fill_after": null,
+        "positions_after_receipt": {
+          "AQUA": 6,
+          "GRID": -40,
+          "FERRY": 40,
+          "MAT": -35,
+          "HAVEN": -25,
+          "ARCH": 5,
+          "REBLD": -10
+        },
+        "orders_after_receipt": []
+      },
+      "candidate": {
+        "pnl": 263.42999999999984,
+        "cleanup": "settled",
+        "trial": "completed",
+        "stop": "requested complete practice seasons recorded",
+        "duration": 5.25,
+        "requests": 21,
+        "request_seconds": 5.25,
+        "request_counts": {
+          "GET /cases/hurricane.json": 1,
+          "GET /competitions/time": 7,
+          "GET /orders/open": 3,
+          "GET /positions": 3,
+          "GET /trades": 2,
+          "GET /orders": 4,
+          "GET /symbols": 1
+        },
+        "closing_orders": 0,
+        "min_book_age": null,
+        "max_book_age": null,
+        "first_closing_order_after": null,
+        "observed_cleanup_fills": 0,
+        "last_observed_cleanup_fill_after": null,
+        "positions_after_receipt": {
+          "AQUA": 6,
+          "GRID": -40,
+          "FERRY": 40,
+          "MAT": -35,
+          "HAVEN": -25,
+          "ARCH": 5,
+          "REBLD": -10
+        },
+        "orders_after_receipt": []
+      },
+      "pnl_delta": 0.0,
+      "duration_delta": 0.0
+    },
+    {
+      "setting": [
+        245,
+        1.0,
+        1.0,
+        false
+      ],
+      "baseline": {
+        "pnl": 5.419999999999732,
+        "cleanup": "flat",
+        "trial": "incomplete_trial",
+        "stop": "cumulative simulated P&L reached loss trigger (-260.59)",
+        "duration": 228.0,
+        "requests": 223,
+        "request_seconds": 223.0,
+        "request_counts": {
+          "GET /cases/hurricane.json": 1,
+          "GET /competitions/time": 69,
+          "GET /orders/open": 34,
+          "GET /positions": 34,
+          "GET /trades": 33,
+          "GET /orders": 35,
+          "GET /orderbook/*": 11,
+          "POST /orders": 6
+        },
+        "closing_orders": 6,
+        "min_book_age": 9.0,
+        "max_book_age": 9.0,
+        "first_closing_order_after": 22.5,
+        "observed_cleanup_fills": 6,
+        "last_observed_cleanup_fill_after": 205.5,
+        "positions_after_receipt": {},
+        "orders_after_receipt": []
+      },
+      "candidate": {
+        "pnl": -26.710000000000946,
+        "cleanup": "flat",
+        "trial": "incomplete_trial",
+        "stop": "cumulative simulated P&L reached loss trigger (-260.59)",
+        "duration": 168.0,
+        "requests": 165,
+        "request_seconds": 165.0,
+        "request_counts": {
+          "GET /cases/hurricane.json": 1,
+          "GET /competitions/time": 51,
+          "GET /orders/open": 24,
+          "GET /positions": 24,
+          "GET /trades": 23,
+          "GET /orders": 27,
+          "GET /orderbook/*": 9,
+          "POST /orders": 6
+        },
+        "closing_orders": 6,
+        "min_book_age": 9.0,
+        "max_book_age": 9.0,
+        "first_closing_order_after": 16.5,
+        "observed_cleanup_fills": 7,
+        "last_observed_cleanup_fill_after": 144.35879921913147,
+        "positions_after_receipt": {},
+        "orders_after_receipt": []
+      },
+      "pnl_delta": -32.13000000000068,
+      "duration_delta": -60.0
+    },
+    {
+      "setting": [
+        245,
+        1.0,
+        1.0,
+        true
+      ],
+      "baseline": {
+        "pnl": 123.63000000000102,
+        "cleanup": "settled",
+        "trial": "completed",
+        "stop": "requested complete practice seasons recorded",
+        "duration": 21.0,
+        "requests": 21,
+        "request_seconds": 21.0,
+        "request_counts": {
+          "GET /cases/hurricane.json": 1,
+          "GET /competitions/time": 7,
+          "GET /orders/open": 3,
+          "GET /positions": 3,
+          "GET /trades": 2,
+          "GET /orders": 4,
+          "GET /symbols": 1
+        },
+        "closing_orders": 0,
+        "min_book_age": null,
+        "max_book_age": null,
+        "first_closing_order_after": null,
+        "observed_cleanup_fills": 0,
+        "last_observed_cleanup_fill_after": null,
+        "positions_after_receipt": {
+          "AQUA": 1,
+          "GRID": -40,
+          "FERRY": 21,
+          "HAVEN": -25,
+          "ARCH": -5
+        },
+        "orders_after_receipt": []
+      },
+      "candidate": {
+        "pnl": 123.63000000000102,
+        "cleanup": "settled",
+        "trial": "completed",
+        "stop": "requested complete practice seasons recorded",
+        "duration": 21.0,
+        "requests": 21,
+        "request_seconds": 21.0,
+        "request_counts": {
+          "GET /cases/hurricane.json": 1,
+          "GET /competitions/time": 7,
+          "GET /orders/open": 3,
+          "GET /positions": 3,
+          "GET /trades": 2,
+          "GET /orders": 4,
+          "GET /symbols": 1
+        },
+        "closing_orders": 0,
+        "min_book_age": null,
+        "max_book_age": null,
+        "first_closing_order_after": null,
+        "observed_cleanup_fills": 0,
+        "last_observed_cleanup_fill_after": null,
+        "positions_after_receipt": {
+          "AQUA": 1,
+          "GRID": -40,
+          "FERRY": 21,
+          "HAVEN": -25,
+          "ARCH": -5
+        },
+        "orders_after_receipt": []
+      },
+      "pnl_delta": 0.0,
+      "duration_delta": 0.0
+    },
+    {
+      "setting": [
+        245,
+        1.0,
+        0.5,
+        false
+      ],
+      "baseline": {
+        "pnl": 203.38000000000034,
+        "cleanup": "settled",
+        "trial": "completed",
+        "stop": "requested complete practice seasons recorded",
+        "duration": 21.0,
+        "requests": 21,
+        "request_seconds": 21.0,
+        "request_counts": {
+          "GET /cases/hurricane.json": 1,
+          "GET /competitions/time": 7,
+          "GET /orders/open": 3,
+          "GET /positions": 3,
+          "GET /trades": 2,
+          "GET /orders": 4,
+          "GET /symbols": 1
+        },
+        "closing_orders": 0,
+        "min_book_age": null,
+        "max_book_age": null,
+        "first_closing_order_after": null,
+        "observed_cleanup_fills": 0,
+        "last_observed_cleanup_fill_after": null,
+        "positions_after_receipt": {
+          "PORT": 20,
+          "AQUA": 1,
+          "FERRY": 40,
+          "RECON": -50,
+          "ARCH": -5
+        },
+        "orders_after_receipt": []
+      },
+      "candidate": {
+        "pnl": 203.38000000000034,
+        "cleanup": "settled",
+        "trial": "completed",
+        "stop": "requested complete practice seasons recorded",
+        "duration": 21.0,
+        "requests": 21,
+        "request_seconds": 21.0,
+        "request_counts": {
+          "GET /cases/hurricane.json": 1,
+          "GET /competitions/time": 7,
+          "GET /orders/open": 3,
+          "GET /positions": 3,
+          "GET /trades": 2,
+          "GET /orders": 4,
+          "GET /symbols": 1
+        },
+        "closing_orders": 0,
+        "min_book_age": null,
+        "max_book_age": null,
+        "first_closing_order_after": null,
+        "observed_cleanup_fills": 0,
+        "last_observed_cleanup_fill_after": null,
+        "positions_after_receipt": {
+          "PORT": 20,
+          "AQUA": 1,
+          "FERRY": 40,
+          "RECON": -50,
+          "ARCH": -5
+        },
+        "orders_after_receipt": []
+      },
+      "pnl_delta": 0.0,
+      "duration_delta": 0.0
+    },
+    {
+      "setting": [
+        245,
+        1.0,
+        0.5,
+        true
+      ],
+      "baseline": {
+        "pnl": 83.82999999999902,
+        "cleanup": "settled",
+        "trial": "completed",
+        "stop": "requested complete practice seasons recorded",
+        "duration": 21.0,
+        "requests": 21,
+        "request_seconds": 21.0,
+        "request_counts": {
+          "GET /cases/hurricane.json": 1,
+          "GET /competitions/time": 7,
+          "GET /orders/open": 3,
+          "GET /positions": 3,
+          "GET /trades": 2,
+          "GET /orders": 4,
+          "GET /symbols": 1
+        },
+        "closing_orders": 0,
+        "min_book_age": null,
+        "max_book_age": null,
+        "first_closing_order_after": null,
+        "observed_cleanup_fills": 0,
+        "last_observed_cleanup_fill_after": null,
+        "positions_after_receipt": {
+          "GRID": -40,
+          "FERRY": 21,
+          "HAVEN": -25,
+          "ARCH": -5
+        },
+        "orders_after_receipt": []
+      },
+      "candidate": {
+        "pnl": 83.82999999999902,
+        "cleanup": "settled",
+        "trial": "completed",
+        "stop": "requested complete practice seasons recorded",
+        "duration": 21.0,
+        "requests": 21,
+        "request_seconds": 21.0,
+        "request_counts": {
+          "GET /cases/hurricane.json": 1,
+          "GET /competitions/time": 7,
+          "GET /orders/open": 3,
+          "GET /positions": 3,
+          "GET /trades": 2,
+          "GET /orders": 4,
+          "GET /symbols": 1
+        },
+        "closing_orders": 0,
+        "min_book_age": null,
+        "max_book_age": null,
+        "first_closing_order_after": null,
+        "observed_cleanup_fills": 0,
+        "last_observed_cleanup_fill_after": null,
+        "positions_after_receipt": {
+          "GRID": -40,
+          "FERRY": 21,
+          "HAVEN": -25,
+          "ARCH": -5
+        },
+        "orders_after_receipt": []
+      },
+      "pnl_delta": 0.0,
+      "duration_delta": 0.0
+    }
+  ]
+}
