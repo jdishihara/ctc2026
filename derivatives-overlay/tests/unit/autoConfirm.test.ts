@@ -218,6 +218,68 @@ describe('Round 3: converter auto-identification in the store', () => {
     expect(st.s.auto.converter).toMatchObject({ status: 'chosen', id: 'variance' });
     expect(st.s.converter.id).toBe('variance');
   });
+  it('retains earlier named units when later analysts omit the unit label', () => {
+    const { st, tick } = r3();
+    quoteAll(st, { OIL: 100, PLANE: 40 }, { OIL: 0.55, PLANE: 1.21 }, 18 / 252);
+    tick(100);
+    news(st, 2, 'Analyst 1: OIL variance 0.5625, PLANE variance 1.21', { type: 'analyst' });
+    news(st, 3, 'Analyst 2: OIL 0.5625, PLANE 1.21', { type: 'analyst' });
+    news(st, 4, 'Analyst 3: OIL 0.5625, PLANE 1.21', { type: 'analyst' });
+    expect(st.s.auto.converter.status).toBe('idle');
+    expect(st.s.auto.converter.reason).toMatch(/message names.*variance/i);
+    expect(st.s.targets.OIL.vol.confirmed).toBe(false);
+    expect(st.s.targets.PLANE.vol.confirmed).toBe(false);
+    expect(st.d.targetsConfirmed).toBe(false);
+  });
+  it.each([1, 3])('reconsiders an inferred unit contradicted after %i unitless analysts', (count) => {
+    const { st, tick } = r3();
+    quoteAll(st, { OIL: 100, PLANE: 40 }, { OIL: 0.55, PLANE: 1.21 }, 18 / 252);
+    tick(100);
+    for (let a = 1; a <= count; a++) {
+      news(st, a + 1, `Analyst ${a}: OIL 0.5625, PLANE 1.21`, { type: 'analyst' });
+    }
+    expect(st.s.auto.converter).toMatchObject({ status: 'chosen', id: 'iv' });
+    expect(st.s.targets.OIL.vol.confirmed).toBe(count === 3);
+    news(st, 5, 'Analyst 1: OIL variance 0.5625, PLANE variance 1.21', { type: 'analyst' });
+    expect(st.s.auto.converter.status).toBe('idle');
+    expect(st.s.targets.OIL.vol.confirmed).toBe(false);
+    expect(st.s.targets.PLANE.vol.confirmed).toBe(false);
+    expect(st.d.targetsConfirmed).toBe(false);
+    expect(st.s.auto.targets.OIL.status).toBe('manual');
+    st.setConverter({ id: 'variance' });
+    expect(st.s.auto.converter.status).toBe('manual');
+    expect(st.s.analystInputs[7].OIL[1]?.sigma).toBeCloseTo(0.75, 6);
+    if (count === 3) {
+      expect(st.s.targets.OIL.vol).toMatchObject({ confirmed: true, value: 0.75 });
+      expect(st.s.targets.PLANE.vol.value).toBeCloseTo(1.1, 6);
+    }
+  });
+  it('re-running a manual converter revokes analyst targets if its unit cannot be identified', () => {
+    const { st, tick } = r3();
+    quoteAll(st, { OIL: 100, PLANE: 40 }, { OIL: 0.55, PLANE: 1.21 }, 18 / 252);
+    tick(100);
+    for (let a = 1; a <= 3; a++) news(st, a + 1, `Analyst ${a}: OIL variance 0.5625, PLANE variance 1.21`, { type: 'analyst' });
+    st.setConverter({ id: 'iv' });
+    expect(st.s.auto.converter.status).toBe('manual');
+    expect(st.d.targetsConfirmed).toBe(true);
+    st.resetAutoConverter();
+    expect(st.s.auto.converter.status).toBe('idle');
+    expect(st.s.targets.OIL.vol.confirmed).toBe(false);
+    expect(st.s.targets.PLANE.vol.confirmed).toBe(false);
+    expect(st.d.targetsConfirmed).toBe(false);
+  });
+  it('preserves literal typed targets when contradictory units revoke an automatic converter', () => {
+    const { st, tick } = r3();
+    quoteAll(st, { OIL: 100, PLANE: 40 }, { OIL: 0.55, PLANE: 1.21 }, 18 / 252);
+    tick(100);
+    for (let a = 1; a <= 3; a++) news(st, a + 1, `Analyst ${a}: OIL 0.5625, PLANE 1.21`, { type: 'analyst' });
+    st.setTarget('OIL', 'vol', 0.8);
+    st.setTarget('PLANE', 'vol', 1.2);
+    news(st, 5, 'Analyst 1: OIL variance 0.5625, PLANE variance 1.21', { type: 'analyst' });
+    expect(st.s.auto.converter.status).toBe('idle');
+    expect(st.s.targets.OIL.vol).toMatchObject({ value: 0.8, src: 'typed', confirmed: true });
+    expect(st.s.targets.PLANE.vol).toMatchObject({ value: 1.2, src: 'typed', confirmed: true });
+  });
   it('an unidentifiable quantity leaves the converter alone and says why', () => {
     const { st } = r3();
     news(st, 2, 'Analyst 1: OIL 1234, PLANE 5678', { type: 'analyst' });

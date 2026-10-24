@@ -53,6 +53,18 @@ describe('Round 3 converter auto-identification', () => {
     expect(r.reason).toMatch(/nothing within 12 vol pts/);
     expect(r.ranked.length).toBeGreaterThan(0);
   });
+  it('does not resolve tied named call and put prices by selecting an unnamed daily move', () => {
+    const r = identifyConverter({
+      ...base, marketIV: { PLANE: 0.16 }, tolPts: 8, tieMarginPts: 2,
+      text: 'PLANE call price 1.00 and put price 1.00',
+      samples: [{ underlying: 'PLANE', raw: 1.0 }],
+    });
+    expect(r.ranked[0].id).toBe('dailyMovePct');
+    expect(r.id).toBeNull();
+    expect(r.reason).toMatch(/ambiguous/i);
+    expect(r.reason).toContain('callPrice');
+    expect(r.reason).toContain('putPrice');
+  });
   it('no market IV: cannot evaluate', () => {
     const r = identifyConverter({ ...base, marketIV: {}, text: 'x', samples: [{ underlying: 'OIL', raw: 0.49 }] });
     expect(r.id).toBeNull();
