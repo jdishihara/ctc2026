@@ -1,0 +1,71 @@
+{
+  "analysis_extra_verified_field": {
+    "unchanged_completed_pairs": 68
+  },
+  "analysis_full_computed_pairs": 80,
+  "analysis_generator_missing_field": [
+    "unchanged_completed_pairs"
+  ],
+  "analysis_reproduced_fields": [
+    "summaries",
+    "pre_cleanup_pairs_equal",
+    "improved_pnl",
+    "worsened_pnl",
+    "unchanged_pnl",
+    "pairs"
+  ],
+  "analysis_selected_pairs": 16,
+  "analysis_selection": "all early stops OR fixed primary",
+  "archives_verified": {
+    "baseline": 640,
+    "candidate": 640,
+    "independent_review": 89,
+    "nested_runtime_review": 20,
+    "preflight": 14
+  },
+  "artifact_manifest_sha256": "7a85f201e2bc9d62001f462339434a21b7025837add7db212d352a5140a421c7",
+  "copied_files_byte_exact": [
+    "spec.json",
+    "baseline.stdout.log",
+    "baseline.stderr.log",
+    "candidate.stdout.log",
+    "candidate.stderr.log",
+    "baseline/metadata.json",
+    "baseline/results.jsonl",
+    "baseline/summary.json",
+    "candidate/metadata.json",
+    "candidate/results.jsonl",
+    "candidate/summary.json"
+  ],
+  "forbidden_attempts": [],
+  "frozen_unchanged": true,
+  "manifest_artifacts": 17,
+  "production_restored": true,
+  "report_sha256": "eda5314b1eccf247d94349ab6c30b3956d4cee39217d2890832a258d663ec455",
+  "tracked_net_diff": [
+    "docs/cleanup-quote-plan.md",
+    "docs/competition-readiness.md",
+    "docs/overnight-run.md"
+  ],
+  "untracked_files": [
+    "docs/cleanup-quote-ordering.md",
+    "docs/evidence/cleanup-quotes/analysis.json",
+    "docs/evidence/cleanup-quotes/analyze.py",
+    "docs/evidence/cleanup-quotes/artifact-manifest.json",
+    "docs/evidence/cleanup-quotes/baseline-journals.tar.gz",
+    "docs/evidence/cleanup-quotes/baseline.stderr.log",
+    "docs/evidence/cleanup-quotes/baseline.stdout.log",
+    "docs/evidence/cleanup-quotes/baseline/metadata.json",
+    "docs/evidence/cleanup-quotes/baseline/results.jsonl",
+    "docs/evidence/cleanup-quotes/baseline/summary.json",
+    "docs/evidence/cleanup-quotes/candidate-journals.tar.gz",
+    "docs/evidence/cleanup-quotes/candidate.stderr.log",
+    "docs/evidence/cleanup-quotes/candidate.stdout.log",
+    "docs/evidence/cleanup-quotes/candidate/metadata.json",
+    "docs/evidence/cleanup-quotes/candidate/results.jsonl",
+    "docs/evidence/cleanup-quotes/candidate/summary.json",
+    "docs/evidence/cleanup-quotes/independent-review.tar.gz",
+    "docs/evidence/cleanup-quotes/preflight.tar.gz",
+    "docs/evidence/cleanup-quotes/spec.json"
+  ]
+}

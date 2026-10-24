@@ -460,8 +460,6 @@ def test_cleanup_stops_after_fill_refresh_moves_to_new_season(setup):
                       copy.deepcopy(CASE) if p == '/cases/hurricane.json' else
                       {'competition_id': 'test-1', 'state': 'running'} if p == '/competitions/time' else
                       owned_history(journal, 'test-1') if p == '/orders?limit=500' else
-                      {'positions': [{'symbol': s, 'quantity': 5, 'realized_pnl': 0, 'unrealized_pnl': 0}
-                                     for s in ('PORT', 'ISLE')]} if p == '/positions?include_zero=true' else
                       {'bids': [{'price': 100}], 'asks': [{'price': 101}]}), \
          patch('bot.practice.time.sleep'):
         reconcile_stop(journal, ex)

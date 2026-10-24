@@ -5,6 +5,25 @@ around **08:00 EDT / 12:00 UTC on October 24**. Continue evaluating and fixing
 problems between bounded batches; a batch stop does not finish the overnight
 goal. Preserve every trial, loss, and cleanup cost.
 
+## 08:35 UTC: cleanup quote-ordering candidate rejected
+
+Both 80-setting phases completed with zero diagnostic errors. Baseline results
+and journals match their archives exactly; candidate pre-cleanup behavior is
+unchanged. Later quote retrieval plus a post-quote position check reduces book
+age from nine to four RTTs, but three slow cleanup settings take longer and
+the worst terminal loss increases from $420.64 to $441.76. Outcomes are better
+in 3 settings, worse in 5 and unchanged in 72. Residual holdings are unchanged.
+Independent review verified all 80 pairs and reproduced ten representative
+runs exactly. Keep the existing runtime. The unpromoted experiment remains
+at `5832359`; full negative evidence is in
+[cleanup-quote-ordering.md](cleanup-quote-ordering.md).
+
+Before evaluation, review caught a position race in the initial proposal; the
+revised candidate verifies the full position vector after reading the quote.
+No candidate code was used for live practice. Forward evaluators remain frozen
+and continue recording/evaluating later closed seasons under their existing
+protocols. Account ownership clarification is still pending.
+
 ## 08:12 UTC: capture 245 evaluated with the full supervisor
 
 PR 20 merged the reviewed round-transition fix at 08:10:11 UTC. The next

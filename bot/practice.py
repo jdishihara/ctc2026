@@ -578,6 +578,7 @@ def reconcile_stop(journal, original):
         for symbol in ex.symbols:
             if not ex.position[symbol]:
                 continue
+            book = ex.get(f'/orderbook/{symbol}?depth=1')
             ex.refresh()
             if not ex.scope_ok():
                 return
@@ -587,20 +588,6 @@ def reconcile_stop(journal, original):
             if not quantity:
                 continue
             side = 'sell' if quantity > 0 else 'buy'
-            # Reconciliation takes several HTTP round trips. Fetch the price
-            # afterward; send() still audits ownership and competition identity.
-            book = ex.get(f'/orderbook/{symbol}?depth=1')
-            try:
-                rows, _, _ = validated_account_rows(
-                    ex.get('/positions?include_zero=true'), {'orders': ex.open_orders}, ex.symbols)
-                observed = {s: 0 for s in ex.symbols}
-                observed.update({row['symbol']: int(row['quantity']) for row in rows})
-                if observed != ex.position:
-                    raise ValueError('positions changed during cleanup quote retrieval')
-            except Exception as exc:
-                ex.state_ready = False
-                cleanup_status(journal, 'attention', reason=f'cleanup position verification failed: {exc}')
-                return
             levels = book['bids' if quantity > 0 else 'asks']
             if not levels or not finite(levels[0].get('price')) or levels[0]['price'] <= 0:
                 continue
