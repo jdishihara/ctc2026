@@ -1,6 +1,6 @@
 # Competition readiness — 2026-10-24
 
-Status updated after the 10:02 UTC capture-247 blend review (06:02 EDT). One complete small-size live season
+Status updated after the 10:34 UTC bounded-cleanup audit (06:34 EDT). One complete small-size live season
 has a verified settlement receipt. The next trial contains mixed activity.
 Live practice remains stopped pending shared-account ownership clarification.
 Market recording and offline evaluations continue.
@@ -17,8 +17,9 @@ retained evidence and implications for the prior reports.
 
 The historical strategy is profitable on average in the local simulator, but
 losing seasons remain. The earlier live loss exposed execution defects; reviewed
-corrections have been regression-tested, while the latest cleanup failure remains
-under investigation. One completed live season was
+corrections have been regression-tested. A bounded retry candidate closes the
+five known stranded portfolios in a fixed offline comparison, with final
+independent verification complete. One completed live season was
 positive; consistent live profitability has not been established. Neither the historical average nor the test count
 establishes a probability of winning the competition.
 
@@ -84,6 +85,15 @@ but fails the supplemental capture-247 check: twelve of sixteen settings lose,
 the primary falls to −$319.63, and two attention outcomes retain more exposure
 than baseline. Independent audits confirm both sets of results. Its reviewed
 optional launcher remains unmerged. See [repeat-blend.md](repeat-blend.md).
+
+A fixed bounded cleanup retry preserves all first-five-pass requests and all
+pre-cleanup behavior in 112 paired settings. It closes all five previously
+stranded portfolios, while 85 positive and 27 negative outcomes and the worst
+loss of $573.91 remain unchanged. Two closures improve terminal P&L by $17.52
+each; three cost an additional $0.96 each. These are reused known-training paths,
+and the improvement does not establish consistent profitability. The full
+comparison, limits and independent review status are in
+[cleanup-retry-window.md](cleanup-retry-window.md).
 
 ## Historical data and evaluation
 

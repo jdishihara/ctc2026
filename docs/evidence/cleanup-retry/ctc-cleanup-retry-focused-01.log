@@ -1,0 +1,44 @@
+....F................................................................... [ 75%]
+.......................                                                  [100%]
+=================================== FAILURES ===================================
+_______ test_partial_fills_cancel_owned_remainder_and_continue_reducing ________
+
+tmp_path = PosixPath('/private/var/folders/5_/4_9w4ch971l2mm9c6fqtg5400000gn/T/pytest-of-arjunhans/pytest-289/test_partial_fills_cancel_owne0')
+
+    def test_partial_fills_cancel_owned_remainder_and_continue_reducing(tmp_path):
+        server, journal, ex = setup(tmp_path, [quote(0), *[quote(t, size=3) for t in (6, 8, 10, 12)]])
+        with patch.object(practice, 'time', VirtualTime(server)):
+            assert ex.place('PORT', 'buy', 10, 101)
+            server.market.available[('PORT', 'sell')] = 0
+            finish(server, journal)
+        assert journal.latest['cleanup']['state'] == 'flat'
+        assert not any(server.market.position.values())
+>       assert sum(f.quantity for f in server.market.fills if f.side == 'sell') == 10
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_cleanup_retry_window.py:53: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+.0 = <list_iterator object at 0x1030684c0>
+
+>   assert sum(f.quantity for f in server.market.fills if f.side == 'sell') == 10
+               ^^^^^^^^^^
+E   AttributeError: 'Fill' object has no attribute 'quantity'
+
+tests/test_cleanup_retry_window.py:53: AttributeError
+----------------------------- Captured stdout call -----------------------------
+ORDER {'symbol': 'PORT', 'side': 'buy', 'order_type': 'limit', 'quantity': 10, 'price': 101.0} -> {'order_id': 1, 'status': 'filled', 'created_at': '0.0', 'message': 'offline acknowledgement', 'message_type': 'order'}
+FILL PORT buy 10 @ 100.0 mid 99.50 slip +50 bp (cum +50 bp) id virtual- t 
+PRACTICE STOP: fixture
+FILL PORT buy 10 @ 100.0 id virtual- t 
+ORDER {'symbol': 'PORT', 'side': 'sell', 'order_type': 'limit', 'quantity': 10, 'price': 98.01} -> {'order_id': 2, 'status': 'partial', 'created_at': '6.0', 'message': 'offline acknowledgement', 'message_type': 'order'}
+FILL PORT sell 3 @ 99.0 id virtual- t 
+ORDER {'symbol': 'PORT', 'side': 'sell', 'order_type': 'limit', 'quantity': 7, 'price': 98.01} -> {'order_id': 3, 'status': 'partial', 'created_at': '8.0', 'message': 'offline acknowledgement', 'message_type': 'order'}
+FILL PORT sell 3 @ 99.0 id virtual- t 
+ORDER {'symbol': 'PORT', 'side': 'sell', 'order_type': 'limit', 'quantity': 4, 'price': 98.01} -> {'order_id': 4, 'status': 'partial', 'created_at': '10.0', 'message': 'offline acknowledgement', 'message_type': 'order'}
+FILL PORT sell 3 @ 99.0 id virtual- t 
+ORDER {'symbol': 'PORT', 'side': 'sell', 'order_type': 'limit', 'quantity': 1, 'price': 98.01} -> {'order_id': 5, 'status': 'filled', 'created_at': '12.0', 'message': 'offline acknowledgement', 'message_type': 'order'}
+FILL PORT sell 1 @ 99.0 id virtual- t 
+=========================== short test summary info ============================
+FAILED tests/test_cleanup_retry_window.py::test_partial_fills_cancel_owned_remainder_and_continue_reducing
+1 failed, 94 passed in 0.47s

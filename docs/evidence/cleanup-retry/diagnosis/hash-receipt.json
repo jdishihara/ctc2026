@@ -1,0 +1,38 @@
+{
+  "schema_version": 1,
+  "kind": "diagnosis_artifact_hash_receipt",
+  "source_archive_sha256": "8930064de48813f53025be67a6d0db6e00019e86631b36b6e176d38dc9329b93",
+  "new_policy_simulations": 0,
+  "strategy_or_runtime_changes": false,
+  "artifacts_sha256": {
+    "diagnosis.md": "28dacd9b9d599519317966c49a00ff4ab7fb17c1a4e3fb7bc8c8a9aaf4cb424d",
+    "diagnosis.json": "dfeddd1431f3b717b91509f7bded16683315a450914f45815f607e4348fd62bf",
+    "build_evidence.py": "bb8e9998f87e37c9ce8d3e57fc3455d546c9a89b96451e7b570d9d95eed3dbd4"
+  },
+  "input_sha256": {
+    "/Users/arjunhans/Documents/ctc2026/out/capture-247-independent-review-20261024.tar.gz": "8930064de48813f53025be67a6d0db6e00019e86631b36b6e176d38dc9329b93",
+    "/Users/arjunhans/Documents/ctc2026/out/capture-247-independent-review-20261024/247.json": "905e7bf98dbd13c913340a9a1999d49a00b6cd6a9209602e089fe20f88d3698e",
+    "/Users/arjunhans/Documents/ctc2026/out/capture-247-independent-review-20261024/original/supervised/capture-247-0.0-1.0-0/result.json": "cbb90f315c35597bc598e624b869394fd2e9c17ff8b8d0f56ced796f34e8c34b",
+    "/Users/arjunhans/Documents/ctc2026/out/capture-247-independent-review-20261024/original/supervised/capture-247-0.0-1.0-0/actions.jsonl": "3029455c9de55b3b32d930a7844a6b3a66bf2ef132f7ff08dad71a638d641455",
+    "/Users/arjunhans/Documents/ctc2026/out/capture-247-independent-review-20261024/original/supervised/capture-247-0.0-1.0-0/status.json": "d626c16b63f07e28d21af69a0954ccd02de046a6b7c30ccd85dc9753e2d17f73",
+    "/Users/arjunhans/Documents/ctc2026/out/capture-247-independent-review-20261024/original/supervised/capture-247-0.0-0.5-0/result.json": "e5753e9b4592f1040f88f8821c43390b025df8540d5f57b33924e83e5a762bed",
+    "/Users/arjunhans/Documents/ctc2026/out/capture-247-independent-review-20261024/original/supervised/capture-247-0.0-0.5-0/actions.jsonl": "01ffc0684f391f827e29ec4c7af46a7b770512d96b39c9ea2afac732dfee648b",
+    "/Users/arjunhans/Documents/ctc2026/out/capture-247-independent-review-20261024/original/supervised/capture-247-0.0-0.5-0/status.json": "8e72709d82357ccfecde8fe61c394d2583af0137ec62da0235480b38bf737d81",
+    "/Users/arjunhans/Documents/ctc2026/out/capture-247-independent-review-20261024/original/supervised/capture-247-0.0-0.5-1/result.json": "b443714cfb11b80881975f282297eb749beb13699bcdfcdd8a82dc4a83d1b94b",
+    "/Users/arjunhans/Documents/ctc2026/out/capture-247-independent-review-20261024/original/supervised/capture-247-0.0-0.5-1/actions.jsonl": "8efe623ed225e26e85f62b400c9002244a7ce06fb6cf3c3d8add9162d5e37c86",
+    "/Users/arjunhans/Documents/ctc2026/out/capture-247-independent-review-20261024/original/supervised/capture-247-0.0-0.5-1/status.json": "d061a828c98b5107be090f86fea1f9abb69992423a71bdc9d7089dd55918049f",
+    "/Users/arjunhans/Documents/ctc2026/out/capture-247-independent-review-20261024/rerun-supervised/0.0-0.5-0/result.json": "e5753e9b4592f1040f88f8821c43390b025df8540d5f57b33924e83e5a762bed",
+    "/Users/arjunhans/Documents/ctc2026/out/capture-247-independent-review-20261024/rerun-supervised/0.0-0.5-0/request-trace.json.gz": "b7c69e1218d978c3e72b274f62ebdb0e3fc69b1b91176e1951851b0b5ff1a579",
+    "/Users/arjunhans/Documents/ctc2026/out/capture-247-independent-review-20261024/rerun-supervised/0.0-0.5-0/fill-trace.json.gz": "50b027ed91e02634d08e679a64ff4f67df8f22465cd34dd9e873693c420c4167",
+    "/Users/arjunhans/Documents/ctc2026/out/capture-247-independent-review-20261024/rerun-supervised/0.05-0.5-0/result.json": "982b7f0a34ad1ebf1551aaa17f15428efb42fbd9c1587d23c6824d358eff276a",
+    "/Users/arjunhans/Documents/ctc2026/out/capture-247-independent-review-20261024/rerun-supervised/0.05-0.5-0/request-trace.json.gz": "e7ebcc2143d187a97564159bd9c17c45d12c6739173f76e86a4bf0246a13b852",
+    "/Users/arjunhans/Documents/ctc2026/out/capture-247-independent-review-20261024/rerun-supervised/0.05-0.5-0/fill-trace.json.gz": "6ca4323120d246b1012bf57c839154e7247ead5adbc9841a41fce528857c732f",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/supervised-forward/bot/practice.py": "37432996c01466ceb8c9394ea49908d0ffc0716200ad730f5395d43cc5cb9353",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/supervised-forward/bot/live.py": "bdfe8ecd489cdcd42d7e6687cbb34511d75f6503c55ad195bc22b0451f1be72e",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/supervised-forward/scripts/replay_practice_supervisor.py": "77c9195a286a4ffb1395539879b3f1ee81b20ce8badd3edd25442787a97acd27",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/supervised-forward/scripts/replay_serialized_client.py": "2b976be6688b8df93f8508b38bbf02510d233533ece6a7d32d0bc1dfb6bcdfb3",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/supervised-forward/scripts/replay_captured_market.py": "10741686ba5ebbff2758bc488fb2a34ef61183b2d57ec3d91d895b1981784ef9",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/supervised-forward/ctc/sim.py": "91da5850c313b94835364dabd7622fb8282382a710cf324c99471d9c29021273"
+  },
+  "forbidden_attempts": []
+}

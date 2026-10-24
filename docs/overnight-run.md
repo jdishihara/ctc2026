@@ -1,5 +1,27 @@
 # Overnight practice — October 24, 2026
 
+## 10:34 UTC — bounded cleanup retry passes independent result audit
+
+The fixed candidate preserves all pre-cleanup behavior and the first five
+cleanup passes across 112 settings on captures 241–247. All five previously
+stranded portfolios become flat. Positive/negative settings remain 85/27,
+worst terminal P&L remains −$573.91, and all seven primary results are unchanged.
+Two closures improve by $17.52 each and three cost an additional $0.96 each.
+The correction does not establish consistent profitability.
+
+Independent audit verifies all pairs, 2,016 produced files/profiles, 862
+source/input artifacts and eight exact representative reproductions. The
+extra slow-loss reproduction confirms unchanged 260-second cleanup. All
+failed test and audit-harness invocations remain archived. The exact retry
+runtime passes 652 tests and is ready for integration review; details are in
+[cleanup-retry-window.md](cleanup-retry-window.md).
+
+Live account ownership remains unresolved, so no owned live batch resumed.
+All existing forward evaluators retain their original versions. A separate
+fixed follow-up for captures 248–249 was declared before capture 248 closed;
+its input gates are under preflight review and no new capture performance
+has been evaluated with the retry candidate.
+
 ## 10:02 UTC — capture 247 and fixed half-blend rejection verified
 
 The frozen full supervisor loses in 15 of 16 capture-247 settings; primary

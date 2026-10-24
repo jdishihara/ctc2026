@@ -1,0 +1,285 @@
+{
+  "diagnosis": "Recorded quote freshness expires and five zero-RTT cleanup passes end before the next REIN quote; no observed action-budget exhaustion.",
+  "competition_id": "fd1ebff9-0f96-4533-b283-bc0a5c60cd4b",
+  "capture": 247,
+  "frozen_driver_revision": "c5c35a30e0c5f521f12324eec854f405b681b8c0",
+  "runtime_revision": "cd3eb239bd7bad97b34f10a8f2bb0b2e1c0f5026",
+  "cases": [
+    {
+      "setting": "0.0-1.0-0",
+      "cleanup_start": 2167.5,
+      "cleanup_end": 2172.5,
+      "residual": {
+        "REIN": -6
+      },
+      "open_orders": [],
+      "last_60_seconds_observed_mutations": 24,
+      "cleanup_posts": 9,
+      "cleanup_deletes": 1,
+      "rein_book_requests": 5,
+      "rein_cleanup_orders": 0,
+      "observed_cleanup_rejections": 0,
+      "receipt_pnl": -404.2099999999999,
+      "terminal_pnl": -403.969999999998,
+      "evidence_level": "complete original journals plus shared recorded quote path"
+    },
+    {
+      "setting": "0.0-0.5-0",
+      "cleanup_start": 2167.5,
+      "cleanup_end": 2172.5,
+      "residual": {
+        "REIN": -6
+      },
+      "open_orders": [],
+      "last_60_seconds_observed_mutations": 26,
+      "cleanup_posts": 10,
+      "cleanup_deletes": 2,
+      "rein_book_requests": 2,
+      "rein_cleanup_orders": 0,
+      "observed_cleanup_rejections": 0,
+      "receipt_pnl": -522.6200000000003,
+      "terminal_pnl": -522.3799999999983,
+      "evidence_level": "complete original journals plus shared recorded quote path"
+    },
+    {
+      "setting": "0.0-0.5-1",
+      "cleanup_start": 2167.5,
+      "cleanup_end": 2172.5,
+      "residual": {
+        "REIN": -6
+      },
+      "open_orders": [],
+      "last_60_seconds_observed_mutations": 26,
+      "cleanup_posts": 10,
+      "cleanup_deletes": 2,
+      "rein_book_requests": 2,
+      "rein_cleanup_orders": 0,
+      "observed_cleanup_rejections": 0,
+      "receipt_pnl": -490.94999999999965,
+      "terminal_pnl": -490.7099999999973,
+      "evidence_level": "complete original journals plus shared recorded quote path"
+    }
+  ],
+  "quote_timing": {
+    "last_before_cleanup": {
+      "type": "quote",
+      "symbol": "REIN",
+      "bid": 89.92,
+      "ask": 90.16,
+      "bid_size": 19,
+      "ask_size": 20,
+      "timestamp": "2026-10-24T05:34:28.242468",
+      "received_at": 1792834468.267457
+    },
+    "next_after_cleanup": {
+      "type": "quote",
+      "symbol": "REIN",
+      "bid": 89.92,
+      "ask": 90.16,
+      "bid_size": 19,
+      "ask_size": 19,
+      "timestamp": "2026-10-24T05:34:47.588114",
+      "received_at": 1792834487.567339
+    },
+    "last_relative": 2154.0259289741516,
+    "next_relative": 2173.3258109092712,
+    "quote_age_at_cleanup_entry": 13.474071025848389,
+    "next_quote_after_cleanup_end_seconds": 0.8258109092712402,
+    "next_ask_full_units": 19,
+    "next_ask_half_units": 9,
+    "replay_freshness_seconds": 5,
+    "interpretation": "Freshness expiration excludes the recorded book; no evidence REIN depth was consumed."
+  },
+  "full_trace_cases": [
+    {
+      "setting": "0.0-0.5-0",
+      "cleanup_start": 2167.5,
+      "cleanup_end": 2172.5,
+      "cleanup_state": "attention",
+      "rein_books": [
+        {
+          "started_at": 2170.5,
+          "executed_at": 2170.5,
+          "completed_at": 2170.5,
+          "response": {
+            "bids": [],
+            "asks": []
+          }
+        },
+        {
+          "started_at": 2171.5,
+          "executed_at": 2171.5,
+          "completed_at": 2171.5,
+          "response": {
+            "bids": [],
+            "asks": []
+          }
+        }
+      ],
+      "rein_orders": [],
+      "rein_fills": [],
+      "request_errors": 0,
+      "mutation_none_responses": 0
+    },
+    {
+      "setting": "0.05-0.5-0",
+      "cleanup_start": 2170.05,
+      "cleanup_end": 2191.2000000000626,
+      "cleanup_state": "flat",
+      "rein_books": [
+        {
+          "started_at": 2184.400000000045,
+          "executed_at": 2184.425000000045,
+          "completed_at": 2184.4500000000453,
+          "response": {
+            "bids": [],
+            "asks": []
+          }
+        },
+        {
+          "started_at": 2188.350000000056,
+          "executed_at": 2188.375000000056,
+          "completed_at": 2188.400000000056,
+          "response": {
+            "bids": [
+              {
+                "price": 89.83,
+                "quantity": 9
+              }
+            ],
+            "asks": [
+              {
+                "price": 90.12,
+                "quantity": 1
+              }
+            ]
+          }
+        }
+      ],
+      "rein_orders": [
+        {
+          "started_at": 2188.8000000000575,
+          "executed_at": 2188.8250000000576,
+          "completed_at": 2188.8500000000577,
+          "body": {
+            "symbol": "REIN",
+            "side": "buy",
+            "order_type": "limit",
+            "quantity": 6,
+            "price": 91.02
+          },
+          "response": {
+            "order_id": 72,
+            "status": "partial",
+            "created_at": "2188.8250000000576",
+            "message": "offline acknowledgement",
+            "message_type": "order"
+          }
+        }
+      ],
+      "rein_fills": [
+        {
+          "t": 2188.8250000000576,
+          "symbol": "REIN",
+          "side": "buy",
+          "qty": 1,
+          "price": 90.12,
+          "passive": false
+        },
+        {
+          "t": 2189.352967977524,
+          "symbol": "REIN",
+          "side": "buy",
+          "qty": 5,
+          "price": 91.02,
+          "passive": true
+        }
+      ],
+      "request_errors": 0,
+      "mutation_none_responses": 0
+    }
+  ],
+  "proposal": {
+    "decision": "Approved for a predeclared offline implementation/test only with the monotonic extra-pass mutation guard specified here; no production approval.",
+    "runtime_changes_implemented": false,
+    "new_policy_simulations_run": 0,
+    "clock": "practice.time.monotonic (the existing patched clock in frozen replay)",
+    "time_origin": "cleanup entry immediately before constructing CleanupExchange",
+    "total_pass_cap": 62,
+    "unconditional_initial_passes": 5,
+    "extra_pass_admission": "pass number 6..62 may begin only if elapsed is finite, nonnegative and <=61 seconds; clock regression disables extras",
+    "preserve": "All existing requests, gates, ordering, one-second sleeps, acknowledgements, prices and early exits during the first five passes; no new budget gate before pass six.",
+    "duration_claim": "Bounds additional pass starts and total passes, not total wall time; an admitted pass, in-flight HTTP, final reconciliation and receipt may finish later.",
+    "budget_limit": 90,
+    "budget_window_seconds": 60,
+    "budget_eviction": "expire only when monotonic age >60; equality still counts",
+    "budget_source": "Private monotonic shadow ledger observing existing Journal.event calls from journal creation. Do not reconstruct runtime ages from persisted wall-clock at fields.",
+    "count_once": [
+      "request with method POST or DELETE, including ETF POSTs and None/rejection responses",
+      "cleanup_cancel, including None responses",
+      "cleanup_order, including None IDs as a conservative charge"
+    ],
+    "do_not_count": [
+      "request_attempt (paired diagnostic, already represented by request)",
+      "GET requests, status, cleanup_attention/flat/settled and extra-pass budget-wait diagnostics"
+    ],
+    "count_identity": "Conservatively include all counted events in this run, regardless of CID; cleanup ownership fencing remains separate.",
+    "extra_mutation_gate": "Before each extra-pass direct DELETE and before each extra-pass place(), require fewer than90 unexpired entries. Synchronous single-owner execution prevents an intervening mutation. Charge the existing completion event at monotonic completion, including rejected or uncertain outcomes.",
+    "budget_denial": "Do not call send/place and do not fabricate a None acknowledgement. Defer mutations, retain live orders, reconcile/read only, then sleep/retry within bounds. Do not emit a counted cleanup_order/cancel for a locally deferred action.",
+    "uncertainty": "Invalid/missing ledger, malformed event schema, unresolved POST request_attempt, clock failure/regression, or event-write failure disables additional mutations. Existing ownership/lost-ACK guards still terminate; an exception must never resume extra mutation processing.",
+    "post_ack_registration": "Keep acknowledged ID registration before status-only-fill refresh.",
+    "scope_limit": "The new guard does not retroactively repair first-five-pass budget behavior, account-wide activity outside this journal, or missing live quote data.",
+    "required_tests": [
+      "first-five-pass request/fill trace equality including existing early exits",
+      "quote refresh after old fifth pass and no refresh before new bounds",
+      "89 permits one mutation;90 defers POST and DELETE; age60 still counted, age>60 expires",
+      "POST/conversion request_attempt+request counted once, direct cleanup DELETE counted, None outcomes charged",
+      "wall-clock jump does not age ledger; patched monotonic progression and pass62 cap",
+      "budget deferral does not create lost-ACK/ownership block or replace live orders",
+      "partial fills, cancel-racing fills, lost ACK, foreign history, CID rollover and market close preserve existing gates",
+      "slow first five passes beyond61 produce no extras; admitted final pass may finish after61",
+      "complete predeclared evaluation grid, with all losses, residuals, attention states and mutation counts reported"
+    ]
+  },
+  "source_sha256": {
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/supervised-forward/bot/practice.py": "37432996c01466ceb8c9394ea49908d0ffc0716200ad730f5395d43cc5cb9353",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/supervised-forward/bot/live.py": "bdfe8ecd489cdcd42d7e6687cbb34511d75f6503c55ad195bc22b0451f1be72e",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/supervised-forward/scripts/replay_practice_supervisor.py": "77c9195a286a4ffb1395539879b3f1ee81b20ce8badd3edd25442787a97acd27",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/supervised-forward/scripts/replay_serialized_client.py": "2b976be6688b8df93f8508b38bbf02510d233533ece6a7d32d0bc1dfb6bcdfb3",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/supervised-forward/scripts/replay_captured_market.py": "10741686ba5ebbff2758bc488fb2a34ef61183b2d57ec3d91d895b1981784ef9",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/supervised-forward/ctc/sim.py": "91da5850c313b94835364dabd7622fb8282382a710cf324c99471d9c29021273"
+  },
+  "input_sha256": {
+    "/Users/arjunhans/Documents/ctc2026/out/capture-247-independent-review-20261024.tar.gz": "8930064de48813f53025be67a6d0db6e00019e86631b36b6e176d38dc9329b93",
+    "/Users/arjunhans/Documents/ctc2026/out/capture-247-independent-review-20261024/247.json": "905e7bf98dbd13c913340a9a1999d49a00b6cd6a9209602e089fe20f88d3698e",
+    "/Users/arjunhans/Documents/ctc2026/out/capture-247-independent-review-20261024/original/supervised/capture-247-0.0-1.0-0/result.json": "cbb90f315c35597bc598e624b869394fd2e9c17ff8b8d0f56ced796f34e8c34b",
+    "/Users/arjunhans/Documents/ctc2026/out/capture-247-independent-review-20261024/original/supervised/capture-247-0.0-1.0-0/actions.jsonl": "3029455c9de55b3b32d930a7844a6b3a66bf2ef132f7ff08dad71a638d641455",
+    "/Users/arjunhans/Documents/ctc2026/out/capture-247-independent-review-20261024/original/supervised/capture-247-0.0-1.0-0/status.json": "d626c16b63f07e28d21af69a0954ccd02de046a6b7c30ccd85dc9753e2d17f73",
+    "/Users/arjunhans/Documents/ctc2026/out/capture-247-independent-review-20261024/original/supervised/capture-247-0.0-0.5-0/result.json": "e5753e9b4592f1040f88f8821c43390b025df8540d5f57b33924e83e5a762bed",
+    "/Users/arjunhans/Documents/ctc2026/out/capture-247-independent-review-20261024/original/supervised/capture-247-0.0-0.5-0/actions.jsonl": "01ffc0684f391f827e29ec4c7af46a7b770512d96b39c9ea2afac732dfee648b",
+    "/Users/arjunhans/Documents/ctc2026/out/capture-247-independent-review-20261024/original/supervised/capture-247-0.0-0.5-0/status.json": "8e72709d82357ccfecde8fe61c394d2583af0137ec62da0235480b38bf737d81",
+    "/Users/arjunhans/Documents/ctc2026/out/capture-247-independent-review-20261024/original/supervised/capture-247-0.0-0.5-1/result.json": "b443714cfb11b80881975f282297eb749beb13699bcdfcdd8a82dc4a83d1b94b",
+    "/Users/arjunhans/Documents/ctc2026/out/capture-247-independent-review-20261024/original/supervised/capture-247-0.0-0.5-1/actions.jsonl": "8efe623ed225e26e85f62b400c9002244a7ce06fb6cf3c3d8add9162d5e37c86",
+    "/Users/arjunhans/Documents/ctc2026/out/capture-247-independent-review-20261024/original/supervised/capture-247-0.0-0.5-1/status.json": "d061a828c98b5107be090f86fea1f9abb69992423a71bdc9d7089dd55918049f",
+    "/Users/arjunhans/Documents/ctc2026/out/capture-247-independent-review-20261024/rerun-supervised/0.0-0.5-0/result.json": "e5753e9b4592f1040f88f8821c43390b025df8540d5f57b33924e83e5a762bed",
+    "/Users/arjunhans/Documents/ctc2026/out/capture-247-independent-review-20261024/rerun-supervised/0.0-0.5-0/request-trace.json.gz": "b7c69e1218d978c3e72b274f62ebdb0e3fc69b1b91176e1951851b0b5ff1a579",
+    "/Users/arjunhans/Documents/ctc2026/out/capture-247-independent-review-20261024/rerun-supervised/0.0-0.5-0/fill-trace.json.gz": "50b027ed91e02634d08e679a64ff4f67df8f22465cd34dd9e873693c420c4167",
+    "/Users/arjunhans/Documents/ctc2026/out/capture-247-independent-review-20261024/rerun-supervised/0.05-0.5-0/result.json": "982b7f0a34ad1ebf1551aaa17f15428efb42fbd9c1587d23c6824d358eff276a",
+    "/Users/arjunhans/Documents/ctc2026/out/capture-247-independent-review-20261024/rerun-supervised/0.05-0.5-0/request-trace.json.gz": "e7ebcc2143d187a97564159bd9c17c45d12c6739173f76e86a4bf0246a13b852",
+    "/Users/arjunhans/Documents/ctc2026/out/capture-247-independent-review-20261024/rerun-supervised/0.05-0.5-0/fill-trace.json.gz": "6ca4323120d246b1012bf57c839154e7247ead5adbc9841a41fce528857c732f",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/supervised-forward/bot/practice.py": "37432996c01466ceb8c9394ea49908d0ffc0716200ad730f5395d43cc5cb9353",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/supervised-forward/bot/live.py": "bdfe8ecd489cdcd42d7e6687cbb34511d75f6503c55ad195bc22b0451f1be72e",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/supervised-forward/scripts/replay_practice_supervisor.py": "77c9195a286a4ffb1395539879b3f1ee81b20ce8badd3edd25442787a97acd27",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/supervised-forward/scripts/replay_serialized_client.py": "2b976be6688b8df93f8508b38bbf02510d233533ece6a7d32d0bc1dfb6bcdfb3",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/supervised-forward/scripts/replay_captured_market.py": "10741686ba5ebbff2758bc488fb2a34ef61183b2d57ec3d91d895b1981784ef9",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/supervised-forward/ctc/sim.py": "91da5850c313b94835364dabd7622fb8282382a710cf324c99471d9c29021273"
+  },
+  "limitations": [
+    "Only half-depth/off has a retained full request/fill trace among the three original attention cases; all three have complete original journals and the common recorded quote stream.",
+    "Recorded quote freshness is a replay rule, not proof of live REST book emptiness or consumed liquidity.",
+    "Next recorded size suffices arithmetically but no extended policy or counterfactual fill/P&L was simulated.",
+    "Sixty-one seconds is a structural budget-window bound with one-second polling, not an empirically necessary duration.",
+    "Higher RTT permits more elapsed time but changes requests, fills and prices; it is not a causal P&L ablation."
+  ],
+  "forbidden_attempts": []
+}

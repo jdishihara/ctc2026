@@ -1,0 +1,130 @@
+{
+  "candidate_revision": "27ab7c4b4784c9aabc92e791b0878d387cd4cc49",
+  "baseline_revision": "cd3eb239bd7bad97b34f10a8f2bb0b2e1c0f5026",
+  "decision": "passes declared offline integration gates after independent review; live inactive",
+  "artifact_count": 27,
+  "files": {
+    "analysis.json": {
+      "bytes": 257748,
+      "sha256": "36544315e4a3ec5b7344f003529521153e524ecb52818a2bf21bcd4cc90bb0b3"
+    },
+    "analysis.stderr.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "analyze.py": {
+      "bytes": 7131,
+      "sha256": "7abc2a98b45769399ce14e5622e8dabc8fcc236c8b499d71977c9b9a1e071010"
+    },
+    "baseline/metadata.json": {
+      "bytes": 197604,
+      "sha256": "d746972d694d6a0b2d9b2b366d1b77d09d86b30057a17ba51004b21467520986"
+    },
+    "baseline/results.jsonl": {
+      "bytes": 791000,
+      "sha256": "b48e6cc69fc2fcd37cc2a0d77b7356f056eb2d140b0789c9a1f357fb50a58ebb"
+    },
+    "baseline/summary.json": {
+      "bytes": 210,
+      "sha256": "27a31256271eeee873a9d295d83a944acf20dab7cfc506be5eee93d56a2e5ad4"
+    },
+    "baseline-journals.tar.gz": {
+      "bytes": 5610649,
+      "sha256": "7e32878ac4c0a4929a066e2db65ae19cfc47d0c0e6fcc8049c0258593f694880"
+    },
+    "baseline.stderr.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "baseline.stdout.log": {
+      "bytes": 11172,
+      "sha256": "810fa1f018d2b95e722dfd52d8a1ffb5f6b6ab59d5f0406f78152e6cc11137d3"
+    },
+    "candidate/metadata.json": {
+      "bytes": 391495,
+      "sha256": "9d110a45d217c59f993fcf02905445f5cbc51bc99cc9d88df9e1e0174c3dc455"
+    },
+    "candidate/results.jsonl": {
+      "bytes": 791263,
+      "sha256": "f716948101f1304491dcee002e815ed40b847c1e3787ae86b40beeba2199de76"
+    },
+    "candidate/summary.json": {
+      "bytes": 210,
+      "sha256": "6b232b12002335ff8438cbb8a7bb210f4925f7c85f054f3d6d8471dbd3b5ea80"
+    },
+    "candidate-journals.tar.gz": {
+      "bytes": 5702766,
+      "sha256": "c80a70a0a5c54c6aee69d3eac68b6629e7aae9cfbb033bff428fc113b720093c"
+    },
+    "candidate.stderr.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "candidate.stdout.log": {
+      "bytes": 12404,
+      "sha256": "78f3cf960724f84b9f2482c6bae3259680048ca5907384b10031862d59d5c7ff"
+    },
+    "ctc-cleanup-retry-focused-01.log": {
+      "bytes": 3228,
+      "sha256": "f249a2fe11c279778ef9b3f1de58140a0e11185cc53350916bfbe310619029a1"
+    },
+    "ctc-cleanup-retry-focused-02.log": {
+      "bytes": 179,
+      "sha256": "6f32474a1ddc9e533c45e3ff50cdbacd221b6b789179e0f745af919216fcd745"
+    },
+    "ctc-cleanup-retry-full-01.log": {
+      "bytes": 820,
+      "sha256": "fd15ee8421d8c8c444d81eac0f247e49cf9ebd3652989edabaf942bcd355f0c1"
+    },
+    "ctc-cleanup-retry-red.log": {
+      "bytes": 19591,
+      "sha256": "d999a77afac255d5082efc206f41241b773dce40678aae74eed9753aaf995a71"
+    },
+    "diagnosis/build_evidence.py": {
+      "bytes": 12116,
+      "sha256": "bb8e9998f87e37c9ce8d3e57fc3455d546c9a89b96451e7b570d9d95eed3dbd4"
+    },
+    "diagnosis/diagnosis.json": {
+      "bytes": 15726,
+      "sha256": "dfeddd1431f3b717b91509f7bded16683315a450914f45815f607e4348fd62bf"
+    },
+    "diagnosis/diagnosis.md": {
+      "bytes": 9877,
+      "sha256": "28dacd9b9d599519317966c49a00ff4ab7fb17c1a4e3fb7bc8c8a9aaf4cb424d"
+    },
+    "diagnosis/hash-receipt.json": {
+      "bytes": 4972,
+      "sha256": "145c26a73f519139ac01ef02e691ed62372b1b1b818eacff854d0eba083d5856"
+    },
+    "independent-review.tar.gz": {
+      "bytes": 3071883,
+      "sha256": "d303219f7259ac538cd959a611713dc5c4ada1a6bcfdd4dc66c6dc5308c41172"
+    },
+    "integration-tests.log": {
+      "bytes": 820,
+      "sha256": "bbe287b1a35c2938a1e73b0506ea73f0cc28282c79026685595a73024ef5bbf8"
+    },
+    "preflight-review.tar.gz": {
+      "bytes": 558027,
+      "sha256": "e34860662dc15f69c10bc5e099a0102d5a509e8a4f3360779c8306d50c5f5695"
+    },
+    "spec.json": {
+      "bytes": 4811,
+      "sha256": "cd458d1810a8e0d08fac3627b81f0c700e87c607f9a11acbeec2231bf90e642c"
+    }
+  },
+  "archive_regular_files": {
+    "baseline-journals.tar.gz": 1008,
+    "candidate-journals.tar.gz": 1008,
+    "preflight-review.tar.gz": 695,
+    "independent-review.tar.gz": 159
+  },
+  "independent_review": {
+    "paired_settings": 112,
+    "representative_unique_reruns": 8,
+    "rerun_files": 72,
+    "forbidden_attempts": 0,
+    "retained_duplicate_executions": 2
+  },
+  "weather_limit": "All 21 storms overlap fitted analog tracks; seven reused paths, not 112 independent seasons"
+}
