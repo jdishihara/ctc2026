@@ -52,6 +52,7 @@ open http://localhost:8787                            # the dashboard, on a seco
                                                       # --host 0.0.0.0 shares it with teammates' laptops at http://<this laptop's IP>:8787 (ipconfig getifaddr en0)
 > map                                                 # check every symbol's role; fix mario/contracts.json and restart if any is wrong or UNMAPPED
 > race 1 2 5 9                                        # after each race: overall places of BIRDO DAISY PEACH YOSHI (alphabetical), from the stream
+> race peach 5 birdo 1 yoshi 9 daisy 2           # or names (first three letters) with places, any order
 > undo | cpu -0.3                                     # typo, or re-centre the CPU strength prior (see the calibration table below)
 > type PORT sell 1 99                                 # checks the form pre-fill on the live UI (nothing is sent until you click); verified on the testnet 2026-10-23
 python3 mario/desk.py --auto-execute                  # the desk clicks too (below); only with the organisers' approval
@@ -113,6 +114,10 @@ market maker the organisers run.
    the total likewise. Recheck available size and positions after each fill.
 2. Model edges: buy when ask <= fair - margin, sell when bid >= fair + margin. Binaries: margin 6 / 4 / 3 / 2.5 points
    by races completed in that series (the skill posterior is weak early); score contracts: max(2 points, 0.35 sd).
+   Both are widened to at least `--model-sd-k` (1.0) x the **model sd**: the sd of the fair across eight parameter
+   settings (race noise 0.7-1.4, skill prior 0.6-1.4, CPU prior -0.6..0; `mario/robustness.py`). Before race 1 the
+   score contracts disagree by 3-5 points between settings while the binaries agree within 1.5; after one race the
+   next race's winner contracts disagree by 2-4.5. `--model-sd-k 0` turns it off.
    Size = what the book offers at acceptable prices, capped by the position limit, `--clip`, and the risk budget.
 3. PnL marked to fair (position x (fair - average price) + exchange realized) next to the exchange's own number.
 
