@@ -122,6 +122,9 @@ export interface Config {
   T_mode: 'dom' | 'computed' | 'fixed20' | 'manual';
   manualTDays: number | null;
   fallbackClockRate: { rounds12: number; round3: number };
+  /** packet: the market bots move the underlying 1 real minute after the news and the options 2 real minutes after; with a live
+   * clock rate other than the packet's the move/snap boundaries are recomputed from these */
+  eventOffsetsRealSec: { move: number; snap: number };
   thresholds: Thresholds;
   blend: { mode: BlendMode; lambda: number; k: number; bandMode: BandMode };
   rate: { limit: number; amberAt: number; redAt: number };
@@ -169,6 +172,7 @@ export const DEFAULT_CONFIG: Config = {
   T_mode: 'dom',
   manualTDays: null,
   fallbackClockRate: { rounds12: 52, round3: 39 },
+  eventOffsetsRealSec: { move: 60, snap: 120 },
   thresholds: {
     minEdge: 0.05,
     ivOutlierPts: 1.5,

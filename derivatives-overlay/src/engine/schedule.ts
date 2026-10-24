@@ -139,6 +139,34 @@ export function rebaseSchedule(
   return schedule.map((e) => ({ ...e, date: newDates[dates.indexOf(e.date)] ?? e.date }));
 }
 
+/** the clock rate the packet layout implies for a day: the whole session divided over that day's evenly spaced events */
+export function packetRateForDate(schedule: EventSpec[], date: string, rates: { rounds12: number; round3: number }): number | null {
+  const e = schedule.find((x) => x.date === date);
+  if (!e) return null;
+  return e.round === 3 ? rates.round3 : rates.rounds12;
+}
+
+/**
+ * The move and snap boundaries are real-time offsets from the news (packet: +1 min, +2 min). The schedule's fictional
+ * times assume the packet's clock rate; when the exchange runs a different rate today, recompute today's move/snap from
+ * the live rate. Returns the same array when nothing changes (rate within 5 % of the packet's, or no events today).
+ */
+export function withLiveRate(
+  schedule: EventSpec[], liveRate: number, date: string, offsets: { move: number; snap: number }, rates: { rounds12: number; round3: number },
+): EventSpec[] {
+  const packet = packetRateForDate(schedule, date, rates);
+  if (!(liveRate > 0) || packet == null || Math.abs(liveRate / packet - 1) < 0.05) return schedule;
+  const hms = (sec: number) => {
+    const s = Math.round(sec);
+    return `${String(Math.floor(s / 3600)).padStart(2, '0')}:${String(Math.floor((s % 3600) / 60)).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}`;
+  };
+  return schedule.map((e) => {
+    if (e.date !== date) return e;
+    const news = hmsToSec(e.news);
+    return { ...e, move: hms(news + offsets.move * liveRate), snap: hms(news + offsets.snap * liveRate) };
+  });
+}
+
 export function realSecondsToNext(info: PhaseInfo, clockRate: number): number | null {
   if (info.simSecondsToNext == null || !(clockRate > 0)) return null;
   return info.simSecondsToNext / clockRate;

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { DEFAULT_SCHEDULE, eventTimeSec, phaseAt, realSecondsToNext, rebaseSchedule } from '../../src/engine/schedule';
+import { DEFAULT_SCHEDULE, eventTimeSec, phaseAt, realSecondsToNext, rebaseSchedule, withLiveRate } from '../../src/engine/schedule';
 import { parseNaiveSec } from '../../src/engine/tradingTime';
 
 const at = (s: string) => parseNaiveSec(s) as number;
@@ -73,5 +73,24 @@ describe('rebasing onto the exchange dates', () => {
     expect(dates(fri)).toEqual(['2026-08-07', '2026-08-10', '2026-08-11']);
     const mon = rebaseSchedule(DEFAULT_SCHEDULE, at('2026-08-10T09:31:00'), 460, rates)!;
     expect(dates(mon)).toEqual(['2026-08-07', '2026-08-10', '2026-08-11']);
+  });
+});
+
+describe('live clock rate', () => {
+  const rates = { rounds12: 52, round3: 39 };
+  const off = { move: 60, snap: 120 };
+  it('the packet rate leaves the schedule as it is', () => {
+    expect(withLiveRate(DEFAULT_SCHEDULE, 52, '2026-06-01', off, rates)).toBe(DEFAULT_SCHEDULE);
+    expect(withLiveRate(DEFAULT_SCHEDULE, 39, '2026-06-03', off, rates)).toBe(DEFAULT_SCHEDULE);
+    expect(withLiveRate(DEFAULT_SCHEDULE, 30, '2026-06-09', off, rates)).toBe(DEFAULT_SCHEDULE); // no events that day
+  });
+  it('a slower exchange moves and snaps earlier in market time: +1/+2 real minutes after the news', () => {
+    const s = withLiveRate(DEFAULT_SCHEDULE, 30, '2026-06-01', off, rates);
+    const e1 = s.find((e) => e.n === 1)!;
+    expect([e1.news, e1.move, e1.snap]).toEqual(['09:30:00', '10:00:00', '10:30:00']);
+    expect(s.find((e) => e.n === 4)).toBe(DEFAULT_SCHEDULE.find((e) => e.n === 4)); // other days untouched
+    const ph = phaseAt(at('2026-06-01T10:22:00'), s);
+    expect(ph.phase).toBe('UNDERLYING_MOVED');
+    expect(phaseAt(at('2026-06-01T10:31:00'), s).phase).toBe('SNAPPED');
   });
 });

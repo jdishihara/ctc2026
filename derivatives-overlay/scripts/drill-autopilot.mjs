@@ -75,12 +75,15 @@ const ov = page.locator('[data-deriv-overlay]');
 const switchAfter = Number(MOCK_ARGS[MOCK_ARGS.indexOf('--switch-after') + 1] || 0) || 0;
 await ov.getByText('DERIVATIVES').waitFor({ timeout: 20_000 + switchAfter * 1000 });
 if (switchAfter) console.log(`case switch picked up by the overlay after ${((Date.now() - t0Load) / 1000).toFixed(1)} s (mock switched at ${switchAfter} s)`);
-if (CONFIG_PATCH) {
+// --fast N compresses wall time: the mock's clock_rate is N times the packet's, so the overlay's "+60/+120 real s" move/snap
+// offsets (eventOffsetsRealSec, applied when the live rate is off the packet's) must shrink by N to describe the same boundaries
+const deepMerge = (a, b) => { for (const [k, v] of Object.entries(b)) a[k] = v && typeof v === 'object' && !Array.isArray(v) ? deepMerge(a[k] ?? {}, v) : v; return a; };
+const patch = deepMerge(FAST !== 1 ? { eventOffsetsRealSec: { move: 60 / FAST, snap: 120 / FAST } } : {}, CONFIG_PATCH ? JSON.parse(CONFIG_PATCH) : {});
+if (Object.keys(patch).length) {
   await ov.getByRole('button', { name: 'Config', exact: true }).click();
   const ta = ov.locator('textarea').first();
   const cur = JSON.parse(await ta.inputValue());
-  const deepMerge = (a, b) => { for (const [k, v] of Object.entries(b)) a[k] = v && typeof v === 'object' && !Array.isArray(v) ? deepMerge(a[k] ?? {}, v) : v; return a; };
-  await ta.fill(JSON.stringify(deepMerge(cur, JSON.parse(CONFIG_PATCH))));
+  await ta.fill(JSON.stringify(deepMerge(cur, patch)));
   await ov.getByRole('button', { name: /Validate/ }).click();
   await sleep(300);
 }

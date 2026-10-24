@@ -14,7 +14,7 @@ import { extractStructured, HeadlineParse, parseHeadline } from '../engine/headl
 import { Breach, capBreaches, contractsBySymbol, flattenOrders, needsFlatten, Portfolio, portfolio } from '../engine/risk';
 import type { PanelProbe } from './readiness';
 import { isOrderAction, RateMeter } from '../engine/rateLimit';
-import { EventSpec, phaseAt, PhaseInfo, realSecondsToNext, rebaseSchedule } from '../engine/schedule';
+import { EventSpec, packetRateForDate, phaseAt, PhaseInfo, realSecondsToNext, rebaseSchedule, withLiveRate } from '../engine/schedule';
 import { straddles, Structure, syntheticForwards } from '../engine/structures';
 import { planTickets, Ticket, ticketsFromArb, ticketsFromFlatten } from '../engine/tickets';
 import { dayStart, fmtDate, hmsToSec, parseNaiveSec, secOfDay, tradingDaysRemaining } from '../engine/tradingTime';
@@ -1376,7 +1376,9 @@ export class Store {
       const today = fmtDate(simNow);
       if (!cfg.schedule.some((e) => e.date === today) && today >= '2000-01-01') {
         if (this.rebased?.today !== today) {
-          const rb = rebaseSchedule(cfg.schedule, simNow, c.elapsedActiveSec ?? null, cfg.fallbackClockRate, { open: cfg.session.open, close: cfg.session.close });
+          const lr = clockSrc === 'REST' && c.rate != null && c.rate > 0 ? c.rate : null;
+          const rates = lr != null && Math.abs(lr / cfg.fallbackClockRate.rounds12 - 1) >= 0.05 && Math.abs(lr / cfg.fallbackClockRate.round3 - 1) >= 0.05 ? { rounds12: lr, round3: lr } : cfg.fallbackClockRate;
+          const rb = rebaseSchedule(cfg.schedule, simNow, c.elapsedActiveSec ?? null, rates, { open: cfg.session.open, close: cfg.session.close });
           this.rebased = rb ? { today, schedule: rb } : null;
         }
         if (this.rebased) {
@@ -1386,6 +1388,19 @@ export class Store {
         }
       }
     } else if (this.rebased) this.rebased = null;
+    // the exchange's clock rate need not be the packet's either: today's move/snap boundaries follow the live rate
+    const liveRate = clockSrc === 'REST' && c.rate != null && c.rate > 0 ? c.rate : null;
+    if (simNow != null && liveRate != null && mode === 'derivatives') {
+      const today = fmtDate(simNow);
+      const offsets = cfg.eventOffsetsRealSec ?? { move: 60, snap: 120 };
+      const adj = withLiveRate(schedule, liveRate, today, offsets, cfg.fallbackClockRate);
+      if (adj !== schedule) {
+        schedule = adj;
+        const ev = adj.find((e) => e.date === today);
+        const note = `clock ${liveRate.toFixed(1)}/min, packet ${packetRateForDate(adj, today, cfg.fallbackClockRate)}: today's move/snap set ${offsets.move}/${offsets.snap} real s after the news (E${ev?.n} ${ev?.news} → ${ev?.move} / ${ev?.snap})`;
+        scheduleNote = scheduleNote ? `${scheduleNote}; ${note}` : note;
+      }
+    }
     const phase = simNow != null ? phaseAt(simNow, schedule, { open: cfg.session.open, close: cfg.session.close }) : null;
     const realToNext = phase ? realSecondsToNext(phase, clockRate) : null;
     const round = phase?.event?.round ?? null;

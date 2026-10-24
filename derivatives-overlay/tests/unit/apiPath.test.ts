@@ -268,3 +268,14 @@ describe('exchange fictional dates', () => {
     expect(st.d.scheduleNote).toBeNull();
   });
 });
+
+describe('exchange clock rate', () => {
+  it('a live rate off the packet moves today\'s move/snap boundaries to +60/+120 real seconds', () => {
+    const st = new Store({ ...cloneDefaults(), mode: 'derivatives' }, () => 100_000);
+    st.handleHttp('GET', '/api/v1/competitions/current', { competition_id: 'c1', name: 'Derivatives', state: 'running', fictional_time: '2026-06-01T10:35:00', elapsed_active_seconds: 130, clock_rate: 30 });
+    st.changed(true);
+    expect(st.d.phase?.event?.n).toBe(1);
+    expect(st.d.phase?.phase).toBe('SNAPPED'); // packet times would still say UNDERLYING_MOVED until 11:14
+    expect(st.d.scheduleNote).toMatch(/clock 30.0\/min, packet 52.*09:30:00 → 10:00:00 \/ 10:30:00/);
+  });
+});

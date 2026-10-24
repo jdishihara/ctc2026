@@ -360,8 +360,16 @@ function publishNews(message) {
 
 // ---------- event engine ----------
 const fired = new Set();
+// --real-offsets: like the packet's wording, the underlying moves 60 real s after the news and the options snap 120 real s
+// after it, whatever the clock rate (with --rate N this is how a live exchange at that rate would behave)
+const REAL_OFFSETS = process.argv.includes('--real-offsets');
 function eventTimes(e) {
-  return { news: parseNaive(`${e.date}T${e.news}`), move: parseNaive(`${e.date}T${e.move}`), snap: parseNaive(`${e.date}T${e.snap}`) };
+  const news = parseNaive(`${e.date}T${e.news}`);
+  if (REAL_OFFSETS) {
+    const r = rateOfDay(e.date);
+    return { news, move: news + 60 * r, snap: news + 120 * r };
+  }
+  return { news, move: parseNaive(`${e.date}T${e.move}`), snap: parseNaive(`${e.date}T${e.snap}`) };
 }
 const pendingRealTimers = [];
 function onBoundary(e, which) {
