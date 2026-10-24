@@ -101,7 +101,8 @@ export class ApiPoller {
     }
     e.status = r.status;
     if (r.status === 429 || r.status === 0 || r.status >= 500) {
-      e.backoff = Math.min(e.backoff * 2, 16);
+      // under a 429 storm shed the cheap endpoints first: the chain (prices) and positions (sizing) never slow past x4
+      e.backoff = Math.min(e.backoff * 2, /^(chain:|positions$)/.test(key) ? 4 : 16);
       this.status.errors++;
     } else {
       e.backoff = 1;

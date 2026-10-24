@@ -485,7 +485,8 @@ const server = http.createServer(async (req, res) => {
         return res.end(readFileSync(f));
       }
     }
-    if (p.startsWith('/api/v1/') && rateLimited()) return json(res, 429, { detail: 'Rate limited' });
+    // drill instrumentation (/__mock/*, /api/v1/pnl) is not the overlay's traffic: it never counts against the limit
+    if (p.startsWith('/api/v1/') && p !== '/api/v1/pnl' && rateLimited()) return json(res, 429, { detail: 'Rate limited' });
     if (preSwitch()) {
       if (p === '/api/v1/competitions/current') return json(res, 200, { competition_id: 'mock-0000-hurricane', name: 'Hurricane Season', state: 'ready', fictional_time: '2026-08-03T09:30:00', elapsed_active_seconds: 0, clock_rate: 0 });
       if (p === '/api/v1/symbols') return json(res, 200, { symbols: ['PORT', 'ISLE', 'AQUA'].map((x, i) => ({ symbol: x, name: x, symbol_type: 'equity', trading_halted: true, settlement_active: false, max_position: 200 + 100 * i, tick_size: 0.01, competition_id: 'mock-0000-hurricane' })), groups: [] });
