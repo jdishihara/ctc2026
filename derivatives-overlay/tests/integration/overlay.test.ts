@@ -194,7 +194,7 @@ describe('overlay against the mock page', () => {
 
   it('a human submit is observed for the rate meter, positions update the risk view', async () => {
     (document.querySelector('button.submit') as HTMLButtonElement).click(); // the human
-    await sleep(100);
+    for (let i = 0; i < 40 && exchange.orderPosts < 1; i++) await sleep(50); // the mock page posts asynchronously
     expect(exchange.orderPosts).toBe(1);
     expect(h.store.d.rate.used).toBe(1);
     h.store.handleHttp('GET', '/api/v1/positions?include_zero=true', [{ symbol: 'OIL_0626_C100', quantity: 40 }]);
