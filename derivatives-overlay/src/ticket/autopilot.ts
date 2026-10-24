@@ -33,6 +33,8 @@ export class Autopilot {
   private busy = false;
   /** contract:side -> { t, pos } of the last submission, to avoid re-sending while positions catch up */
   private sent = new Map<string, { t: number; pos: number }>();
+  /** symbol -> until when it is left alone after the exchange said "Trading halted" / "not found" (no retries into a wall) */
+  private halted = new Map<string, number>();
   private tabSwitchAt = 0;
   /** phase key (event:phase) at which resting orders were last cancelled, so cancel-all runs once per boundary */
   private cancelledAt: string | null = null;
@@ -67,6 +69,11 @@ export class Autopilot {
   }
 
   private excluded(t: Ticket): boolean {
+    const h = this.halted.get(t.symbol);
+    if (h != null) {
+      if (this.now() < h) return true;
+      this.halted.delete(t.symbol);
+    }
     const k = `${t.symbol}:${t.side}`;
     const e = this.sent.get(k);
     if (!e) return false;
@@ -196,6 +203,8 @@ export class Autopilot {
     if (res.status === 429) this.backoffUntil = this.now() + this.cfg.auto.backoffMs;
     if (!res.ok) {
       const detail = (res.json && typeof res.json === 'object' && typeof (res.json as { detail?: unknown }).detail === 'string' ? (res.json as { detail: string }).detail : res.text.slice(0, 120)) || `HTTP ${res.status}`;
+      // live messages (testnet 2026-10-24): 403 "Trading halted"; 404 "Symbol X not found". Leave that contract alone for a while.
+      if (/halted|not found|settled/i.test(detail) || res.status === 404) this.halted.set(t.symbol, this.now() + (this.cfg.auto.haltedPauseMs ?? 30_000));
       store.markLoaded(t, false, `exchange rejected ${t.side} ${t.qty} ${t.symbol}: ${detail}`);
       return { action: 'submitted', detail: `${t.side} ${t.qty} ${t.symbol} @ ${t.price} -> HTTP ${res.status} ${detail}`, ticket: t };
     }

@@ -2,6 +2,7 @@
 //
 //   node scripts/drill-autopilot.mjs [--fast 4] [--seed 1] [--start-event 1] [--events 10] [--out out/deriv_drill] [--headed]
 //                                    [--config '{"auto":{"submitRateCap":36}}']   (patched into chrome.storage via the Config tab API)
+//                                    [--mock-args "--rate-limit 8 --halt SYM --ws-drop 40 --switch-after 30 --reject-every 7"]
 //
 // Needs `npm run build:dev` (dist-dev/). Starts the mock (port 5317), loads the extension, arms auto-submit, then samples
 // /api/v1/pnl, /__mock/stats and /__mock/news every second until the last event has snapped and been flattened.
@@ -49,8 +50,10 @@ const DIAG_EVERY = Number(arg('diag-every', 10));
 for (let i = 0; i < 50; i++) {
   try { await fetch(`${BASE}/__mock/stats`); await sleep(200); } catch { break; }
 }
+// --mock-args "--rate-limit 8 --halt OIL_0626_C100 --ws-drop 40 --switch-after 30 --reject-every 7": hostile-exchange options passed to the mock
+const MOCK_ARGS = arg('mock-args', null) ? String(arg('mock-args')).split(/\s+/).filter(Boolean) : [];
 const server = spawn(process.execPath, [join(ROOT, 'mock-exchange/server.mjs'), '--port', String(PORT), '--fast', String(FAST), '--preroll', '8',
-  '--start-event', String(START), '--seed', SEED, '--quiet'], { stdio: 'inherit' });
+  '--start-event', String(START), '--seed', SEED, '--quiet', ...MOCK_ARGS], { stdio: 'inherit' });
 for (let i = 0; i < 100; i++) {
   try { if ((await fetch(`${BASE}/api/v1/competitions/current`)).ok) break; } catch { /* not up */ }
   await sleep(100);
@@ -62,9 +65,13 @@ const ctx = await chromium.launchPersistentContext(mkdtempSync(join(tmpdir(), 'd
 const page = await ctx.newPage();
 const errors = [];
 page.on('pageerror', (e) => errors.push(String(e)));
+const t0Load = Date.now();
 await page.goto(`${BASE}/trading`);
 const ov = page.locator('[data-deriv-overlay]');
-await ov.getByText('DERIVATIVES').waitFor({ timeout: 20_000 });
+// with --switch-after the mock serves an equity case first: the overlay must flip to DERIVATIVES on its own when the case changes
+const switchAfter = Number(MOCK_ARGS[MOCK_ARGS.indexOf('--switch-after') + 1] || 0) || 0;
+await ov.getByText('DERIVATIVES').waitFor({ timeout: 20_000 + switchAfter * 1000 });
+if (switchAfter) console.log(`case switch picked up by the overlay after ${((Date.now() - t0Load) / 1000).toFixed(1)} s (mock switched at ${switchAfter} s)`);
 if (CONFIG_PATCH) {
   await ov.getByRole('button', { name: 'Config', exact: true }).click();
   const ta = ov.locator('textarea').first();

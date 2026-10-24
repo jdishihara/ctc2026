@@ -86,6 +86,8 @@ export interface AutoConfig {
   cancelOnNews: boolean;
   /** pause submissions this long after an HTTP 429 */
   backoffMs: number;
+  /** after "Trading halted" / "not found" on a contract, leave it alone this long (ms) */
+  haltedPauseMs: number;
 }
 
 /** REST polling through the session cookie (Config.api); 0 disables one endpoint */
@@ -195,7 +197,7 @@ export const DEFAULT_CONFIG: Config = {
     confirm: true, converter: true, converterTolPts: 8, converterTieMarginPts: 2,
     submit: false, submitRateCap: 36, submitIntervalMs: 1500, resubmitAfterMs: 20_000, flattenResubmitMs: 6_000, flattenReserve: 12, flattenIntervalMs: 1500,
     spotBoundPct: 40, volMin: 0.05, volMax: 3.0, switchTabs: true,
-    submitVia: 'api', cancelOnSnap: true, cancelOnNews: true, backoffMs: 5000,
+    submitVia: 'api', cancelOnSnap: true, cancelOnNews: true, backoffMs: 5000, haltedPauseMs: 30_000,
   },
   api: { enabled: true, clockMs: 1000, symbolsMs: 15_000, chainMs: 1000, positionsMs: 1000, ordersMs: 1500, tradesMs: 3000 },
   feed: { enabled: true, channels: ['quotes', 'trades', 'news'], path: '/ws/v1/market-data' },
@@ -279,6 +281,7 @@ export function validateConfig(input: unknown): Validation {
     if (!['api', 'form'].includes(String(a.submitVia))) errors.push('auto.submitVia must be api | form');
     for (const k of ['cancelOnSnap', 'cancelOnNews']) if (typeof a[k] !== 'boolean') errors.push(`auto.${k} must be true or false`);
     if (typeof a.backoffMs !== 'number' || !(a.backoffMs >= 0)) errors.push('auto.backoffMs must be a number >= 0');
+    if (typeof a.haltedPauseMs !== 'number' || !(a.haltedPauseMs >= 0)) errors.push('auto.haltedPauseMs must be a number >= 0');
     if (typeof a.volMin === 'number' && typeof a.volMax === 'number' && a.volMin >= a.volMax) errors.push('auto.volMin must be below auto.volMax');
   }
   const api = c.api as unknown as Record<string, unknown>;

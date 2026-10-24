@@ -44,6 +44,14 @@ Not verifiable before the open: the form's behaviour when live (prefill + click 
 shapes with real fills (the Hurricane bot's field names are assumed), and whether series 2 really reuses the names.
 Directions for the day: docs/mario-gameday-steps.md (emailed to the team).
 
+# Game day 2026-10-24, 11:40 onwards: Derivatives refinement loop (Fable, unattended; Jayden reachable by email for blockers)
+
+The testnet shows Hurricane until that case ends, so the Derivatives chain is first seen live at 4:15 pm. Until then: drills on
+the mock at real speed and against a hostile exchange (mock options --rate-limit, --halt, --ws-drop, --switch-after,
+--reject-every; drill --mock-args), each accepted change committed and pushed. Derivatives only.
+
+| time | run | result | decision |
+|---|---|---|---|
 # Game day 2026-10-24, 10:30-11:25 (Derivatives; Fable, Jayden present)
 
 Organisers confirmed to Jayden (~11:00): a bot in our logged-in browser may place orders. Decision: keep the Chrome

@@ -30,6 +30,29 @@ const T_MODE = arg('t-mode', 'decay');
 const QUIET = argv.includes('--quiet');
 // --glitch: quote OIL's top-strike call above the middle-strike call's ask (a riskless monotonicity arb) to practice the Arb tab
 const GLITCH = argv.includes('--glitch');
+// ---- hostile-exchange options (all off by default) ----
+// --rate-limit N: more than N /api requests in any rolling second answer 429 {"detail":"Rate limited"} (the live message)
+const RATE_LIMIT = Number(arg('rate-limit', 0)) || 0;
+// --halt SYM[,SYM]: orders on these symbols answer 403 {"detail":"Trading halted"}; /symbols shows trading_halted
+const HALTED = new Set(String(arg('halt', '') || '').split(',').filter(Boolean));
+// --ws-drop S: every S seconds close every market-data socket (code 1001), like a load balancer recycling
+const WS_DROP = Number(arg('ws-drop', 0)) || 0;
+// --switch-after S: for the first S real seconds serve an equity case ("Hurricane Season": equities, no options, chain 400)
+// and only then the Derivatives case, like the live exchange flipping cases while the tab stays open
+const SWITCH_AFTER = Number(arg('switch-after', 0)) || 0;
+// --reject-every N: every Nth order answers 400 {"detail":"Insufficient buying power"} (a rejection the overlay must shrug off)
+const REJECT_EVERY = Number(arg('reject-every', 0)) || 0;
+const bootWall = Date.now();
+const preSwitch = () => SWITCH_AFTER > 0 && (Date.now() - bootWall) / 1000 < SWITCH_AFTER;
+const rateWindow = [];
+function rateLimited() {
+  if (!RATE_LIMIT) return false;
+  const now = Date.now();
+  while (rateWindow.length && now - rateWindow[0] > 1000) rateWindow.shift();
+  rateWindow.push(now);
+  if (rateWindow.length > RATE_LIMIT) { stats.rateLimited = (stats.rateLimited || 0) + 1; return true; }
+  return false;
+}
 const log = (...a) => { if (!QUIET) console.log('[mock]', ...a); };
 
 const scenario = JSON.parse(readFileSync(SCENARIO_PATH, 'utf8'));
@@ -266,7 +289,7 @@ function symbolsView() {
     ...Object.keys(und).map((s) => ({ symbol: s, name: s, symbol_type: 'scheduled', trading_halted: false, settlement_active: false, max_position: 0, competition_id: scenario.competition_id })),
     ...options.map((o) => ({
       symbol: o.symbol, name: `${o.und} ${o.K} ${o.kind === 'C' ? 'Call' : 'Put'}`, symbol_type: 'option', underlying_symbol: o.und, option_kind: o.kind === 'C' ? 'call' : 'put',
-      strike_price: o.K, expiry_fictional_time: scenario.expiry, trading_halted: false, settlement_active: false, settlement_price: null, max_position: LIMIT, tick_size: 0.01,
+      strike_price: o.K, expiry_fictional_time: scenario.expiry, trading_halted: HALTED.has(o.symbol), settlement_active: false, settlement_price: null, max_position: LIMIT, tick_size: 0.01,
       competition_id: scenario.competition_id,
     })),
   ];
@@ -462,6 +485,16 @@ const server = http.createServer(async (req, res) => {
         return res.end(readFileSync(f));
       }
     }
+    if (p.startsWith('/api/v1/') && rateLimited()) return json(res, 429, { detail: 'Rate limited' });
+    if (preSwitch()) {
+      if (p === '/api/v1/competitions/current') return json(res, 200, { competition_id: 'mock-0000-hurricane', name: 'Hurricane Season', state: 'ready', fictional_time: '2026-08-03T09:30:00', elapsed_active_seconds: 0, clock_rate: 0 });
+      if (p === '/api/v1/symbols') return json(res, 200, { symbols: ['PORT', 'ISLE', 'AQUA'].map((x, i) => ({ symbol: x, name: x, symbol_type: 'equity', trading_halted: true, settlement_active: false, max_position: 200 + 100 * i, tick_size: 0.01, competition_id: 'mock-0000-hurricane' })), groups: [] });
+      if (/^\/api\/v1\/options\//.test(p)) return json(res, 400, { detail: 'Underlying must be scheduled' });
+      if (p === '/api/v1/positions') return json(res, 200, { positions: [] });
+      if (p === '/api/v1/orders/open' || p === '/api/v1/orders') return json(res, 200, { orders: [] });
+      if (p === '/api/v1/trades') return json(res, 200, { trades: [], cursor: 0 });
+      if (p === '/api/v1/orders' && req.method === 'POST') return json(res, 403, { detail: 'Trading halted' });
+    }
     if (p === '/api/v1/competitions/current') {
       return json(res, 200, {
         competition_id: scenario.competition_id, name: scenario.name, state: clock.state,
@@ -512,6 +545,8 @@ const server = http.createServer(async (req, res) => {
       stats.orderPosts++;
       let body = {};
       try { body = JSON.parse(await readBody(req)); } catch { return json(res, 400, { detail: 'bad json' }); }
+      if (HALTED.has(String(body.symbol))) { log(`ORDER 403 halted ${JSON.stringify(body)}`); return json(res, 403, { detail: 'Trading halted' }); }
+      if (REJECT_EVERY && stats.orderPosts % REJECT_EVERY === 0) { log(`ORDER 400 rejected ${JSON.stringify(body)}`); return json(res, 400, { detail: 'Insufficient buying power' }); }
       const [code, out] = placeOrder(body);
       log(`ORDER ${code} ${JSON.stringify(body)}${code === 200 ? ` -> ${out.status} ${out.filled_quantity}/${out.quantity}` : ` ${out.detail}`}`);
       return json(res, code, code === 200 ? { ...out, message: `Order ${out.status}`, message_type: 'success' } : out);
@@ -574,6 +609,13 @@ wss.on('connection', (ws) => {
   ws.on('close', () => clients.delete(c));
 });
 
+if (WS_DROP > 0) {
+  setInterval(() => {
+    for (const c of clients) { try { c.ws.close(1001, 'recycling'); } catch { /* gone */ } }
+    stats.wsDrops = (stats.wsDrops || 0) + 1;
+    log(`WS DROP: closed ${clients.size} socket(s)`);
+  }, WS_DROP * 1000);
+}
 server.listen(PORT, () => {
   console.log(`[mock] Newtonia vs Euleria mock exchange on http://localhost:${PORT}/trading (rate x${FAST}, start event ${START_EVENT}, preroll ${PREROLL}s)`);
 });
