@@ -36,7 +36,9 @@ forwarding credentials or resubmitting a request to another URL.
 
 ## Verification (2026-10-24 06:25 UTC)
 
-- All 405 Python tests passed. Fifteen local-server tests cover reuse, concurrent
+- The initial 405-test suite passed. After independent review, two regressions
+  reproduced and fixed IPv6 proxy-host parity and connection cleanup on strategy
+  startup failure. Seventeen local-server tests cover reuse, concurrent
   callers, server connection closure, HTTP error bodies, empty responses, proxy
   fallback, the unchanged default, and dropped acknowledgements/redirects that
   must not duplicate a POST.
@@ -51,3 +53,8 @@ forwarding credentials or resubmitting a request to another URL.
 The measured durations vary even in this short window. This is an optional
 transport candidate for a subsequent controlled trial, not evidence of higher
 profit. No live trader was started or reconfigured for this experiment.
+
+The integrated receipt records the source before the two review fixes. Those
+fixes change proxy selection to use urllib's exact request-host representation
+and extend connection cleanup over strategy initialization. They do not add any
+request retries. All 407 Python tests passed after those fixes.

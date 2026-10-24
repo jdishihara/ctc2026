@@ -39,10 +39,10 @@ class LiveExchange:
         self._http = JSONConnection(self.url) if self.http_reuse_enabled else None
         try:
             self.case = self.get("/cases/hurricane.json", api=False)
+            self.limits = self.case["limits"]; self.symbols = list(self.limits)
         except BaseException:
             self.close()
             raise
-        self.limits = self.case["limits"]; self.symbols = list(self.limits)
         self.quotes: dict[str, tuple[float, float]] = {}
         self.mid: dict[str, float] = {}
         self.quote_times: dict[str, float] = {}
@@ -688,6 +688,13 @@ class LiveSession:
 async def run(args: argparse.Namespace) -> None:
     ex = LiveExchange(args.url, args.key, args.dry_run, rate_limit=args.rate,
                       reuse_http=getattr(args, 'reuse_http', False))
+    try:
+        await run_exchange(args, ex)
+    finally:
+        ex.close()
+
+
+async def run_exchange(args: argparse.Namespace, ex: LiveExchange) -> None:
     print(f"HTTP connection reuse={ex.http_reuse_enabled}", flush=True)
     if args.nowcast:
         strat = S.FairValueTrader(min_edge=args.min_edge, edge_full=args.edge_full, project=True)
@@ -738,7 +745,6 @@ async def run(args: argparse.Namespace) -> None:
     finally:
         receiver.cancel()
         await asyncio.gather(receiver, return_exceptions=True)
-        ex.close()
 
 
 def main() -> None:

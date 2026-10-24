@@ -11,9 +11,9 @@ import urllib.request
 
 
 def proxy_required(url):
-    parsed = urllib.parse.urlsplit(url)
-    return bool(urllib.request.getproxies().get(parsed.scheme)
-                and not urllib.request.proxy_bypass(parsed.hostname or ''))
+    request = urllib.request.Request(url)
+    return bool(urllib.request.getproxies().get(request.type)
+                and not urllib.request.proxy_bypass(request.host))
 
 
 class JSONConnection:

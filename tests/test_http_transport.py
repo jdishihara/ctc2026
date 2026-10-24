@@ -1,3 +1,5 @@
+import argparse
+import asyncio
 import json
 import socket
 import threading
@@ -10,6 +12,7 @@ import pytest
 
 from bot.http_transport import JSONConnection, proxy_required
 from bot.live import LiveExchange
+from bot import live
 
 
 @pytest.fixture
@@ -146,6 +149,40 @@ def test_proxy_configuration_is_respected(monkeypatch):
     monkeypatch.setattr('urllib.request.proxy_bypass', lambda host: host == 'localhost')
     assert proxy_required('https://exchange.example')
     assert not proxy_required('https://localhost')
+
+
+def test_proxy_bypass_uses_urllib_request_host_including_ipv6_and_port(monkeypatch):
+    configured = {'http': 'http://proxy.example:3128', 'no': '::1'}
+    monkeypatch.setattr('urllib.request.getproxies', lambda: configured)
+    monkeypatch.setattr('urllib.request.proxy_bypass',
+                        lambda host: urllib.request.proxy_bypass_environment(host, configured))
+    url = 'http://[::1]:8000'
+    expected = not urllib.request.proxy_bypass(urllib.request.Request(url).host)
+    assert expected
+    assert proxy_required(url) == expected
+
+
+def test_strategy_startup_failure_closes_connection(server, monkeypatch):
+    url, requests = server
+    closed = []
+    original_close = LiveExchange.close
+
+    def close(exchange):
+        closed.append(exchange)
+        original_close(exchange)
+
+    def fail_strategy(**kwargs):
+        raise RuntimeError('strategy startup failed')
+
+    monkeypatch.setattr(LiveExchange, 'close', close)
+    monkeypatch.setattr(live.S, 'FairValueTrader', fail_strategy)
+    args = argparse.Namespace(url=url, key='test', dry_run=True, rate=90,
+                              reuse_http=True, nowcast=True, min_edge=.025, edge_full=.03)
+    with pytest.raises(RuntimeError, match='strategy startup failed'):
+        asyncio.run(live.run(args))
+    assert len(requests) == 1
+    assert len(closed) == 1
+    assert closed[0]._http._connection is None
 
 
 def test_live_adapter_opt_in_preserves_uncertain_post_latch(server):
