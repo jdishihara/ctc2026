@@ -21,7 +21,7 @@ before the closing POST. Thus the chosen price is nine round trips old at
 execution, even when all requests succeed. Request counts include the final
 receipt. These are virtual replay timings, not measured live latencies.
 
-## Candidate and invariant
+## Initial candidate (rejected before outcome evaluation)
 
 Move the per-symbol book read after the existing account refresh, scope check,
 open-order/market-open check and nonzero-position check. Retain the ownership
@@ -34,6 +34,28 @@ flattening.
 Tests must show the freshest book follows reconciliation; a competition
 change, unknown order, market closure, or invalid book still prevents a new
 closing order. A position filled during reconciliation must not be reopened.
+
+## Amendment before outcome evaluation
+
+Independent review reproduced an ordering regression in the initial candidate:
+a conversion during the later book request can change positions without adding
+an order ID. The send-time history audit cannot detect that change, so a stale
+closing quantity can reopen an already flat position. No alternative capture
+performance had been run when this issue was found.
+
+The revised candidate adds a positions GET immediately after the later book
+read. Strictly validate those account rows and require the full position vector
+to equal the previously reconciled snapshot. On a changed vector, stop cleanup
+with an attention result and submit no order. Invalid account rows also stop
+cleanup. Preserve the existing send-time history/identity/market-open audit.
+This adds one GET per fetched book; expected quote age becomes four RTTs rather
+than the initial proposal's three. It can increase request count and cleanup
+duration. All such effects must be reported in the full comparison.
+
+Additional regressions must cover flattening, sign reversal, partial position
+change and a different symbol changing during book retrieval. The new check
+does not make the multi-request exchange interface atomic; account exclusivity
+remains a prerequisite for live practice.
 
 ## Fixed comparison before any outcome selection
 
