@@ -88,7 +88,12 @@ was red. Two root causes found and fixed:
    contract/side is not re-sent for 20 s unless the position has moved. Third fix: flatten tickets may be re-sent after
    6 s (auto.flattenResubmitMs), sized net of same-side resting orders; and during an event with a cap breached the
    auto-pilot works risk-reducing flatten tickets instead of idling (event 2 had 3 orders because every edge ticket was
-   red). Third run (with the Round 1 confirm fix too): below.
+   red). Third run (03:19-03:46, confirm fix + risk fallback + 6 s flatten re-send): **+23,967** (+21% on the baseline),
+   485 orders. Round 1 now trades from the headline (21/19/21 orders in the first 60 s vs 0/0/0); event 2 made +1,299
+   (vs -698 / -843). Gross carried into the next event: Rounds 1-2 116, 128, 138, 225, 64, 192 (vs 288-1,087); Round 3
+   still 568, 816, 656, 1,028: with 23-26 edge orders in the first minute and 19-24 in the second, the rolling-minute
+   cap leaves only 5-6 orders for the 30 s flatten window. Fourth fix: edge tickets stop at submitRateCap - 12
+   (auto.flattenReserve) so the snap always has 12 orders of budget. Fourth run: below.
 Also fixed on the way: the integration test raced the content script's own 700 ms auto-pilot timer (now disabled in
 the test harness) and judged one real-time tick (now retries up to 4 s); vitest runs files sequentially.
 

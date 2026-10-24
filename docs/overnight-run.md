@@ -12,7 +12,8 @@ The new fixed comparison retains all 64 supervised settings after exact
 40 history stops, 8 loss stops and only 16 completed trials. Primary capture
 244 finishes flat at −$261.00, versus +$628.14 in the core-client replay.
 The inter-round history guard requires a separate fix; practice limits and
-the loss trigger remain unchanged. Independent final result review is pending.
+the loss trigger remain unchanged. Independent final result review is complete;
+all 40 history stops were reproduced at valid round-2 or round-3 formations.
 See [supervised-client-replay.md](supervised-client-replay.md) for all results
 and the six cleanup-attention outcomes. Recording and both frozen evaluations
 continue; no new owned live batch has run.

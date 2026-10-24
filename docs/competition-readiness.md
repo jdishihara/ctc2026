@@ -20,7 +20,7 @@ supervisor to −$261.00 after the actual loss stop and cleanup. Forty settings
 stop on a reproducible inter-round history-guard issue; a separate correction
 is still required. Full results, cleanup attention cases and limitations are in
 [supervised-client-replay.md](supervised-client-replay.md). These offline
-findings are pending independent final result review and do not change the
+findings passed independent final result review and do not change the
 actual +$141.16 completed practice record.
 
 ## Historical data and evaluation

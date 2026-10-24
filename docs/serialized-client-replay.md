@@ -3,7 +3,7 @@
 Follow-up: [production-supervisor replay](supervised-client-replay.md) adds the
 actual practice loss stop, history audits and cleanup on captures 241–244.
 Its weaker outcomes are necessary context when interpreting the core-client
-profits below; final result review is pending.
+profits below; independent final result review is complete.
 
 ## What this evaluates
 

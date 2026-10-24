@@ -1,8 +1,8 @@
 # Production practice supervision on four recorded markets
 
 Source frozen at `5d7d67bc636ed34ad09630812070e37bf12219bb` before the comparison.
-Independent final result review is pending. These are offline simulated outcomes,
-not a new live practice run.
+Independent source, result and artifact review is complete. These are offline
+simulated outcomes, not a new live practice run.
 
 ## What changed in the measurement
 
@@ -132,7 +132,13 @@ discarded. The complete source suite passes **578 Python tests**, including
 
 The independent code review reproduced timing and provenance defects before
 they were corrected, then approved the frozen source. Final result review
-checks all rows, source/input/artifact hashes, and representative guarded reruns.
+verified all rows, source/input/artifact hashes, and eight representative
+guarded reruns with exact result and journal matches. It also instrumented and
+reran all 40 history stops: 32 occur at valid round-2 formation and 8 at valid
+round-3 formation, with complete prior history and no current observation yet.
+All 15 copied phase/log files and 448 regular journal archive members match
+their originals byte-for-byte; all 16 artifact-manifest hashes verify. The
+branch integrating teammate main `13af3f8` passes **579 Python tests**.
 
 ## Practical limits and next action
 
