@@ -56,10 +56,10 @@ def test_edge_positions_stop_at_a_fraction_of_the_limit_but_arbs_use_all_of_it()
     fairs = {("race", 1): [0.6, 0.2, 0.1, 0.1]}
     # a cheap favourite: ask 40 vs fair 60, deep book; we already hold 40
     books = {"race_BIRDO": {"asks": [{"price": 40, "quantity": 500}], "bids": [{"price": 39, "quantity": 500}]}}
-    acts = Engine(roles, Params(clip=500)).evaluate(fairs, books, {"race_BIRDO": {"qty": 40}}, n_done=0)["actions"]
+    acts = Engine(roles, Params(clip=500, edge_pos_frac=0.5)).evaluate(fairs, books, {"race_BIRDO": {"qty": 40}}, n_done=0)["actions"]
     assert [a.legs[0][2] for a in acts if a.kind == "edge"] == [10]          # 0.5 x 100 limit - 40 held
-    acts = Engine(roles, Params(clip=500, edge_pos_frac=1.0)).evaluate(fairs, books, {"race_BIRDO": {"qty": 40}}, n_done=0)["actions"]
-    assert [a.legs[0][2] for a in acts if a.kind == "edge"] == [60]
+    acts = Engine(roles, Params(clip=500)).evaluate(fairs, books, {"race_BIRDO": {"qty": 40}}, n_done=0)["actions"]
+    assert [a.legs[0][2] for a in acts if a.kind == "edge"] == [60]          # default: the full limit
     # a complete-set arb still fills to the full limit
     books = {f"race_{r}": {"asks": [{"price": 20, "quantity": 500}]} for r in RACERS}
     acts = Engine(roles, Params(clip=500)).evaluate(fairs, books, {}, n_done=0)["actions"]

@@ -25,7 +25,7 @@ class Params:
     clip: int = 50                             # never recommend more than this many contracts per action
     min_profit: float = 5.0                    # do not list actions worth less than this (contract points)
     model_sd_k: float = 1.0                    # margin >= k x sd of the fair across the parameter ensemble (mario/robustness.py); 0 disables
-    edge_pos_frac: float = 0.5                 # model-edge positions use at most this fraction of the exchange limit; riskless arbs use all of it
+    edge_pos_frac: float = 1.0                 # model-edge positions use at most this fraction of the exchange limit (0.5 tested 2026-10-24: worse on 3/3 mock seeds, rejected)
 
 
 @dataclass

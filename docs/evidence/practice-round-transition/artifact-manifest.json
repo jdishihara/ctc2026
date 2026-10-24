@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "source_revision": "cd3eb239bd7bad97b34f10a8f2bb0b2e1c0f5026",
+  "source_freeze_at": 1792828815,
+  "source_worktree": "/Users/arjunhans/Documents/ctc2026/.worktrees/practice-history",
+  "source_outputs": "/Users/arjunhans/Documents/ctc2026/out/supervised-replay-v2-20261024",
+  "reused_reference": {
+    "source_revision": "505a5ad2d5a6f81e7c711cb550871ce7aa7f3734",
+    "results_sha256": "6f01f462fdf82fd42714fb749263ed4635590f15b4fb26951c4bce07db306bbb",
+    "archive": "../supervised-client/reference"
+  },
+  "journal_members": 448,
+  "sha256": {
+    "baseline/metadata.json": "9ce9183421a879eea61bc15b562fdbf3eaa7d9f616f837bdb18b09c3e89efe2d",
+    "baseline/results.jsonl": "8c05ff9ab2f42c6a7f8aa144f043ccbb6b99f80038e8a8d4a6136fbb00b741af",
+    "baseline/summary.json": "b8e68a7831067774d0df3e00a677ebf5f1c2cbaa5dab4a99367f8225e0803141",
+    "supervised/metadata.json": "76d7ef4e62cefaa9fe5a56c48759ecd7b4212ef4d6d5de5d0866226697867e0e",
+    "supervised/results.jsonl": "985fdb64e556a0c2caad2f947149e09c5c5b0adceb911f5420b034735035e0bf",
+    "supervised/summary.json": "8845b2a40055154b71d77620e4d4bef26bd9b0910849dd2ed1e3fc1440eb5337",
+    "supervised-journals.tar.gz": "3a6da1771a55c2163113e7d9585d87076b9ec9895e32db8cbd45b714721248b9",
+    "supervised-replay-v2-baseline.stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "supervised-replay-v2-baseline.stdout.log": "d67a7b3db539d309065e89f3ba90eb8a2bd20a043e88d3d7b260d775ae8513da",
+    "supervised-replay-v2-supervised.stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "supervised-replay-v2-supervised.stdout.log": "b54b417e241586e17e35dc8c3d9899ea936f65a84929e462268aabd9c2a909ca"
+  }
+}
