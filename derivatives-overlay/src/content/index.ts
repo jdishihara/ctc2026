@@ -196,7 +196,7 @@ export async function startOverlay(win: Window & typeof globalThis = window, opt
       const after = t.side === 'BUY' ? pos + sameSide + t.qty : pos - sameSide - t.qty;
       const refusal = apiSubmitRefusal({
         armed: store.d.mode === 'derivatives', ticket: { symbol: t.symbol, side: t.side, qty: t.qty, price: t.price }, known: !!store.d.contracts[t.symbol],
-        tick: store.d.tick, perTicketCap: th.perTicketCap, positionLimit: th.positionLimit, positionAfter: after,
+        tick: store.d.tick, perTicketCap: store.d.perTicketCap ?? th.perTicketCap, positionLimit: store.d.positionLimit ?? th.positionLimit, positionAfter: after,
         rateUsed: store.rate.count(now), rateCap: store.cfg.rate.limit, backoffLeftMs: Math.max(0, autopilot.backoffUntil - now),
       });
       if (refusal) {

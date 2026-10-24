@@ -231,3 +231,21 @@ describe('REST poller and own feed', () => {
     expect(f.status.frames).toBe(1);
   });
 });
+
+describe('exchange position limit', () => {
+  it('a smaller max_position from GET /symbols caps the plan, the per-ticket size and the guard inputs', () => {
+    const st = new Store(cloneDefaults());
+    st.handleHttp('GET', '/api/v1/symbols', { symbols: [
+      { symbol: 'OIL', symbol_type: 'scheduled' },
+      { symbol: 'OIL_0626_C100', symbol_type: 'option', underlying_symbol: 'OIL', option_kind: 'call', strike_price: 100, max_position: 120, tick_size: 0.01 },
+    ], groups: [] });
+    st.changed(true);
+    expect(st.s.exchange).toMatchObject({ maxPosition: 120, tick: 0.01 });
+    expect(st.d.positionLimit).toBe(120);
+    expect(st.d.perTicketCap).toBe(120);
+    // a larger one leaves Config in charge
+    st.handleHttp('GET', '/api/v1/symbols', { symbols: [{ symbol: 'OIL_0626_C100', symbol_type: 'option', underlying_symbol: 'OIL', option_kind: 'call', strike_price: 100, max_position: 1000 }], groups: [] });
+    st.changed(true);
+    expect(st.d.positionLimit).toBe(cloneDefaults().thresholds.positionLimit);
+  });
+});

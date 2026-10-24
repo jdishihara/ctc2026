@@ -68,7 +68,7 @@ export function readiness(s: Raw, d: Derived, cfg: Config, now: number, panel: P
     const mismatch = got.length && (got.length !== want.length || got.some((u) => !want.includes(u)));
     if (mismatch) out.push({ id: 'exch-und', label: 'underlyings', status: 'bad', detail: `exchange lists ${got.join(', ')}; Config has ${want.join(', ')}`, fix: 'Config underlyings (and headline.aliases) must use the exchange\'s names' });
     if (ex.maxPosition != null && ex.maxPosition > 0 && ex.maxPosition !== th.positionLimit) {
-      out.push({ id: 'exch-limit', label: 'position limit', status: 'warn', detail: `exchange max_position ${ex.maxPosition}, Config ${th.positionLimit}`, fix: 'Config thresholds.positionLimit / perTicketCap' });
+      out.push({ id: 'exch-limit', label: 'position limit', status: ex.maxPosition < th.positionLimit ? 'ok' : 'warn', detail: `exchange max_position ${ex.maxPosition}, Config ${th.positionLimit}: using ${Math.min(ex.maxPosition, th.positionLimit)}`, fix: ex.maxPosition < th.positionLimit ? undefined : 'Config thresholds.positionLimit may be raised to the exchange\'s' });
     }
     if (ex.tick != null && cfg.tick != null && ex.tick !== cfg.tick) {
       out.push({ id: 'exch-tick', label: 'tick', status: 'warn', detail: `exchange tick_size ${ex.tick}, Config ${cfg.tick}`, fix: 'Config tick: null uses the exchange\'s' });

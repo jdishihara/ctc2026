@@ -189,7 +189,7 @@ export class Autopilot {
     const after = t.side === 'BUY' ? pos + sameSide + t.qty : pos - sameSide - t.qty;
     const refusal = apiSubmitRefusal({
       armed: store.d.autoArmed, ticket: { symbol: t.symbol, side: t.side, qty: t.qty, price: t.price }, known: !!store.d.contracts[t.symbol],
-      tick: store.d.tick, perTicketCap: th.perTicketCap, positionLimit: th.positionLimit, positionAfter: after,
+      tick: store.d.tick, perTicketCap: store.d.perTicketCap ?? th.perTicketCap, positionLimit: store.d.positionLimit ?? th.positionLimit, positionAfter: after,
       rateUsed: store.rate.count(now), rateCap: this.cfg.auto.submitRateCap, backoffLeftMs: Math.max(0, this.backoffUntil - now),
     });
     if (refusal) {

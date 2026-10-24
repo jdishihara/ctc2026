@@ -239,6 +239,9 @@ export interface Derived {
   targetsConfirmed: boolean;
   /** per underlying: spot and vol of the current event confirmed (edge tickets of one underlying do not wait for the other) */
   confirmedUnderlyings: Record<string, boolean>;
+  /** the limits in force: Config thresholds capped by the exchange's own max_position when it lists one */
+  positionLimit: number;
+  perTicketCap: number;
   /** auto-submit is on in Config, not paused, and this is the derivatives page */
   autoArmed: boolean;
 }
@@ -1461,8 +1464,12 @@ export class Store {
     const strads: Record<string, Structure[]> = {};
     const arbs: ArbFlag[] = [];
     const ev = phase?.event?.n;
-    const edgeOpts = { positionLimit: th.positionLimit, perTicketCap: th.perTicketCap, minEdge: th.minEdge, multiplier: cfg.multiplier, tick };
-    const structOpts = { positionLimit: th.positionLimit, perTicketCap: th.perTicketCap };
+    // the exchange's own max_position (GET /symbols) caps what Config allows: a limit breach is a rejected order or a penalty
+    const exLimit = s.exchange.maxPosition != null && s.exchange.maxPosition > 0 ? s.exchange.maxPosition : null;
+    const positionLimit = exLimit != null ? Math.min(th.positionLimit, exLimit) : th.positionLimit;
+    const perTicketCap = Math.min(th.perTicketCap, positionLimit);
+    const edgeOpts = { positionLimit, perTicketCap, minEdge: th.minEdge, multiplier: cfg.multiplier, tick };
+    const structOpts = { positionLimit, perTicketCap };
     for (const u of cfg.underlyings) {
       const ch = chains[u];
       const tg = effTargets[u];
@@ -1493,10 +1500,10 @@ export class Store {
     const plan = planTickets({
       edges: allEdges, structures: allSynths, contracts, targets: riskInputs, T: T.years, positions, resting: s.resting,
       bookGreeks: Object.fromEntries(Object.entries(pf.perUnderlying).map(([u, b]) => [u, { delta: b.delta, vega: b.vega }])),
-      caps, positionLimit: th.positionLimit, perTicketCap: th.perTicketCap, minEdge: th.minEdge, rateRemaining: rate.remaining,
+      caps, positionLimit, perTicketCap, minEdge: th.minEdge, rateRemaining: rate.remaining,
       round, preferSynthForSpot: cfg.preferSynthForSpot, priceMode: cfg.priceMode, tick, focus: cfg.focus, multiplier: cfg.multiplier,
     });
-    const fl = flattenOrders(chains, positions, riskInputs, T.years, caps, th.perTicketCap, { pct: th.flattenThroughPct ?? 0, ticks: th.flattenThroughTicks ?? 0, tick }, s.resting);
+    const fl = flattenOrders(chains, positions, riskInputs, T.years, caps, perTicketCap, { pct: th.flattenThroughPct ?? 0, ticks: th.flattenThroughTicks ?? 0, tick }, s.resting);
     const flatten = ticketsFromFlatten(fl.orders, tick, rate.remaining, cfg.focus);
 
     let quoteAge: number | null = null;
@@ -1509,7 +1516,7 @@ export class Store {
       r,
       now, mode, modeReason, simNow, clockSrc, clockStale, clockRate, replay: !!phase?.replay, phase, realToNext, round, T,
       chains, contracts, spot, marketIV: mIV, effTargets, blends, edges, synths, straddles: strads, arbs,
-      portfolio: pf, breaches, flattenNow, plan, flatten, flattenCost: fl.totalSpreadCost, rate, quoteAge, tick, targetsConfirmed, confirmedUnderlyings,
+      portfolio: pf, breaches, flattenNow, plan, flatten, flattenCost: fl.totalSpreadCost, rate, quoteAge, tick, targetsConfirmed, confirmedUnderlyings, positionLimit, perTicketCap,
       autoArmed: cfg.auto.submit && !s.auto.paused && mode === 'derivatives',
     };
   }
