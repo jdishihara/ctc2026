@@ -1,0 +1,52 @@
+{
+  "artifact_set": "Final overnight evaluation, 2026-10-24",
+  "final_reconciliation": "final-reconciliation.json",
+  "evidence_archive": "overnight-evaluation-evidence.tar.gz",
+  "archive_sha256": "6c857946d4976ef5c3298d0abd36cf8e04697ccf252b25cd7337f47532e774b1",
+  "archive_members": 59,
+  "archive_bytes": 188173,
+  "observation_boundary": {
+    "at_utc": "2026-10-24T12:00:00.008254Z",
+    "prefix_bytes": 328628,
+    "complete_lines": 1596,
+    "sha256": "2a27ffc79c4af550427d06234f8256c38464aa2fed0eaa352dc6baebf0d75837",
+    "matches_source_prefix": true
+  },
+  "eligibility_counts": {
+    "settlement_receipts": 8,
+    "malformed": 0,
+    "duplicates": 0,
+    "serialized_client": 6,
+    "full_controller": 5,
+    "original_market_worker": 7
+  },
+  "evaluation_counts": {
+    "serialized_settings": 96,
+    "supervised_settings": 80,
+    "original_worker_settings": 168,
+    "completed_supervised_scenarios": 67,
+    "incomplete_supervised_scenarios": 13,
+    "failed_scenarios": 0,
+    "unfinished_attempts": 0
+  },
+  "source_audit": {
+    "client_and_supervised_source_bindings": 92,
+    "supervised_result_metadata_summary_bindings": 33,
+    "original_worker_frozen_sources": 23,
+    "original_worker_source_inputs": 9
+  },
+  "reviews": [
+    {
+      "path": "collector-review-receipt.json",
+      "sha256": "1e23a4d426b926d70bc1193e148f3aa292f6e278702e8da65a032d2843f98744",
+      "scope": "read-only boundary collector"
+    },
+    {
+      "path": "pre-cutoff-helpers-review.json",
+      "sha256": "881fb4579256779df478e44a3a205b6bc8b7a7add36c0e23c3c1a6a57c7e2e92",
+      "scope": "provisional aggregate and fixed-engine artifact reconciliation"
+    }
+  ],
+  "final_report_sha256": "685646b21ba1af7cbf731c0e7d3861a7b73e4188815266d0d5c2b2ebfbbd1338",
+  "review_status": "Final exact-head review pending"
+}

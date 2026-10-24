@@ -1,5 +1,30 @@
 # Overnight practice — October 24, 2026
 
+## 12:24 UTC — final evaluation boundary sealed and reconciled
+
+The first post-cutoff scan sealed 1,596 complete observation lines at
+12:00:00.008254 UTC: 328,628 bytes, SHA-256
+`2a27ffc79c4af550427d06234f8256c38464aa2fed0eaa352dc6baebf0d75837`.
+The prefix matches the append-only observer; it has no partial or malformed
+lines. Eight settlement receipts yield six serialized-client seasons, five
+full-controller seasons and seven earlier-worker seasons. There are no
+duplicate receipts, failed evaluations or unfinished attempts. The original
+worker ledger ends with `worker_stopped` at 12:00:00.020745 UTC. The owned
+read-only recorder was stopped after the boundary; it did not submit orders.
+
+Across the five full-controller seasons, the primary setting averages
++$881.54, four seasons are positive and one loses. Capture 249's primary is
++$1,760.14; the best single setting in these five captures is +$1,937.04 on
+capture 246. The serialized-client primary mean is +$684.36 across six seasons;
+the earlier worker has 140 positive and 28 negative settings. All three engines
+are offline replays over weather tracks that overlap the fitted training data.
+
+The final results and limitations are in
+[overnight-final-window.md](overnight-final-window.md). Live practice remains
+stopped: the initial full-size trial lost $2,589.80, only one completed clean
+small-size trial is attributable (+$141.16), and account exclusivity was not
+confirmed. No last-minute full-size or live trial is supported by this evidence.
+
 ## 11:34 UTC — capture 249 and unchanged retry confirmation verified
 
 The latest closed path is positive in all sixteen full-supervisor settings:

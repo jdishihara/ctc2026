@@ -1,0 +1,392 @@
+{
+  "title": "2026-10-24 overnight evaluation: final reconciliation",
+  "final_boundary": {
+    "at_utc": 1792843200.008254,
+    "cutoff_utc": 1792843200,
+    "complete_lines": 1596,
+    "prefix_bytes": 328628,
+    "prefix_sha256": "2a27ffc79c4af550427d06234f8256c38464aa2fed0eaa352dc6baebf0d75837",
+    "matched_original_prefix": true,
+    "partial_bytes": 0,
+    "settlement_receipts": 8,
+    "malformed_lines": 0
+  },
+  "eligibility": {
+    "serialized-forward": {
+      "effective_freeze_at": 1792826318,
+      "eligible": [
+        {
+          "competition_id": "2cf67e88-9081-4258-aa6a-3648c41925de",
+          "year": "1783",
+          "receipt_at": 1792826305.620034,
+          "receipt_sha256": "275a4573727610c4b2f91c861aedce858c6eed0f0c199fba51b804c04f675690"
+        },
+        {
+          "competition_id": "a7e77935-0ddd-4c77-8ce9-5494a9941962",
+          "year": "1782",
+          "receipt_at": 1792829250.818968,
+          "receipt_sha256": "e2e47d411f0530d943185c64b210cb3fcf534fc0b9ed243f4da51f37ac8ee7c1"
+        },
+        {
+          "competition_id": "83fc18b9-e9fd-4634-bc8e-c7a1a77768a7",
+          "year": "1781",
+          "receipt_at": 1792832203.4848561,
+          "receipt_sha256": "dd8bb77cdf53d26457baa75631d634de42339ac2f06329e73bfdfd6b76e0d8e3"
+        },
+        {
+          "competition_id": "fd1ebff9-0f96-4533-b283-bc0a5c60cd4b",
+          "year": "1780",
+          "receipt_at": 1792835136.260472,
+          "receipt_sha256": "49a7b2b53528fc5c2f5ea990eb40bda4b480593955c18e6db2a797b4069d3b63"
+        },
+        {
+          "competition_id": "789097b1-a48b-4e68-95b4-5e15b047e149",
+          "year": "1779",
+          "receipt_at": 1792838086.3271759,
+          "receipt_sha256": "7b91d8fdaae8b25a125e9285cc8fb8a5a5d4cf60c69499f383965c6cc3480280"
+        },
+        {
+          "competition_id": "7d19a254-8c3b-4c4a-b4f3-32c84a138b79",
+          "year": "1778",
+          "receipt_at": 1792841026.283543,
+          "receipt_sha256": "b067d33043f12a2f8f11552f14b589a50f5130932a70eca59026a3a6b4d0bdcc"
+        }
+      ],
+      "rejected": [
+        {
+          "competition_id": "0d7afac2-6acd-4223-aa8a-8c1a067091f0",
+          "year": "1785",
+          "receipt_at": 1792820424.18974,
+          "reason": "outside effective freeze/cutoff window or not ready"
+        },
+        {
+          "competition_id": "5edc122c-e97d-4d59-ada5-658c02c3c0da",
+          "year": "1784",
+          "receipt_at": 1792823359.863008,
+          "reason": "outside effective freeze/cutoff window or not ready"
+        }
+      ],
+      "duplicate_receipts": 0,
+      "malformed_receipt_lines": 0
+    },
+    "supervised-forward": {
+      "effective_freeze_at": 1792828815,
+      "eligible": [
+        {
+          "competition_id": "a7e77935-0ddd-4c77-8ce9-5494a9941962",
+          "year": "1782",
+          "receipt_at": 1792829250.818968,
+          "receipt_sha256": "e2e47d411f0530d943185c64b210cb3fcf534fc0b9ed243f4da51f37ac8ee7c1"
+        },
+        {
+          "competition_id": "83fc18b9-e9fd-4634-bc8e-c7a1a77768a7",
+          "year": "1781",
+          "receipt_at": 1792832203.4848561,
+          "receipt_sha256": "dd8bb77cdf53d26457baa75631d634de42339ac2f06329e73bfdfd6b76e0d8e3"
+        },
+        {
+          "competition_id": "fd1ebff9-0f96-4533-b283-bc0a5c60cd4b",
+          "year": "1780",
+          "receipt_at": 1792835136.260472,
+          "receipt_sha256": "49a7b2b53528fc5c2f5ea990eb40bda4b480593955c18e6db2a797b4069d3b63"
+        },
+        {
+          "competition_id": "789097b1-a48b-4e68-95b4-5e15b047e149",
+          "year": "1779",
+          "receipt_at": 1792838086.3271759,
+          "receipt_sha256": "7b91d8fdaae8b25a125e9285cc8fb8a5a5d4cf60c69499f383965c6cc3480280"
+        },
+        {
+          "competition_id": "7d19a254-8c3b-4c4a-b4f3-32c84a138b79",
+          "year": "1778",
+          "receipt_at": 1792841026.283543,
+          "receipt_sha256": "b067d33043f12a2f8f11552f14b589a50f5130932a70eca59026a3a6b4d0bdcc"
+        }
+      ],
+      "rejected": [
+        {
+          "competition_id": "0d7afac2-6acd-4223-aa8a-8c1a067091f0",
+          "year": "1785",
+          "receipt_at": 1792820424.18974,
+          "reason": "outside effective freeze/cutoff window or not ready"
+        },
+        {
+          "competition_id": "5edc122c-e97d-4d59-ada5-658c02c3c0da",
+          "year": "1784",
+          "receipt_at": 1792823359.863008,
+          "reason": "outside effective freeze/cutoff window or not ready"
+        },
+        {
+          "competition_id": "2cf67e88-9081-4258-aa6a-3648c41925de",
+          "year": "1783",
+          "receipt_at": 1792826305.620034,
+          "reason": "outside effective freeze/cutoff window or not ready"
+        }
+      ],
+      "duplicate_receipts": 0,
+      "malformed_receipt_lines": 0
+    }
+  },
+  "full_controller": {
+    "seasons": 5,
+    "settings": 80,
+    "primary_mean": 881.54,
+    "primary_positive_seasons": 4,
+    "positive_settings": 65,
+    "negative_settings": 15,
+    "best_single_setting": 1937.04,
+    "seasons_detail": [
+      {
+        "capture": 245,
+        "year": "1782",
+        "primary_pnl": 362.85,
+        "primary_trial": "completed",
+        "cleanup": "settled",
+        "positive_settings": 16,
+        "negative_settings": 0,
+        "mean": 328.37,
+        "worst": 5.42,
+        "best": 692.51,
+        "results_sha256": "f698e8b6f26db7c2eb7c65117cea8057fb9d85a23037dcb490fbe28a304db894"
+      },
+      {
+        "capture": 246,
+        "year": "1781",
+        "primary_pnl": 1539.17,
+        "primary_trial": "completed",
+        "cleanup": "settled",
+        "positive_settings": 16,
+        "negative_settings": 0,
+        "mean": 1678.09,
+        "worst": 1439.61,
+        "best": 1937.04,
+        "results_sha256": "60960b091422ac4cbfcc4e9c88f60d561e6ecf095a215405de11818436e591cb"
+      },
+      {
+        "capture": 247,
+        "year": "1780",
+        "primary_pnl": -239.99,
+        "primary_trial": "incomplete_trial",
+        "cleanup": "flat",
+        "positive_settings": 1,
+        "negative_settings": 15,
+        "mean": -332.11,
+        "worst": -573.91,
+        "best": 15.36,
+        "results_sha256": "9f49c0207913893e2fa1ac1dd836e459f8604bcf42f1016d57507921109ff00a"
+      },
+      {
+        "capture": 248,
+        "year": "1779",
+        "primary_pnl": 985.54,
+        "primary_trial": "completed",
+        "cleanup": "settled",
+        "positive_settings": 16,
+        "negative_settings": 0,
+        "mean": 897.99,
+        "worst": 295.45,
+        "best": 1224.03,
+        "results_sha256": "33905130125afbfd61b35175aabcdde08bbdec0d1a7b35aaa08333098dafadc0"
+      },
+      {
+        "capture": 249,
+        "year": "1778",
+        "primary_pnl": 1760.14,
+        "primary_trial": "completed",
+        "cleanup": "settled",
+        "positive_settings": 16,
+        "negative_settings": 0,
+        "mean": 1485.76,
+        "worst": 1014.34,
+        "best": 1795.95,
+        "results_sha256": "913a725d47c1c869c8e803c02e96f9289bd0f5af786905e27efe59c018402fb2"
+      }
+    ]
+  },
+  "serialized_client": {
+    "seasons": 6,
+    "settings": 96,
+    "primary_mean": 684.36,
+    "primary_positive_seasons": 5,
+    "positive_settings": 82,
+    "negative_settings": 14,
+    "worst_setting": -738.46,
+    "seasons_detail": [
+      {
+        "competition_id": "2cf67e88-9081-4258-aa6a-3648c41925de",
+        "year": "1783",
+        "primary_pnl": 628.14,
+        "positive_settings": 16,
+        "negative_settings": 0,
+        "mean": 848.99,
+        "worst": 533.32,
+        "best": 1238.28,
+        "results_sha256": "c68a8fb332739e16ad25e069e92f5e24866dd56494e6129040c71740b7c7314a"
+      },
+      {
+        "competition_id": "a7e77935-0ddd-4c77-8ce9-5494a9941962",
+        "year": "1782",
+        "primary_pnl": 344.43,
+        "positive_settings": 16,
+        "negative_settings": 0,
+        "mean": 350.69,
+        "worst": 187.75,
+        "best": 692.51,
+        "results_sha256": "e22b341f1d4207a8b156ca0c1a7bf4d1441b41571315ee105853d92b9b0bfcc5"
+      },
+      {
+        "competition_id": "83fc18b9-e9fd-4634-bc8e-c7a1a77768a7",
+        "year": "1781",
+        "primary_pnl": 1393.6,
+        "positive_settings": 16,
+        "negative_settings": 0,
+        "mean": 1568.38,
+        "worst": 1155.06,
+        "best": 1937.04,
+        "results_sha256": "46676e0a872eedf5b38d0bcae14f9a1ad9ee1ee4025cd9b5a7a210b1802fde82"
+      },
+      {
+        "competition_id": "fd1ebff9-0f96-4533-b283-bc0a5c60cd4b",
+        "year": "1780",
+        "primary_pnl": -501.21,
+        "positive_settings": 2,
+        "negative_settings": 14,
+        "mean": -400.6,
+        "worst": -738.46,
+        "best": 132.47,
+        "results_sha256": "3a8a90b4bd16819471954b28a88cb86e89223a6b01fb9dd489c351538951d831"
+      },
+      {
+        "competition_id": "789097b1-a48b-4e68-95b4-5e15b047e149",
+        "year": "1779",
+        "primary_pnl": 997.15,
+        "positive_settings": 16,
+        "negative_settings": 0,
+        "mean": 964.05,
+        "worst": 493.54,
+        "best": 1224.03,
+        "results_sha256": "578d8ddc04295d58cf2576a4abce09ea89068d32fc8411607afb0da1cd3fed1a"
+      },
+      {
+        "competition_id": "7d19a254-8c3b-4c4a-b4f3-32c84a138b79",
+        "year": "1778",
+        "primary_pnl": 1244.04,
+        "positive_settings": 16,
+        "negative_settings": 0,
+        "mean": 1345.69,
+        "worst": 1144.23,
+        "best": 1711.86,
+        "results_sha256": "4879b4d2f1309a9e522813f3905c9796075272b4fdd4e73084787334eaf72dbe"
+      }
+    ]
+  },
+  "original_market_replay": {
+    "seasons": 7,
+    "settings": 168,
+    "worst_setting": null,
+    "ledger_terminal": {
+      "written_at": 1792843200.020745,
+      "kind": "worker_stopped"
+    },
+    "per_season": [
+      {
+        "competition_id": "5edc122c-e97d-4d59-ada5-658c02c3c0da",
+        "year": "1784",
+        "positive": null,
+        "worst": 156.65,
+        "best": 544.84
+      },
+      {
+        "competition_id": "2cf67e88-9081-4258-aa6a-3648c41925de",
+        "year": "1783",
+        "positive": null,
+        "worst": 1031.57,
+        "best": 1215.88
+      },
+      {
+        "competition_id": "a7e77935-0ddd-4c77-8ce9-5494a9941962",
+        "year": "1782",
+        "positive": null,
+        "worst": -44.04,
+        "best": 503.01
+      },
+      {
+        "competition_id": "83fc18b9-e9fd-4634-bc8e-c7a1a77768a7",
+        "year": "1781",
+        "positive": null,
+        "worst": 1172.78,
+        "best": 1848.21
+      },
+      {
+        "competition_id": "fd1ebff9-0f96-4533-b283-bc0a5c60cd4b",
+        "year": "1780",
+        "positive": null,
+        "worst": -799.84,
+        "best": -507.47
+      },
+      {
+        "competition_id": "789097b1-a48b-4e68-95b4-5e15b047e149",
+        "year": "1779",
+        "positive": null,
+        "worst": 919.12,
+        "best": 1050.83
+      },
+      {
+        "competition_id": "7d19a254-8c3b-4c4a-b4f3-32c84a138b79",
+        "year": "1778",
+        "positive": null,
+        "worst": 1162.77,
+        "best": 1556.01
+      }
+    ]
+  },
+  "execution_and_live": {
+    "training_seasons": 600,
+    "closed_weather_tracks": 27,
+    "fitted_tracks_matched": 27,
+    "position_fraction": 0.1,
+    "loss_trigger_usd": 250,
+    "largest_real_attributed_loss_including_cleanup_and_smoke": -2589.8,
+    "only_clean_owned_small_size_live_pnl": 141.16,
+    "live_practice_stopped": true,
+    "account_exclusivity_confirmed": false,
+    "consistent_live_profit_demonstrated": false
+  },
+  "source_audit": {
+    "full_controller_and_client_source_bindings": 92,
+    "completed_result_metadata_summary_artifacts_bound": 33,
+    "original_market_worker_source_files": 23,
+    "original_market_worker_inputs": 9,
+    "three_independent_programs_reviewed": true
+  },
+  "other_case_readiness": {
+    "competition_commit": "782c55539a74972a0d14c27d6d871dcd1dcf833f",
+    "previously_merged_prs": [
+      28,
+      29,
+      30,
+      31
+    ],
+    "open_prs_at_final_report_start": 0,
+    "python_tests_previously_passed": 713,
+    "derivatives_zip_sha256": "7596d38b20ab3a6b708f74d18ce78a9db1385c24bd04e693a4747a2effa6f094",
+    "mario_mock_orders": 0
+  },
+  "limitations": [
+    "The 16 and 24 settings repeat execution conditions on each recorded season; they are not independent season samples.",
+    "All 27 weather tracks match the fitted training library.",
+    "Replay P&L at 10% limits is not a live trading or competition score.",
+    "Later shared-account activity could not be attributed to this bot."
+  ],
+  "reports": [
+    "overnight-final-window.md",
+    "competition-readiness.md",
+    "overnight-run.md",
+    "cleanup-retry-forward.md",
+    "training-overlap-audit.md"
+  ],
+  "review": {
+    "pre_cutoff_aggregate_receipt_sha256": "881fb4579256779df478e44a3a205b6bc8b7a7add36c0e23c3c1a6a57c7e2e92",
+    "final_integration_review": "pending exact committed head"
+  }
+}
