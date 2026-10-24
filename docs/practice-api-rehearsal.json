@@ -1,0 +1,199 @@
+{
+  "recorded_utc": "2026-10-24T03:06:50.285393+00:00",
+  "preflight": {
+    "passed": 20,
+    "warnings": 0,
+    "failures": 0
+  },
+  "python_tests_passed": 200,
+  "strategy": {
+    "seconds": 180,
+    "competition_id": "90602797-3b9b-406c-8956-e755d14c09fc",
+    "strategy_parameters": "unchanged defaults",
+    "strategy_order_count": 9,
+    "flat_after": true,
+    "no_open_orders_after": true,
+    "total_owned_orders_including_cleanup": 17,
+    "last_logged_elapsed_seconds": 200.0,
+    "fills_before_cleanup": 45,
+    "fills_including_cleanup": 87,
+    "pnl_before_cleanup": -1970.18,
+    "pnl_after_cleanup": -2589.19,
+    "account_pnl_after_all_smokes": -2589.8,
+    "diagnostics": []
+  },
+  "account_audit": {
+    "positions_match": true,
+    "realized_difference": 0.0,
+    "symbols": {
+      "AQUA": {
+        "model": {
+          "quantity": 0,
+          "average_price": 0.0,
+          "realized_pnl": -105.77000000000274
+        },
+        "exchange": {
+          "quantity": 0,
+          "average_price": 0.0,
+          "realized_pnl": -105.77000000000274
+        },
+        "quantity_difference": 0,
+        "average_price_difference": null,
+        "realized_difference": 0.0
+      },
+      "FERRY": {
+        "model": {
+          "quantity": 0,
+          "average_price": 0.0,
+          "realized_pnl": -34.280000000000456
+        },
+        "exchange": {
+          "quantity": 0,
+          "average_price": 0.0,
+          "realized_pnl": -34.280000000000456
+        },
+        "quantity_difference": 0,
+        "average_price_difference": null,
+        "realized_difference": 0.0
+      },
+      "GRID": {
+        "model": {
+          "quantity": 0,
+          "average_price": 0.0,
+          "realized_pnl": -516.6599999999997
+        },
+        "exchange": {
+          "quantity": 0,
+          "average_price": 0.0,
+          "realized_pnl": -516.6599999999997
+        },
+        "quantity_difference": 0,
+        "average_price_difference": null,
+        "realized_difference": 0.0
+      },
+      "HAVEN": {
+        "model": {
+          "quantity": 0,
+          "average_price": 0.0,
+          "realized_pnl": -583.2799999999991
+        },
+        "exchange": {
+          "quantity": 0,
+          "average_price": 0.0,
+          "realized_pnl": -583.2799999999991
+        },
+        "quantity_difference": 0,
+        "average_price_difference": null,
+        "realized_difference": 0.0
+      },
+      "MAT": {
+        "model": {
+          "quantity": 0,
+          "average_price": 0.0,
+          "realized_pnl": -557.719999999997
+        },
+        "exchange": {
+          "quantity": 0,
+          "average_price": 0.0,
+          "realized_pnl": -557.719999999997
+        },
+        "quantity_difference": 0,
+        "average_price_difference": null,
+        "realized_difference": 0.0
+      },
+      "PORT": {
+        "model": {
+          "quantity": 0,
+          "average_price": 0.0,
+          "realized_pnl": -150.6800000000011
+        },
+        "exchange": {
+          "quantity": 0,
+          "average_price": 0.0,
+          "realized_pnl": -150.6800000000011
+        },
+        "quantity_difference": 0,
+        "average_price_difference": null,
+        "realized_difference": 0.0
+      },
+      "REBLD": {
+        "model": {
+          "quantity": 0,
+          "average_price": 0.0,
+          "realized_pnl": -96.27999999999611
+        },
+        "exchange": {
+          "quantity": 0,
+          "average_price": 0.0,
+          "realized_pnl": -96.27999999999611
+        },
+        "quantity_difference": 0,
+        "average_price_difference": null,
+        "realized_difference": 0.0
+      },
+      "RECON": {
+        "model": {
+          "quantity": 0,
+          "average_price": 0.0,
+          "realized_pnl": -545.1299999999993
+        },
+        "exchange": {
+          "quantity": 0,
+          "average_price": 0.0,
+          "realized_pnl": -545.1299999999993
+        },
+        "quantity_difference": 0,
+        "average_price_difference": null,
+        "realized_difference": 0.0
+      }
+    },
+    "note": "Requires all fills since opening; matching positions does not prove history completeness."
+  },
+  "feed": {
+    "frames": 4375,
+    "unique_sequenced_news": 132,
+    "first_seq": 630,
+    "last_seq": 761,
+    "different_from_published": 3,
+    "missing_within_received_span": 0,
+    "full_season_checked": false,
+    "differences": [
+      {
+        "seq": 664,
+        "type": "advisory",
+        "fields": [
+          "cone",
+          "headline",
+          "hurricane_conditions"
+        ]
+      },
+      {
+        "seq": 698,
+        "type": "advisory",
+        "fields": [
+          "cone",
+          "headline",
+          "hurricane_conditions"
+        ]
+      },
+      {
+        "seq": 733,
+        "type": "advisory",
+        "fields": [
+          "cone",
+          "hurricane_conditions"
+        ]
+      }
+    ]
+  },
+  "timestamp_normalization": "Naive API timestamps assigned America/New_York for sorting; constant offset on this date does not change fill order.",
+  "live_adapter_sha256": "4de7e4fd4922b917a48b6a136d8007a58ed98520393a9c1c7ef8088698b4d790",
+  "raw_evidence": "recordings/practice-20261024/ (git-ignored)",
+  "limitations": [
+    "Midseason cold start",
+    "Deliberate short-window position closure",
+    "No estimate of full-season profitability or win probability",
+    "Observed advisory cones differ from published replay; cause and performance effect unresolved",
+    "180-second stop request completed at last logged strategy time 200 seconds"
+  ]
+}

@@ -27,7 +27,7 @@ class ScriptedExchange(LiveExchange):
         self.refresh()
 
     def get(self, path, api=True):
-        value = self.responses[path]
+        value = self.responses[path if path in self.responses else path.partition('?')[0]]
         if isinstance(value, Exception):
             raise value
         return value
@@ -103,6 +103,19 @@ def test_empty_positions_clear_previous_account_state(exchange):
     exchange.refresh()
     assert exchange.position["PORT"] == 0
     assert exchange.pnl_now == 0
+
+
+def test_refresh_keeps_realized_pnl_from_closed_positions(exchange):
+    exchange.responses['/positions'] = {'positions': []}
+    exchange.responses['/positions?include_zero=true'] = {'positions': [
+        {'symbol': 'PORT', 'quantity': 0, 'average_price': None,
+         'current_price': 86.03, 'unrealized_pnl': None, 'realized_pnl': 20.37}
+    ]}
+    exchange.refresh()
+    assert exchange.state_ready
+    assert exchange.position['PORT'] == 0
+    assert exchange.pnl_now == 20
+    assert exchange.last_positions['realized_by'] == {'PORT': 20}
 
 
 def test_fill_audit_uses_our_side_when_we_are_the_passive_seller(exchange, capsys):
@@ -252,13 +265,43 @@ def test_malformed_position_response_blocks_new_orders(exchange, response):
     {"order_id": "a", "filled_quantity": -1}, {"order_id": "a", "filled_quantity": 6},
     {"order_id": "a", "quantity": True}, {"order_id": "a", "quantity": 2.5},
     {"order_id": "a", "filled_quantity": True}, {"order_id": "a", "status": "rejected"},
-    {"order_id": "a", "status": "filled"}])
+    {"order_id": "a", "status": "filled", "filled_quantity": 0}])
 def test_uncertain_order_ack_blocks_further_submissions(exchange, ack):
     with patch.object(exchange, "send", return_value=ack):
         assert exchange.place("PORT", "buy", 5, 90) is None
     with patch.object(exchange, "send", return_value={"order_id": "second", "filled_quantity": 5}):
         assert exchange.place("PORT", "buy", 5, 90) is None
     assert exchange.position["PORT"] == 10
+
+
+@pytest.mark.parametrize("side,status,position,remaining", [
+    ("buy", "filled", 15, 0), ("sell", "filled", 5, 0),
+    ("buy", "partial", 12, 3), ("sell", "partial", 8, 3),
+    ("buy", "partially_filled", 12, 3), ("sell", "partially_filled", 8, 3),
+])
+def test_status_only_fill_ack_reconciles_actual_account(exchange, side, status, position, remaining):
+    # The real testnet acknowledges fills without quantity/filled_quantity.
+    ack = {"order_id": "live-order", "status": status,
+           "created_at": "2026-10-23T22:56:37.356530",
+           "message": "Placed", "message_type": "success"}
+    exchange.responses["/positions"]["positions"][0]["quantity"] = position
+    exchange.responses["/orders/open"] = {"orders": [
+        {**order(side, 5), "order_id": "live-order", "filled_quantity": 2}
+    ] if remaining else []}
+    with patch.object(exchange, "send", return_value=ack):
+        assert exchange.place("PORT", side, 5, 90) == "live-order"
+    assert exchange.position["PORT"] == position
+    assert exchange.resting("PORT", side) == remaining
+    assert exchange.state_ready
+
+
+def test_status_only_fill_ack_retains_id_and_blocks_orders_if_refresh_fails(exchange):
+    exchange.responses["/positions"] = TimeoutError("account unavailable")
+    with patch.object(exchange, "send", return_value={"order_id": "accepted", "status": "filled"}):
+        assert exchange.place("PORT", "buy", 5, 90) == "accepted"
+        assert exchange.place("PORT", "buy", 5, 90) is None
+    assert exchange.position["PORT"] == 10
+    assert not exchange.state_ready
 
 
 def test_truncated_order_response_blocks_trading(exchange):
@@ -277,7 +320,7 @@ def test_refresh_captures_fill_between_account_requests(exchange):
         if path == "/orders/open":
             server_position = 110  # Existing order filled just before this response.
             return {"orders": []}
-        if path == "/positions":
+        if path.partition('?')[0] == "/positions":
             return {"positions": [{"symbol": "PORT", "quantity": server_position}]}
         return original_get(path, api)
 

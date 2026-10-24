@@ -111,7 +111,7 @@ class LiveExchange:
             # counted in the position without losing its reservation prematurely.
             oo = self.get("/orders/open")
             orders = oo.get("orders", oo) if isinstance(oo, dict) else oo
-            pos = self.get("/positions")
+            pos = self.get("/positions?include_zero=true")
             items = pos.get("positions", pos) if isinstance(pos, dict) else pos
             if not isinstance(items, list) or not isinstance(orders, list):
                 raise ValueError("positions and open orders must be lists")
@@ -127,10 +127,10 @@ class LiveExchange:
                     raise ValueError("invalid open order")
                 if int(o["quantity"]) < int(o.get("filled_quantity", 0)):
                     raise ValueError("invalid remaining order quantity")
-            summary = {"realized": round(sum(p.get("realized_pnl", 0) for p in items)),
-                       "unrealized": round(sum(p.get("unrealized_pnl", 0) for p in items)),
+            summary = {"realized": round(sum(p.get("realized_pnl") or 0 for p in items)),
+                       "unrealized": round(sum(p.get("unrealized_pnl") or 0 for p in items)),
                        "positions": positions.copy(),
-                       "realized_by": {p["symbol"]: round(p.get("realized_pnl", 0)) for p in items},
+                       "realized_by": {p["symbol"]: round(p.get("realized_pnl") or 0) for p in items},
                        "avg_price": {p["symbol"]: p.get("average_price") for p in items}}
             if self.competition_id and cid != self.competition_id:
                 print(f"SEASON END competition {self.competition_id} ({tm.get('fictional_time')}): last positions {json.dumps(self.last_positions)}", flush=True)
@@ -229,12 +229,22 @@ class LiveExchange:
             status = resp.get("status")
             if status is not None and status not in {"new", "pending", "accepted", "open", "resting", "partial", "partially_filled", "filled"}:
                 raise ValueError("unrecognized order status")
-            if status == "filled" and filled != accepted:
+            status_only_fill = (status in {"filled", "partial", "partially_filled"}
+                                and "filled_quantity" not in resp and "filled" not in resp)
+            if status == "filled" and filled != accepted and not status_only_fill:
                 raise ValueError("filled acknowledgement lacks complete fill quantity")
         except (TypeError, ValueError, OverflowError):
             self.state_ready = False
             print("uncertain order acknowledgement; waiting for account refresh", flush=True)
             return None
+        if status_only_fill:
+            # The testnet returns order_id/status without fill quantities.
+            # Reconcile actual holdings and remaining orders, rather than
+            # guessing the fill. Keep the accepted ID even if refresh fails;
+            # state_ready then prevents another submission until recovery.
+            self.state_ready = False
+            self.refresh()
+            return oid
         self.position[symbol] += sign * filled  # refresh() reconciles later fills
         if filled < accepted:
             self.open_orders.append({**order, "quantity": accepted, "filled_quantity": filled, "order_id": oid})

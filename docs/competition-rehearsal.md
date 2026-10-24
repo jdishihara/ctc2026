@@ -58,7 +58,7 @@ Machine-readable results are in [competition-rehearsal.json](competition-rehears
 
 ## Remaining verification
 
-- A real exchange rehearsal is still needed for actual feed schemas, team credentials, rate limits, fills, and account reconciliation. No remote orders were submitted here.
+- This initial rehearsal used localhost exchanges. The later [authenticated practice rehearsal](practice-api-rehearsal.md) verifies team credentials and actual feed, fill, and account schemas, and records two fixes found on the testnet. Full-season exchange performance and sustained rate-limit behavior still need verification.
 - The derivatives integration suite verifies form prefilling without submitting. Actual installed-extension execution and Mario browser-prefill compatibility were not verified in this run; browser interaction was interrupted by changes to the active Chrome window. The Playwright browser suite was not run. Successful builds and DOM tests do not replace that check.
 - Historical systematic data has no live announcements. Control parsing and pause/resume behavior passed, but the announcement re-anchoring strategy has no measured live PnL evidence.
 - These checks establish tested software behavior under the stated conditions. They do not establish a win probability; opponent behavior and real execution remain material unknowns.

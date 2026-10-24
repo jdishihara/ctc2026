@@ -28,7 +28,7 @@ def test_http_cancel_rejection_then_empty_success_ack():
             assert self.headers["X-API-Key"] == "local-test-key"
             if self.path == "/api/v1/competitions/time":
                 return self.reply({"state": "running", "competition_id": "local-season"})
-            if self.path == "/api/v1/positions":
+            if self.path == "/api/v1/positions?include_zero=true":
                 return self.reply({"positions": []})
             if self.path == "/api/v1/orders/open":
                 return self.reply({"orders": state["orders"]})
