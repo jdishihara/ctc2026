@@ -56,6 +56,39 @@ class AuditedTrader(FairValueTrader):
 
 class UncertaintyGuardTrader(AuditedTrader):
     """Allow only fundamental reductions while the existing entropy gate is active."""
+    def on_start(self, sim):
+        super().on_start(sim)
+        self.uncertainty_cancel_t = {}
+
+    @staticmethod
+    def working_orders_add_risk(sim, symbol):
+        orders = sim.working_orders(symbol)
+        position = sim.position[symbol]
+        return any(sum(o['remaining'] for o in orders if o['side'] == side) > capacity
+                   for side, capacity in (('buy', max(-position, 0)), ('sell', max(position, 0))))
+
+    def on_quotes(self, sim):
+        if not self._same_competition(sim):
+            return
+        # Use the latest computed posterior. Check working fundamental orders
+        # before basket/throttle/warm-up returns, without cancelling basket
+        # hedges: a basket cancels its symbols before starting its target set.
+        if uncertain(self) and getattr(sim, 'state_ready', True):
+            hedge_symbols = set(self.basket.targets or ()) if self.basket is not None else set()
+            for symbol in self.symbols:
+                if symbol in hedge_symbols or not self.working_orders_add_risk(sim, symbol):
+                    continue
+                if sim.t - self.uncertainty_cancel_t.get(symbol, -math.inf) < 1:
+                    return
+                self.uncertainty_cancel_t[symbol] = sim.t
+                cancelled = sim.cancel_all(symbol)
+                if not self._same_competition(sim) or not getattr(sim, 'state_ready', True):
+                    return
+                if not cancelled:
+                    return
+                self.passive_order.pop(symbol, None)
+        super().on_quotes(sim)
+
     def price_target(self, sim, symbol, target, position):
         target = super().price_target(sim, symbol, target, position)
         if not uncertain(self):
@@ -65,12 +98,8 @@ class UncertaintyGuardTrader(AuditedTrader):
         return min(target, position) if position > 0 else max(target, position)
 
     def stale_risk_orders(self, sim, symbol, fair, confidence, floor):
-        if uncertain(self):
-            orders = sim.working_orders(symbol)
-            position = sim.position[symbol]
-            for side, capacity in (('buy', max(-position, 0)), ('sell', max(position, 0))):
-                if sum(o['remaining'] for o in orders if o['side'] == side) > capacity:
-                    return True
+        if uncertain(self) and self.working_orders_add_risk(sim, symbol):
+            return True
         return super().stale_risk_orders(sim, symbol, fair, confidence, floor)
 
 
@@ -131,6 +160,8 @@ def main():
         year = receipt['year']
     else:
         _, trial, receipt, frames, count = completed_capture(args.batch, args.feed, args.competition_id, case['limits'])
+        if receipt.get('clock', {}).get('state') != 'ready':
+            raise ValueError('confirmed ready closed receipt required')
         year, coverage = trial['year'], {'news_count': count, 'quote_path_completeness_proven': False}
     profiles = None
     if args.mode == 'dev':
@@ -142,6 +173,7 @@ def main():
                ROOT / 'data/case.json', ROOT / 'bot/live.py', ROOT / 'bot/http_transport.py', Path(__file__),
                ROOT / 'scripts/experiment_final_reports.py', ROOT / 'scripts/experiment_execution_costs.py',
                ROOT / 'scripts/replay_captured_market.py', ROOT / 'scripts/evaluate_observed_season.py',
+               ROOT / 'scripts/observe_market_seasons.py',
                ROOT / 'docs/uncertainty-guard-plan.md']
     metadata = {'mode': args.mode, 'source_competition_id': args.competition_id, 'year': year,
         'official_receipt': receipt, 'coverage': coverage, 'parameters': PARAMETERS,

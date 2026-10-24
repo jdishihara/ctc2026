@@ -46,3 +46,30 @@ no additional losing development seasons or worse worst case at any delay,
 and no lower mean or additional negative scenario on any closed captured market.
 If a gate fails, retain the complete evidence and do not change the live defaults.
 These gates are conservative experiment decisions, not a guarantee of profit.
+
+## Revision 2 — review findings, declared before rerun
+
+The first frozen candidate is commit `dbe499e`. All 450 development runs and
+72 capture runs completed. Their original outputs remain in
+`out/uncertainty-guard-20261024-{dev,241,242,243}`. They failed the declared
+profit gates. Review also found the cancellation pass was bypassed during an
+active basket cycle; a zero accepted-passive-order audit did not establish
+that old working orders had been removed.
+
+Revision 2 checks working fundamental orders before basket, throttle, warm-up,
+confidence, and quote-availability returns. Active basket target symbols retain
+their hedge orders. It uses the latest computed posterior and does not change
+the model update schedule. Failed cancellations stop the pass and are retried
+at most once per second; competition identity and account readiness are checked
+after cancellation. The existing later check covers a posterior refreshed by
+the usual fundamental calculation.
+
+Completed/development input must have a `ready` receipt, and the manifest now
+includes the observed-receipt validator source. The four original runs did have
+independently inspected matching `ready` receipts; their weakness was missing
+enforcement in the driver, not a known use of an active settlement.
+
+Rerun exactly the same 225 development pairs and 12 pairs per closed capture,
+with all parameters and gates above unchanged. Save fresh outputs under
+`out/uncertainty-guard-v2-20261024-*`. Do not overwrite the first run or call
+the reused captures prospective validation.
