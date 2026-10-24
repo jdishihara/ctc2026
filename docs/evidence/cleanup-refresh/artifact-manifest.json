@@ -1,0 +1,96 @@
+{
+  "candidate_revision": "74c81f4d288f72e1248a6956ffcb15fea3970005",
+  "baseline_revision": "cd3eb239bd7bad97b34f10a8f2bb0b2e1c0f5026",
+  "decision": "reject production promotion: worse worst loss and more negative settings",
+  "artifact_count": 18,
+  "files": {
+    "analysis.json": {
+      "bytes": 171900,
+      "sha256": "19af200088ae09581b1088354f94af1cce5b8609440c2f73f1551b50c464526b"
+    },
+    "analyze.py": {
+      "bytes": 4762,
+      "sha256": "a8d4c2e76b45972fdc244937af843a95958b5ae24f2a91547db5400f09a3d75c"
+    },
+    "baseline/metadata.json": {
+      "bytes": 134985,
+      "sha256": "f69201f5ddbfff9ddbd668c2190b9fc1f7e98255f5ebf212127e9b30ed5bc7c9"
+    },
+    "baseline/results.jsonl": {
+      "bytes": 541220,
+      "sha256": "1eebc590f7a191be75709f9bc467b05123d96fecc77e3bacea237b4cc2492f97"
+    },
+    "baseline/summary.json": {
+      "bytes": 209,
+      "sha256": "a455ea0aa099a6dd955e0b169b5baf574e86406a4c2195fd40e3621684442718"
+    },
+    "baseline-journals.tar.gz": {
+      "bytes": 3277568,
+      "sha256": "79cc336014ccb30ebed2c62976b24e0792d44dfe0f94876f37e8bfa6944e9063"
+    },
+    "baseline.stderr.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "baseline.stdout.log": {
+      "bytes": 8035,
+      "sha256": "9f616e88e20504a0beef30ad720bc8f656a3851f7cab4aeb1e17a673bd1179a4"
+    },
+    "candidate/metadata.json": {
+      "bytes": 256575,
+      "sha256": "f0e5ec9fa9069739d141a36cc84e03cd0acfdb6e9442ed007844dbf7c8f53df2"
+    },
+    "candidate/results.jsonl": {
+      "bytes": 542148,
+      "sha256": "9fb5a90e27bdc2288f20443b3ff6e043e39d9e52b31b63909f3bf78355ca70b4"
+    },
+    "candidate/summary.json": {
+      "bytes": 209,
+      "sha256": "7385e33e53cc48a40ff3575691de940b10b17c5c8c41314f211fa7ce202c8149"
+    },
+    "candidate-journals.tar.gz": {
+      "bytes": 3258916,
+      "sha256": "e59706d628bab396a9dd2796cb3f042fe5b3028c86c2a17b840b01ddb9b13ea1"
+    },
+    "candidate.stderr.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "candidate.stdout.log": {
+      "bytes": 8915,
+      "sha256": "ba9ea5b67cae9d353883f0ce2923837e74428576744cb87ac82a427830a3ebd3"
+    },
+    "driver-review.tar.gz": {
+      "bytes": 9939,
+      "sha256": "bdd46837d6308a0c552cbdcd47c91c81c4405aa2893b12bc2837b88a3f5aa807"
+    },
+    "independent-review.tar.gz": {
+      "bytes": 909895,
+      "sha256": "c6d2ad37be650cbbab3144ae13eba0f1a07a6eb33433a1449d75bfb2d5d081e6"
+    },
+    "runtime-review.tar.gz": {
+      "bytes": 10557,
+      "sha256": "974ae0163a677633a578578f11f78ec54e7fce6d86d2f77b337ab2c4ca172792"
+    },
+    "spec.json": {
+      "bytes": 3417,
+      "sha256": "8d08de8cca753d3333f141a0a462ce2f24914ab366cc0cdcf27ed87e0845fc6f"
+    }
+  },
+  "phase_archive_regular_files": {
+    "baseline": 640,
+    "candidate": 640
+  },
+  "review_archive_regular_files": {
+    "runtime-review.tar.gz": 13,
+    "driver-review.tar.gz": 3,
+    "independent-review.tar.gz": 106
+  },
+  "independent_review": {
+    "paired_scenarios": 80,
+    "representative_reruns": 12,
+    "rerun_files": 96,
+    "forbidden_attempts": 0
+  },
+  "weather_limit": "all15 storms overlap fitted analog tracks; execution diagnostic on reused paths"
+}
