@@ -74,6 +74,8 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--baseline', type=Path, required=True)
     parser.add_argument('--out', type=Path, required=True)
+    parser.add_argument('--include-positive', action='store_true',
+                        help='include all development seasons to contextualize selected losses')
     args = parser.parse_args()
     metadata = json.loads((args.baseline.parent / 'metadata.json').read_text())
     if (metadata['evaluation'] != 'dev' or metadata['seasons'] != list(range(451, 526))
@@ -90,12 +92,13 @@ def main():
     if len(rows) != 675 or keys != expected or not all(math.isfinite(r['pnl']) for r in rows):
         parser.error('the complete finite 675-row baseline is required')
     selected = [r for r in rows if r['profile'] == 'observed_touch'
-                and r['pnl'] < 0 and r['latency'] in (.25, 3.)]
+                and (args.include_positive or r['pnl'] < 0) and r['latency'] in (.25, 3.)]
     case = json.loads((ROOT / 'data/case.json').read_text())
     case['limits'] = {s: max(1, math.floor(n * .1)) for s, n in case['limits'].items()}
     source_files = [*ROOT.glob('ctc/*.py'), *ROOT.glob('ctc/*.json'), *ROOT.glob('ctc/*.npz'),
         ROOT / 'data/case.json', Path(__file__), ROOT / 'scripts/experiment_execution_costs.py']
-    run_metadata = {'selection': 'All negative observed-touch development outcomes at .25 and 3 seconds.',
+    run_metadata = {'selection': ('All observed-touch development outcomes at .25 and 3 seconds.'
+            if args.include_positive else 'All negative observed-touch development outcomes at .25 and 3 seconds.'),
         'selected_scenarios': len(selected), 'seasons': sorted({r['season'] for r in selected}),
         'baseline_sha256': file_hash(args.baseline),
         'baseline_metadata_sha256': file_hash(args.baseline.parent / 'metadata.json'),
