@@ -49,6 +49,8 @@ export interface Thresholds {
   /** edge/synthetic tickets: 0 = price at the touch, sized to the displayed touch size; >0 = size to perTicketCap and price this
    *  fraction of the per-unit edge through the touch so one order sweeps several levels (live makers show ~30 lots at the touch) */
   edgeThroughFrac: number;
+  /** live: trade only the vega-neutral synthetics (pure spot bets); single-leg tickets need a per-strike vol we do not have */
+  synthOnly: boolean;
 }
 
 /** Auto-pilot: what the overlay does on its own per event. autoSubmit stays OFF until the organisers allow a bot to click. */
@@ -197,6 +199,7 @@ export const DEFAULT_CONFIG: Config = {
     flattenThroughPct: 2,
     flattenThroughTicks: 5,
     edgeThroughFrac: 0,
+    synthOnly: false,
     learnDelayRealSec: 5,
   },
   blend: { mode: 'median', lambda: 0.0025, k: 1, bandMode: 'auto' },

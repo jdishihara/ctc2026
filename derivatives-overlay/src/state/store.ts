@@ -1552,7 +1552,7 @@ export class Store {
       bookGreeks: Object.fromEntries(Object.entries(pf.perUnderlying).map(([u, b]) => [u, { delta: b.delta, vega: b.vega }])),
       caps, positionLimit, perTicketCap, minEdge: th.minEdge, rateRemaining: rate.remaining,
       round, preferSynthForSpot: cfg.preferSynthForSpot, priceMode: cfg.priceMode, tick, focus: cfg.focus, multiplier: cfg.multiplier,
-      edgeThroughFrac: th.edgeThroughFrac ?? 0,
+      edgeThroughFrac: th.edgeThroughFrac ?? 0, synthOnly: th.synthOnly ?? false,
     });
     const fl = flattenOrders(chains, positions, riskInputs, T.years, caps, perTicketCap, { pct: th.flattenThroughPct ?? 0, ticks: th.flattenThroughTicks ?? 0, tick }, s.resting);
     const flatten = ticketsFromFlatten(fl.orders, tick, rate.remaining, cfg.focus);

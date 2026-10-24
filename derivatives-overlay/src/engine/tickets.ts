@@ -46,6 +46,8 @@ export interface PlanInput {
   focus: string | null; // underlying filter, null = all
   multiplier?: number;
   edgeThroughFrac?: number;
+  /** only vega-neutral synthetics (and flatten): no single-leg vol trades against a target vol we cannot know */
+  synthOnly?: boolean;
 }
 
 let seq = 0;
@@ -101,6 +103,7 @@ export function planTickets(inp: PlanInput): Ticket[] {
   }
   for (const e of inp.edges) {
     const c = e.contract;
+    if (inp.synthOnly) break;
     if (!e.passes || !e.robustSide || !inFocus(c.underlying)) continue;
     // In rounds 2-3, spot-driven single legs are replaced by the vega-neutral synthetic when one exists.
     if (useSynth && e.spotComponent != null && e.volComponent != null && Math.abs(e.spotComponent) > 2 * Math.abs(e.volComponent)) {
