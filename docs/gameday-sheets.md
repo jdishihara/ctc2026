@@ -1,7 +1,8 @@
 # Game day sheets: one page per desk (Saturday 2026-10-24)
 
-Three desks, two roles at each: the **reader** puts information into the tool, the **clicker** executes what it
-outputs. Nothing on these pages needs market knowledge beyond noticing that a number is nonsense (a spot of 8 when the
+The cases do not overlap (confirmed 2026-10-24), so all four teammates and laptops work one case at a time. Each desk
+has two roles: the **reader** puts information into the tool, the **clicker** executes what it outputs. The other two
+watch for mistakes and keep the time. Nothing on these pages needs market knowledge beyond noticing that a number is nonsense (a spot of 8 when the
 chain shows 80, a fair of 300 for a stock at 60).
 
 Overall rank = 0.45 x Hurricane rank + 0.35 x Derivatives rank + 0.20 x Mario rank. Lower is better.
@@ -140,7 +141,9 @@ type `race ...` and `fair` in the terminal and trade from that.
 
 ## Before you leave tonight
 
-- [ ] Schedule from Slack: do the cases overlap? Assign readers and clickers per desk.
+- [x] Schedule: no overlap. Per case: Hurricane = one laptop runs the bot, one watches the log, two watch the exchange UI and the
+      clock. Derivatives = OIL laptop (the only one that may arm auto), PLANE laptop, one reader on the news, one on Risk.
+      Mario = one desk laptop, one typist watching the stream, one clicker, one on the dashboard checking fills and limits.
 - [ ] Hurricane: a supervised testnet season on current main (nothing has run since 06:29 today; the basket overlay and
       the merged efficiency branch have never traded live). Compare the `SEASON END` PnL with `scripts/backtest.py
       --seasons N`.
