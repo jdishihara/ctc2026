@@ -81,6 +81,8 @@ rounded to the 0.01 tick (buys down, sells up). On the testnet the fictional yea
 
 ## Competition day runbook (Hurricane Season bot)
 
+One-page sheets for all three desks: [docs/gameday-sheets.md](docs/gameday-sheets.md).
+
 Before the market opens (allow 15 minutes):
 
 ```bash
