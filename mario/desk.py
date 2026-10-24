@@ -23,7 +23,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from mario.pricer import Pricer
 from mario.engine import Engine, Params
-from mario.contracts import RACERS, load_roles, role_label
+from mario.contracts import RACERS, load_roles, parse_race, role_label
 from mario.tap import HttpTap, BrowserTap, book_levels
 from mario.executor import Executor
 from mario.robustness import ensemble, symbol_model_sd
@@ -81,7 +81,7 @@ class Desk:
             f.write(json.dumps({"t": time.time(), "cmd": line}) + "\n")
         try:
             if parts[0] == "race":
-                places = [int(x) for x in parts[1:5]]
+                places = parse_race(parts[1:])
                 if len(self.pricer.races) >= 8:
                     return "all 8 races are already entered"
                 self.pricer.add_race(places); self.refair()
@@ -259,7 +259,7 @@ button{background:#2563eb;color:#fff;border:0;border-radius:4px;padding:4px 10px
 <div class="box"><h3>Contracts</h3><table id="rows"></table></div></div>
 <div><div class="box"><h3>Status <span id="status"></span></h3>
 <div>Races: <span id="races"></span></div><div>Skill: <span id="skill"></span></div><div>Points: <span id="points"></span></div>
-<form onsubmit="return send()"><input id="cmd" size="34" placeholder="race 1 2 5 9  (Birdo Daisy Peach Yoshi)"> <button>send</button></form>
+<form onsubmit="return send()"><input id="cmd" size="34" placeholder="race 1 2 5 9 (Birdo Daisy Peach Yoshi) or race peach 5 birdo 1 ..."> <button>send</button></form>
 <div class="dim">race P1 P2 P3 P4 · undo · cpu -0.3 · map · prepare N · type SYM buy QTY PX · stop · go · orders</div></div>
 <div class="box"><h3>Log</h3><pre id="log"></pre></div></div></div>
 <script>

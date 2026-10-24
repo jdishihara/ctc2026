@@ -43,6 +43,9 @@ export interface Thresholds {
   flattenWarnFraction: number;
   flattenWarnRealSec: number;
   learnDelayRealSec: number;
+  /** flatten tickets are priced this far through the touch so one order clears several levels (snap -> next news is 30 s) */
+  flattenThroughPct: number;
+  flattenThroughTicks: number;
 }
 
 /** Auto-pilot: what the overlay does on its own per event. autoSubmit stays OFF until the organisers allow a bot to click. */
@@ -142,6 +145,8 @@ export const DEFAULT_CONFIG: Config = {
     minVegaForIV: 0.02,
     flattenWarnFraction: 0.1,
     flattenWarnRealSec: 30,
+    flattenThroughPct: 2,
+    flattenThroughTicks: 5,
     learnDelayRealSec: 5,
   },
   blend: { mode: 'median', lambda: 0.0025, k: 1, bandMode: 'auto' },

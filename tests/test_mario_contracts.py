@@ -45,3 +45,22 @@ def test_descriptive_names(record, role):
 def test_unknown_is_unmapped():
     assert guess_role({"symbol": "OIL_0626_C100"}) is None
     assert guess_role({"symbol": "PORT", "name": "Cascadia Pacific Terminals"}) is None
+
+
+@pytest.mark.parametrize("line,places", [
+    ("1 2 5 9", [1, 2, 5, 9]),
+    ("peach 5 birdo 1 yoshi 9 daisy 2", [1, 2, 5, 9]),
+    ("5 peach 1 birdo 9 yoshi 2 daisy", [1, 2, 5, 9]),
+    ("daisy=2 birdo=1 peach=5 yoshi=9", [1, 2, 5, 9]),
+    ("Bir 3, Dai 1, Pea 7, Yos 2", [3, 1, 7, 2]),
+])
+def test_parse_race_accepts_positions_or_names_in_any_order(line, places):
+    from mario.contracts import parse_race
+    assert parse_race(line.split()) == places
+
+
+@pytest.mark.parametrize("line", ["1 2 5", "1 1 5 9", "0 2 5 9", "peach 5 birdo 1 yoshi 9", "mario 1 daisy 2 peach 3 yoshi 4", "1 2 5 13"])
+def test_parse_race_rejects_bad_input(line):
+    from mario.contracts import parse_race
+    with pytest.raises(ValueError):
+        parse_race(line.split())

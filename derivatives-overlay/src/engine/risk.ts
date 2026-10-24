@@ -132,6 +132,8 @@ export function flattenOrders(
   T: number,
   caps: Caps = DEFAULT_CAPS,
   perTicketCap = 300,
+  /** price distance to go through the touch so one order clears several levels: max(throughPct% of mid, throughTicks x tick) */
+  through: { pct: number; ticks: number; tick: number } = { pct: 0, ticks: 0, tick: 0.01 },
 ): { orders: CloseOrder[]; totalSpreadCost: number } {
   const p = portfolio(chains, positions, inputs, T);
   const bySym = contractsBySymbol(chains);
@@ -153,8 +155,10 @@ export function flattenOrders(
   for (const row of p.rows) {
     const c = bySym[row.symbol];
     const side: Side = row.qty > 0 ? 'SELL' : 'BUY';
-    const px = side === 'SELL' ? c.bid : c.ask;
+    const touch = side === 'SELL' ? c.bid : c.ask;
     const ref = mid(c) ?? row.fair;
+    const dist = Math.max((through.pct / 100) * (ref ?? 0), through.ticks * through.tick);
+    const px = touch == null ? null : side === 'SELL' ? Math.max(through.tick, touch - dist) : touch + dist;
     let remaining = Math.abs(row.qty);
     const b = p.perUnderlying[row.underlying];
     // risk reduction: share of this position's greeks in the direction of the book's exposure, scaled by caps
@@ -165,7 +169,7 @@ export function flattenOrders(
       remaining -= q;
       orders.push({
         symbol: row.symbol, underlying: row.underlying, side, qty: q, price: px,
-        spreadCost: px != null ? Math.abs(ref - px) * q : 0,
+        spreadCost: touch != null ? Math.abs(ref - touch) * q : 0,
         riskScore: (dRed + vRed) * (q / Math.abs(row.qty)),
         groupId: pairOf[row.symbol],
         reason: `close ${row.qty > 0 ? 'long' : 'short'} ${Math.abs(row.qty)} (Δ ${row.delta.toFixed(1)}, vega ${row.vega.toFixed(1)})`,

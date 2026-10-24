@@ -82,6 +82,41 @@ def load_roles(symbols: list[dict]) -> tuple[dict[str, tuple], list[str]]:
     return roles, unmapped
 
 
+def parse_race(tokens: list[str]) -> list[int]:
+    """The humans' overall places from a typed `race ...` line. Either four integers in BIRDO DAISY PEACH YOSHI order
+    (`race 1 2 5 9`) or racer names with their places in any order (`race peach 5 birdo 1 yoshi 9 daisy 2`,
+    `race daisy=2 birdo=1 ...`); names may be abbreviated to their first three letters. Raises ValueError with a message
+    the dashboard can show."""
+    toks = [t for tok in tokens for t in tok.replace("=", " ").replace(":", " ").replace(",", " ").split() if t]
+    if len(toks) == 4 and all(t.isdigit() for t in toks):
+        places = [int(t) for t in toks]
+    else:
+        by_name: dict[str, int] = {}
+        pending_name = None
+        pending_num = None
+        for t in toks:
+            if t.isdigit():
+                if pending_name is not None:
+                    by_name[pending_name] = int(t); pending_name = None
+                else:
+                    pending_num = int(t)
+                continue
+            name = next((r for r in RACERS if r.startswith(t.upper()[:3])), None)
+            if name is None:
+                raise ValueError(f"'{t}' is not a racer (Birdo, Daisy, Peach, Yoshi) or a place")
+            if pending_num is not None:
+                by_name[name] = pending_num; pending_num = None
+            else:
+                pending_name = name
+        missing = [r.title() for r in RACERS if r not in by_name]
+        if missing or pending_name is not None or pending_num is not None:
+            raise ValueError("need a place for every racer; missing " + ", ".join(missing) if missing else "unpaired token")
+        places = [by_name[r] for r in RACERS]
+    if len(places) != 4 or len(set(places)) != 4 or not all(1 <= p <= 12 for p in places):
+        raise ValueError("need 4 distinct overall places 1..12 (12 racers: 4 humans + 8 CPUs)")
+    return places
+
+
 def role_label(role: tuple) -> str:
     if role[0] == "race":
         return f"R{role[1]} win {role[2].title()}"
