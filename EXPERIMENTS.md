@@ -72,7 +72,13 @@ was red. Two root causes found and fixed:
 2. **Flatten could not keep up.** Flatten tickets were priced at the touch and fill one level (10-60) per order; with 36
    orders a minute and 30 s from snap to the next news, 300-1,100 contracts cannot be closed. Fix: price flatten orders
    max(2% of mid, 5 ticks) through the touch (one order clears several levels) and keep flattening in the WAITING phase.
-   Re-measured below.
+   Re-measured (02:49-03:16, flatten fixes only, same seed): **+21,604** (vs 19,795), 369 orders; gross carried into
+   the next event 341, 198, 0, 463, 396, 304, 600, 270, 334, 355 (vs 288-1,154); event 3 ended flat. Still not flat:
+   in the 30 s window only 6-10 flatten orders went out although the rate meter showed 9-11/40, because the same
+   contract/side is not re-sent for 20 s unless the position has moved. Third fix: flatten tickets may be re-sent after
+   6 s (auto.flattenResubmitMs), sized net of same-side resting orders; and during an event with a cap breached the
+   auto-pilot works risk-reducing flatten tickets instead of idling (event 2 had 3 orders because every edge ticket was
+   red). Third run (with the Round 1 confirm fix too): below.
 Also fixed on the way: the integration test raced the content script's own 700 ms auto-pilot timer (now disabled in
 the test harness) and judged one real-time tick (now retries up to 4 s); vitest runs files sequentially.
 
