@@ -75,3 +75,32 @@ does not activate a bot or promote a strategy. Queue priority, own market
 impact, server-side processing variability, fees not represented in prices,
 and actual conversion execution remain unmodeled. The captured data have
 already been examined and are not untouched validation.
+
+## Scheduling contracts frozen after design review, before implementation
+
+- Recorded arrivals and observed closes precede REST operations at the same
+  timestamp. Order activation is immediate at the operation midpoint, with
+  no second hidden delay. Responses are deep-copied there and delivered after
+  the remaining half round trip.
+- Only one client step runs at a time. REST clock advancement queues arrivals
+  without recursively processing client steps. An idle client wakes at the
+  next arrival or after 0.25 seconds, whichever comes first.
+- A closed phase persists until observed new-round/open-phase information;
+  a valid quote alone cannot reopen that closed round. The terminal fence is
+  the last captured frame, with close winning ties. Final news is still
+  delivered, while matching and mutations at/after that fence are prohibited.
+  Finish outstanding calls and finitely drain queued data, then stop heartbeats.
+- Report last-frame cutoff, official ready-receipt time, gap duration, and
+  remaining inventory valued at settlement. This is tail truncation, not a
+  lower bound on profit: suppressed unobserved trades could help or hurt.
+- Order books include external depth plus own resting orders. The production
+  adapter subtracts its cached opposite-side orders, so an external-only book
+  would incorrectly subtract them twice.
+- Unsupported endpoints latch a fatal contract error. Final validation fails
+  even if production exception handling catches that error. Calculate marks
+  and settlement P&L from server cash/holdings; never expose settlement prices
+  through trading responses. Report lowest marked P&L separately from maximum
+  peak-to-trough drawdown.
+- Conversion reconciliation follows the existing overlay's refresh path;
+  there is no additional implicit refresh. Strategy computation is modeled as
+  instantaneous. No empirical CPU delay or network-delay distribution is fitted.
