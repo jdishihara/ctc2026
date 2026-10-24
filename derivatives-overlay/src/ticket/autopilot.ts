@@ -63,7 +63,10 @@ export class Autopilot {
     const k = `${t.symbol}:${t.side}`;
     const e = this.sent.get(k);
     if (!e) return false;
-    if (this.now() - e.t > this.cfg.auto.resubmitAfterMs) return false;
+    // flatten tickets are re-sized from the position (less same-side resting orders) on every recompute, so they may be
+    // re-sent sooner than edge tickets: the snap-to-next-news window is 30 s
+    const window = t.source === 'flatten' ? Math.min(this.cfg.auto.resubmitAfterMs, this.cfg.auto.flattenResubmitMs ?? this.cfg.auto.resubmitAfterMs) : this.cfg.auto.resubmitAfterMs;
+    if (this.now() - e.t > window) return false;
     // the position moved since we sent: the exchange has processed it, a new ticket is a new decision
     return this.positionOf(t.symbol) === e.pos;
   }
@@ -94,7 +97,13 @@ export class Autopilot {
     if (store.d.quoteAge == null || store.d.quoteAge > this.cfg.thresholds.staleQuoteSec) return { action: 'idle', detail: 'quotes stale' };
     if (mode === 'edge' && !store.d.targetsConfirmed) return { action: 'idle', detail: 'targets not confirmed' };
 
-    const t = store.pickNext(mode, { quiet: true, exclude: (x) => this.excluded(x) || !x.withinRateBudget });
+    let t = store.pickNext(mode, { quiet: true, exclude: (x) => this.excluded(x) || !x.withinRateBudget });
+    // during an event with a risk cap breached (a book carried in from the last event), nothing clears the edge filter
+    // because every ticket that adds risk is red: work the risk-reducing flatten tickets instead of sitting idle
+    if (!t && mode === 'edge' && store.d.breaches.length) {
+      t = store.pickNext('flatten', { quiet: true, exclude: (x) => this.excluded(x) || !x.withinRateBudget });
+      if (t) t = { ...t, reason: `${t.reason} · cap breached: reducing risk during the event` };
+    }
     if (!t) return { action: 'idle', detail: mode === 'edge' ? 'no ticket clears the edge threshold' : 'flat' };
     const c = store.d.contracts[t.symbol];
     const fair = t.source === 'edge' ? store.d.edges[t.underlying]?.find((r) => r.contract.symbol === t.symbol)?.fair ?? null : null;

@@ -134,6 +134,8 @@ export function flattenOrders(
   perTicketCap = 300,
   /** price distance to go through the touch so one order clears several levels: max(throughPct% of mid, throughTicks x tick) */
   through: { pct: number; ticks: number; tick: number } = { pct: 0, ticks: 0, tick: 0.01 },
+  /** same-side resting orders already working the close, subtracted from the quantity */
+  resting: Record<string, { buy: number; sell: number } | undefined> = {},
 ): { orders: CloseOrder[]; totalSpreadCost: number } {
   const p = portfolio(chains, positions, inputs, T);
   const bySym = contractsBySymbol(chains);
@@ -159,7 +161,9 @@ export function flattenOrders(
     const ref = mid(c) ?? row.fair;
     const dist = Math.max((through.pct / 100) * (ref ?? 0), through.ticks * through.tick);
     const px = touch == null ? null : side === 'SELL' ? Math.max(through.tick, touch - dist) : touch + dist;
-    let remaining = Math.abs(row.qty);
+    const working = side === 'SELL' ? resting[row.symbol]?.sell ?? 0 : resting[row.symbol]?.buy ?? 0;
+    let remaining = Math.max(0, Math.abs(row.qty) - working);
+    if (remaining === 0) continue;
     const b = p.perUnderlying[row.underlying];
     // risk reduction: share of this position's greeks in the direction of the book's exposure, scaled by caps
     const dRed = b && Math.sign(b.delta) === Math.sign(row.delta) ? Math.abs(row.delta) / caps.maxAbsDeltaPerUnderlying : -Math.abs(row.delta) / caps.maxAbsDeltaPerUnderlying;

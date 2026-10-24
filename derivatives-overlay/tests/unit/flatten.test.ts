@@ -38,6 +38,11 @@ describe('flatten tickets', () => {
     expect(totalSpreadCost).toBeCloseTo(0.1 * 120 + 0.05 * 50, 6);
   });
 
+  it('subtracts same-side resting orders already working the close', () => {
+    const { orders } = flattenOrders(chains, { OIL_0626_C100: 120, OIL_0626_P100: -50 }, inputs, T, undefined, 300, undefined, { OIL_0626_C100: { buy: 0, sell: 70 }, OIL_0626_P100: { buy: 50, sell: 0 } });
+    expect(orders.map((o) => [o.symbol, o.qty])).toEqual([['OIL_0626_C100', 50]]);
+  });
+
   it('never prices a sell below one tick', () => {
     const ch = chain({ PLANE_0626_P30: [0.02, 0.04] });
     const { orders } = flattenOrders(ch, { PLANE_0626_P30: 10 }, { PLANE: { spot: 40, vol: 0.9 } }, T, undefined, 300, { pct: 2, ticks: 5, tick: 0.01 });

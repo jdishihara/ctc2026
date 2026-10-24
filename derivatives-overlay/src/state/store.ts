@@ -1349,7 +1349,7 @@ export class Store {
       caps, positionLimit: th.positionLimit, perTicketCap: th.perTicketCap, minEdge: th.minEdge, rateRemaining: rate.remaining,
       round, preferSynthForSpot: cfg.preferSynthForSpot, priceMode: cfg.priceMode, tick, focus: cfg.focus, multiplier: cfg.multiplier,
     });
-    const fl = flattenOrders(chains, positions, riskInputs, T.years, caps, th.perTicketCap, { pct: th.flattenThroughPct ?? 0, ticks: th.flattenThroughTicks ?? 0, tick });
+    const fl = flattenOrders(chains, positions, riskInputs, T.years, caps, th.perTicketCap, { pct: th.flattenThroughPct ?? 0, ticks: th.flattenThroughTicks ?? 0, tick }, s.resting);
     const flatten = ticketsFromFlatten(fl.orders, tick, rate.remaining, cfg.focus);
 
     let quoteAge: number | null = null;
