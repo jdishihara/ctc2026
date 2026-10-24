@@ -549,15 +549,21 @@ def reconcile_stop(journal, original):
         ex.refresh()
         if not ex.scope_ok():
             return
+        # A nonempty cancellation pass must be reconciled even if DELETE
+        # times out. Flat/closed outcomes also retain their second snapshot.
+        # With nothing to cancel and live exposure, every prospective POST
+        # below still gets a fresh account snapshot after its book read.
+        reconcile_after_cancel = bool(ex.open_orders) or not ex.market_open or not any(ex.position.values())
         for order in list(ex.open_orders):
             oid = order_id(order)
             result = ex.send('DELETE', f'/orders/{oid}')
             journal.event('cleanup_cancel', order_id=oid, response=result)
             if result is None:
                 break
-        ex.refresh()
-        if not ex.scope_ok():
-            return
+        if reconcile_after_cancel:
+            ex.refresh()
+            if not ex.scope_ok():
+                return
         if ex.open_orders:
             # A timeout is not proof of cancellation. Never replace these orders.
             time.sleep(1)
