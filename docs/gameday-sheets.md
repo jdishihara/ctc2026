@@ -99,8 +99,9 @@ that alphabetical order, from the stream. Typo: `undo`, retype. The dashboard re
 After race 1 only: if the humans all finished behind several CPUs, `cpu 0`; if a human won outright and the others were
 top 4, leave it.
 
-Clicker: the action list is best first. Orange rows are riskless (four binaries of one race not summing to 100, top-2
-not equal to #1 + #2, a racer who cannot win still bid above 0): take all of them. Then the model edges in order. Click
+Clicker: the action list is best first. Orange rows show settlement guarantees (race-winner sets sum to 100; series-winner
+sets pay 100 to 200 because every tied winner pays 50; top-2 equals #1 + #2). Multi-leg guarantees require every leg to
+fill at the stated prices. Recheck available size and positions after each fill. Then consider model edges. Click
 **prepare** on a row (or type `prepare N`): the exchange tab's form fills; you click the submit button. Size is already
 inside the position limit and the book. Browser cap is 40 orders a minute, about one every 1.5 s.
 

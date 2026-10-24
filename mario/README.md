@@ -83,10 +83,12 @@ market maker the organisers run.
 
 ### What the engine does with the book
 
-1. Model-free, riskless at settlement, checked every poll: the four race-winner (or series-winner) contracts of one race
-   (series) settle to exactly 100 in total, so sum of asks < 100 is a buy of all four, sum of bids > 100 a sale;
+1. Model-free settlement guarantees, checked every poll: the four race-winner contracts of one race settle to exactly
+   100 in total, so sum of asks < 100 is a buy of all four, sum of bids > 100 a sale. A complete series-winner set pays
+   100 to 200: the packet pays **50 to each tied winner**, including three- and four-way ties. Buy that set below 100;
+   only sell it as a guaranteed-profit trade above 200. These guarantees require every leg to fill at the stated prices;
    top-2 total settles to #1 + #2 exactly; #1 >= the leader's banked points and <= banked + 15 x races left, #2 and
-   the total likewise. A binary whose racer can no longer win is a free sale.
+   the total likewise. Recheck available size and positions after each fill.
 2. Model edges: buy when ask <= fair - margin, sell when bid >= fair + margin. Binaries: margin 6 / 4 / 3 / 2.5 points
    by races completed in that series (the skill posterior is weak early); score contracts: max(2 points, 0.35 sd).
    Size = what the book offers at acceptable prices, capped by the position limit, `--clip`, and the risk budget.

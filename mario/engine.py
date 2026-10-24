@@ -2,7 +2,7 @@
 
 Two kinds of recommendation, both sized to the position limits and to what is actually in the book:
   1. model-free (riskless at settlement): the four race-winner contracts of one race sum to exactly 100, the four
-     series-winner contracts of one series sum to exactly 100 (ties pay 50+50), top-2 total = #1 + #2, and every score
+     series-winner contracts together pay between 100 and 200 (each tied winner pays 50), top-2 total = #1 + #2, and every score
      contract is bounded by the points already banked and the points still available. When the book violates one of
      these, the engine prints the legs and the locked-in profit.
   2. model edges: buy below fair minus a margin, sell above fair plus a margin. The margin is wider early in a series
@@ -170,13 +170,16 @@ class Engine:
                 if any(t is None for t in ts):
                     continue
                 total = sum(t[0] for t in ts)
-                gain = (100 - total) if side == "buy" else (total - 100)
+                # The packet pays each tied series winner 50, including three-
+                # and four-way ties. Only race sets always settle to 100.
+                bound = 200 if key[0] == "swin" and side == "sell" else 100
+                gain = (bound - total) if side == "buy" else (total - bound)
                 if gain <= 0:
                     continue
                 qty = min(min(t[1] for t in ts), self.p.clip, *(self._room(s, side, positions) for s in syms))
                 if qty > 0:
                     out.append(Action("arb", [(s, side, qty, t[0]) for s, t in zip(syms, ts)], round(gain * qty, 1),
-                                      f"{'race' if key[0] == 'race' else 'series'} {key[1]} set {side}s {total:.1f} vs 100"))
+                                      f"{'race' if key[0] == 'race' else 'series'} {key[1]} set {side}s {total:.1f} vs {bound}"))
         # top2 = s1 + s2
         for s in (1, 2):
             s1, s2, t2 = self.by_role.get(("s1", s)), self.by_role.get(("s2", s)), self.by_role.get(("top2", s))
