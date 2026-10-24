@@ -3,7 +3,7 @@ from types import SimpleNamespace
 
 import pytest
 
-from scripts import check_repeat_development as driver
+from scripts import check_repeat_blend_development as driver
 
 
 @pytest.mark.parametrize('access', [lambda p: p['PORT'], lambda p: p.copy(), copy.copy, copy.deepcopy])

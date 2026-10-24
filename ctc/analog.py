@@ -69,10 +69,16 @@ def build_library(root: Path, seasons: list[dict[str, Any]], out: Path = LIB) ->
 class AnalogEnsemble:
     def __init__(self, case: dict[str, Any], sigma: float = 25.0, tau_wire: float = 0.5, k: int = 50,
                  shift: bool = True, lib: Path = LIB, cone_w: float = 0.0, isl_w: float = 0.0, cone_s0: float = 10.0, cone_nu: float = 0.0, vel_w: float = 0.0, vel_sd: float = 0.3, cone_all: bool = False,
-                 wind_condition: float = 0.0, cone_center: float = 0.0, repeat_prefix: bool = False):
+                 wind_condition: float = 0.0, cone_center: float = 0.0, repeat_prefix: bool = False,
+                 repeat_weight: float = 1.0):
         if type(repeat_prefix) is not bool:
             raise ValueError('repeat_prefix must be a boolean')
         self.repeat_prefix = repeat_prefix
+        if (not isinstance(repeat_weight, (int, float, np.integer, np.floating))
+                or isinstance(repeat_weight, (bool, np.bool_)) or not math.isfinite(repeat_weight)
+                or not 0 <= repeat_weight <= 1):
+            raise ValueError('repeat_weight must be finite and between zero and one')
+        self.repeat_weight = float(repeat_weight)
         self.repeat_match: int | None = None
         if not 0 <= wind_condition <= 1:
             raise ValueError("wind_condition must be between zero and one")
@@ -217,8 +223,12 @@ class AnalogEnsemble:
         ordinary = w / w.sum()
         self.repeat_match = self._repeat_index(obs) if self.repeat_prefix else None
         if self.repeat_match is not None:
-            ordinary.fill(0)
-            ordinary[self.repeat_match] = 1
+            if self.repeat_weight == 1:
+                ordinary.fill(0)
+                ordinary[self.repeat_match] = 1
+            elif self.repeat_weight:
+                ordinary *= 1 - self.repeat_weight
+                ordinary[self.repeat_match] += self.repeat_weight
         return ordinary
 
     def pattern_posterior(self, w: np.ndarray) -> dict[str, float]:

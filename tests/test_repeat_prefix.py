@@ -20,13 +20,13 @@ def models(tmp_path):
         sym: {'sites': [{'x': 40, 'y': 500, 'weight': 1, 'island': 'test'}]}
         for sym in PHYS}}
 
-    def create(enabled, values=None):
+    def create(enabled, values=None, **extra):
         path = tmp_path / f'library-{len(list(tmp_path.iterdir()))}.npz'
         np.savez(path, tracks=tracks if values is None else values,
                  pattern=np.array([0, 1, 2]), flip=np.full(3, -1),
                  C_off=np.full((6, 6), 1 / 6), C_wire=np.full((6, 6), 1 / 6))
         kwargs = {} if enabled is None else {'repeat_prefix': enabled}
-        return AnalogEnsemble(case, lib=path, sigma=15, k=0, **kwargs)
+        return AnalogEnsemble(case, lib=path, sigma=15, k=0, **kwargs, **extra)
 
     return create, tracks
 
@@ -190,3 +190,57 @@ def test_prediction_uses_matched_historical_continuation_without_mutating_it(mod
     assert selected.tolist() == [0]
     np.testing.assert_array_equal(future, tracks[0:1, 21:, :])
     np.testing.assert_array_equal(candidate.tracks, before)
+
+
+def test_half_weight_recognition_preserves_half_the_ordinary_distribution(models):
+    create, tracks = models
+    obs = observations(tracks)
+    ordinary = create(False).weights(obs, [], [])
+    expected = ordinary * .5
+    expected[0] += .5
+    candidate = create(True, repeat_weight=.5)
+    actual = candidate.weights(obs, [], [])
+    np.testing.assert_array_equal(actual, expected)
+    assert np.count_nonzero(actual) == 3
+    assert candidate.repeat_match == 0
+
+
+@pytest.mark.parametrize('strength', [0., 1.])
+def test_weight_endpoints_preserve_original_modes_exactly(models, strength):
+    create, tracks = models
+    obs = observations(tracks)
+    actual = create(True, repeat_weight=strength).weights(obs, [], [])
+    expected = create(bool(strength)).weights(obs, [], [])
+    np.testing.assert_array_equal(actual, expected)
+
+
+@pytest.mark.parametrize('strength', [-.1, 1.1, float('nan'), float('inf'), '0.5', None, True])
+def test_invalid_repeat_weights_are_rejected(models, strength):
+    create, _ = models
+    with pytest.raises(ValueError, match='repeat_weight'):
+        create(True, repeat_weight=strength)
+
+
+def test_half_weight_has_exact_disabled_and_unmatched_fallback(models):
+    create, tracks = models
+    obs = observations(tracks)
+    baseline = create(False)
+    compare_fallback(create(False, repeat_weight=.5), baseline, obs)
+    candidate = create(True, repeat_weight=.5)
+    candidate.weights(obs, [], [])
+    obs[0]['radius'] += 1
+    compare_fallback(candidate, baseline, obs)
+
+
+def test_half_weight_recomputes_after_a_corrected_prefix(models):
+    create, tracks = models
+    obs = observations(tracks)
+    candidate, baseline = create(True, repeat_weight=.5), create(False)
+    candidate.weights(obs, [], [])
+    baseline.weights(obs, [], [])
+    obs[0]['radius'] += 1
+    compare_fallback(candidate, baseline, obs)
+    obs[0]['radius'] -= 1
+    expected = baseline.weights(obs, [], []) * .5
+    expected[0] += .5
+    np.testing.assert_array_equal(candidate.weights(obs, [], []), expected)
