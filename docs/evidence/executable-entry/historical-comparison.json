@@ -1,0 +1,5723 @@
+{
+  "source_revision": "e3074b5727f99de95fba8a9a4c488c91617e0b39",
+  "evaluations": {
+    "dev": {
+      "summaries": [
+        {
+          "profile": "legacy",
+          "latency": 0.25,
+          "scenarios": 75,
+          "mean_change": 6.026143442019284,
+          "improved": 32,
+          "declined": 20,
+          "unchanged": 23,
+          "before_losses": 6,
+          "after_losses": 6,
+          "best_change": 162.59684048523195,
+          "worst_change": -50.50398543029041
+        },
+        {
+          "profile": "legacy",
+          "latency": 1,
+          "scenarios": 75,
+          "mean_change": 6.026143442019284,
+          "improved": 32,
+          "declined": 20,
+          "unchanged": 23,
+          "before_losses": 6,
+          "after_losses": 6,
+          "best_change": 162.59684048523195,
+          "worst_change": -50.50398543029041
+        },
+        {
+          "profile": "legacy",
+          "latency": 3,
+          "scenarios": 75,
+          "mean_change": -2.8915413638975087,
+          "improved": 23,
+          "declined": 32,
+          "unchanged": 20,
+          "before_losses": 8,
+          "after_losses": 8,
+          "best_change": 36.31032773340485,
+          "worst_change": -112.17075896611004
+        },
+        {
+          "profile": "observed_spread",
+          "latency": 0.25,
+          "scenarios": 75,
+          "mean_change": 9.766740885901443,
+          "improved": 48,
+          "declined": 20,
+          "unchanged": 7,
+          "before_losses": 6,
+          "after_losses": 6,
+          "best_change": 159.62064912257665,
+          "worst_change": -129.2498983938085
+        },
+        {
+          "profile": "observed_spread",
+          "latency": 1,
+          "scenarios": 75,
+          "mean_change": 9.766740885901418,
+          "improved": 48,
+          "declined": 20,
+          "unchanged": 7,
+          "before_losses": 6,
+          "after_losses": 6,
+          "best_change": 159.62064912257665,
+          "worst_change": -129.2498983938085
+        },
+        {
+          "profile": "observed_spread",
+          "latency": 3,
+          "scenarios": 75,
+          "mean_change": -2.9316569847859317,
+          "improved": 30,
+          "declined": 37,
+          "unchanged": 8,
+          "before_losses": 8,
+          "after_losses": 9,
+          "best_change": 231.48450540876547,
+          "worst_change": -213.11176009949145
+        },
+        {
+          "profile": "observed_touch",
+          "latency": 0.25,
+          "scenarios": 75,
+          "mean_change": 8.60585706552917,
+          "improved": 51,
+          "declined": 19,
+          "unchanged": 5,
+          "before_losses": 6,
+          "after_losses": 6,
+          "best_change": 159.62064912257847,
+          "worst_change": -162.25659400544964
+        },
+        {
+          "profile": "observed_touch",
+          "latency": 1,
+          "scenarios": 75,
+          "mean_change": 8.62134625717318,
+          "improved": 51,
+          "declined": 19,
+          "unchanged": 5,
+          "before_losses": 6,
+          "after_losses": 6,
+          "best_change": 159.62064912257665,
+          "worst_change": -162.25659400544964
+        },
+        {
+          "profile": "observed_touch",
+          "latency": 3,
+          "scenarios": 75,
+          "mean_change": -2.870456851819519,
+          "improved": 30,
+          "declined": 37,
+          "unchanged": 8,
+          "before_losses": 8,
+          "after_losses": 9,
+          "best_change": 231.48450540876547,
+          "worst_change": -213.11176009949145
+        }
+      ],
+      "pairs": [
+        {
+          "season": 451,
+          "profile": "legacy",
+          "latency": 0.25,
+          "before_pnl": 1829.49530452173,
+          "after_pnl": 1829.49530452173,
+          "pnl_change": 0
+        },
+        {
+          "season": 451,
+          "profile": "legacy",
+          "latency": 1,
+          "before_pnl": 1829.49530452173,
+          "after_pnl": 1829.49530452173,
+          "pnl_change": 0
+        },
+        {
+          "season": 451,
+          "profile": "legacy",
+          "latency": 3,
+          "before_pnl": 1552.8085560386592,
+          "after_pnl": 1552.8085560386592,
+          "pnl_change": 0
+        },
+        {
+          "season": 451,
+          "profile": "observed_spread",
+          "latency": 0.25,
+          "before_pnl": 1726.0024968410366,
+          "after_pnl": 1726.0024968410366,
+          "pnl_change": 0
+        },
+        {
+          "season": 451,
+          "profile": "observed_spread",
+          "latency": 1,
+          "before_pnl": 1726.0024968410366,
+          "after_pnl": 1726.0024968410366,
+          "pnl_change": 0
+        },
+        {
+          "season": 451,
+          "profile": "observed_spread",
+          "latency": 3,
+          "before_pnl": 1458.9671601508387,
+          "after_pnl": 1458.9671601508387,
+          "pnl_change": 0
+        },
+        {
+          "season": 451,
+          "profile": "observed_touch",
+          "latency": 0.25,
+          "before_pnl": 1726.0024968410366,
+          "after_pnl": 1726.0024968410366,
+          "pnl_change": 0
+        },
+        {
+          "season": 451,
+          "profile": "observed_touch",
+          "latency": 1,
+          "before_pnl": 1726.0024968410366,
+          "after_pnl": 1726.0024968410366,
+          "pnl_change": 0
+        },
+        {
+          "season": 451,
+          "profile": "observed_touch",
+          "latency": 3,
+          "before_pnl": 1458.9671601508387,
+          "after_pnl": 1458.9671601508387,
+          "pnl_change": 0
+        },
+        {
+          "season": 452,
+          "profile": "legacy",
+          "latency": 0.25,
+          "before_pnl": 1250.7007211270538,
+          "after_pnl": 1282.7130987494347,
+          "pnl_change": 32.01237762238088
+        },
+        {
+          "season": 452,
+          "profile": "legacy",
+          "latency": 1,
+          "before_pnl": 1250.7007211270538,
+          "after_pnl": 1282.7130987494347,
+          "pnl_change": 32.01237762238088
+        },
+        {
+          "season": 452,
+          "profile": "legacy",
+          "latency": 3,
+          "before_pnl": 534.4634710170285,
+          "after_pnl": 566.0603966006911,
+          "pnl_change": 31.596925583662596
+        },
+        {
+          "season": 452,
+          "profile": "observed_spread",
+          "latency": 0.25,
+          "before_pnl": 1156.6888377945688,
+          "after_pnl": 1234.4779442697072,
+          "pnl_change": 77.7891064751384
+        },
+        {
+          "season": 452,
+          "profile": "observed_spread",
+          "latency": 1,
+          "before_pnl": 1156.6888377945688,
+          "after_pnl": 1234.4779442697072,
+          "pnl_change": 77.7891064751384
+        },
+        {
+          "season": 452,
+          "profile": "observed_spread",
+          "latency": 3,
+          "before_pnl": 488.95386352581227,
+          "after_pnl": 565.1231077871107,
+          "pnl_change": 76.16924426129845
+        },
+        {
+          "season": 452,
+          "profile": "observed_touch",
+          "latency": 0.25,
+          "before_pnl": 1156.6888377945688,
+          "after_pnl": 1234.4779442697072,
+          "pnl_change": 77.7891064751384
+        },
+        {
+          "season": 452,
+          "profile": "observed_touch",
+          "latency": 1,
+          "before_pnl": 1156.6888377945688,
+          "after_pnl": 1234.4779442697072,
+          "pnl_change": 77.7891064751384
+        },
+        {
+          "season": 452,
+          "profile": "observed_touch",
+          "latency": 3,
+          "before_pnl": 488.95386352581227,
+          "after_pnl": 565.1231077871107,
+          "pnl_change": 76.16924426129845
+        },
+        {
+          "season": 453,
+          "profile": "legacy",
+          "latency": 0.25,
+          "before_pnl": 837.9768351227003,
+          "after_pnl": 837.9768351227003,
+          "pnl_change": 0
+        },
+        {
+          "season": 453,
+          "profile": "legacy",
+          "latency": 1,
+          "before_pnl": 837.9768351227003,
+          "after_pnl": 837.9768351227003,
+          "pnl_change": 0
+        },
+        {
+          "season": 453,
+          "profile": "legacy",
+          "latency": 3,
+          "before_pnl": 119.4054484440444,
+          "after_pnl": 119.4054484440444,
+          "pnl_change": 0
+        },
+        {
+          "season": 453,
+          "profile": "observed_spread",
+          "latency": 0.25,
+          "before_pnl": 788.8714090997732,
+          "after_pnl": 794.4279144626853,
+          "pnl_change": 5.556505362912048
+        },
+        {
+          "season": 453,
+          "profile": "observed_spread",
+          "latency": 1,
+          "before_pnl": 788.8714090997732,
+          "after_pnl": 794.4279144626853,
+          "pnl_change": 5.556505362912048
+        },
+        {
+          "season": 453,
+          "profile": "observed_spread",
+          "latency": 3,
+          "before_pnl": 102.89237088404798,
+          "after_pnl": 100.39573226772427,
+          "pnl_change": -2.4966386163237075
+        },
+        {
+          "season": 453,
+          "profile": "observed_touch",
+          "latency": 0.25,
+          "before_pnl": 788.8714090997732,
+          "after_pnl": 794.4279144626853,
+          "pnl_change": 5.556505362912048
+        },
+        {
+          "season": 453,
+          "profile": "observed_touch",
+          "latency": 1,
+          "before_pnl": 788.8714090997732,
+          "after_pnl": 794.4279144626853,
+          "pnl_change": 5.556505362912048
+        },
+        {
+          "season": 453,
+          "profile": "observed_touch",
+          "latency": 3,
+          "before_pnl": 102.89237088404798,
+          "after_pnl": 100.39573226772427,
+          "pnl_change": -2.4966386163237075
+        },
+        {
+          "season": 454,
+          "profile": "legacy",
+          "latency": 0.25,
+          "before_pnl": 3250.381469297925,
+          "after_pnl": 3250.381469297925,
+          "pnl_change": 0
+        },
+        {
+          "season": 454,
+          "profile": "legacy",
+          "latency": 1,
+          "before_pnl": 3250.381469297925,
+          "after_pnl": 3250.381469297925,
+          "pnl_change": 0
+        },
+        {
+          "season": 454,
+          "profile": "legacy",
+          "latency": 3,
+          "before_pnl": 3062.6618548671277,
+          "after_pnl": 3062.24254717482,
+          "pnl_change": -0.4193076923074841
+        },
+        {
+          "season": 454,
+          "profile": "observed_spread",
+          "latency": 0.25,
+          "before_pnl": 3165.797477629465,
+          "after_pnl": 3162.004747844612,
+          "pnl_change": -3.7927297848527814
+        },
+        {
+          "season": 454,
+          "profile": "observed_spread",
+          "latency": 1,
+          "before_pnl": 3165.797477629465,
+          "after_pnl": 3162.004747844612,
+          "pnl_change": -3.7927297848527814
+        },
+        {
+          "season": 454,
+          "profile": "observed_spread",
+          "latency": 3,
+          "before_pnl": 2978.123692016635,
+          "after_pnl": 2973.9981501150414,
+          "pnl_change": -4.125541901593351
+        },
+        {
+          "season": 454,
+          "profile": "observed_touch",
+          "latency": 0.25,
+          "before_pnl": 3159.639959457905,
+          "after_pnl": 3155.8472296730524,
+          "pnl_change": -3.7927297848527814
+        },
+        {
+          "season": 454,
+          "profile": "observed_touch",
+          "latency": 1,
+          "before_pnl": 3159.6399594579034,
+          "after_pnl": 3155.8472296730524,
+          "pnl_change": -3.7927297848509625
+        },
+        {
+          "season": 454,
+          "profile": "observed_touch",
+          "latency": 3,
+          "before_pnl": 2977.725335458751,
+          "after_pnl": 2973.9981501150414,
+          "pnl_change": -3.727185343709607
+        },
+        {
+          "season": 455,
+          "profile": "legacy",
+          "latency": 0.25,
+          "before_pnl": 3027.045216031031,
+          "after_pnl": 3041.154306940122,
+          "pnl_change": 14.10909090909081
+        },
+        {
+          "season": 455,
+          "profile": "legacy",
+          "latency": 1,
+          "before_pnl": 3022.0625998418695,
+          "after_pnl": 3036.1716907509604,
+          "pnl_change": 14.10909090909081
+        },
+        {
+          "season": 455,
+          "profile": "legacy",
+          "latency": 3,
+          "before_pnl": 2256.7415491570837,
+          "after_pnl": 2256.7415491570837,
+          "pnl_change": 0
+        },
+        {
+          "season": 455,
+          "profile": "observed_spread",
+          "latency": 0.25,
+          "before_pnl": 2887.134601011896,
+          "after_pnl": 2902.1166531509225,
+          "pnl_change": 14.982052139026564
+        },
+        {
+          "season": 455,
+          "profile": "observed_spread",
+          "latency": 1,
+          "before_pnl": 2887.134601011896,
+          "after_pnl": 2902.1166531509225,
+          "pnl_change": 14.982052139026564
+        },
+        {
+          "season": 455,
+          "profile": "observed_spread",
+          "latency": 3,
+          "before_pnl": 2075.97309781091,
+          "after_pnl": 2075.97309781091,
+          "pnl_change": 0
+        },
+        {
+          "season": 455,
+          "profile": "observed_touch",
+          "latency": 0.25,
+          "before_pnl": 2845.6078768059133,
+          "after_pnl": 2860.58992894494,
+          "pnl_change": 14.982052139026564
+        },
+        {
+          "season": 455,
+          "profile": "observed_touch",
+          "latency": 1,
+          "before_pnl": 2845.6078768059133,
+          "after_pnl": 2860.58992894494,
+          "pnl_change": 14.982052139026564
+        },
+        {
+          "season": 455,
+          "profile": "observed_touch",
+          "latency": 3,
+          "before_pnl": 2061.983246678855,
+          "after_pnl": 2061.983246678855,
+          "pnl_change": 0
+        },
+        {
+          "season": 456,
+          "profile": "legacy",
+          "latency": 0.25,
+          "before_pnl": 1602.4817531206172,
+          "after_pnl": 1607.822444209558,
+          "pnl_change": 5.34069108894073
+        },
+        {
+          "season": 456,
+          "profile": "legacy",
+          "latency": 1,
+          "before_pnl": 1602.4817531206172,
+          "after_pnl": 1607.822444209558,
+          "pnl_change": 5.34069108894073
+        },
+        {
+          "season": 456,
+          "profile": "legacy",
+          "latency": 3,
+          "before_pnl": 1427.284618694941,
+          "after_pnl": 1396.1491142181721,
+          "pnl_change": -31.1355044767688
+        },
+        {
+          "season": 456,
+          "profile": "observed_spread",
+          "latency": 0.25,
+          "before_pnl": 1526.6752005148055,
+          "after_pnl": 1529.4245394636373,
+          "pnl_change": 2.7493389488317916
+        },
+        {
+          "season": 456,
+          "profile": "observed_spread",
+          "latency": 1,
+          "before_pnl": 1526.6752005148055,
+          "after_pnl": 1529.4245394636373,
+          "pnl_change": 2.7493389488317916
+        },
+        {
+          "season": 456,
+          "profile": "observed_spread",
+          "latency": 3,
+          "before_pnl": 1452.6392059402224,
+          "after_pnl": 1419.8907812348948,
+          "pnl_change": -32.74842470532758
+        },
+        {
+          "season": 456,
+          "profile": "observed_touch",
+          "latency": 0.25,
+          "before_pnl": 1498.8722670000004,
+          "after_pnl": 1501.6216059488333,
+          "pnl_change": 2.7493389488329285
+        },
+        {
+          "season": 456,
+          "profile": "observed_touch",
+          "latency": 1,
+          "before_pnl": 1498.8722670000004,
+          "after_pnl": 1501.6216059488333,
+          "pnl_change": 2.7493389488329285
+        },
+        {
+          "season": 456,
+          "profile": "observed_touch",
+          "latency": 3,
+          "before_pnl": 1452.6392059402224,
+          "after_pnl": 1419.8907812348948,
+          "pnl_change": -32.74842470532758
+        },
+        {
+          "season": 457,
+          "profile": "legacy",
+          "latency": 0.25,
+          "before_pnl": 1139.3258926427877,
+          "after_pnl": 1139.2058926427887,
+          "pnl_change": -0.11999999999898137
+        },
+        {
+          "season": 457,
+          "profile": "legacy",
+          "latency": 1,
+          "before_pnl": 1139.3258926427877,
+          "after_pnl": 1139.2058926427887,
+          "pnl_change": -0.11999999999898137
+        },
+        {
+          "season": 457,
+          "profile": "legacy",
+          "latency": 3,
+          "before_pnl": 1027.7160314574176,
+          "after_pnl": 1027.5789619337156,
+          "pnl_change": -0.13706952370193903
+        },
+        {
+          "season": 457,
+          "profile": "observed_spread",
+          "latency": 0.25,
+          "before_pnl": 1070.4289281573435,
+          "after_pnl": 1063.8213442489787,
+          "pnl_change": -6.607583908364859
+        },
+        {
+          "season": 457,
+          "profile": "observed_spread",
+          "latency": 1,
+          "before_pnl": 1070.4289281573435,
+          "after_pnl": 1063.8213442489787,
+          "pnl_change": -6.607583908364859
+        },
+        {
+          "season": 457,
+          "profile": "observed_spread",
+          "latency": 3,
+          "before_pnl": 1166.4278074464528,
+          "after_pnl": 1157.5606587962557,
+          "pnl_change": -8.867148650197123
+        },
+        {
+          "season": 457,
+          "profile": "observed_touch",
+          "latency": 0.25,
+          "before_pnl": 1054.8485001382032,
+          "after_pnl": 1048.2409162298381,
+          "pnl_change": -6.607583908365086
+        },
+        {
+          "season": 457,
+          "profile": "observed_touch",
+          "latency": 1,
+          "before_pnl": 1054.8485001382032,
+          "after_pnl": 1048.2409162298381,
+          "pnl_change": -6.607583908365086
+        },
+        {
+          "season": 457,
+          "profile": "observed_touch",
+          "latency": 3,
+          "before_pnl": 1166.4278074464528,
+          "after_pnl": 1157.5606587962557,
+          "pnl_change": -8.867148650197123
+        },
+        {
+          "season": 458,
+          "profile": "legacy",
+          "latency": 0.25,
+          "before_pnl": 2354.9171187005245,
+          "after_pnl": 2384.317118700526,
+          "pnl_change": 29.400000000001455
+        },
+        {
+          "season": 458,
+          "profile": "legacy",
+          "latency": 1,
+          "before_pnl": 2354.9171187005245,
+          "after_pnl": 2384.317118700526,
+          "pnl_change": 29.400000000001455
+        },
+        {
+          "season": 458,
+          "profile": "legacy",
+          "latency": 3,
+          "before_pnl": 1506.5350990217166,
+          "after_pnl": 1542.8454267551215,
+          "pnl_change": 36.31032773340485
+        },
+        {
+          "season": 458,
+          "profile": "observed_spread",
+          "latency": 0.25,
+          "before_pnl": 2169.190128359768,
+          "after_pnl": 2198.760128359766,
+          "pnl_change": 29.56999999999789
+        },
+        {
+          "season": 458,
+          "profile": "observed_spread",
+          "latency": 1,
+          "before_pnl": 2169.19012835977,
+          "after_pnl": 2198.760128359766,
+          "pnl_change": 29.56999999999607
+        },
+        {
+          "season": 458,
+          "profile": "observed_spread",
+          "latency": 3,
+          "before_pnl": 1351.1158890297802,
+          "after_pnl": 1447.0411060550496,
+          "pnl_change": 95.92521702526938
+        },
+        {
+          "season": 458,
+          "profile": "observed_touch",
+          "latency": 0.25,
+          "before_pnl": 1999.6767428870976,
+          "after_pnl": 2029.2467428870955,
+          "pnl_change": 29.56999999999789
+        },
+        {
+          "season": 458,
+          "profile": "observed_touch",
+          "latency": 1,
+          "before_pnl": 1988.388331305629,
+          "after_pnl": 2017.9583313056287,
+          "pnl_change": 29.56999999999971
+        },
+        {
+          "season": 458,
+          "profile": "observed_touch",
+          "latency": 3,
+          "before_pnl": 1281.4938101883808,
+          "after_pnl": 1377.4190272136466,
+          "pnl_change": 95.92521702526574
+        },
+        {
+          "season": 459,
+          "profile": "legacy",
+          "latency": 0.25,
+          "before_pnl": 1176.0212465077352,
+          "after_pnl": 1176.6489915508632,
+          "pnl_change": 0.6277450431280158
+        },
+        {
+          "season": 459,
+          "profile": "legacy",
+          "latency": 1,
+          "before_pnl": 1176.0212465077352,
+          "after_pnl": 1176.6489915508632,
+          "pnl_change": 0.6277450431280158
+        },
+        {
+          "season": 459,
+          "profile": "legacy",
+          "latency": 3,
+          "before_pnl": 613.3504541217208,
+          "after_pnl": 613.4792958378639,
+          "pnl_change": 0.12884171614314255
+        },
+        {
+          "season": 459,
+          "profile": "observed_spread",
+          "latency": 0.25,
+          "before_pnl": 1008.5378490530998,
+          "after_pnl": 1009.1372874306339,
+          "pnl_change": 0.5994383775341703
+        },
+        {
+          "season": 459,
+          "profile": "observed_spread",
+          "latency": 1,
+          "before_pnl": 1008.5378490530998,
+          "after_pnl": 1009.1372874306339,
+          "pnl_change": 0.5994383775341703
+        },
+        {
+          "season": 459,
+          "profile": "observed_spread",
+          "latency": 3,
+          "before_pnl": 544.364102696331,
+          "after_pnl": 544.4641026963313,
+          "pnl_change": 0.1000000000003638
+        },
+        {
+          "season": 459,
+          "profile": "observed_touch",
+          "latency": 0.25,
+          "before_pnl": 968.5903038615487,
+          "after_pnl": 969.1897422390829,
+          "pnl_change": 0.5994383775341703
+        },
+        {
+          "season": 459,
+          "profile": "observed_touch",
+          "latency": 1,
+          "before_pnl": 968.5903038615487,
+          "after_pnl": 969.1897422390829,
+          "pnl_change": 0.5994383775341703
+        },
+        {
+          "season": 459,
+          "profile": "observed_touch",
+          "latency": 3,
+          "before_pnl": 544.364102696331,
+          "after_pnl": 544.4641026963313,
+          "pnl_change": 0.1000000000003638
+        },
+        {
+          "season": 460,
+          "profile": "legacy",
+          "latency": 0.25,
+          "before_pnl": 1323.3796376251812,
+          "after_pnl": 1323.3796376251812,
+          "pnl_change": 0
+        },
+        {
+          "season": 460,
+          "profile": "legacy",
+          "latency": 1,
+          "before_pnl": 1323.3796376251812,
+          "after_pnl": 1323.3796376251812,
+          "pnl_change": 0
+        },
+        {
+          "season": 460,
+          "profile": "legacy",
+          "latency": 3,
+          "before_pnl": 885.1741019824929,
+          "after_pnl": 885.1741019824929,
+          "pnl_change": 0
+        },
+        {
+          "season": 460,
+          "profile": "observed_spread",
+          "latency": 0.25,
+          "before_pnl": 1238.8194857573835,
+          "after_pnl": 1245.2194857573832,
+          "pnl_change": 6.399999999999636
+        },
+        {
+          "season": 460,
+          "profile": "observed_spread",
+          "latency": 1,
+          "before_pnl": 1238.8194857573835,
+          "after_pnl": 1245.2194857573832,
+          "pnl_change": 6.399999999999636
+        },
+        {
+          "season": 460,
+          "profile": "observed_spread",
+          "latency": 3,
+          "before_pnl": 827.8660073356405,
+          "after_pnl": 827.8660073356405,
+          "pnl_change": 0
+        },
+        {
+          "season": 460,
+          "profile": "observed_touch",
+          "latency": 0.25,
+          "before_pnl": 1179.1766294722984,
+          "after_pnl": 1185.576629472298,
+          "pnl_change": 6.399999999999636
+        },
+        {
+          "season": 460,
+          "profile": "observed_touch",
+          "latency": 1,
+          "before_pnl": 1179.1766294722984,
+          "after_pnl": 1185.576629472298,
+          "pnl_change": 6.399999999999636
+        },
+        {
+          "season": 460,
+          "profile": "observed_touch",
+          "latency": 3,
+          "before_pnl": 827.8660073356405,
+          "after_pnl": 827.8660073356405,
+          "pnl_change": 0
+        },
+        {
+          "season": 461,
+          "profile": "legacy",
+          "latency": 0.25,
+          "before_pnl": 4252.167973391078,
+          "after_pnl": 4261.877678109217,
+          "pnl_change": 9.70970471813962
+        },
+        {
+          "season": 461,
+          "profile": "legacy",
+          "latency": 1,
+          "before_pnl": 4252.167973391078,
+          "after_pnl": 4261.877678109217,
+          "pnl_change": 9.70970471813962
+        },
+        {
+          "season": 461,
+          "profile": "legacy",
+          "latency": 3,
+          "before_pnl": 3225.2068280779895,
+          "after_pnl": 3234.5170241742635,
+          "pnl_change": 9.310196096274012
+        },
+        {
+          "season": 461,
+          "profile": "observed_spread",
+          "latency": 0.25,
+          "before_pnl": 4154.9239364284695,
+          "after_pnl": 4164.125849380431,
+          "pnl_change": 9.201912951961276
+        },
+        {
+          "season": 461,
+          "profile": "observed_spread",
+          "latency": 1,
+          "before_pnl": 4154.9239364284695,
+          "after_pnl": 4164.125849380431,
+          "pnl_change": 9.201912951961276
+        },
+        {
+          "season": 461,
+          "profile": "observed_spread",
+          "latency": 3,
+          "before_pnl": 3145.8055417927353,
+          "after_pnl": 3142.233370848193,
+          "pnl_change": -3.5721709445424494
+        },
+        {
+          "season": 461,
+          "profile": "observed_touch",
+          "latency": 0.25,
+          "before_pnl": 3955.9597047259035,
+          "after_pnl": 3965.1616176778653,
+          "pnl_change": 9.20191295196173
+        },
+        {
+          "season": 461,
+          "profile": "observed_touch",
+          "latency": 1,
+          "before_pnl": 3955.9597047259035,
+          "after_pnl": 3965.1616176778653,
+          "pnl_change": 9.20191295196173
+        },
+        {
+          "season": 461,
+          "profile": "observed_touch",
+          "latency": 3,
+          "before_pnl": 3122.7844273524734,
+          "after_pnl": 3119.212256407931,
+          "pnl_change": -3.5721709445424494
+        },
+        {
+          "season": 462,
+          "profile": "legacy",
+          "latency": 0.25,
+          "before_pnl": -112.41884270193805,
+          "after_pnl": -112.41884270193805,
+          "pnl_change": 0
+        },
+        {
+          "season": 462,
+          "profile": "legacy",
+          "latency": 1,
+          "before_pnl": -112.41884270193805,
+          "after_pnl": -112.41884270193805,
+          "pnl_change": 0
+        },
+        {
+          "season": 462,
+          "profile": "legacy",
+          "latency": 3,
+          "before_pnl": -734.0989921021519,
+          "after_pnl": -734.0989921021519,
+          "pnl_change": 0
+        },
+        {
+          "season": 462,
+          "profile": "observed_spread",
+          "latency": 0.25,
+          "before_pnl": -236.94485934682007,
+          "after_pnl": -236.94485934682007,
+          "pnl_change": 0
+        },
+        {
+          "season": 462,
+          "profile": "observed_spread",
+          "latency": 1,
+          "before_pnl": -236.94485934682007,
+          "after_pnl": -236.94485934682007,
+          "pnl_change": 0
+        },
+        {
+          "season": 462,
+          "profile": "observed_spread",
+          "latency": 3,
+          "before_pnl": -835.8059844869617,
+          "after_pnl": -835.8059844869617,
+          "pnl_change": 0
+        },
+        {
+          "season": 462,
+          "profile": "observed_touch",
+          "latency": 0.25,
+          "before_pnl": -344.0506884934671,
+          "after_pnl": -320.8006884934671,
+          "pnl_change": 23.25
+        },
+        {
+          "season": 462,
+          "profile": "observed_touch",
+          "latency": 1,
+          "before_pnl": -344.0506884934689,
+          "after_pnl": -320.8006884934689,
+          "pnl_change": 23.25
+        },
+        {
+          "season": 462,
+          "profile": "observed_touch",
+          "latency": 3,
+          "before_pnl": -836.6277969438784,
+          "after_pnl": -836.6277969438784,
+          "pnl_change": 0
+        },
+        {
+          "season": 463,
+          "profile": "legacy",
+          "latency": 0.25,
+          "before_pnl": 1312.2772380488113,
+          "after_pnl": 1312.2772380488113,
+          "pnl_change": 0
+        },
+        {
+          "season": 463,
+          "profile": "legacy",
+          "latency": 1,
+          "before_pnl": 1312.2772380488113,
+          "after_pnl": 1312.2772380488113,
+          "pnl_change": 0
+        },
+        {
+          "season": 463,
+          "profile": "legacy",
+          "latency": 3,
+          "before_pnl": 964.9080830962812,
+          "after_pnl": 964.9080830962812,
+          "pnl_change": 0
+        },
+        {
+          "season": 463,
+          "profile": "observed_spread",
+          "latency": 0.25,
+          "before_pnl": 1314.1717666687618,
+          "after_pnl": 1314.2717666687622,
+          "pnl_change": 0.1000000000003638
+        },
+        {
+          "season": 463,
+          "profile": "observed_spread",
+          "latency": 1,
+          "before_pnl": 1314.1717666687618,
+          "after_pnl": 1314.2717666687622,
+          "pnl_change": 0.1000000000003638
+        },
+        {
+          "season": 463,
+          "profile": "observed_spread",
+          "latency": 3,
+          "before_pnl": 973.2381384562723,
+          "after_pnl": 973.2880363111999,
+          "pnl_change": 0.049897854927621665
+        },
+        {
+          "season": 463,
+          "profile": "observed_touch",
+          "latency": 0.25,
+          "before_pnl": 1296.624705744789,
+          "after_pnl": 1296.7247057447894,
+          "pnl_change": 0.1000000000003638
+        },
+        {
+          "season": 463,
+          "profile": "observed_touch",
+          "latency": 1,
+          "before_pnl": 1296.624705744789,
+          "after_pnl": 1296.7247057447894,
+          "pnl_change": 0.1000000000003638
+        },
+        {
+          "season": 463,
+          "profile": "observed_touch",
+          "latency": 3,
+          "before_pnl": 973.2381384562723,
+          "after_pnl": 973.2880363111999,
+          "pnl_change": 0.049897854927621665
+        },
+        {
+          "season": 464,
+          "profile": "legacy",
+          "latency": 0.25,
+          "before_pnl": 1623.3546406675046,
+          "after_pnl": 1623.3546406675046,
+          "pnl_change": 0
+        },
+        {
+          "season": 464,
+          "profile": "legacy",
+          "latency": 1,
+          "before_pnl": 1623.3546406675046,
+          "after_pnl": 1623.3546406675046,
+          "pnl_change": 0
+        },
+        {
+          "season": 464,
+          "profile": "legacy",
+          "latency": 3,
+          "before_pnl": 1536.3551541473141,
+          "after_pnl": 1536.3551541473141,
+          "pnl_change": 0
+        },
+        {
+          "season": 464,
+          "profile": "observed_spread",
+          "latency": 0.25,
+          "before_pnl": 1559.7101330351848,
+          "after_pnl": 1560.0909437689374,
+          "pnl_change": 0.38081073375269625
+        },
+        {
+          "season": 464,
+          "profile": "observed_spread",
+          "latency": 1,
+          "before_pnl": 1559.7101330351848,
+          "after_pnl": 1560.0909437689374,
+          "pnl_change": 0.38081073375269625
+        },
+        {
+          "season": 464,
+          "profile": "observed_spread",
+          "latency": 3,
+          "before_pnl": 1480.1416253717937,
+          "after_pnl": 1471.1071533559348,
+          "pnl_change": -9.03447201585891
+        },
+        {
+          "season": 464,
+          "profile": "observed_touch",
+          "latency": 0.25,
+          "before_pnl": 1583.0896684508093,
+          "after_pnl": 1583.470479184562,
+          "pnl_change": 0.38081073375269625
+        },
+        {
+          "season": 464,
+          "profile": "observed_touch",
+          "latency": 1,
+          "before_pnl": 1583.0896684508093,
+          "after_pnl": 1583.470479184562,
+          "pnl_change": 0.38081073375269625
+        },
+        {
+          "season": 464,
+          "profile": "observed_touch",
+          "latency": 3,
+          "before_pnl": 1478.9427226659093,
+          "after_pnl": 1469.9082506500504,
+          "pnl_change": -9.03447201585891
+        },
+        {
+          "season": 465,
+          "profile": "legacy",
+          "latency": 0.25,
+          "before_pnl": 1216.1735095125623,
+          "after_pnl": 1216.1735095125623,
+          "pnl_change": 0
+        },
+        {
+          "season": 465,
+          "profile": "legacy",
+          "latency": 1,
+          "before_pnl": 1216.1735095125623,
+          "after_pnl": 1216.1735095125623,
+          "pnl_change": 0
+        },
+        {
+          "season": 465,
+          "profile": "legacy",
+          "latency": 3,
+          "before_pnl": 376.4963198510509,
+          "after_pnl": 376.4963198510509,
+          "pnl_change": 0
+        },
+        {
+          "season": 465,
+          "profile": "observed_spread",
+          "latency": 0.25,
+          "before_pnl": 1091.0630064984425,
+          "after_pnl": 1095.6480318007584,
+          "pnl_change": 4.585025302315898
+        },
+        {
+          "season": 465,
+          "profile": "observed_spread",
+          "latency": 1,
+          "before_pnl": 1091.0630064984425,
+          "after_pnl": 1095.6480318007584,
+          "pnl_change": 4.585025302315898
+        },
+        {
+          "season": 465,
+          "profile": "observed_spread",
+          "latency": 3,
+          "before_pnl": 312.88768768673935,
+          "after_pnl": 298.2698766926478,
+          "pnl_change": -14.617810994091542
+        },
+        {
+          "season": 465,
+          "profile": "observed_touch",
+          "latency": 0.25,
+          "before_pnl": 878.9988119078498,
+          "after_pnl": 883.5838372101662,
+          "pnl_change": 4.585025302316353
+        },
+        {
+          "season": 465,
+          "profile": "observed_touch",
+          "latency": 1,
+          "before_pnl": 878.9988119078498,
+          "after_pnl": 883.5838372101662,
+          "pnl_change": 4.585025302316353
+        },
+        {
+          "season": 465,
+          "profile": "observed_touch",
+          "latency": 3,
+          "before_pnl": 312.88768768673935,
+          "after_pnl": 298.2698766926478,
+          "pnl_change": -14.617810994091542
+        },
+        {
+          "season": 466,
+          "profile": "legacy",
+          "latency": 0.25,
+          "before_pnl": 602.3868477702345,
+          "after_pnl": 593.6361084401142,
+          "pnl_change": -8.750739330120268
+        },
+        {
+          "season": 466,
+          "profile": "legacy",
+          "latency": 1,
+          "before_pnl": 602.3868477702345,
+          "after_pnl": 593.6361084401142,
+          "pnl_change": -8.750739330120268
+        },
+        {
+          "season": 466,
+          "profile": "legacy",
+          "latency": 3,
+          "before_pnl": 459.75651013977586,
+          "after_pnl": 460.1506134219544,
+          "pnl_change": 0.3941032821785484
+        },
+        {
+          "season": 466,
+          "profile": "observed_spread",
+          "latency": 0.25,
+          "before_pnl": 541.0120734573375,
+          "after_pnl": 536.596755652723,
+          "pnl_change": -4.41531780461446
+        },
+        {
+          "season": 466,
+          "profile": "observed_spread",
+          "latency": 1,
+          "before_pnl": 541.0120734573375,
+          "after_pnl": 536.596755652723,
+          "pnl_change": -4.41531780461446
+        },
+        {
+          "season": 466,
+          "profile": "observed_spread",
+          "latency": 3,
+          "before_pnl": 390.53143340551105,
+          "after_pnl": 395.3637404396377,
+          "pnl_change": 4.832307034126643
+        },
+        {
+          "season": 466,
+          "profile": "observed_touch",
+          "latency": 0.25,
+          "before_pnl": 517.3785063296764,
+          "after_pnl": 512.9631885250619,
+          "pnl_change": -4.41531780461446
+        },
+        {
+          "season": 466,
+          "profile": "observed_touch",
+          "latency": 1,
+          "before_pnl": 517.3785063296764,
+          "after_pnl": 512.9631885250619,
+          "pnl_change": -4.41531780461446
+        },
+        {
+          "season": 466,
+          "profile": "observed_touch",
+          "latency": 3,
+          "before_pnl": 390.53143340551105,
+          "after_pnl": 395.3637404396377,
+          "pnl_change": 4.832307034126643
+        },
+        {
+          "season": 467,
+          "profile": "legacy",
+          "latency": 0.25,
+          "before_pnl": 1674.6648816918741,
+          "after_pnl": 1674.6648816918741,
+          "pnl_change": 0
+        },
+        {
+          "season": 467,
+          "profile": "legacy",
+          "latency": 1,
+          "before_pnl": 1674.6648816918741,
+          "after_pnl": 1674.6648816918741,
+          "pnl_change": 0
+        },
+        {
+          "season": 467,
+          "profile": "legacy",
+          "latency": 3,
+          "before_pnl": 1390.1197866311031,
+          "after_pnl": 1374.289390739821,
+          "pnl_change": -15.830395891282024
+        },
+        {
+          "season": 467,
+          "profile": "observed_spread",
+          "latency": 0.25,
+          "before_pnl": 1582.4031933249553,
+          "after_pnl": 1612.5231933249552,
+          "pnl_change": 30.11999999999989
+        },
+        {
+          "season": 467,
+          "profile": "observed_spread",
+          "latency": 1,
+          "before_pnl": 1582.4031933249553,
+          "after_pnl": 1612.5231933249552,
+          "pnl_change": 30.11999999999989
+        },
+        {
+          "season": 467,
+          "profile": "observed_spread",
+          "latency": 3,
+          "before_pnl": 1254.266159335547,
+          "after_pnl": 1272.1494963971963,
+          "pnl_change": 17.8833370616494
+        },
+        {
+          "season": 467,
+          "profile": "observed_touch",
+          "latency": 0.25,
+          "before_pnl": 1492.6320633063751,
+          "after_pnl": 1522.752063306375,
+          "pnl_change": 30.11999999999989
+        },
+        {
+          "season": 467,
+          "profile": "observed_touch",
+          "latency": 1,
+          "before_pnl": 1492.6320633063751,
+          "after_pnl": 1522.752063306375,
+          "pnl_change": 30.11999999999989
+        },
+        {
+          "season": 467,
+          "profile": "observed_touch",
+          "latency": 3,
+          "before_pnl": 1254.266159335547,
+          "after_pnl": 1272.1494963971963,
+          "pnl_change": 17.8833370616494
+        },
+        {
+          "season": 468,
+          "profile": "legacy",
+          "latency": 0.25,
+          "before_pnl": -568.6776732672133,
+          "after_pnl": -568.6776732672133,
+          "pnl_change": 0
+        },
+        {
+          "season": 468,
+          "profile": "legacy",
+          "latency": 1,
+          "before_pnl": -568.6776732672133,
+          "after_pnl": -568.6776732672133,
+          "pnl_change": 0
+        },
+        {
+          "season": 468,
+          "profile": "legacy",
+          "latency": 3,
+          "before_pnl": -583.3857545406099,
+          "after_pnl": -583.3857545406099,
+          "pnl_change": 0
+        },
+        {
+          "season": 468,
+          "profile": "observed_spread",
+          "latency": 0.25,
+          "before_pnl": -635.2859857446228,
+          "after_pnl": -561.0079093083314,
+          "pnl_change": 74.27807643629149
+        },
+        {
+          "season": 468,
+          "profile": "observed_spread",
+          "latency": 1,
+          "before_pnl": -635.2859857446228,
+          "after_pnl": -561.0079093083314,
+          "pnl_change": 74.27807643629149
+        },
+        {
+          "season": 468,
+          "profile": "observed_spread",
+          "latency": 3,
+          "before_pnl": -593.0616226436805,
+          "after_pnl": -514.6351376300563,
+          "pnl_change": 78.42648501362419
+        },
+        {
+          "season": 468,
+          "profile": "observed_touch",
+          "latency": 0.25,
+          "before_pnl": -635.2859857446228,
+          "after_pnl": -561.0079093083314,
+          "pnl_change": 74.27807643629149
+        },
+        {
+          "season": 468,
+          "profile": "observed_touch",
+          "latency": 1,
+          "before_pnl": -635.2859857446228,
+          "after_pnl": -561.0079093083314,
+          "pnl_change": 74.27807643629149
+        },
+        {
+          "season": 468,
+          "profile": "observed_touch",
+          "latency": 3,
+          "before_pnl": -593.0616226436805,
+          "after_pnl": -514.6351376300563,
+          "pnl_change": 78.42648501362419
+        },
+        {
+          "season": 469,
+          "profile": "legacy",
+          "latency": 0.25,
+          "before_pnl": 1629.981078964006,
+          "after_pnl": 1609.1831541676293,
+          "pnl_change": -20.79792479637672
+        },
+        {
+          "season": 469,
+          "profile": "legacy",
+          "latency": 1,
+          "before_pnl": 1629.9810789640078,
+          "after_pnl": 1609.183154167631,
+          "pnl_change": -20.79792479637672
+        },
+        {
+          "season": 469,
+          "profile": "legacy",
+          "latency": 3,
+          "before_pnl": -251.18055376941834,
+          "after_pnl": -289.1338465411536,
+          "pnl_change": -37.95329277173528
+        },
+        {
+          "season": 469,
+          "profile": "observed_spread",
+          "latency": 0.25,
+          "before_pnl": 1593.1740550372542,
+          "after_pnl": 1576.496124862264,
+          "pnl_change": -16.67793017499025
+        },
+        {
+          "season": 469,
+          "profile": "observed_spread",
+          "latency": 1,
+          "before_pnl": 1593.174055037256,
+          "after_pnl": 1576.4961248622658,
+          "pnl_change": -16.67793017499025
+        },
+        {
+          "season": 469,
+          "profile": "observed_spread",
+          "latency": 3,
+          "before_pnl": -369.8783031009041,
+          "after_pnl": -400.26215979570065,
+          "pnl_change": -30.383856694796577
+        },
+        {
+          "season": 469,
+          "profile": "observed_touch",
+          "latency": 0.25,
+          "before_pnl": 1049.137592349107,
+          "after_pnl": 1032.4596621741186,
+          "pnl_change": -16.677930174988433
+        },
+        {
+          "season": 469,
+          "profile": "observed_touch",
+          "latency": 1,
+          "before_pnl": 1049.137592349109,
+          "after_pnl": 1032.4596621741196,
+          "pnl_change": -16.677930174989342
+        },
+        {
+          "season": 469,
+          "profile": "observed_touch",
+          "latency": 3,
+          "before_pnl": -372.44999507533953,
+          "after_pnl": -402.83385177013247,
+          "pnl_change": -30.38385669479294
+        },
+        {
+          "season": 470,
+          "profile": "legacy",
+          "latency": 0.25,
+          "before_pnl": 4052.434023821338,
+          "after_pnl": 4190.825340052994,
+          "pnl_change": 138.39131623165576
+        },
+        {
+          "season": 470,
+          "profile": "legacy",
+          "latency": 1,
+          "before_pnl": 4052.434023821338,
+          "after_pnl": 4190.825340052994,
+          "pnl_change": 138.39131623165576
+        },
+        {
+          "season": 470,
+          "profile": "legacy",
+          "latency": 3,
+          "before_pnl": 2728.4153817920937,
+          "after_pnl": 2728.831616906616,
+          "pnl_change": 0.41623511452235107
+        },
+        {
+          "season": 470,
+          "profile": "observed_spread",
+          "latency": 0.25,
+          "before_pnl": 3943.1776666894552,
+          "after_pnl": 4088.0078357709144,
+          "pnl_change": 144.8301690814592
+        },
+        {
+          "season": 470,
+          "profile": "observed_spread",
+          "latency": 1,
+          "before_pnl": 3943.1776666894552,
+          "after_pnl": 4088.0078357709144,
+          "pnl_change": 144.8301690814592
+        },
+        {
+          "season": 470,
+          "profile": "observed_spread",
+          "latency": 3,
+          "before_pnl": 2638.4469269382616,
+          "after_pnl": 2640.1484593230225,
+          "pnl_change": 1.701532384760867
+        },
+        {
+          "season": 470,
+          "profile": "observed_touch",
+          "latency": 0.25,
+          "before_pnl": 3714.3832226177024,
+          "after_pnl": 3859.213391699162,
+          "pnl_change": 144.83016908145964
+        },
+        {
+          "season": 470,
+          "profile": "observed_touch",
+          "latency": 1,
+          "before_pnl": 3714.3832226177024,
+          "after_pnl": 3859.213391699162,
+          "pnl_change": 144.83016908145964
+        },
+        {
+          "season": 470,
+          "profile": "observed_touch",
+          "latency": 3,
+          "before_pnl": 2638.4469269382616,
+          "after_pnl": 2640.1484593230225,
+          "pnl_change": 1.701532384760867
+        },
+        {
+          "season": 471,
+          "profile": "legacy",
+          "latency": 0.25,
+          "before_pnl": 1727.1780182017658,
+          "after_pnl": 1734.0056198596562,
+          "pnl_change": 6.827601657890455
+        },
+        {
+          "season": 471,
+          "profile": "legacy",
+          "latency": 1,
+          "before_pnl": 1727.1780182017658,
+          "after_pnl": 1734.0056198596562,
+          "pnl_change": 6.827601657890455
+        },
+        {
+          "season": 471,
+          "profile": "legacy",
+          "latency": 3,
+          "before_pnl": 1447.458023192195,
+          "after_pnl": 1442.7908338272143,
+          "pnl_change": -4.667189364980686
+        },
+        {
+          "season": 471,
+          "profile": "observed_spread",
+          "latency": 0.25,
+          "before_pnl": 1667.0474164663522,
+          "after_pnl": 1680.1699393101221,
+          "pnl_change": 13.122522843769957
+        },
+        {
+          "season": 471,
+          "profile": "observed_spread",
+          "latency": 1,
+          "before_pnl": 1667.0474164663522,
+          "after_pnl": 1680.1699393101221,
+          "pnl_change": 13.122522843769957
+        },
+        {
+          "season": 471,
+          "profile": "observed_spread",
+          "latency": 3,
+          "before_pnl": 1396.1153631119219,
+          "after_pnl": 1397.8111571892211,
+          "pnl_change": 1.695794077299297
+        },
+        {
+          "season": 471,
+          "profile": "observed_touch",
+          "latency": 0.25,
+          "before_pnl": 1590.9846833755253,
+          "after_pnl": 1604.107206219296,
+          "pnl_change": 13.12252284377064
+        },
+        {
+          "season": 471,
+          "profile": "observed_touch",
+          "latency": 1,
+          "before_pnl": 1590.9846833755262,
+          "after_pnl": 1604.1072062192968,
+          "pnl_change": 13.12252284377064
+        },
+        {
+          "season": 471,
+          "profile": "observed_touch",
+          "latency": 3,
+          "before_pnl": 1367.6946786167541,
+          "after_pnl": 1369.3904726940516,
+          "pnl_change": 1.695794077297478
+        },
+        {
+          "season": 472,
+          "profile": "legacy",
+          "latency": 0.25,
+          "before_pnl": 2509.3344852629552,
+          "after_pnl": 2506.3344852629552,
+          "pnl_change": -3
+        },
+        {
+          "season": 472,
+          "profile": "legacy",
+          "latency": 1,
+          "before_pnl": 2509.3344852629552,
+          "after_pnl": 2506.3344852629552,
+          "pnl_change": -3
+        },
+        {
+          "season": 472,
+          "profile": "legacy",
+          "latency": 3,
+          "before_pnl": 1395.5546056362825,
+          "after_pnl": 1376.0546056362828,
+          "pnl_change": -19.499999999999773
+        },
+        {
+          "season": 472,
+          "profile": "observed_spread",
+          "latency": 0.25,
+          "before_pnl": 2301.222101356235,
+          "after_pnl": 2299.0868079390452,
+          "pnl_change": -2.1352934171895868
+        },
+        {
+          "season": 472,
+          "profile": "observed_spread",
+          "latency": 1,
+          "before_pnl": 2301.222101356235,
+          "after_pnl": 2299.0868079390452,
+          "pnl_change": -2.1352934171895868
+        },
+        {
+          "season": 472,
+          "profile": "observed_spread",
+          "latency": 3,
+          "before_pnl": 940.3822589911588,
+          "after_pnl": 727.2704988916673,
+          "pnl_change": -213.11176009949145
+        },
+        {
+          "season": 472,
+          "profile": "observed_touch",
+          "latency": 0.25,
+          "before_pnl": 2291.8108908237236,
+          "after_pnl": 2289.675597406534,
+          "pnl_change": -2.1352934171895868
+        },
+        {
+          "season": 472,
+          "profile": "observed_touch",
+          "latency": 1,
+          "before_pnl": 2291.8108908237236,
+          "after_pnl": 2289.675597406534,
+          "pnl_change": -2.1352934171895868
+        },
+        {
+          "season": 472,
+          "profile": "observed_touch",
+          "latency": 3,
+          "before_pnl": 940.3822589911588,
+          "after_pnl": 727.2704988916673,
+          "pnl_change": -213.11176009949145
+        },
+        {
+          "season": 473,
+          "profile": "legacy",
+          "latency": 0.25,
+          "before_pnl": 929.848891353223,
+          "after_pnl": 1005.4315461031194,
+          "pnl_change": 75.58265474989639
+        },
+        {
+          "season": 473,
+          "profile": "legacy",
+          "latency": 1,
+          "before_pnl": 929.848891353223,
+          "after_pnl": 1005.4315461031194,
+          "pnl_change": 75.58265474989639
+        },
+        {
+          "season": 473,
+          "profile": "legacy",
+          "latency": 3,
+          "before_pnl": 644.9116009071768,
+          "after_pnl": 678.9449208586057,
+          "pnl_change": 34.03331995142889
+        },
+        {
+          "season": 473,
+          "profile": "observed_spread",
+          "latency": 0.25,
+          "before_pnl": 795.8697577385526,
+          "after_pnl": 876.7329207987248,
+          "pnl_change": 80.86316306017216
+        },
+        {
+          "season": 473,
+          "profile": "observed_spread",
+          "latency": 1,
+          "before_pnl": 795.8697577385526,
+          "after_pnl": 876.7329207987248,
+          "pnl_change": 80.86316306017216
+        },
+        {
+          "season": 473,
+          "profile": "observed_spread",
+          "latency": 3,
+          "before_pnl": 725.8286593568955,
+          "after_pnl": 957.313164765661,
+          "pnl_change": 231.48450540876547
+        },
+        {
+          "season": 473,
+          "profile": "observed_touch",
+          "latency": 0.25,
+          "before_pnl": 722.9524824700056,
+          "after_pnl": 803.8156455301778,
+          "pnl_change": 80.86316306017216
+        },
+        {
+          "season": 473,
+          "profile": "observed_touch",
+          "latency": 1,
+          "before_pnl": 722.2324824700045,
+          "after_pnl": 803.0956455301803,
+          "pnl_change": 80.8631630601758
+        },
+        {
+          "season": 473,
+          "profile": "observed_touch",
+          "latency": 3,
+          "before_pnl": 725.8286593568955,
+          "after_pnl": 957.313164765661,
+          "pnl_change": 231.48450540876547
+        },
+        {
+          "season": 474,
+          "profile": "legacy",
+          "latency": 0.25,
+          "before_pnl": 2204.964423588692,
+          "after_pnl": 2240.801983886181,
+          "pnl_change": 35.837560297488835
+        },
+        {
+          "season": 474,
+          "profile": "legacy",
+          "latency": 1,
+          "before_pnl": 2204.964423588692,
+          "after_pnl": 2240.801983886181,
+          "pnl_change": 35.837560297488835
+        },
+        {
+          "season": 474,
+          "profile": "legacy",
+          "latency": 3,
+          "before_pnl": 2027.2422853799615,
+          "after_pnl": 2027.2422853799615,
+          "pnl_change": 0
+        },
+        {
+          "season": 474,
+          "profile": "observed_spread",
+          "latency": 0.25,
+          "before_pnl": 1936.3070836232096,
+          "after_pnl": 1973.1809639483524,
+          "pnl_change": 36.87388032514286
+        },
+        {
+          "season": 474,
+          "profile": "observed_spread",
+          "latency": 1,
+          "before_pnl": 1936.3070836232096,
+          "after_pnl": 1973.1809639483524,
+          "pnl_change": 36.87388032514286
+        },
+        {
+          "season": 474,
+          "profile": "observed_spread",
+          "latency": 3,
+          "before_pnl": 1761.4003120345212,
+          "after_pnl": 1761.4003120345212,
+          "pnl_change": 0
+        },
+        {
+          "season": 474,
+          "profile": "observed_touch",
+          "latency": 0.25,
+          "before_pnl": 1936.3070836232096,
+          "after_pnl": 1973.1809639483524,
+          "pnl_change": 36.87388032514286
+        },
+        {
+          "season": 474,
+          "profile": "observed_touch",
+          "latency": 1,
+          "before_pnl": 1936.3070836232096,
+          "after_pnl": 1973.1809639483524,
+          "pnl_change": 36.87388032514286
+        },
+        {
+          "season": 474,
+          "profile": "observed_touch",
+          "latency": 3,
+          "before_pnl": 1759.3823380160354,
+          "after_pnl": 1759.3823380160354,
+          "pnl_change": 0
+        },
+        {
+          "season": 475,
+          "profile": "legacy",
+          "latency": 0.25,
+          "before_pnl": 1086.4134061234436,
+          "after_pnl": 1086.4334677342868,
+          "pnl_change": 0.020061610843185917
+        },
+        {
+          "season": 475,
+          "profile": "legacy",
+          "latency": 1,
+          "before_pnl": 1086.4134061234436,
+          "after_pnl": 1086.4334677342868,
+          "pnl_change": 0.020061610843185917
+        },
+        {
+          "season": 475,
+          "profile": "legacy",
+          "latency": 3,
+          "before_pnl": 773.9733627510786,
+          "after_pnl": 661.8026037849686,
+          "pnl_change": -112.17075896611004
+        },
+        {
+          "season": 475,
+          "profile": "observed_spread",
+          "latency": 0.25,
+          "before_pnl": 1002.1028265890864,
+          "after_pnl": 872.8529281952779,
+          "pnl_change": -129.2498983938085
+        },
+        {
+          "season": 475,
+          "profile": "observed_spread",
+          "latency": 1,
+          "before_pnl": 1002.1028265890864,
+          "after_pnl": 872.8529281952779,
+          "pnl_change": -129.2498983938085
+        },
+        {
+          "season": 475,
+          "profile": "observed_spread",
+          "latency": 3,
+          "before_pnl": 707.8245392889057,
+          "after_pnl": 597.9704228175151,
+          "pnl_change": -109.85411647139063
+        },
+        {
+          "season": 475,
+          "profile": "observed_touch",
+          "latency": 0.25,
+          "before_pnl": 988.6690101776494,
+          "after_pnl": 859.4191117838409,
+          "pnl_change": -129.2498983938085
+        },
+        {
+          "season": 475,
+          "profile": "observed_touch",
+          "latency": 1,
+          "before_pnl": 988.6690101776494,
+          "after_pnl": 859.4191117838409,
+          "pnl_change": -129.2498983938085
+        },
+        {
+          "season": 475,
+          "profile": "observed_touch",
+          "latency": 3,
+          "before_pnl": 694.2914674957019,
+          "after_pnl": 584.4373510243113,
+          "pnl_change": -109.85411647139063
+        },
+        {
+          "season": 476,
+          "profile": "legacy",
+          "latency": 0.25,
+          "before_pnl": 880.7870470606724,
+          "after_pnl": 878.2959182458835,
+          "pnl_change": -2.491128814788908
+        },
+        {
+          "season": 476,
+          "profile": "legacy",
+          "latency": 1,
+          "before_pnl": 880.7870470606724,
+          "after_pnl": 878.2959182458835,
+          "pnl_change": -2.491128814788908
+        },
+        {
+          "season": 476,
+          "profile": "legacy",
+          "latency": 3,
+          "before_pnl": 418.2661350690478,
+          "after_pnl": 414.81762482921,
+          "pnl_change": -3.4485102398377876
+        },
+        {
+          "season": 476,
+          "profile": "observed_spread",
+          "latency": 0.25,
+          "before_pnl": 796.3150471789254,
+          "after_pnl": 794.8273779111264,
+          "pnl_change": -1.4876692677989922
+        },
+        {
+          "season": 476,
+          "profile": "observed_spread",
+          "latency": 1,
+          "before_pnl": 796.3150471789254,
+          "after_pnl": 794.8273779111264,
+          "pnl_change": -1.4876692677989922
+        },
+        {
+          "season": 476,
+          "profile": "observed_spread",
+          "latency": 3,
+          "before_pnl": 340.8221927101267,
+          "after_pnl": 335.37018909622066,
+          "pnl_change": -5.452003613906072
+        },
+        {
+          "season": 476,
+          "profile": "observed_touch",
+          "latency": 0.25,
+          "before_pnl": 796.3150471789254,
+          "after_pnl": 794.8273779111264,
+          "pnl_change": -1.4876692677989922
+        },
+        {
+          "season": 476,
+          "profile": "observed_touch",
+          "latency": 1,
+          "before_pnl": 796.3150471789254,
+          "after_pnl": 794.8273779111264,
+          "pnl_change": -1.4876692677989922
+        },
+        {
+          "season": 476,
+          "profile": "observed_touch",
+          "latency": 3,
+          "before_pnl": 340.8221927101267,
+          "after_pnl": 335.37018909622066,
+          "pnl_change": -5.452003613906072
+        },
+        {
+          "season": 477,
+          "profile": "legacy",
+          "latency": 0.25,
+          "before_pnl": 1779.0027048689933,
+          "after_pnl": 1782.916408653007,
+          "pnl_change": 3.9137037840137054
+        },
+        {
+          "season": 477,
+          "profile": "legacy",
+          "latency": 1,
+          "before_pnl": 1779.0027048689933,
+          "after_pnl": 1782.916408653007,
+          "pnl_change": 3.9137037840137054
+        },
+        {
+          "season": 477,
+          "profile": "legacy",
+          "latency": 3,
+          "before_pnl": 1314.2261130228023,
+          "after_pnl": 1311.6862535146245,
+          "pnl_change": -2.5398595081778694
+        },
+        {
+          "season": 477,
+          "profile": "observed_spread",
+          "latency": 0.25,
+          "before_pnl": 1677.3465985931493,
+          "after_pnl": 1681.343310966005,
+          "pnl_change": 3.9967123728556544
+        },
+        {
+          "season": 477,
+          "profile": "observed_spread",
+          "latency": 1,
+          "before_pnl": 1677.3465985931493,
+          "after_pnl": 1681.343310966005,
+          "pnl_change": 3.9967123728556544
+        },
+        {
+          "season": 477,
+          "profile": "observed_spread",
+          "latency": 3,
+          "before_pnl": 1222.320616942966,
+          "after_pnl": 1229.877550198249,
+          "pnl_change": 7.556933255283184
+        },
+        {
+          "season": 477,
+          "profile": "observed_touch",
+          "latency": 0.25,
+          "before_pnl": 1641.5537775722428,
+          "after_pnl": 1645.5504899450984,
+          "pnl_change": 3.9967123728556544
+        },
+        {
+          "season": 477,
+          "profile": "observed_touch",
+          "latency": 1,
+          "before_pnl": 1641.5537775722428,
+          "after_pnl": 1645.5504899450984,
+          "pnl_change": 3.9967123728556544
+        },
+        {
+          "season": 477,
+          "profile": "observed_touch",
+          "latency": 3,
+          "before_pnl": 1217.2544051966097,
+          "after_pnl": 1224.8113384518947,
+          "pnl_change": 7.556933255285003
+        },
+        {
+          "season": 478,
+          "profile": "legacy",
+          "latency": 0.25,
+          "before_pnl": 840.0378398648484,
+          "after_pnl": 840.0378398648484,
+          "pnl_change": 0
+        },
+        {
+          "season": 478,
+          "profile": "legacy",
+          "latency": 1,
+          "before_pnl": 840.0378398648484,
+          "after_pnl": 840.0378398648484,
+          "pnl_change": 0
+        },
+        {
+          "season": 478,
+          "profile": "legacy",
+          "latency": 3,
+          "before_pnl": 651.2934511174299,
+          "after_pnl": 651.2934511174299,
+          "pnl_change": 0
+        },
+        {
+          "season": 478,
+          "profile": "observed_spread",
+          "latency": 0.25,
+          "before_pnl": 758.4327091844063,
+          "after_pnl": 756.4698209010278,
+          "pnl_change": -1.962888283378561
+        },
+        {
+          "season": 478,
+          "profile": "observed_spread",
+          "latency": 1,
+          "before_pnl": 758.4327091844063,
+          "after_pnl": 756.4698209010278,
+          "pnl_change": -1.962888283378561
+        },
+        {
+          "season": 478,
+          "profile": "observed_spread",
+          "latency": 3,
+          "before_pnl": 572.6919956424199,
+          "after_pnl": 556.6278783087873,
+          "pnl_change": -16.064117333632566
+        },
+        {
+          "season": 478,
+          "profile": "observed_touch",
+          "latency": 0.25,
+          "before_pnl": 736.2299281071407,
+          "after_pnl": 734.2670398237622,
+          "pnl_change": -1.962888283378561
+        },
+        {
+          "season": 478,
+          "profile": "observed_touch",
+          "latency": 1,
+          "before_pnl": 736.2299281071407,
+          "after_pnl": 734.2670398237622,
+          "pnl_change": -1.962888283378561
+        },
+        {
+          "season": 478,
+          "profile": "observed_touch",
+          "latency": 3,
+          "before_pnl": 568.874252920762,
+          "after_pnl": 552.8101355871313,
+          "pnl_change": -16.064117333630747
+        },
+        {
+          "season": 479,
+          "profile": "legacy",
+          "latency": 0.25,
+          "before_pnl": 902.5273684487343,
+          "after_pnl": 902.5273684487343,
+          "pnl_change": 0
+        },
+        {
+          "season": 479,
+          "profile": "legacy",
+          "latency": 1,
+          "before_pnl": 902.5273684487343,
+          "after_pnl": 902.5273684487343,
+          "pnl_change": 0
+        },
+        {
+          "season": 479,
+          "profile": "legacy",
+          "latency": 3,
+          "before_pnl": 245.62478700954443,
+          "after_pnl": 245.62478700954443,
+          "pnl_change": 0
+        },
+        {
+          "season": 479,
+          "profile": "observed_spread",
+          "latency": 0.25,
+          "before_pnl": 751.3382485965858,
+          "after_pnl": 784.4150335599961,
+          "pnl_change": 33.07678496341032
+        },
+        {
+          "season": 479,
+          "profile": "observed_spread",
+          "latency": 1,
+          "before_pnl": 751.3382485965858,
+          "after_pnl": 784.4150335599961,
+          "pnl_change": 33.07678496341032
+        },
+        {
+          "season": 479,
+          "profile": "observed_spread",
+          "latency": 3,
+          "before_pnl": 230.36442280561982,
+          "after_pnl": 262.84003118821204,
+          "pnl_change": 32.47560838259221
+        },
+        {
+          "season": 479,
+          "profile": "observed_touch",
+          "latency": 0.25,
+          "before_pnl": 681.3344599515412,
+          "after_pnl": 714.4112449149516,
+          "pnl_change": 33.07678496341032
+        },
+        {
+          "season": 479,
+          "profile": "observed_touch",
+          "latency": 1,
+          "before_pnl": 681.3344599515412,
+          "after_pnl": 714.4112449149516,
+          "pnl_change": 33.07678496341032
+        },
+        {
+          "season": 479,
+          "profile": "observed_touch",
+          "latency": 3,
+          "before_pnl": 212.51920644902725,
+          "after_pnl": 244.99481483161958,
+          "pnl_change": 32.47560838259233
+        },
+        {
+          "season": 480,
+          "profile": "legacy",
+          "latency": 0.25,
+          "before_pnl": 2073.261483522455,
+          "after_pnl": 2079.0240463568284,
+          "pnl_change": 5.762562834373512
+        },
+        {
+          "season": 480,
+          "profile": "legacy",
+          "latency": 1,
+          "before_pnl": 2073.261483522455,
+          "after_pnl": 2079.0240463568284,
+          "pnl_change": 5.762562834373512
+        },
+        {
+          "season": 480,
+          "profile": "legacy",
+          "latency": 3,
+          "before_pnl": 1609.7769939979235,
+          "after_pnl": 1605.4849290764232,
+          "pnl_change": -4.292064921500241
+        },
+        {
+          "season": 480,
+          "profile": "observed_spread",
+          "latency": 0.25,
+          "before_pnl": 1947.6013297156821,
+          "after_pnl": 1950.863616862801,
+          "pnl_change": 3.2622871471189683
+        },
+        {
+          "season": 480,
+          "profile": "observed_spread",
+          "latency": 1,
+          "before_pnl": 1947.6013297156821,
+          "after_pnl": 1950.863616862801,
+          "pnl_change": 3.2622871471189683
+        },
+        {
+          "season": 480,
+          "profile": "observed_spread",
+          "latency": 3,
+          "before_pnl": 1705.4251264509458,
+          "after_pnl": 1698.874696394615,
+          "pnl_change": -6.550430056330697
+        },
+        {
+          "season": 480,
+          "profile": "observed_touch",
+          "latency": 0.25,
+          "before_pnl": 1909.6568577349783,
+          "after_pnl": 1912.9191448820966,
+          "pnl_change": 3.262287147118286
+        },
+        {
+          "season": 480,
+          "profile": "observed_touch",
+          "latency": 1,
+          "before_pnl": 1909.6568577349783,
+          "after_pnl": 1912.9191448820966,
+          "pnl_change": 3.262287147118286
+        },
+        {
+          "season": 480,
+          "profile": "observed_touch",
+          "latency": 3,
+          "before_pnl": 1705.4251264509458,
+          "after_pnl": 1698.874696394615,
+          "pnl_change": -6.550430056330697
+        },
+        {
+          "season": 481,
+          "profile": "legacy",
+          "latency": 0.25,
+          "before_pnl": 2973.4498944278753,
+          "after_pnl": 2976.016510451195,
+          "pnl_change": 2.5666160233195114
+        },
+        {
+          "season": 481,
+          "profile": "legacy",
+          "latency": 1,
+          "before_pnl": 2973.4498944278753,
+          "after_pnl": 2976.016510451195,
+          "pnl_change": 2.5666160233195114
+        },
+        {
+          "season": 481,
+          "profile": "legacy",
+          "latency": 3,
+          "before_pnl": 2038.7957390791034,
+          "after_pnl": 2034.236609825974,
+          "pnl_change": -4.559129253129413
+        },
+        {
+          "season": 481,
+          "profile": "observed_spread",
+          "latency": 0.25,
+          "before_pnl": 2856.225189374124,
+          "after_pnl": 2862.859470537427,
+          "pnl_change": 6.634281163303058
+        },
+        {
+          "season": 481,
+          "profile": "observed_spread",
+          "latency": 1,
+          "before_pnl": 2856.225189374124,
+          "after_pnl": 2862.859470537427,
+          "pnl_change": 6.634281163303058
+        },
+        {
+          "season": 481,
+          "profile": "observed_spread",
+          "latency": 3,
+          "before_pnl": 1631.875730959081,
+          "after_pnl": 1613.9018171301132,
+          "pnl_change": -17.973913828967852
+        },
+        {
+          "season": 481,
+          "profile": "observed_touch",
+          "latency": 0.25,
+          "before_pnl": 2730.3536234632766,
+          "after_pnl": 2736.9879046265773,
+          "pnl_change": 6.634281163300784
+        },
+        {
+          "season": 481,
+          "profile": "observed_touch",
+          "latency": 1,
+          "before_pnl": 2730.3536234632766,
+          "after_pnl": 2736.9879046265773,
+          "pnl_change": 6.634281163300784
+        },
+        {
+          "season": 481,
+          "profile": "observed_touch",
+          "latency": 3,
+          "before_pnl": 1631.875730959081,
+          "after_pnl": 1613.9018171301132,
+          "pnl_change": -17.973913828967852
+        },
+        {
+          "season": 482,
+          "profile": "legacy",
+          "latency": 0.25,
+          "before_pnl": 2978.004076016243,
+          "after_pnl": 2978.1140760162434,
+          "pnl_change": 0.11000000000058208
+        },
+        {
+          "season": 482,
+          "profile": "legacy",
+          "latency": 1,
+          "before_pnl": 2978.004076016243,
+          "after_pnl": 2978.1140760162434,
+          "pnl_change": 0.11000000000058208
+        },
+        {
+          "season": 482,
+          "profile": "legacy",
+          "latency": 3,
+          "before_pnl": 2753.383596739948,
+          "after_pnl": 2753.563585750937,
+          "pnl_change": 0.1799890109887201
+        },
+        {
+          "season": 482,
+          "profile": "observed_spread",
+          "latency": 0.25,
+          "before_pnl": 2846.5582561982524,
+          "after_pnl": 2846.668256198253,
+          "pnl_change": 0.11000000000058208
+        },
+        {
+          "season": 482,
+          "profile": "observed_spread",
+          "latency": 1,
+          "before_pnl": 2846.5582561982524,
+          "after_pnl": 2846.668256198253,
+          "pnl_change": 0.11000000000058208
+        },
+        {
+          "season": 482,
+          "profile": "observed_spread",
+          "latency": 3,
+          "before_pnl": 2664.4803760395544,
+          "after_pnl": 2664.963797087169,
+          "pnl_change": 0.48342104761468363
+        },
+        {
+          "season": 482,
+          "profile": "observed_touch",
+          "latency": 0.25,
+          "before_pnl": 2846.5582561982524,
+          "after_pnl": 2846.668256198253,
+          "pnl_change": 0.11000000000058208
+        },
+        {
+          "season": 482,
+          "profile": "observed_touch",
+          "latency": 1,
+          "before_pnl": 2846.5582561982524,
+          "after_pnl": 2846.668256198253,
+          "pnl_change": 0.11000000000058208
+        },
+        {
+          "season": 482,
+          "profile": "observed_touch",
+          "latency": 3,
+          "before_pnl": 2664.4803760395544,
+          "after_pnl": 2664.963797087169,
+          "pnl_change": 0.48342104761468363
+        },
+        {
+          "season": 483,
+          "profile": "legacy",
+          "latency": 0.25,
+          "before_pnl": 1827.5925152632046,
+          "after_pnl": 1777.0885298329142,
+          "pnl_change": -50.50398543029041
+        },
+        {
+          "season": 483,
+          "profile": "legacy",
+          "latency": 1,
+          "before_pnl": 1827.5925152632046,
+          "after_pnl": 1777.0885298329142,
+          "pnl_change": -50.50398543029041
+        },
+        {
+          "season": 483,
+          "profile": "legacy",
+          "latency": 3,
+          "before_pnl": 1039.2636306637776,
+          "after_pnl": 1047.9437005938478,
+          "pnl_change": 8.680069930070204
+        },
+        {
+          "season": 483,
+          "profile": "observed_spread",
+          "latency": 0.25,
+          "before_pnl": 1729.5760343913175,
+          "after_pnl": 1680.7435023537532,
+          "pnl_change": -48.832532037564306
+        },
+        {
+          "season": 483,
+          "profile": "observed_spread",
+          "latency": 1,
+          "before_pnl": 1729.5760343913175,
+          "after_pnl": 1680.7435023537532,
+          "pnl_change": -48.832532037564306
+        },
+        {
+          "season": 483,
+          "profile": "observed_spread",
+          "latency": 3,
+          "before_pnl": 926.5105852382751,
+          "after_pnl": 910.2483187167675,
+          "pnl_change": -16.262266521507627
+        },
+        {
+          "season": 483,
+          "profile": "observed_touch",
+          "latency": 0.25,
+          "before_pnl": 1729.5760343913175,
+          "after_pnl": 1680.7435023537532,
+          "pnl_change": -48.832532037564306
+        },
+        {
+          "season": 483,
+          "profile": "observed_touch",
+          "latency": 1,
+          "before_pnl": 1729.5760343913175,
+          "after_pnl": 1680.7435023537532,
+          "pnl_change": -48.832532037564306
+        },
+        {
+          "season": 483,
+          "profile": "observed_touch",
+          "latency": 3,
+          "before_pnl": 926.5105852382751,
+          "after_pnl": 910.2483187167675,
+          "pnl_change": -16.262266521507627
+        },
+        {
+          "season": 484,
+          "profile": "legacy",
+          "latency": 0.25,
+          "before_pnl": 410.906050656738,
+          "after_pnl": 417.5695204501217,
+          "pnl_change": 6.663469793383683
+        },
+        {
+          "season": 484,
+          "profile": "legacy",
+          "latency": 1,
+          "before_pnl": 410.906050656738,
+          "after_pnl": 417.5695204501217,
+          "pnl_change": 6.663469793383683
+        },
+        {
+          "season": 484,
+          "profile": "legacy",
+          "latency": 3,
+          "before_pnl": 349.50752954495556,
+          "after_pnl": 350.10127323426786,
+          "pnl_change": 0.5937436893123049
+        },
+        {
+          "season": 484,
+          "profile": "observed_spread",
+          "latency": 0.25,
+          "before_pnl": 541.6327193643183,
+          "after_pnl": 547.4747895096166,
+          "pnl_change": 5.842070145298294
+        },
+        {
+          "season": 484,
+          "profile": "observed_spread",
+          "latency": 1,
+          "before_pnl": 541.6327193643183,
+          "after_pnl": 547.4747895096166,
+          "pnl_change": 5.842070145298294
+        },
+        {
+          "season": 484,
+          "profile": "observed_spread",
+          "latency": 3,
+          "before_pnl": 279.80556459335094,
+          "after_pnl": 279.62866133023454,
+          "pnl_change": -0.17690326311640092
+        },
+        {
+          "season": 484,
+          "profile": "observed_touch",
+          "latency": 0.25,
+          "before_pnl": 541.6327193643183,
+          "after_pnl": 547.4747895096166,
+          "pnl_change": 5.842070145298294
+        },
+        {
+          "season": 484,
+          "profile": "observed_touch",
+          "latency": 1,
+          "before_pnl": 541.6327193643183,
+          "after_pnl": 547.4747895096166,
+          "pnl_change": 5.842070145298294
+        },
+        {
+          "season": 484,
+          "profile": "observed_touch",
+          "latency": 3,
+          "before_pnl": 276.3156783719037,
+          "after_pnl": 276.13877510878683,
+          "pnl_change": -0.17690326311685567
+        },
+        {
+          "season": 485,
+          "profile": "legacy",
+          "latency": 0.25,
+          "before_pnl": -351.68819298490234,
+          "after_pnl": -354.60006111677285,
+          "pnl_change": -2.9118681318705057
+        },
+        {
+          "season": 485,
+          "profile": "legacy",
+          "latency": 1,
+          "before_pnl": -351.68819298490234,
+          "after_pnl": -354.60006111677285,
+          "pnl_change": -2.9118681318705057
+        },
+        {
+          "season": 485,
+          "profile": "legacy",
+          "latency": 3,
+          "before_pnl": -772.7306204837319,
+          "after_pnl": -775.5422974179733,
+          "pnl_change": -2.8116769342414045
+        },
+        {
+          "season": 485,
+          "profile": "observed_spread",
+          "latency": 0.25,
+          "before_pnl": -412.70956140609724,
+          "after_pnl": -409.90522793937,
+          "pnl_change": 2.8043334667272575
+        },
+        {
+          "season": 485,
+          "profile": "observed_spread",
+          "latency": 1,
+          "before_pnl": -412.70956140609724,
+          "after_pnl": -409.90522793937,
+          "pnl_change": 2.8043334667272575
+        },
+        {
+          "season": 485,
+          "profile": "observed_spread",
+          "latency": 3,
+          "before_pnl": -879.1330453508317,
+          "after_pnl": -886.9250845566976,
+          "pnl_change": -7.792039205865876
+        },
+        {
+          "season": 485,
+          "profile": "observed_touch",
+          "latency": 0.25,
+          "before_pnl": -449.1316207843338,
+          "after_pnl": -446.32728731760653,
+          "pnl_change": 2.8043334667272575
+        },
+        {
+          "season": 485,
+          "profile": "observed_touch",
+          "latency": 1,
+          "before_pnl": -449.1316207843338,
+          "after_pnl": -446.32728731760653,
+          "pnl_change": 2.8043334667272575
+        },
+        {
+          "season": 485,
+          "profile": "observed_touch",
+          "latency": 3,
+          "before_pnl": -879.1330453508317,
+          "after_pnl": -886.9250845566976,
+          "pnl_change": -7.792039205865876
+        },
+        {
+          "season": 486,
+          "profile": "legacy",
+          "latency": 0.25,
+          "before_pnl": 2567.856976190991,
+          "after_pnl": 2567.856976190991,
+          "pnl_change": 0
+        },
+        {
+          "season": 486,
+          "profile": "legacy",
+          "latency": 1,
+          "before_pnl": 2567.856976190991,
+          "after_pnl": 2567.856976190991,
+          "pnl_change": 0
+        },
+        {
+          "season": 486,
+          "profile": "legacy",
+          "latency": 3,
+          "before_pnl": 2354.987078542039,
+          "after_pnl": 2354.987078542039,
+          "pnl_change": 0
+        },
+        {
+          "season": 486,
+          "profile": "observed_spread",
+          "latency": 0.25,
+          "before_pnl": 2509.185361707845,
+          "after_pnl": 2509.185361707845,
+          "pnl_change": 0
+        },
+        {
+          "season": 486,
+          "profile": "observed_spread",
+          "latency": 1,
+          "before_pnl": 2509.185361707845,
+          "after_pnl": 2509.185361707845,
+          "pnl_change": 0
+        },
+        {
+          "season": 486,
+          "profile": "observed_spread",
+          "latency": 3,
+          "before_pnl": 2327.3834021443936,
+          "after_pnl": 2327.3834021443936,
+          "pnl_change": 0
+        },
+        {
+          "season": 486,
+          "profile": "observed_touch",
+          "latency": 0.25,
+          "before_pnl": 2433.283529675395,
+          "after_pnl": 2433.283529675395,
+          "pnl_change": 0
+        },
+        {
+          "season": 486,
+          "profile": "observed_touch",
+          "latency": 1,
+          "before_pnl": 2433.283529675396,
+          "after_pnl": 2433.283529675396,
+          "pnl_change": 0
+        },
+        {
+          "season": 486,
+          "profile": "observed_touch",
+          "latency": 3,
+          "before_pnl": 2311.054996930253,
+          "after_pnl": 2311.054996930253,
+          "pnl_change": 0
+        },
+        {
+          "season": 487,
+          "profile": "legacy",
+          "latency": 0.25,
+          "before_pnl": 958.0693833236612,
+          "after_pnl": 958.0693833236612,
+          "pnl_change": 0
+        },
+        {
+          "season": 487,
+          "profile": "legacy",
+          "latency": 1,
+          "before_pnl": 958.0693833236612,
+          "after_pnl": 958.0693833236612,
+          "pnl_change": 0
+        },
+        {
+          "season": 487,
+          "profile": "legacy",
+          "latency": 3,
+          "before_pnl": 283.08515748704303,
+          "after_pnl": 282.5757859176465,
+          "pnl_change": -0.509371569396535
+        },
+        {
+          "season": 487,
+          "profile": "observed_spread",
+          "latency": 0.25,
+          "before_pnl": 865.0568200090354,
+          "after_pnl": 884.9869172915935,
+          "pnl_change": 19.93009728255811
+        },
+        {
+          "season": 487,
+          "profile": "observed_spread",
+          "latency": 1,
+          "before_pnl": 865.0568200090354,
+          "after_pnl": 884.9869172915935,
+          "pnl_change": 19.93009728255811
+        },
+        {
+          "season": 487,
+          "profile": "observed_spread",
+          "latency": 3,
+          "before_pnl": 205.73324767275153,
+          "after_pnl": 210.4945650458667,
+          "pnl_change": 4.761317373115162
+        },
+        {
+          "season": 487,
+          "profile": "observed_touch",
+          "latency": 0.25,
+          "before_pnl": 810.3542834470834,
+          "after_pnl": 830.2843807296417,
+          "pnl_change": 19.930097282558336
+        },
+        {
+          "season": 487,
+          "profile": "observed_touch",
+          "latency": 1,
+          "before_pnl": 810.3542834470834,
+          "after_pnl": 830.2843807296417,
+          "pnl_change": 19.930097282558336
+        },
+        {
+          "season": 487,
+          "profile": "observed_touch",
+          "latency": 3,
+          "before_pnl": 205.73324767275153,
+          "after_pnl": 210.4945650458667,
+          "pnl_change": 4.761317373115162
+        },
+        {
+          "season": 488,
+          "profile": "legacy",
+          "latency": 0.25,
+          "before_pnl": 3233.5958265646345,
+          "after_pnl": 3233.5958265646345,
+          "pnl_change": 0
+        },
+        {
+          "season": 488,
+          "profile": "legacy",
+          "latency": 1,
+          "before_pnl": 3233.5958265646345,
+          "after_pnl": 3233.5958265646345,
+          "pnl_change": 0
+        },
+        {
+          "season": 488,
+          "profile": "legacy",
+          "latency": 3,
+          "before_pnl": 2377.6621827849167,
+          "after_pnl": 2369.8548625779176,
+          "pnl_change": -7.807320206999066
+        },
+        {
+          "season": 488,
+          "profile": "observed_spread",
+          "latency": 0.25,
+          "before_pnl": 3160.0819061836937,
+          "after_pnl": 3160.0819061836937,
+          "pnl_change": 0
+        },
+        {
+          "season": 488,
+          "profile": "observed_spread",
+          "latency": 1,
+          "before_pnl": 3160.0819061836937,
+          "after_pnl": 3160.0819061836937,
+          "pnl_change": 0
+        },
+        {
+          "season": 488,
+          "profile": "observed_spread",
+          "latency": 3,
+          "before_pnl": 2255.9726512760644,
+          "after_pnl": 2254.101153185853,
+          "pnl_change": -1.8714980902113894
+        },
+        {
+          "season": 488,
+          "profile": "observed_touch",
+          "latency": 0.25,
+          "before_pnl": 3138.7392188807235,
+          "after_pnl": 3138.7392188807235,
+          "pnl_change": 0
+        },
+        {
+          "season": 488,
+          "profile": "observed_touch",
+          "latency": 1,
+          "before_pnl": 3138.7392188807235,
+          "after_pnl": 3138.7392188807235,
+          "pnl_change": 0
+        },
+        {
+          "season": 488,
+          "profile": "observed_touch",
+          "latency": 3,
+          "before_pnl": 2255.9726512760644,
+          "after_pnl": 2254.101153185853,
+          "pnl_change": -1.8714980902113894
+        },
+        {
+          "season": 489,
+          "profile": "legacy",
+          "latency": 0.25,
+          "before_pnl": -683.3455675735677,
+          "after_pnl": -616.5223661426644,
+          "pnl_change": 66.82320143090328
+        },
+        {
+          "season": 489,
+          "profile": "legacy",
+          "latency": 1,
+          "before_pnl": -683.3455675735677,
+          "after_pnl": -616.5223661426644,
+          "pnl_change": 66.82320143090328
+        },
+        {
+          "season": 489,
+          "profile": "legacy",
+          "latency": 3,
+          "before_pnl": -665.2557788476506,
+          "after_pnl": -669.4063235143612,
+          "pnl_change": -4.15054466671063
+        },
+        {
+          "season": 489,
+          "profile": "observed_spread",
+          "latency": 0.25,
+          "before_pnl": -744.1827017102023,
+          "after_pnl": -684.4486935018849,
+          "pnl_change": 59.73400820831739
+        },
+        {
+          "season": 489,
+          "profile": "observed_spread",
+          "latency": 1,
+          "before_pnl": -744.1827017102023,
+          "after_pnl": -684.4486935018849,
+          "pnl_change": 59.73400820831739
+        },
+        {
+          "season": 489,
+          "profile": "observed_spread",
+          "latency": 3,
+          "before_pnl": -734.2479010666339,
+          "after_pnl": -755.3454759121832,
+          "pnl_change": -21.09757484554939
+        },
+        {
+          "season": 489,
+          "profile": "observed_touch",
+          "latency": 0.25,
+          "before_pnl": -825.3860235783268,
+          "after_pnl": -765.6520153700076,
+          "pnl_change": 59.73400820831921
+        },
+        {
+          "season": 489,
+          "profile": "observed_touch",
+          "latency": 1,
+          "before_pnl": -825.3860235783268,
+          "after_pnl": -765.6520153700094,
+          "pnl_change": 59.73400820831739
+        },
+        {
+          "season": 489,
+          "profile": "observed_touch",
+          "latency": 3,
+          "before_pnl": -771.0437134574586,
+          "after_pnl": -792.1412883030116,
+          "pnl_change": -21.097574845553027
+        },
+        {
+          "season": 490,
+          "profile": "legacy",
+          "latency": 0.25,
+          "before_pnl": 1998.5296918195954,
+          "after_pnl": 1998.2384100278714,
+          "pnl_change": -0.2912817917240318
+        },
+        {
+          "season": 490,
+          "profile": "legacy",
+          "latency": 1,
+          "before_pnl": 1998.5296918195954,
+          "after_pnl": 1998.2384100278714,
+          "pnl_change": -0.2912817917240318
+        },
+        {
+          "season": 490,
+          "profile": "legacy",
+          "latency": 3,
+          "before_pnl": 1295.4837064985732,
+          "after_pnl": 1296.2380779067316,
+          "pnl_change": 0.7543714081584767
+        },
+        {
+          "season": 490,
+          "profile": "observed_spread",
+          "latency": 0.25,
+          "before_pnl": 1896.8303589259058,
+          "after_pnl": 1896.6203364450457,
+          "pnl_change": -0.21002248086006148
+        },
+        {
+          "season": 490,
+          "profile": "observed_spread",
+          "latency": 1,
+          "before_pnl": 1896.8303589259058,
+          "after_pnl": 1896.6203364450457,
+          "pnl_change": -0.21002248086006148
+        },
+        {
+          "season": 490,
+          "profile": "observed_spread",
+          "latency": 3,
+          "before_pnl": 1212.716798771773,
+          "after_pnl": 1213.5200176091303,
+          "pnl_change": 0.8032188373572353
+        },
+        {
+          "season": 490,
+          "profile": "observed_touch",
+          "latency": 0.25,
+          "before_pnl": 1769.0260544684406,
+          "after_pnl": 1770.6968766742284,
+          "pnl_change": 1.670822205787772
+        },
+        {
+          "season": 490,
+          "profile": "observed_touch",
+          "latency": 1,
+          "before_pnl": 1769.0260544684406,
+          "after_pnl": 1771.8585660475255,
+          "pnl_change": 2.832511579084894
+        },
+        {
+          "season": 490,
+          "profile": "observed_touch",
+          "latency": 3,
+          "before_pnl": 1210.1272179651332,
+          "after_pnl": 1213.4537296634799,
+          "pnl_change": 3.3265116983466214
+        },
+        {
+          "season": 491,
+          "profile": "legacy",
+          "latency": 0.25,
+          "before_pnl": 2516.712234959329,
+          "after_pnl": 2515.2722349593305,
+          "pnl_change": -1.4399999999986903
+        },
+        {
+          "season": 491,
+          "profile": "legacy",
+          "latency": 1,
+          "before_pnl": 2516.712234959329,
+          "after_pnl": 2515.2722349593305,
+          "pnl_change": -1.4399999999986903
+        },
+        {
+          "season": 491,
+          "profile": "legacy",
+          "latency": 3,
+          "before_pnl": 1933.0410531170428,
+          "after_pnl": 1939.5319622079523,
+          "pnl_change": 6.490909090909554
+        },
+        {
+          "season": 491,
+          "profile": "observed_spread",
+          "latency": 0.25,
+          "before_pnl": 2360.668923299294,
+          "after_pnl": 2360.101608513576,
+          "pnl_change": -0.5673147857178265
+        },
+        {
+          "season": 491,
+          "profile": "observed_spread",
+          "latency": 1,
+          "before_pnl": 2360.668923299294,
+          "after_pnl": 2360.101608513576,
+          "pnl_change": -0.5673147857178265
+        },
+        {
+          "season": 491,
+          "profile": "observed_spread",
+          "latency": 3,
+          "before_pnl": 1781.5929138135634,
+          "after_pnl": 1788.7358765262284,
+          "pnl_change": 7.142962712664939
+        },
+        {
+          "season": 491,
+          "profile": "observed_touch",
+          "latency": 0.25,
+          "before_pnl": 2225.8128140715817,
+          "after_pnl": 2225.2454992858657,
+          "pnl_change": -0.5673147857160075
+        },
+        {
+          "season": 491,
+          "profile": "observed_touch",
+          "latency": 1,
+          "before_pnl": 2225.8128140715817,
+          "after_pnl": 2225.2454992858657,
+          "pnl_change": -0.5673147857160075
+        },
+        {
+          "season": 491,
+          "profile": "observed_touch",
+          "latency": 3,
+          "before_pnl": 1781.5929138135634,
+          "after_pnl": 1788.7358765262284,
+          "pnl_change": 7.142962712664939
+        },
+        {
+          "season": 492,
+          "profile": "legacy",
+          "latency": 0.25,
+          "before_pnl": 162.16165835296397,
+          "after_pnl": 147.61194814736064,
+          "pnl_change": -14.549710205603333
+        },
+        {
+          "season": 492,
+          "profile": "legacy",
+          "latency": 1,
+          "before_pnl": 162.16165835296397,
+          "after_pnl": 147.61194814736064,
+          "pnl_change": -14.549710205603333
+        },
+        {
+          "season": 492,
+          "profile": "legacy",
+          "latency": 3,
+          "before_pnl": -80.6271542191198,
+          "after_pnl": -95.19610143831687,
+          "pnl_change": -14.56894721919707
+        },
+        {
+          "season": 492,
+          "profile": "observed_spread",
+          "latency": 0.25,
+          "before_pnl": 108.97012926885418,
+          "after_pnl": 141.13232244226947,
+          "pnl_change": 32.16219317341529
+        },
+        {
+          "season": 492,
+          "profile": "observed_spread",
+          "latency": 1,
+          "before_pnl": 108.97012926885418,
+          "after_pnl": 141.13232244226947,
+          "pnl_change": 32.16219317341529
+        },
+        {
+          "season": 492,
+          "profile": "observed_spread",
+          "latency": 3,
+          "before_pnl": -95.92636007865713,
+          "after_pnl": -57.17232164135112,
+          "pnl_change": 38.75403843730601
+        },
+        {
+          "season": 492,
+          "profile": "observed_touch",
+          "latency": 0.25,
+          "before_pnl": 108.97012926885418,
+          "after_pnl": 141.13232244226947,
+          "pnl_change": 32.16219317341529
+        },
+        {
+          "season": 492,
+          "profile": "observed_touch",
+          "latency": 1,
+          "before_pnl": 108.97012926885418,
+          "after_pnl": 141.13232244226947,
+          "pnl_change": 32.16219317341529
+        },
+        {
+          "season": 492,
+          "profile": "observed_touch",
+          "latency": 3,
+          "before_pnl": -95.92636007865713,
+          "after_pnl": -57.17232164135112,
+          "pnl_change": 38.75403843730601
+        },
+        {
+          "season": 493,
+          "profile": "legacy",
+          "latency": 0.25,
+          "before_pnl": 3038.128711433168,
+          "after_pnl": 3038.3335465980017,
+          "pnl_change": 0.20483516483363928
+        },
+        {
+          "season": 493,
+          "profile": "legacy",
+          "latency": 1,
+          "before_pnl": 3038.128711433168,
+          "after_pnl": 3038.3335465980017,
+          "pnl_change": 0.20483516483363928
+        },
+        {
+          "season": 493,
+          "profile": "legacy",
+          "latency": 3,
+          "before_pnl": 3025.06411057639,
+          "after_pnl": 3025.0744402467208,
+          "pnl_change": 0.010329670330975205
+        },
+        {
+          "season": 493,
+          "profile": "observed_spread",
+          "latency": 0.25,
+          "before_pnl": 2972.278424464091,
+          "after_pnl": 2973.1023601587144,
+          "pnl_change": 0.8239356946232874
+        },
+        {
+          "season": 493,
+          "profile": "observed_spread",
+          "latency": 1,
+          "before_pnl": 2972.278424464091,
+          "after_pnl": 2973.1023601587144,
+          "pnl_change": 0.8239356946232874
+        },
+        {
+          "season": 493,
+          "profile": "observed_spread",
+          "latency": 3,
+          "before_pnl": 2837.2434372772923,
+          "after_pnl": 2837.4890476014652,
+          "pnl_change": 0.24561032417295792
+        },
+        {
+          "season": 493,
+          "profile": "observed_touch",
+          "latency": 0.25,
+          "before_pnl": 2937.6023503916854,
+          "after_pnl": 2938.4262860863087,
+          "pnl_change": 0.8239356946232874
+        },
+        {
+          "season": 493,
+          "profile": "observed_touch",
+          "latency": 1,
+          "before_pnl": 2937.6023503916854,
+          "after_pnl": 2938.4262860863087,
+          "pnl_change": 0.8239356946232874
+        },
+        {
+          "season": 493,
+          "profile": "observed_touch",
+          "latency": 3,
+          "before_pnl": 2837.044633849914,
+          "after_pnl": 2837.290244174087,
+          "pnl_change": 0.24561032417295792
+        },
+        {
+          "season": 494,
+          "profile": "legacy",
+          "latency": 0.25,
+          "before_pnl": 1188.8980044006253,
+          "after_pnl": 1182.9348967220162,
+          "pnl_change": -5.963107678609049
+        },
+        {
+          "season": 494,
+          "profile": "legacy",
+          "latency": 1,
+          "before_pnl": 1188.8980044006253,
+          "after_pnl": 1182.9348967220162,
+          "pnl_change": -5.963107678609049
+        },
+        {
+          "season": 494,
+          "profile": "legacy",
+          "latency": 3,
+          "before_pnl": 883.5546611523359,
+          "after_pnl": 876.5176435658254,
+          "pnl_change": -7.037017586510501
+        },
+        {
+          "season": 494,
+          "profile": "observed_spread",
+          "latency": 0.25,
+          "before_pnl": 1044.1613669875946,
+          "after_pnl": 1044.8294085708426,
+          "pnl_change": 0.6680415832479412
+        },
+        {
+          "season": 494,
+          "profile": "observed_spread",
+          "latency": 1,
+          "before_pnl": 1044.1613669875946,
+          "after_pnl": 1044.8294085708426,
+          "pnl_change": 0.6680415832479412
+        },
+        {
+          "season": 494,
+          "profile": "observed_spread",
+          "latency": 3,
+          "before_pnl": 714.464992783162,
+          "after_pnl": 718.1359522967446,
+          "pnl_change": 3.670959513582602
+        },
+        {
+          "season": 494,
+          "profile": "observed_touch",
+          "latency": 0.25,
+          "before_pnl": 1030.9685581446006,
+          "after_pnl": 1031.6365997278488,
+          "pnl_change": 0.6680415832481685
+        },
+        {
+          "season": 494,
+          "profile": "observed_touch",
+          "latency": 1,
+          "before_pnl": 1030.9685581446006,
+          "after_pnl": 1031.6365997278488,
+          "pnl_change": 0.6680415832481685
+        },
+        {
+          "season": 494,
+          "profile": "observed_touch",
+          "latency": 3,
+          "before_pnl": 714.464992783162,
+          "after_pnl": 718.1359522967446,
+          "pnl_change": 3.670959513582602
+        },
+        {
+          "season": 495,
+          "profile": "legacy",
+          "latency": 0.25,
+          "before_pnl": 1053.6294674255241,
+          "after_pnl": 1054.2179363613714,
+          "pnl_change": 0.5884689358472315
+        },
+        {
+          "season": 495,
+          "profile": "legacy",
+          "latency": 1,
+          "before_pnl": 1053.6294674255241,
+          "after_pnl": 1054.2179363613714,
+          "pnl_change": 0.5884689358472315
+        },
+        {
+          "season": 495,
+          "profile": "legacy",
+          "latency": 3,
+          "before_pnl": 735.3116682394002,
+          "after_pnl": 733.802542720452,
+          "pnl_change": -1.5091255189481672
+        },
+        {
+          "season": 495,
+          "profile": "observed_spread",
+          "latency": 0.25,
+          "before_pnl": 966.3049964326019,
+          "after_pnl": 966.6830192845291,
+          "pnl_change": 0.37802285192719864
+        },
+        {
+          "season": 495,
+          "profile": "observed_spread",
+          "latency": 1,
+          "before_pnl": 966.3049964326019,
+          "after_pnl": 966.6830192845291,
+          "pnl_change": 0.37802285192719864
+        },
+        {
+          "season": 495,
+          "profile": "observed_spread",
+          "latency": 3,
+          "before_pnl": 729.4739411520668,
+          "after_pnl": 728.8152353909636,
+          "pnl_change": -0.6587057611031923
+        },
+        {
+          "season": 495,
+          "profile": "observed_touch",
+          "latency": 0.25,
+          "before_pnl": 966.3049964326019,
+          "after_pnl": 966.6830192845291,
+          "pnl_change": 0.37802285192719864
+        },
+        {
+          "season": 495,
+          "profile": "observed_touch",
+          "latency": 1,
+          "before_pnl": 966.3049964326019,
+          "after_pnl": 966.6830192845291,
+          "pnl_change": 0.37802285192719864
+        },
+        {
+          "season": 495,
+          "profile": "observed_touch",
+          "latency": 3,
+          "before_pnl": 729.4739411520668,
+          "after_pnl": 728.8152353909636,
+          "pnl_change": -0.6587057611031923
+        },
+        {
+          "season": 496,
+          "profile": "legacy",
+          "latency": 0.25,
+          "before_pnl": 502.38589025023884,
+          "after_pnl": 499.935890250239,
+          "pnl_change": -2.449999999999818
+        },
+        {
+          "season": 496,
+          "profile": "legacy",
+          "latency": 1,
+          "before_pnl": 499.18227504292463,
+          "after_pnl": 496.7322750429248,
+          "pnl_change": -2.449999999999818
+        },
+        {
+          "season": 496,
+          "profile": "legacy",
+          "latency": 3,
+          "before_pnl": 153.70693441008734,
+          "after_pnl": 153.70693441008734,
+          "pnl_change": 0
+        },
+        {
+          "season": 496,
+          "profile": "observed_spread",
+          "latency": 0.25,
+          "before_pnl": 388.29137483001614,
+          "after_pnl": 384.451374830016,
+          "pnl_change": -3.8400000000001455
+        },
+        {
+          "season": 496,
+          "profile": "observed_spread",
+          "latency": 1,
+          "before_pnl": 388.29137483001614,
+          "after_pnl": 384.451374830016,
+          "pnl_change": -3.8400000000001455
+        },
+        {
+          "season": 496,
+          "profile": "observed_spread",
+          "latency": 3,
+          "before_pnl": 185.39066659614673,
+          "after_pnl": 181.53017638323627,
+          "pnl_change": -3.860490212910463
+        },
+        {
+          "season": 496,
+          "profile": "observed_touch",
+          "latency": 0.25,
+          "before_pnl": 323.7021364817756,
+          "after_pnl": 319.86213648177545,
+          "pnl_change": -3.8400000000001455
+        },
+        {
+          "season": 496,
+          "profile": "observed_touch",
+          "latency": 1,
+          "before_pnl": 323.7021364817756,
+          "after_pnl": 319.86213648177545,
+          "pnl_change": -3.8400000000001455
+        },
+        {
+          "season": 496,
+          "profile": "observed_touch",
+          "latency": 3,
+          "before_pnl": 113.68817582664406,
+          "after_pnl": 109.82768561373359,
+          "pnl_change": -3.860490212910463
+        },
+        {
+          "season": 497,
+          "profile": "legacy",
+          "latency": 0.25,
+          "before_pnl": 633.469483127612,
+          "after_pnl": 634.8694831276098,
+          "pnl_change": 1.3999999999978172
+        },
+        {
+          "season": 497,
+          "profile": "legacy",
+          "latency": 1,
+          "before_pnl": 633.469483127612,
+          "after_pnl": 634.8694831276098,
+          "pnl_change": 1.3999999999978172
+        },
+        {
+          "season": 497,
+          "profile": "legacy",
+          "latency": 3,
+          "before_pnl": 594.7955046122943,
+          "after_pnl": 592.511400304681,
+          "pnl_change": -2.2841043076132337
+        },
+        {
+          "season": 497,
+          "profile": "observed_spread",
+          "latency": 0.25,
+          "before_pnl": 580.567075112177,
+          "after_pnl": 581.7670751121777,
+          "pnl_change": 1.2000000000007276
+        },
+        {
+          "season": 497,
+          "profile": "observed_spread",
+          "latency": 1,
+          "before_pnl": 580.567075112177,
+          "after_pnl": 581.7670751121777,
+          "pnl_change": 1.2000000000007276
+        },
+        {
+          "season": 497,
+          "profile": "observed_spread",
+          "latency": 3,
+          "before_pnl": 501.10589611962496,
+          "after_pnl": 498.2722634316124,
+          "pnl_change": -2.8336326880125853
+        },
+        {
+          "season": 497,
+          "profile": "observed_touch",
+          "latency": 0.25,
+          "before_pnl": 580.567075112177,
+          "after_pnl": 581.7670751121777,
+          "pnl_change": 1.2000000000007276
+        },
+        {
+          "season": 497,
+          "profile": "observed_touch",
+          "latency": 1,
+          "before_pnl": 580.567075112177,
+          "after_pnl": 581.7670751121777,
+          "pnl_change": 1.2000000000007276
+        },
+        {
+          "season": 497,
+          "profile": "observed_touch",
+          "latency": 3,
+          "before_pnl": 501.10589611962496,
+          "after_pnl": 498.2722634316124,
+          "pnl_change": -2.8336326880125853
+        },
+        {
+          "season": 498,
+          "profile": "legacy",
+          "latency": 0.25,
+          "before_pnl": 1880.3498451200076,
+          "after_pnl": 2042.9466856052395,
+          "pnl_change": 162.59684048523195
+        },
+        {
+          "season": 498,
+          "profile": "legacy",
+          "latency": 1,
+          "before_pnl": 1880.3498451200076,
+          "after_pnl": 2042.9466856052395,
+          "pnl_change": 162.59684048523195
+        },
+        {
+          "season": 498,
+          "profile": "legacy",
+          "latency": 3,
+          "before_pnl": 2195.7170507448,
+          "after_pnl": 2195.9690287667772,
+          "pnl_change": 0.2519780219772656
+        },
+        {
+          "season": 498,
+          "profile": "observed_spread",
+          "latency": 0.25,
+          "before_pnl": 1835.2091876375857,
+          "after_pnl": 1994.8298367601624,
+          "pnl_change": 159.62064912257665
+        },
+        {
+          "season": 498,
+          "profile": "observed_spread",
+          "latency": 1,
+          "before_pnl": 1835.2091876375857,
+          "after_pnl": 1994.8298367601624,
+          "pnl_change": 159.62064912257665
+        },
+        {
+          "season": 498,
+          "profile": "observed_spread",
+          "latency": 3,
+          "before_pnl": 2152.9543446518383,
+          "after_pnl": 2153.223750658506,
+          "pnl_change": 0.2694060066678503
+        },
+        {
+          "season": 498,
+          "profile": "observed_touch",
+          "latency": 0.25,
+          "before_pnl": 1798.197412882745,
+          "after_pnl": 1957.8180620053236,
+          "pnl_change": 159.62064912257847
+        },
+        {
+          "season": 498,
+          "profile": "observed_touch",
+          "latency": 1,
+          "before_pnl": 1798.197412882745,
+          "after_pnl": 1957.8180620053217,
+          "pnl_change": 159.62064912257665
+        },
+        {
+          "season": 498,
+          "profile": "observed_touch",
+          "latency": 3,
+          "before_pnl": 2145.997986327706,
+          "after_pnl": 2146.267392334372,
+          "pnl_change": 0.2694060066660313
+        },
+        {
+          "season": 499,
+          "profile": "legacy",
+          "latency": 0.25,
+          "before_pnl": 1102.4707623357103,
+          "after_pnl": 1102.4707623357103,
+          "pnl_change": 0
+        },
+        {
+          "season": 499,
+          "profile": "legacy",
+          "latency": 1,
+          "before_pnl": 1102.4707623357103,
+          "after_pnl": 1102.4707623357103,
+          "pnl_change": 0
+        },
+        {
+          "season": 499,
+          "profile": "legacy",
+          "latency": 3,
+          "before_pnl": 688.2574853835813,
+          "after_pnl": 689.0843450239408,
+          "pnl_change": 0.8268596403595438
+        },
+        {
+          "season": 499,
+          "profile": "observed_spread",
+          "latency": 0.25,
+          "before_pnl": 984.410040383363,
+          "after_pnl": 990.8822013896518,
+          "pnl_change": 6.472161006288729
+        },
+        {
+          "season": 499,
+          "profile": "observed_spread",
+          "latency": 1,
+          "before_pnl": 984.410040383363,
+          "after_pnl": 990.8822013896518,
+          "pnl_change": 6.472161006288729
+        },
+        {
+          "season": 499,
+          "profile": "observed_spread",
+          "latency": 3,
+          "before_pnl": 592.8043963742111,
+          "after_pnl": 598.2626582939565,
+          "pnl_change": 5.458261919745382
+        },
+        {
+          "season": 499,
+          "profile": "observed_touch",
+          "latency": 0.25,
+          "before_pnl": 927.3763170995212,
+          "after_pnl": 933.8484781058099,
+          "pnl_change": 6.472161006288729
+        },
+        {
+          "season": 499,
+          "profile": "observed_touch",
+          "latency": 1,
+          "before_pnl": 927.3763170995212,
+          "after_pnl": 933.8484781058099,
+          "pnl_change": 6.472161006288729
+        },
+        {
+          "season": 499,
+          "profile": "observed_touch",
+          "latency": 3,
+          "before_pnl": 572.6777570656741,
+          "after_pnl": 578.1360189854204,
+          "pnl_change": 5.458261919746292
+        },
+        {
+          "season": 500,
+          "profile": "legacy",
+          "latency": 0.25,
+          "before_pnl": 781.9626697088902,
+          "after_pnl": 785.0305158627361,
+          "pnl_change": 3.0678461538459487
+        },
+        {
+          "season": 500,
+          "profile": "legacy",
+          "latency": 1,
+          "before_pnl": 781.9626697088902,
+          "after_pnl": 785.0305158627361,
+          "pnl_change": 3.0678461538459487
+        },
+        {
+          "season": 500,
+          "profile": "legacy",
+          "latency": 3,
+          "before_pnl": 561.7258647643084,
+          "after_pnl": 560.878242386686,
+          "pnl_change": -0.8476223776224288
+        },
+        {
+          "season": 500,
+          "profile": "observed_spread",
+          "latency": 0.25,
+          "before_pnl": 530.3747212374965,
+          "after_pnl": 533.3913406477063,
+          "pnl_change": 3.0166194102098416
+        },
+        {
+          "season": 500,
+          "profile": "observed_spread",
+          "latency": 1,
+          "before_pnl": 530.3747212374965,
+          "after_pnl": 533.3913406477063,
+          "pnl_change": 3.0166194102098416
+        },
+        {
+          "season": 500,
+          "profile": "observed_spread",
+          "latency": 3,
+          "before_pnl": 334.1396032508601,
+          "after_pnl": 329.3123183130051,
+          "pnl_change": -4.827284937854984
+        },
+        {
+          "season": 500,
+          "profile": "observed_touch",
+          "latency": 0.25,
+          "before_pnl": 530.3747212374965,
+          "after_pnl": 533.3913406477063,
+          "pnl_change": 3.0166194102098416
+        },
+        {
+          "season": 500,
+          "profile": "observed_touch",
+          "latency": 1,
+          "before_pnl": 530.3747212374965,
+          "after_pnl": 533.3913406477063,
+          "pnl_change": 3.0166194102098416
+        },
+        {
+          "season": 500,
+          "profile": "observed_touch",
+          "latency": 3,
+          "before_pnl": 334.1396032508601,
+          "after_pnl": 329.3123183130051,
+          "pnl_change": -4.827284937854984
+        },
+        {
+          "season": 501,
+          "profile": "legacy",
+          "latency": 0.25,
+          "before_pnl": 536.1537158706383,
+          "after_pnl": 536.5572123741342,
+          "pnl_change": 0.4034965034959441
+        },
+        {
+          "season": 501,
+          "profile": "legacy",
+          "latency": 1,
+          "before_pnl": 536.1537158706383,
+          "after_pnl": 536.5572123741342,
+          "pnl_change": 0.4034965034959441
+        },
+        {
+          "season": 501,
+          "profile": "legacy",
+          "latency": 3,
+          "before_pnl": 582.796439870268,
+          "after_pnl": 562.890340226385,
+          "pnl_change": -19.906099643883067
+        },
+        {
+          "season": 501,
+          "profile": "observed_spread",
+          "latency": 0.25,
+          "before_pnl": 465.05771470894933,
+          "after_pnl": 466.16384996756824,
+          "pnl_change": 1.106135258618906
+        },
+        {
+          "season": 501,
+          "profile": "observed_spread",
+          "latency": 1,
+          "before_pnl": 465.05771470894933,
+          "after_pnl": 466.16384996756824,
+          "pnl_change": 1.106135258618906
+        },
+        {
+          "season": 501,
+          "profile": "observed_spread",
+          "latency": 3,
+          "before_pnl": 482.6779548293591,
+          "after_pnl": 465.55187999495274,
+          "pnl_change": -17.12607483440638
+        },
+        {
+          "season": 501,
+          "profile": "observed_touch",
+          "latency": 0.25,
+          "before_pnl": 465.05771470894933,
+          "after_pnl": 466.16384996756824,
+          "pnl_change": 1.106135258618906
+        },
+        {
+          "season": 501,
+          "profile": "observed_touch",
+          "latency": 1,
+          "before_pnl": 465.05771470894933,
+          "after_pnl": 466.16384996756824,
+          "pnl_change": 1.106135258618906
+        },
+        {
+          "season": 501,
+          "profile": "observed_touch",
+          "latency": 3,
+          "before_pnl": 482.6779548293591,
+          "after_pnl": 465.55187999495274,
+          "pnl_change": -17.12607483440638
+        },
+        {
+          "season": 502,
+          "profile": "legacy",
+          "latency": 0.25,
+          "before_pnl": 2300.9999390127678,
+          "after_pnl": 2306.791112243283,
+          "pnl_change": 5.791173230515142
+        },
+        {
+          "season": 502,
+          "profile": "legacy",
+          "latency": 1,
+          "before_pnl": 2300.9999390127678,
+          "after_pnl": 2306.791112243283,
+          "pnl_change": 5.791173230515142
+        },
+        {
+          "season": 502,
+          "profile": "legacy",
+          "latency": 3,
+          "before_pnl": 1663.5315961756794,
+          "after_pnl": 1661.0841299129415,
+          "pnl_change": -2.447466262737862
+        },
+        {
+          "season": 502,
+          "profile": "observed_spread",
+          "latency": 0.25,
+          "before_pnl": 2214.553806189723,
+          "after_pnl": 2221.27616992791,
+          "pnl_change": 6.7223637381866865
+        },
+        {
+          "season": 502,
+          "profile": "observed_spread",
+          "latency": 1,
+          "before_pnl": 2214.553806189723,
+          "after_pnl": 2221.27616992791,
+          "pnl_change": 6.7223637381866865
+        },
+        {
+          "season": 502,
+          "profile": "observed_spread",
+          "latency": 3,
+          "before_pnl": 1600.8868236289263,
+          "after_pnl": 1610.749133936237,
+          "pnl_change": 9.862310307310736
+        },
+        {
+          "season": 502,
+          "profile": "observed_touch",
+          "latency": 0.25,
+          "before_pnl": 2131.7573222761193,
+          "after_pnl": 2138.4796860143056,
+          "pnl_change": 6.722363738186232
+        },
+        {
+          "season": 502,
+          "profile": "observed_touch",
+          "latency": 1,
+          "before_pnl": 2131.7573222761193,
+          "after_pnl": 2138.4796860143056,
+          "pnl_change": 6.722363738186232
+        },
+        {
+          "season": 502,
+          "profile": "observed_touch",
+          "latency": 3,
+          "before_pnl": 1598.9453868860955,
+          "after_pnl": 1609.1325972565576,
+          "pnl_change": 10.187210370462026
+        },
+        {
+          "season": 503,
+          "profile": "legacy",
+          "latency": 0.25,
+          "before_pnl": 1926.3799261584809,
+          "after_pnl": 1926.3799261584809,
+          "pnl_change": 0
+        },
+        {
+          "season": 503,
+          "profile": "legacy",
+          "latency": 1,
+          "before_pnl": 1926.3799261584809,
+          "after_pnl": 1926.3799261584809,
+          "pnl_change": 0
+        },
+        {
+          "season": 503,
+          "profile": "legacy",
+          "latency": 3,
+          "before_pnl": 1276.6401342741021,
+          "after_pnl": 1276.6401342741021,
+          "pnl_change": 0
+        },
+        {
+          "season": 503,
+          "profile": "observed_spread",
+          "latency": 0.25,
+          "before_pnl": 1680.7413986185488,
+          "after_pnl": 1805.7395457575144,
+          "pnl_change": 124.99814713896558
+        },
+        {
+          "season": 503,
+          "profile": "observed_spread",
+          "latency": 1,
+          "before_pnl": 1680.7413986185488,
+          "after_pnl": 1805.7395457575144,
+          "pnl_change": 124.99814713896558
+        },
+        {
+          "season": 503,
+          "profile": "observed_spread",
+          "latency": 3,
+          "before_pnl": 1212.0754597240882,
+          "after_pnl": 1212.0754597240882,
+          "pnl_change": 0
+        },
+        {
+          "season": 503,
+          "profile": "observed_touch",
+          "latency": 0.25,
+          "before_pnl": 1545.0336713405113,
+          "after_pnl": 1670.031818479477,
+          "pnl_change": 124.99814713896558
+        },
+        {
+          "season": 503,
+          "profile": "observed_touch",
+          "latency": 1,
+          "before_pnl": 1545.0336713405113,
+          "after_pnl": 1670.031818479477,
+          "pnl_change": 124.99814713896558
+        },
+        {
+          "season": 503,
+          "profile": "observed_touch",
+          "latency": 3,
+          "before_pnl": 1189.1127010132902,
+          "after_pnl": 1189.1127010132902,
+          "pnl_change": 0
+        },
+        {
+          "season": 504,
+          "profile": "legacy",
+          "latency": 0.25,
+          "before_pnl": 2109.598998335726,
+          "after_pnl": 2071.211219096452,
+          "pnl_change": -38.38777923927364
+        },
+        {
+          "season": 504,
+          "profile": "legacy",
+          "latency": 1,
+          "before_pnl": 2109.598998335726,
+          "after_pnl": 2071.211219096452,
+          "pnl_change": -38.38777923927364
+        },
+        {
+          "season": 504,
+          "profile": "legacy",
+          "latency": 3,
+          "before_pnl": 1673.7005894102017,
+          "after_pnl": 1630.8885535329728,
+          "pnl_change": -42.812035877228936
+        },
+        {
+          "season": 504,
+          "profile": "observed_spread",
+          "latency": 0.25,
+          "before_pnl": 2161.855752534844,
+          "after_pnl": 2124.676658521612,
+          "pnl_change": -37.179094013232316
+        },
+        {
+          "season": 504,
+          "profile": "observed_spread",
+          "latency": 1,
+          "before_pnl": 2161.855752534844,
+          "after_pnl": 2124.676658521612,
+          "pnl_change": -37.179094013232316
+        },
+        {
+          "season": 504,
+          "profile": "observed_spread",
+          "latency": 3,
+          "before_pnl": 1560.368430972147,
+          "after_pnl": 1518.6366488068884,
+          "pnl_change": -41.731782165258664
+        },
+        {
+          "season": 504,
+          "profile": "observed_touch",
+          "latency": 0.25,
+          "before_pnl": 2137.0415306592777,
+          "after_pnl": 2099.8624366460454,
+          "pnl_change": -37.179094013232316
+        },
+        {
+          "season": 504,
+          "profile": "observed_touch",
+          "latency": 1,
+          "before_pnl": 2137.0415306592777,
+          "after_pnl": 2099.8624366460454,
+          "pnl_change": -37.179094013232316
+        },
+        {
+          "season": 504,
+          "profile": "observed_touch",
+          "latency": 3,
+          "before_pnl": 1551.7190429079133,
+          "after_pnl": 1509.9872607426546,
+          "pnl_change": -41.731782165258664
+        },
+        {
+          "season": 505,
+          "profile": "legacy",
+          "latency": 0.25,
+          "before_pnl": 3039.6871874501203,
+          "after_pnl": 3039.6871874501203,
+          "pnl_change": 0
+        },
+        {
+          "season": 505,
+          "profile": "legacy",
+          "latency": 1,
+          "before_pnl": 3039.6871874501203,
+          "after_pnl": 3039.6871874501203,
+          "pnl_change": 0
+        },
+        {
+          "season": 505,
+          "profile": "legacy",
+          "latency": 3,
+          "before_pnl": 2598.212376079675,
+          "after_pnl": 2591.754464530759,
+          "pnl_change": -6.457911548915945
+        },
+        {
+          "season": 505,
+          "profile": "observed_spread",
+          "latency": 0.25,
+          "before_pnl": 3028.0443966714374,
+          "after_pnl": 3028.1914090207047,
+          "pnl_change": 0.14701234926724283
+        },
+        {
+          "season": 505,
+          "profile": "observed_spread",
+          "latency": 1,
+          "before_pnl": 3028.0443966714374,
+          "after_pnl": 3028.1914090207047,
+          "pnl_change": 0.14701234926724283
+        },
+        {
+          "season": 505,
+          "profile": "observed_spread",
+          "latency": 3,
+          "before_pnl": 2629.7690772779306,
+          "after_pnl": 2624.0405964988995,
+          "pnl_change": -5.728480779031088
+        },
+        {
+          "season": 505,
+          "profile": "observed_touch",
+          "latency": 0.25,
+          "before_pnl": 2950.830936039302,
+          "after_pnl": 2950.977948388569,
+          "pnl_change": 0.14701234926724283
+        },
+        {
+          "season": 505,
+          "profile": "observed_touch",
+          "latency": 1,
+          "before_pnl": 2950.830936039302,
+          "after_pnl": 2950.977948388569,
+          "pnl_change": 0.14701234926724283
+        },
+        {
+          "season": 505,
+          "profile": "observed_touch",
+          "latency": 3,
+          "before_pnl": 2629.7690772779306,
+          "after_pnl": 2624.0405964988995,
+          "pnl_change": -5.728480779031088
+        },
+        {
+          "season": 506,
+          "profile": "legacy",
+          "latency": 0.25,
+          "before_pnl": 3646.9717930166526,
+          "after_pnl": 3639.4851055535237,
+          "pnl_change": -7.486687463128874
+        },
+        {
+          "season": 506,
+          "profile": "legacy",
+          "latency": 1,
+          "before_pnl": 3646.9717930166526,
+          "after_pnl": 3639.4851055535237,
+          "pnl_change": -7.486687463128874
+        },
+        {
+          "season": 506,
+          "profile": "legacy",
+          "latency": 3,
+          "before_pnl": 2749.633467662504,
+          "after_pnl": 2741.227118104038,
+          "pnl_change": -8.40634955846599
+        },
+        {
+          "season": 506,
+          "profile": "observed_spread",
+          "latency": 0.25,
+          "before_pnl": 3544.623097203244,
+          "after_pnl": 3536.7045159860645,
+          "pnl_change": -7.918581217179508
+        },
+        {
+          "season": 506,
+          "profile": "observed_spread",
+          "latency": 1,
+          "before_pnl": 3544.623097203244,
+          "after_pnl": 3536.7045159860645,
+          "pnl_change": -7.918581217179508
+        },
+        {
+          "season": 506,
+          "profile": "observed_spread",
+          "latency": 3,
+          "before_pnl": 2633.595494453981,
+          "after_pnl": 2625.716881690422,
+          "pnl_change": -7.878612763558976
+        },
+        {
+          "season": 506,
+          "profile": "observed_touch",
+          "latency": 0.25,
+          "before_pnl": 3436.191529101273,
+          "after_pnl": 3428.2729478840934,
+          "pnl_change": -7.918581217179508
+        },
+        {
+          "season": 506,
+          "profile": "observed_touch",
+          "latency": 1,
+          "before_pnl": 3436.191529101273,
+          "after_pnl": 3428.2729478840915,
+          "pnl_change": -7.918581217181327
+        },
+        {
+          "season": 506,
+          "profile": "observed_touch",
+          "latency": 3,
+          "before_pnl": 2597.738309964393,
+          "after_pnl": 2589.859697200834,
+          "pnl_change": -7.878612763558976
+        },
+        {
+          "season": 507,
+          "profile": "legacy",
+          "latency": 0.25,
+          "before_pnl": 1305.3519468020395,
+          "after_pnl": 1307.1122544943473,
+          "pnl_change": 1.7603076923078333
+        },
+        {
+          "season": 507,
+          "profile": "legacy",
+          "latency": 1,
+          "before_pnl": 1305.3519468020395,
+          "after_pnl": 1307.1122544943473,
+          "pnl_change": 1.7603076923078333
+        },
+        {
+          "season": 507,
+          "profile": "legacy",
+          "latency": 3,
+          "before_pnl": 964.6110690420205,
+          "after_pnl": 965.5544387452405,
+          "pnl_change": 0.9433697032200143
+        },
+        {
+          "season": 507,
+          "profile": "observed_spread",
+          "latency": 0.25,
+          "before_pnl": 1203.6932408028606,
+          "after_pnl": 1205.5131764264097,
+          "pnl_change": 1.8199356235490995
+        },
+        {
+          "season": 507,
+          "profile": "observed_spread",
+          "latency": 1,
+          "before_pnl": 1203.6932408028606,
+          "after_pnl": 1205.5131764264097,
+          "pnl_change": 1.8199356235490995
+        },
+        {
+          "season": 507,
+          "profile": "observed_spread",
+          "latency": 3,
+          "before_pnl": 918.6694543204981,
+          "after_pnl": 919.6220255627336,
+          "pnl_change": 0.9525712422355355
+        },
+        {
+          "season": 507,
+          "profile": "observed_touch",
+          "latency": 0.25,
+          "before_pnl": 1194.221168750766,
+          "after_pnl": 1196.0411043743134,
+          "pnl_change": 1.8199356235472806
+        },
+        {
+          "season": 507,
+          "profile": "observed_touch",
+          "latency": 1,
+          "before_pnl": 1194.221168750766,
+          "after_pnl": 1196.0411043743152,
+          "pnl_change": 1.8199356235490995
+        },
+        {
+          "season": 507,
+          "profile": "observed_touch",
+          "latency": 3,
+          "before_pnl": 918.6694543204981,
+          "after_pnl": 919.6220255627336,
+          "pnl_change": 0.9525712422355355
+        },
+        {
+          "season": 508,
+          "profile": "legacy",
+          "latency": 0.25,
+          "before_pnl": -202.555093797444,
+          "after_pnl": -203.272422659903,
+          "pnl_change": -0.7173288624589986
+        },
+        {
+          "season": 508,
+          "profile": "legacy",
+          "latency": 1,
+          "before_pnl": -202.555093797444,
+          "after_pnl": -203.272422659903,
+          "pnl_change": -0.7173288624589986
+        },
+        {
+          "season": 508,
+          "profile": "legacy",
+          "latency": 3,
+          "before_pnl": -180.9673797662349,
+          "after_pnl": -181.2192853717038,
+          "pnl_change": -0.25190560546889174
+        },
+        {
+          "season": 508,
+          "profile": "observed_spread",
+          "latency": 0.25,
+          "before_pnl": -319.79796012640054,
+          "after_pnl": -316.11169999175036,
+          "pnl_change": 3.6862601346501833
+        },
+        {
+          "season": 508,
+          "profile": "observed_spread",
+          "latency": 1,
+          "before_pnl": -319.79796012640054,
+          "after_pnl": -316.11169999175036,
+          "pnl_change": 3.6862601346501833
+        },
+        {
+          "season": 508,
+          "profile": "observed_spread",
+          "latency": 3,
+          "before_pnl": -235.37578471503457,
+          "after_pnl": -235.37835848324903,
+          "pnl_change": -0.00257376821446087
+        },
+        {
+          "season": 508,
+          "profile": "observed_touch",
+          "latency": 0.25,
+          "before_pnl": -348.9397284730285,
+          "after_pnl": -345.2534683383783,
+          "pnl_change": 3.6862601346501833
+        },
+        {
+          "season": 508,
+          "profile": "observed_touch",
+          "latency": 1,
+          "before_pnl": -348.9397284730294,
+          "after_pnl": -345.2534683383783,
+          "pnl_change": 3.686260134651093
+        },
+        {
+          "season": 508,
+          "profile": "observed_touch",
+          "latency": 3,
+          "before_pnl": -294.5667591840547,
+          "after_pnl": -294.5693329522692,
+          "pnl_change": -0.00257376821446087
+        },
+        {
+          "season": 509,
+          "profile": "legacy",
+          "latency": 0.25,
+          "before_pnl": 2742.6535498181292,
+          "after_pnl": 2741.9125008670817,
+          "pnl_change": -0.74104895104756
+        },
+        {
+          "season": 509,
+          "profile": "legacy",
+          "latency": 1,
+          "before_pnl": 2742.6535498181292,
+          "after_pnl": 2741.9125008670817,
+          "pnl_change": -0.74104895104756
+        },
+        {
+          "season": 509,
+          "profile": "legacy",
+          "latency": 3,
+          "before_pnl": 1404.4647105346112,
+          "after_pnl": 1400.0508923527932,
+          "pnl_change": -4.413818181817987
+        },
+        {
+          "season": 509,
+          "profile": "observed_spread",
+          "latency": 0.25,
+          "before_pnl": 2677.1211692920206,
+          "after_pnl": 2682.614444652403,
+          "pnl_change": 5.49327536038254
+        },
+        {
+          "season": 509,
+          "profile": "observed_spread",
+          "latency": 1,
+          "before_pnl": 2677.1211692920206,
+          "after_pnl": 2682.614444652403,
+          "pnl_change": 5.49327536038254
+        },
+        {
+          "season": 509,
+          "profile": "observed_spread",
+          "latency": 3,
+          "before_pnl": 1468.5786567261766,
+          "after_pnl": 1459.1018226762098,
+          "pnl_change": -9.476834049966783
+        },
+        {
+          "season": 509,
+          "profile": "observed_touch",
+          "latency": 0.25,
+          "before_pnl": 2631.5007103265416,
+          "after_pnl": 2636.993985686924,
+          "pnl_change": 5.49327536038254
+        },
+        {
+          "season": 509,
+          "profile": "observed_touch",
+          "latency": 1,
+          "before_pnl": 2631.5007103265407,
+          "after_pnl": 2636.993985686923,
+          "pnl_change": 5.49327536038254
+        },
+        {
+          "season": 509,
+          "profile": "observed_touch",
+          "latency": 3,
+          "before_pnl": 1437.1396720243738,
+          "after_pnl": 1427.662837974407,
+          "pnl_change": -9.476834049966783
+        },
+        {
+          "season": 510,
+          "profile": "legacy",
+          "latency": 0.25,
+          "before_pnl": 1871.1430393521669,
+          "after_pnl": 1871.220048882612,
+          "pnl_change": 0.07700953044513881
+        },
+        {
+          "season": 510,
+          "profile": "legacy",
+          "latency": 1,
+          "before_pnl": 1871.1430393521669,
+          "after_pnl": 1871.220048882612,
+          "pnl_change": 0.07700953044513881
+        },
+        {
+          "season": 510,
+          "profile": "legacy",
+          "latency": 3,
+          "before_pnl": 1404.8766240161947,
+          "after_pnl": 1404.3066160826709,
+          "pnl_change": -0.5700079335238115
+        },
+        {
+          "season": 510,
+          "profile": "observed_spread",
+          "latency": 0.25,
+          "before_pnl": 1803.8355948644385,
+          "after_pnl": 1803.702203590643,
+          "pnl_change": -0.1333912737954961
+        },
+        {
+          "season": 510,
+          "profile": "observed_spread",
+          "latency": 1,
+          "before_pnl": 1803.8355948644385,
+          "after_pnl": 1803.702203590643,
+          "pnl_change": -0.1333912737954961
+        },
+        {
+          "season": 510,
+          "profile": "observed_spread",
+          "latency": 3,
+          "before_pnl": 1319.7325483621437,
+          "after_pnl": 1319.2871961168432,
+          "pnl_change": -0.44535224530045525
+        },
+        {
+          "season": 510,
+          "profile": "observed_touch",
+          "latency": 0.25,
+          "before_pnl": 1798.49680179615,
+          "after_pnl": 1798.3634105223546,
+          "pnl_change": -0.1333912737954961
+        },
+        {
+          "season": 510,
+          "profile": "observed_touch",
+          "latency": 1,
+          "before_pnl": 1798.49680179615,
+          "after_pnl": 1798.3634105223546,
+          "pnl_change": -0.1333912737954961
+        },
+        {
+          "season": 510,
+          "profile": "observed_touch",
+          "latency": 3,
+          "before_pnl": 1319.7325483621437,
+          "after_pnl": 1319.2871961168432,
+          "pnl_change": -0.44535224530045525
+        },
+        {
+          "season": 511,
+          "profile": "legacy",
+          "latency": 0.25,
+          "before_pnl": 1366.729574162262,
+          "after_pnl": 1379.0105002918153,
+          "pnl_change": 12.280926129553336
+        },
+        {
+          "season": 511,
+          "profile": "legacy",
+          "latency": 1,
+          "before_pnl": 1366.729574162262,
+          "after_pnl": 1379.0105002918153,
+          "pnl_change": 12.280926129553336
+        },
+        {
+          "season": 511,
+          "profile": "legacy",
+          "latency": 3,
+          "before_pnl": 863.9942385523827,
+          "after_pnl": 865.7773683069317,
+          "pnl_change": 1.7831297545490088
+        },
+        {
+          "season": 511,
+          "profile": "observed_spread",
+          "latency": 0.25,
+          "before_pnl": 1274.607734686566,
+          "after_pnl": 1312.467717557237,
+          "pnl_change": 37.85998287067105
+        },
+        {
+          "season": 511,
+          "profile": "observed_spread",
+          "latency": 1,
+          "before_pnl": 1274.607734686566,
+          "after_pnl": 1312.467717557237,
+          "pnl_change": 37.85998287067105
+        },
+        {
+          "season": 511,
+          "profile": "observed_spread",
+          "latency": 3,
+          "before_pnl": 777.4142225717233,
+          "after_pnl": 778.6303741007805,
+          "pnl_change": 1.2161515290572424
+        },
+        {
+          "season": 511,
+          "profile": "observed_touch",
+          "latency": 0.25,
+          "before_pnl": 1253.251616409998,
+          "after_pnl": 1291.111599280669,
+          "pnl_change": 37.85998287067105
+        },
+        {
+          "season": 511,
+          "profile": "observed_touch",
+          "latency": 1,
+          "before_pnl": 1253.251616409998,
+          "after_pnl": 1291.111599280669,
+          "pnl_change": 37.85998287067105
+        },
+        {
+          "season": 511,
+          "profile": "observed_touch",
+          "latency": 3,
+          "before_pnl": 755.2526141212993,
+          "after_pnl": 756.4687656503556,
+          "pnl_change": 1.216151529056333
+        },
+        {
+          "season": 512,
+          "profile": "legacy",
+          "latency": 0.25,
+          "before_pnl": 1875.2715684017796,
+          "after_pnl": 1875.3774309358753,
+          "pnl_change": 0.10586253409564961
+        },
+        {
+          "season": 512,
+          "profile": "legacy",
+          "latency": 1,
+          "before_pnl": 1875.2715684017796,
+          "after_pnl": 1875.3774309358753,
+          "pnl_change": 0.10586253409564961
+        },
+        {
+          "season": 512,
+          "profile": "legacy",
+          "latency": 3,
+          "before_pnl": 1537.1528732518502,
+          "after_pnl": 1537.6921901992675,
+          "pnl_change": 0.5393169474173192
+        },
+        {
+          "season": 512,
+          "profile": "observed_spread",
+          "latency": 0.25,
+          "before_pnl": 1810.0096663366119,
+          "after_pnl": 1815.3913031754298,
+          "pnl_change": 5.38163683881794
+        },
+        {
+          "season": 512,
+          "profile": "observed_spread",
+          "latency": 1,
+          "before_pnl": 1810.0096663366119,
+          "after_pnl": 1815.3913031754298,
+          "pnl_change": 5.38163683881794
+        },
+        {
+          "season": 512,
+          "profile": "observed_spread",
+          "latency": 3,
+          "before_pnl": 1508.5177757982412,
+          "after_pnl": 1513.7477596391561,
+          "pnl_change": 5.229983840914883
+        },
+        {
+          "season": 512,
+          "profile": "observed_touch",
+          "latency": 0.25,
+          "before_pnl": 1775.7650914994574,
+          "after_pnl": 1781.1467283382754,
+          "pnl_change": 5.38163683881794
+        },
+        {
+          "season": 512,
+          "profile": "observed_touch",
+          "latency": 1,
+          "before_pnl": 1775.7650914994574,
+          "after_pnl": 1781.1467283382754,
+          "pnl_change": 5.38163683881794
+        },
+        {
+          "season": 512,
+          "profile": "observed_touch",
+          "latency": 3,
+          "before_pnl": 1508.5177757982412,
+          "after_pnl": 1513.7477596391561,
+          "pnl_change": 5.229983840914883
+        },
+        {
+          "season": 513,
+          "profile": "legacy",
+          "latency": 0.25,
+          "before_pnl": 1087.2815745976532,
+          "after_pnl": 1087.8887019336817,
+          "pnl_change": 0.6071273360284977
+        },
+        {
+          "season": 513,
+          "profile": "legacy",
+          "latency": 1,
+          "before_pnl": 1084.2328110892431,
+          "after_pnl": 1084.8399384252716,
+          "pnl_change": 0.6071273360284977
+        },
+        {
+          "season": 513,
+          "profile": "legacy",
+          "latency": 3,
+          "before_pnl": 238.3968429228953,
+          "after_pnl": 238.58161655915137,
+          "pnl_change": 0.18477363625606813
+        },
+        {
+          "season": 513,
+          "profile": "observed_spread",
+          "latency": 0.25,
+          "before_pnl": 968.428992027938,
+          "after_pnl": 979.8049872613456,
+          "pnl_change": 11.375995233407593
+        },
+        {
+          "season": 513,
+          "profile": "observed_spread",
+          "latency": 1,
+          "before_pnl": 968.428992027938,
+          "after_pnl": 979.8049872613456,
+          "pnl_change": 11.375995233407593
+        },
+        {
+          "season": 513,
+          "profile": "observed_spread",
+          "latency": 3,
+          "before_pnl": 125.07953177419222,
+          "after_pnl": 145.09155968607047,
+          "pnl_change": 20.01202791187825
+        },
+        {
+          "season": 513,
+          "profile": "observed_touch",
+          "latency": 0.25,
+          "before_pnl": 679.7204924129073,
+          "after_pnl": 691.0964876463167,
+          "pnl_change": 11.375995233409412
+        },
+        {
+          "season": 513,
+          "profile": "observed_touch",
+          "latency": 1,
+          "before_pnl": 679.7204924129073,
+          "after_pnl": 691.0964876463167,
+          "pnl_change": 11.375995233409412
+        },
+        {
+          "season": 513,
+          "profile": "observed_touch",
+          "latency": 3,
+          "before_pnl": 114.2854182589399,
+          "after_pnl": 134.29744617081633,
+          "pnl_change": 20.01202791187643
+        },
+        {
+          "season": 514,
+          "profile": "legacy",
+          "latency": 0.25,
+          "before_pnl": 1969.9399321610263,
+          "after_pnl": 1969.9399321610263,
+          "pnl_change": 0
+        },
+        {
+          "season": 514,
+          "profile": "legacy",
+          "latency": 1,
+          "before_pnl": 1969.9399321610263,
+          "after_pnl": 1969.9399321610263,
+          "pnl_change": 0
+        },
+        {
+          "season": 514,
+          "profile": "legacy",
+          "latency": 3,
+          "before_pnl": 1525.5579291305507,
+          "after_pnl": 1525.5579291305507,
+          "pnl_change": 0
+        },
+        {
+          "season": 514,
+          "profile": "observed_spread",
+          "latency": 0.25,
+          "before_pnl": 1914.9086278171262,
+          "after_pnl": 1918.15753789887,
+          "pnl_change": 3.2489100817438157
+        },
+        {
+          "season": 514,
+          "profile": "observed_spread",
+          "latency": 1,
+          "before_pnl": 1914.9086278171262,
+          "after_pnl": 1918.15753789887,
+          "pnl_change": 3.2489100817438157
+        },
+        {
+          "season": 514,
+          "profile": "observed_spread",
+          "latency": 3,
+          "before_pnl": 1452.5997167127146,
+          "after_pnl": 1448.8020327890092,
+          "pnl_change": -3.7976839237053355
+        },
+        {
+          "season": 514,
+          "profile": "observed_touch",
+          "latency": 0.25,
+          "before_pnl": 1875.6553844346436,
+          "after_pnl": 1878.9042945163874,
+          "pnl_change": 3.2489100817438157
+        },
+        {
+          "season": 514,
+          "profile": "observed_touch",
+          "latency": 1,
+          "before_pnl": 1875.6553844346436,
+          "after_pnl": 1878.9042945163874,
+          "pnl_change": 3.2489100817438157
+        },
+        {
+          "season": 514,
+          "profile": "observed_touch",
+          "latency": 3,
+          "before_pnl": 1452.5997167127146,
+          "after_pnl": 1448.8020327890092,
+          "pnl_change": -3.7976839237053355
+        },
+        {
+          "season": 515,
+          "profile": "legacy",
+          "latency": 0.25,
+          "before_pnl": 2336.6357612231827,
+          "after_pnl": 2335.735761223183,
+          "pnl_change": -0.8999999999996362
+        },
+        {
+          "season": 515,
+          "profile": "legacy",
+          "latency": 1,
+          "before_pnl": 2336.6357612231827,
+          "after_pnl": 2335.735761223183,
+          "pnl_change": -0.8999999999996362
+        },
+        {
+          "season": 515,
+          "profile": "legacy",
+          "latency": 3,
+          "before_pnl": 2107.231134391995,
+          "after_pnl": 2107.231134391995,
+          "pnl_change": 0
+        },
+        {
+          "season": 515,
+          "profile": "observed_spread",
+          "latency": 0.25,
+          "before_pnl": 2038.3588107967303,
+          "after_pnl": 1990.2348325950957,
+          "pnl_change": -48.1239782016346
+        },
+        {
+          "season": 515,
+          "profile": "observed_spread",
+          "latency": 1,
+          "before_pnl": 2038.3588107967303,
+          "after_pnl": 1990.2348325950957,
+          "pnl_change": -48.1239782016346
+        },
+        {
+          "season": 515,
+          "profile": "observed_spread",
+          "latency": 3,
+          "before_pnl": 2095.3355020630806,
+          "after_pnl": 1926.1019511195843,
+          "pnl_change": -169.2335509434963
+        },
+        {
+          "season": 515,
+          "profile": "observed_touch",
+          "latency": 0.25,
+          "before_pnl": 2023.2404561850713,
+          "after_pnl": 1860.9838621796216,
+          "pnl_change": -162.25659400544964
+        },
+        {
+          "season": 515,
+          "profile": "observed_touch",
+          "latency": 1,
+          "before_pnl": 2023.2404561850713,
+          "after_pnl": 1860.9838621796216,
+          "pnl_change": -162.25659400544964
+        },
+        {
+          "season": 515,
+          "profile": "observed_touch",
+          "latency": 3,
+          "before_pnl": 2095.3355020630806,
+          "after_pnl": 1926.1019511195843,
+          "pnl_change": -169.2335509434963
+        },
+        {
+          "season": 516,
+          "profile": "legacy",
+          "latency": 0.25,
+          "before_pnl": 932.487590935506,
+          "after_pnl": 933.6902120634309,
+          "pnl_change": 1.2026211279248855
+        },
+        {
+          "season": 516,
+          "profile": "legacy",
+          "latency": 1,
+          "before_pnl": 932.487590935506,
+          "after_pnl": 933.6902120634309,
+          "pnl_change": 1.2026211279248855
+        },
+        {
+          "season": 516,
+          "profile": "legacy",
+          "latency": 3,
+          "before_pnl": 740.4863405347741,
+          "after_pnl": 735.6845931161566,
+          "pnl_change": -4.801747418617424
+        },
+        {
+          "season": 516,
+          "profile": "observed_spread",
+          "latency": 0.25,
+          "before_pnl": 941.7873551297071,
+          "after_pnl": 942.9910323523222,
+          "pnl_change": 1.2036772226151697
+        },
+        {
+          "season": 516,
+          "profile": "observed_spread",
+          "latency": 1,
+          "before_pnl": 941.7873551297071,
+          "after_pnl": 942.9910323523222,
+          "pnl_change": 1.2036772226151697
+        },
+        {
+          "season": 516,
+          "profile": "observed_spread",
+          "latency": 3,
+          "before_pnl": 755.0644860032494,
+          "after_pnl": 750.2620345215057,
+          "pnl_change": -4.802451481743674
+        },
+        {
+          "season": 516,
+          "profile": "observed_touch",
+          "latency": 0.25,
+          "before_pnl": 941.7873551297071,
+          "after_pnl": 942.9910323523222,
+          "pnl_change": 1.2036772226151697
+        },
+        {
+          "season": 516,
+          "profile": "observed_touch",
+          "latency": 1,
+          "before_pnl": 941.7873551297071,
+          "after_pnl": 942.9910323523222,
+          "pnl_change": 1.2036772226151697
+        },
+        {
+          "season": 516,
+          "profile": "observed_touch",
+          "latency": 3,
+          "before_pnl": 755.0644860032494,
+          "after_pnl": 750.2620345215057,
+          "pnl_change": -4.802451481743674
+        },
+        {
+          "season": 517,
+          "profile": "legacy",
+          "latency": 0.25,
+          "before_pnl": 1258.8452542169389,
+          "after_pnl": 1251.6093534703077,
+          "pnl_change": -7.23590074663116
+        },
+        {
+          "season": 517,
+          "profile": "legacy",
+          "latency": 1,
+          "before_pnl": 1258.8452542169389,
+          "after_pnl": 1251.6093534703077,
+          "pnl_change": -7.23590074663116
+        },
+        {
+          "season": 517,
+          "profile": "legacy",
+          "latency": 3,
+          "before_pnl": 950.5353533861189,
+          "after_pnl": 943.6620883664664,
+          "pnl_change": -6.873265019652536
+        },
+        {
+          "season": 517,
+          "profile": "observed_spread",
+          "latency": 0.25,
+          "before_pnl": 1165.2362195836558,
+          "after_pnl": 1158.6952719945584,
+          "pnl_change": -6.540947589097414
+        },
+        {
+          "season": 517,
+          "profile": "observed_spread",
+          "latency": 1,
+          "before_pnl": 1165.2362195836558,
+          "after_pnl": 1158.6952719945584,
+          "pnl_change": -6.540947589097414
+        },
+        {
+          "season": 517,
+          "profile": "observed_spread",
+          "latency": 3,
+          "before_pnl": 877.9956505859286,
+          "after_pnl": 871.5030499199752,
+          "pnl_change": -6.492600665953432
+        },
+        {
+          "season": 517,
+          "profile": "observed_touch",
+          "latency": 0.25,
+          "before_pnl": 1118.9058461229206,
+          "after_pnl": 1112.3648985338214,
+          "pnl_change": -6.540947589099233
+        },
+        {
+          "season": 517,
+          "profile": "observed_touch",
+          "latency": 1,
+          "before_pnl": 1118.9058461229206,
+          "after_pnl": 1112.3648985338214,
+          "pnl_change": -6.540947589099233
+        },
+        {
+          "season": 517,
+          "profile": "observed_touch",
+          "latency": 3,
+          "before_pnl": 877.9956505859286,
+          "after_pnl": 871.5030499199752,
+          "pnl_change": -6.492600665953432
+        },
+        {
+          "season": 518,
+          "profile": "legacy",
+          "latency": 0.25,
+          "before_pnl": 989.160909990168,
+          "after_pnl": 989.160909990168,
+          "pnl_change": 0
+        },
+        {
+          "season": 518,
+          "profile": "legacy",
+          "latency": 1,
+          "before_pnl": 989.160909990168,
+          "after_pnl": 989.160909990168,
+          "pnl_change": 0
+        },
+        {
+          "season": 518,
+          "profile": "legacy",
+          "latency": 3,
+          "before_pnl": 925.2530513658621,
+          "after_pnl": 925.2530513658621,
+          "pnl_change": 0
+        },
+        {
+          "season": 518,
+          "profile": "observed_spread",
+          "latency": 0.25,
+          "before_pnl": 959.8973587596092,
+          "after_pnl": 959.8973587596092,
+          "pnl_change": 0
+        },
+        {
+          "season": 518,
+          "profile": "observed_spread",
+          "latency": 1,
+          "before_pnl": 959.8973587596092,
+          "after_pnl": 959.8973587596092,
+          "pnl_change": 0
+        },
+        {
+          "season": 518,
+          "profile": "observed_spread",
+          "latency": 3,
+          "before_pnl": 882.0544464081104,
+          "after_pnl": 882.0544464081104,
+          "pnl_change": 0
+        },
+        {
+          "season": 518,
+          "profile": "observed_touch",
+          "latency": 0.25,
+          "before_pnl": 959.8973587596092,
+          "after_pnl": 959.8973587596092,
+          "pnl_change": 0
+        },
+        {
+          "season": 518,
+          "profile": "observed_touch",
+          "latency": 1,
+          "before_pnl": 959.8973587596092,
+          "after_pnl": 959.8973587596092,
+          "pnl_change": 0
+        },
+        {
+          "season": 518,
+          "profile": "observed_touch",
+          "latency": 3,
+          "before_pnl": 882.0544464081104,
+          "after_pnl": 882.0544464081104,
+          "pnl_change": 0
+        },
+        {
+          "season": 519,
+          "profile": "legacy",
+          "latency": 0.25,
+          "before_pnl": 1844.567241825722,
+          "after_pnl": 1841.612370950929,
+          "pnl_change": -2.9548708747929595
+        },
+        {
+          "season": 519,
+          "profile": "legacy",
+          "latency": 1,
+          "before_pnl": 1844.567241825722,
+          "after_pnl": 1841.612370950929,
+          "pnl_change": -2.9548708747929595
+        },
+        {
+          "season": 519,
+          "profile": "legacy",
+          "latency": 3,
+          "before_pnl": 1378.488500924917,
+          "after_pnl": 1375.9671454863594,
+          "pnl_change": -2.5213554385575208
+        },
+        {
+          "season": 519,
+          "profile": "observed_spread",
+          "latency": 0.25,
+          "before_pnl": 1820.786675498381,
+          "after_pnl": 1814.228924754389,
+          "pnl_change": -6.557750743992074
+        },
+        {
+          "season": 519,
+          "profile": "observed_spread",
+          "latency": 1,
+          "before_pnl": 1820.786675498381,
+          "after_pnl": 1814.228924754389,
+          "pnl_change": -6.557750743992074
+        },
+        {
+          "season": 519,
+          "profile": "observed_spread",
+          "latency": 3,
+          "before_pnl": 1283.613395356791,
+          "after_pnl": 1283.8277302405224,
+          "pnl_change": 0.21433488373145337
+        },
+        {
+          "season": 519,
+          "profile": "observed_touch",
+          "latency": 0.25,
+          "before_pnl": 1776.4346050727459,
+          "after_pnl": 1769.981159505866,
+          "pnl_change": -6.453445566879964
+        },
+        {
+          "season": 519,
+          "profile": "observed_touch",
+          "latency": 1,
+          "before_pnl": 1776.4346050727459,
+          "after_pnl": 1769.981159505866,
+          "pnl_change": -6.453445566879964
+        },
+        {
+          "season": 519,
+          "profile": "observed_touch",
+          "latency": 3,
+          "before_pnl": 1283.613395356791,
+          "after_pnl": 1283.8277302405224,
+          "pnl_change": 0.21433488373145337
+        },
+        {
+          "season": 520,
+          "profile": "legacy",
+          "latency": 0.25,
+          "before_pnl": -563.1968892855423,
+          "after_pnl": -563.8623062158215,
+          "pnl_change": -0.665416930279207
+        },
+        {
+          "season": 520,
+          "profile": "legacy",
+          "latency": 1,
+          "before_pnl": -563.1968892855423,
+          "after_pnl": -563.8623062158215,
+          "pnl_change": -0.665416930279207
+        },
+        {
+          "season": 520,
+          "profile": "legacy",
+          "latency": 3,
+          "before_pnl": -964.4868954758132,
+          "after_pnl": -964.4020921232756,
+          "pnl_change": 0.0848033525376195
+        },
+        {
+          "season": 520,
+          "profile": "observed_spread",
+          "latency": 0.25,
+          "before_pnl": -700.4591679659286,
+          "after_pnl": -703.0406082627258,
+          "pnl_change": -2.5814402967971546
+        },
+        {
+          "season": 520,
+          "profile": "observed_spread",
+          "latency": 1,
+          "before_pnl": -700.4591679659286,
+          "after_pnl": -703.0406082627258,
+          "pnl_change": -2.5814402967971546
+        },
+        {
+          "season": 520,
+          "profile": "observed_spread",
+          "latency": 3,
+          "before_pnl": -1097.7381242238569,
+          "after_pnl": -1097.4065275935407,
+          "pnl_change": 0.33159663031619857
+        },
+        {
+          "season": 520,
+          "profile": "observed_touch",
+          "latency": 0.25,
+          "before_pnl": -700.4591679659286,
+          "after_pnl": -703.0406082627258,
+          "pnl_change": -2.5814402967971546
+        },
+        {
+          "season": 520,
+          "profile": "observed_touch",
+          "latency": 1,
+          "before_pnl": -700.4591679659286,
+          "after_pnl": -703.0406082627258,
+          "pnl_change": -2.5814402967971546
+        },
+        {
+          "season": 520,
+          "profile": "observed_touch",
+          "latency": 3,
+          "before_pnl": -1097.7381242238569,
+          "after_pnl": -1097.4065275935407,
+          "pnl_change": 0.33159663031619857
+        },
+        {
+          "season": 521,
+          "profile": "legacy",
+          "latency": 0.25,
+          "before_pnl": 1328.552976759359,
+          "after_pnl": 1328.552976759359,
+          "pnl_change": 0
+        },
+        {
+          "season": 521,
+          "profile": "legacy",
+          "latency": 1,
+          "before_pnl": 1328.552976759359,
+          "after_pnl": 1328.552976759359,
+          "pnl_change": 0
+        },
+        {
+          "season": 521,
+          "profile": "legacy",
+          "latency": 3,
+          "before_pnl": 1023.9415849606758,
+          "after_pnl": 1023.9415849606758,
+          "pnl_change": 0
+        },
+        {
+          "season": 521,
+          "profile": "observed_spread",
+          "latency": 0.25,
+          "before_pnl": 1229.1816386274375,
+          "after_pnl": 1229.1816386274375,
+          "pnl_change": 0
+        },
+        {
+          "season": 521,
+          "profile": "observed_spread",
+          "latency": 1,
+          "before_pnl": 1229.1816386274375,
+          "after_pnl": 1229.1816386274375,
+          "pnl_change": 0
+        },
+        {
+          "season": 521,
+          "profile": "observed_spread",
+          "latency": 3,
+          "before_pnl": 950.0088821099198,
+          "after_pnl": 948.0365660336256,
+          "pnl_change": -1.9723160762941916
+        },
+        {
+          "season": 521,
+          "profile": "observed_touch",
+          "latency": 0.25,
+          "before_pnl": 1223.2430761546264,
+          "after_pnl": 1223.2430761546264,
+          "pnl_change": 0
+        },
+        {
+          "season": 521,
+          "profile": "observed_touch",
+          "latency": 1,
+          "before_pnl": 1223.2430761546264,
+          "after_pnl": 1223.2430761546264,
+          "pnl_change": 0
+        },
+        {
+          "season": 521,
+          "profile": "observed_touch",
+          "latency": 3,
+          "before_pnl": 941.3006439520232,
+          "after_pnl": 939.328327875729,
+          "pnl_change": -1.9723160762941916
+        },
+        {
+          "season": 522,
+          "profile": "legacy",
+          "latency": 0.25,
+          "before_pnl": 3188.127968660405,
+          "after_pnl": 3188.127968660405,
+          "pnl_change": 0
+        },
+        {
+          "season": 522,
+          "profile": "legacy",
+          "latency": 1,
+          "before_pnl": 3188.127968660405,
+          "after_pnl": 3188.127968660405,
+          "pnl_change": 0
+        },
+        {
+          "season": 522,
+          "profile": "legacy",
+          "latency": 3,
+          "before_pnl": 2073.536249326845,
+          "after_pnl": 2100.323084909328,
+          "pnl_change": 26.786835582483036
+        },
+        {
+          "season": 522,
+          "profile": "observed_spread",
+          "latency": 0.25,
+          "before_pnl": 3072.345835503027,
+          "after_pnl": 3072.345835503027,
+          "pnl_change": 0
+        },
+        {
+          "season": 522,
+          "profile": "observed_spread",
+          "latency": 1,
+          "before_pnl": 3072.345835503027,
+          "after_pnl": 3072.345835503027,
+          "pnl_change": 0
+        },
+        {
+          "season": 522,
+          "profile": "observed_spread",
+          "latency": 3,
+          "before_pnl": 1990.6364512529817,
+          "after_pnl": 2019.0345458979082,
+          "pnl_change": 28.39809464492646
+        },
+        {
+          "season": 522,
+          "profile": "observed_touch",
+          "latency": 0.25,
+          "before_pnl": 2813.960068871549,
+          "after_pnl": 2815.791248283678,
+          "pnl_change": 1.8311794121291314
+        },
+        {
+          "season": 522,
+          "profile": "observed_touch",
+          "latency": 1,
+          "before_pnl": 2813.960068871549,
+          "after_pnl": 2815.791248283678,
+          "pnl_change": 1.8311794121291314
+        },
+        {
+          "season": 522,
+          "profile": "observed_touch",
+          "latency": 3,
+          "before_pnl": 1834.9884502201676,
+          "after_pnl": 1864.7300053555573,
+          "pnl_change": 29.741555135389717
+        },
+        {
+          "season": 523,
+          "profile": "legacy",
+          "latency": 0.25,
+          "before_pnl": 1393.1739147056269,
+          "after_pnl": 1393.2763102537238,
+          "pnl_change": 0.10239554809686524
+        },
+        {
+          "season": 523,
+          "profile": "legacy",
+          "latency": 1,
+          "before_pnl": 1393.1739147056269,
+          "after_pnl": 1393.2763102537238,
+          "pnl_change": 0.10239554809686524
+        },
+        {
+          "season": 523,
+          "profile": "legacy",
+          "latency": 3,
+          "before_pnl": 1015.5328287158884,
+          "after_pnl": 1015.5753037622624,
+          "pnl_change": 0.0424750463739656
+        },
+        {
+          "season": 523,
+          "profile": "observed_spread",
+          "latency": 0.25,
+          "before_pnl": 1303.98439645405,
+          "after_pnl": 1304.8403409320485,
+          "pnl_change": 0.8559444779984915
+        },
+        {
+          "season": 523,
+          "profile": "observed_spread",
+          "latency": 1,
+          "before_pnl": 1303.98439645405,
+          "after_pnl": 1304.8403409320485,
+          "pnl_change": 0.8559444779984915
+        },
+        {
+          "season": 523,
+          "profile": "observed_spread",
+          "latency": 3,
+          "before_pnl": 913.5465211480832,
+          "after_pnl": 924.7500391426889,
+          "pnl_change": 11.203517994605704
+        },
+        {
+          "season": 523,
+          "profile": "observed_touch",
+          "latency": 0.25,
+          "before_pnl": 1291.1281974830358,
+          "after_pnl": 1291.9841419610343,
+          "pnl_change": 0.8559444779984915
+        },
+        {
+          "season": 523,
+          "profile": "observed_touch",
+          "latency": 1,
+          "before_pnl": 1291.1281974830358,
+          "after_pnl": 1291.9841419610343,
+          "pnl_change": 0.8559444779984915
+        },
+        {
+          "season": 523,
+          "profile": "observed_touch",
+          "latency": 3,
+          "before_pnl": 913.5465211480832,
+          "after_pnl": 924.7500391426889,
+          "pnl_change": 11.203517994605704
+        },
+        {
+          "season": 524,
+          "profile": "legacy",
+          "latency": 0.25,
+          "before_pnl": 169.59212305051187,
+          "after_pnl": 169.59212305051187,
+          "pnl_change": 0
+        },
+        {
+          "season": 524,
+          "profile": "legacy",
+          "latency": 1,
+          "before_pnl": 169.59212305051187,
+          "after_pnl": 169.59212305051187,
+          "pnl_change": 0
+        },
+        {
+          "season": 524,
+          "profile": "legacy",
+          "latency": 3,
+          "before_pnl": 76.82834594054657,
+          "after_pnl": 76.82834594054657,
+          "pnl_change": 0
+        },
+        {
+          "season": 524,
+          "profile": "observed_spread",
+          "latency": 0.25,
+          "before_pnl": 94.4627595072634,
+          "after_pnl": 95.31632898955286,
+          "pnl_change": 0.8535694822894584
+        },
+        {
+          "season": 524,
+          "profile": "observed_spread",
+          "latency": 1,
+          "before_pnl": 94.4627595072634,
+          "after_pnl": 95.31632898955286,
+          "pnl_change": 0.8535694822894584
+        },
+        {
+          "season": 524,
+          "profile": "observed_spread",
+          "latency": 3,
+          "before_pnl": 8.787575583903163,
+          "after_pnl": -94.77760152781411,
+          "pnl_change": -103.56517711171728
+        },
+        {
+          "season": 524,
+          "profile": "observed_touch",
+          "latency": 0.25,
+          "before_pnl": 94.4627595072634,
+          "after_pnl": 95.31632898955286,
+          "pnl_change": 0.8535694822894584
+        },
+        {
+          "season": 524,
+          "profile": "observed_touch",
+          "latency": 1,
+          "before_pnl": 94.4627595072634,
+          "after_pnl": 95.31632898955286,
+          "pnl_change": 0.8535694822894584
+        },
+        {
+          "season": 524,
+          "profile": "observed_touch",
+          "latency": 3,
+          "before_pnl": 8.787575583903163,
+          "after_pnl": -94.77760152781411,
+          "pnl_change": -103.56517711171728
+        },
+        {
+          "season": 525,
+          "profile": "legacy",
+          "latency": 0.25,
+          "before_pnl": 2751.460951564701,
+          "after_pnl": 2751.89322079547,
+          "pnl_change": 0.4322692307687248
+        },
+        {
+          "season": 525,
+          "profile": "legacy",
+          "latency": 1,
+          "before_pnl": 2751.460951564701,
+          "after_pnl": 2751.89322079547,
+          "pnl_change": 0.4322692307687248
+        },
+        {
+          "season": 525,
+          "profile": "legacy",
+          "latency": 3,
+          "before_pnl": 2087.7128543469607,
+          "after_pnl": 2088.1451235777295,
+          "pnl_change": 0.4322692307687248
+        },
+        {
+          "season": 525,
+          "profile": "observed_spread",
+          "latency": 0.25,
+          "before_pnl": 2656.9624439927793,
+          "after_pnl": 2641.795328668907,
+          "pnl_change": -15.167115323872167
+        },
+        {
+          "season": 525,
+          "profile": "observed_spread",
+          "latency": 1,
+          "before_pnl": 2656.9624439927793,
+          "after_pnl": 2641.795328668907,
+          "pnl_change": -15.167115323872167
+        },
+        {
+          "season": 525,
+          "profile": "observed_spread",
+          "latency": 3,
+          "before_pnl": 1825.7421668248842,
+          "after_pnl": 1825.0435383103684,
+          "pnl_change": -0.6986285145158035
+        },
+        {
+          "season": 525,
+          "profile": "observed_touch",
+          "latency": 0.25,
+          "before_pnl": 2533.737862907955,
+          "after_pnl": 2518.5707475840827,
+          "pnl_change": -15.167115323872167
+        },
+        {
+          "season": 525,
+          "profile": "observed_touch",
+          "latency": 1,
+          "before_pnl": 2532.609928351112,
+          "after_pnl": 2517.44281302724,
+          "pnl_change": -15.167115323872167
+        },
+        {
+          "season": 525,
+          "profile": "observed_touch",
+          "latency": 3,
+          "before_pnl": 1773.1551217299009,
+          "after_pnl": 1772.4564932153842,
+          "pnl_change": -0.698628514516713
+        }
+      ]
+    },
+    "completed": {
+      "summaries": [
+        {
+          "profile": "legacy",
+          "latency": 0.25,
+          "scenarios": 1,
+          "mean_change": -0.049999999999272404,
+          "improved": 0,
+          "declined": 1,
+          "unchanged": 0,
+          "before_losses": 0,
+          "after_losses": 0,
+          "best_change": -0.049999999999272404,
+          "worst_change": -0.049999999999272404
+        },
+        {
+          "profile": "legacy",
+          "latency": 1,
+          "scenarios": 1,
+          "mean_change": -0.049999999999272404,
+          "improved": 0,
+          "declined": 1,
+          "unchanged": 0,
+          "before_losses": 0,
+          "after_losses": 0,
+          "best_change": -0.049999999999272404,
+          "worst_change": -0.049999999999272404
+        },
+        {
+          "profile": "legacy",
+          "latency": 3,
+          "scenarios": 1,
+          "mean_change": -0.1101601800401113,
+          "improved": 0,
+          "declined": 1,
+          "unchanged": 0,
+          "before_losses": 0,
+          "after_losses": 0,
+          "best_change": -0.1101601800401113,
+          "worst_change": -0.1101601800401113
+        },
+        {
+          "profile": "observed_spread",
+          "latency": 0.25,
+          "scenarios": 1,
+          "mean_change": -6.3499999999989996,
+          "improved": 0,
+          "declined": 1,
+          "unchanged": 0,
+          "before_losses": 0,
+          "after_losses": 0,
+          "best_change": -6.3499999999989996,
+          "worst_change": -6.3499999999989996
+        },
+        {
+          "profile": "observed_spread",
+          "latency": 1,
+          "scenarios": 1,
+          "mean_change": -6.3499999999989996,
+          "improved": 0,
+          "declined": 1,
+          "unchanged": 0,
+          "before_losses": 0,
+          "after_losses": 0,
+          "best_change": -6.3499999999989996,
+          "worst_change": -6.3499999999989996
+        },
+        {
+          "profile": "observed_spread",
+          "latency": 3,
+          "scenarios": 1,
+          "mean_change": -8.569407947670697,
+          "improved": 0,
+          "declined": 1,
+          "unchanged": 0,
+          "before_losses": 0,
+          "after_losses": 0,
+          "best_change": -8.569407947670697,
+          "worst_change": -8.569407947670697
+        },
+        {
+          "profile": "observed_touch",
+          "latency": 0.25,
+          "scenarios": 1,
+          "mean_change": -6.3499999999989996,
+          "improved": 0,
+          "declined": 1,
+          "unchanged": 0,
+          "before_losses": 0,
+          "after_losses": 0,
+          "best_change": -6.3499999999989996,
+          "worst_change": -6.3499999999989996
+        },
+        {
+          "profile": "observed_touch",
+          "latency": 1,
+          "scenarios": 1,
+          "mean_change": -6.3499999999989996,
+          "improved": 0,
+          "declined": 1,
+          "unchanged": 0,
+          "before_losses": 0,
+          "after_losses": 0,
+          "best_change": -6.3499999999989996,
+          "worst_change": -6.3499999999989996
+        },
+        {
+          "profile": "observed_touch",
+          "latency": 3,
+          "scenarios": 1,
+          "mean_change": -8.569407947670697,
+          "improved": 0,
+          "declined": 1,
+          "unchanged": 0,
+          "before_losses": 0,
+          "after_losses": 0,
+          "best_change": -8.569407947670697,
+          "worst_change": -8.569407947670697
+        }
+      ],
+      "pairs": [
+        {
+          "season": 241,
+          "profile": "legacy",
+          "latency": 0.25,
+          "before_pnl": 1628.9400020072658,
+          "after_pnl": 1628.8900020072665,
+          "pnl_change": -0.049999999999272404
+        },
+        {
+          "season": 241,
+          "profile": "legacy",
+          "latency": 1,
+          "before_pnl": 1628.9400020072658,
+          "after_pnl": 1628.8900020072665,
+          "pnl_change": -0.049999999999272404
+        },
+        {
+          "season": 241,
+          "profile": "legacy",
+          "latency": 3,
+          "before_pnl": 1441.5070935846825,
+          "after_pnl": 1441.3969334046424,
+          "pnl_change": -0.1101601800401113
+        },
+        {
+          "season": 241,
+          "profile": "observed_spread",
+          "latency": 0.25,
+          "before_pnl": 1564.0366274940918,
+          "after_pnl": 1557.6866274940928,
+          "pnl_change": -6.3499999999989996
+        },
+        {
+          "season": 241,
+          "profile": "observed_spread",
+          "latency": 1,
+          "before_pnl": 1564.0366274940918,
+          "after_pnl": 1557.6866274940928,
+          "pnl_change": -6.3499999999989996
+        },
+        {
+          "season": 241,
+          "profile": "observed_spread",
+          "latency": 3,
+          "before_pnl": 1382.1911320287518,
+          "after_pnl": 1373.621724081081,
+          "pnl_change": -8.569407947670697
+        },
+        {
+          "season": 241,
+          "profile": "observed_touch",
+          "latency": 0.25,
+          "before_pnl": 1564.0366274940918,
+          "after_pnl": 1557.6866274940928,
+          "pnl_change": -6.3499999999989996
+        },
+        {
+          "season": 241,
+          "profile": "observed_touch",
+          "latency": 1,
+          "before_pnl": 1564.0366274940918,
+          "after_pnl": 1557.6866274940928,
+          "pnl_change": -6.3499999999989996
+        },
+        {
+          "season": 241,
+          "profile": "observed_touch",
+          "latency": 3,
+          "before_pnl": 1382.1911320287518,
+          "after_pnl": 1373.621724081081,
+          "pnl_change": -8.569407947670697
+        }
+      ]
+    }
+  }
+}
