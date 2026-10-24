@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "CTC Derivatives Overlay",
   "version": "1.0.0",
-  "description": "Read-only assistant overlay for the CTC 2026 Derivatives case. Observes the page; never submits orders.",
+  "description": "CTC 2026 Derivatives assistant with pricing, form prefill and optional armed order submission.",
   "permissions": ["storage"],
   "content_scripts": [
     {

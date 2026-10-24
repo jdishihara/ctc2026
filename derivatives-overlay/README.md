@@ -2,7 +2,7 @@
 
 A Chrome extension (Manifest V3) that helps a human trader in the Derivatives case. It watches the exchange page,
 prices all 12 options with Black-Scholes at the spot and vol you confirm, ranks the mispricings, and can prefill the
-exchange's order form. **You always click Buy/Sell yourself.**
+exchange's order form. **Order submission is manual by default; optional auto-submit can click the order form when armed.**
 
 ## Safety model
 
@@ -31,22 +31,31 @@ npm run build
 ```
 
 Then in Chrome:
-1. Open `chrome://extensions` and turn on **Developer mode**.
-2. Click **Load unpacked** and choose `derivatives-overlay/dist`.
-3. **Hard-reload the exchange tab.** The hooks are injected at `document_start`, so a tab opened before the install
+1. Before opening or reloading the live exchange, disable/remove older copies of this overlay, including any old dev
+   build. Saved `auto.submit` settings survive extension/page reloads. If a production copy was previously armed,
+   disarm it in its Config tab first; if you cannot establish its saved state without opening the live page, remove
+   that extension and install a fresh copy (removal clears its saved configuration).
+2. Open `chrome://extensions` and turn on **Developer mode**.
+3. Click **Load unpacked** and choose `derivatives-overlay/dist`.
+4. **Hard-reload the exchange tab.** The hooks are injected at `document_start`, so a tab opened before the install
    won't have them.
+5. Before the manual dry run, verify Config → **Auto-submit** is unchecked and the header shows **arm auto**,
+   with neither **AUTO ON** nor **AUTO PAUSED**. Pausing with `Alt+P` is temporary; disarm with the Config checkbox
+   to save the off state.
 
 `npm run package` also writes `derivatives-overlay.zip` (a zip of `dist/`) if a teammate needs a copy.
 
 ## Practice against the mock exchange
 
 ```bash
-npm run build:dev          # dist-dev/ also matches http://localhost:5317
+npm run build:dev          # dist-dev/ matches only http://localhost:5317
 npm run mock               # http://localhost:5317/trading
 ```
 
-Load `dist-dev` as an unpacked extension (you can keep both builds loaded), then open
-`http://localhost:5317/trading`.
+Load `dist-dev` as an unpacked extension, then open `http://localhost:5317/trading`. This build injects only into the
+localhost mock; `dist` injects only into Cornell. Disable/remove older dev extensions before competition and load
+one production copy. Each extension remembers its own auto-submit setting; use the install checklist above before
+the live manual dry run.
 
 Mock options:
 
@@ -162,6 +171,7 @@ Hurricane and Mario cases, where the overlay stays a small "Overlay: capture onl
 npm run typecheck          # tsc --noEmit (strict)
 npm test                   # unit + integration (Vitest), then the clock tests under TZ=UTC and America/New_York
 npm run test:e2e           # builds dist-dev, starts the mock, runs Playwright with the extension loaded
+npm run test:manifests     # builds both variants and checks origin isolation and submission descriptions
 npm run verify-isolation   # nothing outside derivatives-overlay/ changed
 ```
 

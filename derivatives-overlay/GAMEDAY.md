@@ -1,7 +1,12 @@
 # Game day: Derivatives (Sat Oct 24)
 
 ## Before the case opens
+- [ ] Before opening/reloading the live page, disable/remove older dev builds and duplicate overlays. Only one
+      production copy should be enabled. Follow the [install checklist](README.md#install-competition-build) to
+      clear or disarm any previously saved auto-submit setting; reloading does not clear it.
 - [ ] Load the **prod** build (`dist/`) in `chrome://extensions` and **hard-reload** the exchange tab.
+- [ ] Config → **Auto-submit** is unchecked; header says **arm auto**, with no **AUTO ON** or **AUTO PAUSED**.
+      `Alt+P` only pauses; use **disarm** or the Config checkbox to save auto-submit off before the manual dry run.
 - [ ] Open the Derivatives page early. **Capture** tab: `ws:quote` is counting up for the 12 option symbols, and
       `http:GET /api/v1/competitions/current` is polling. Header says **DERIVATIVES** (not "capture only").
 - [ ] **Edge** tab: each underlying shows `spot: WS` (or `DOM`/`parity`), and the header shows `T 20.00d · DOM Fair tab`

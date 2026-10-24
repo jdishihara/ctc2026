@@ -2,7 +2,7 @@
   "name": "derivatives-overlay",
   "version": "1.0.0",
   "private": true,
-  "description": "Read-only Chrome overlay for the CTC 2026 Derivatives case (Newtonia vs Euleria)",
+  "description": "Chrome trading assistant with optional armed order submission for CTC 2026 Derivatives",
   "type": "module",
   "engines": {
     "node": ">=18"
@@ -14,6 +14,7 @@
     "test": "vitest run && npm run test:tz",
     "test:watch": "vitest",
     "test:e2e": "node scripts/build.mjs --dev && playwright test",
+    "test:manifests": "node scripts/test-manifests.mjs",
     "mock": "node mock-exchange/server.mjs",
     "package": "node scripts/build.mjs --prod && node scripts/package.mjs",
     "verify-isolation": "node scripts/verify-isolation.mjs",
