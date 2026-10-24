@@ -18,6 +18,11 @@ ownership requirements, or either currently frozen evaluation checkout.
   an offline transport in their method-resolution order. Override all HTTP and
   virtual-clock access; use dummy credentials. Do not run the actual websocket
   or key-file startup. Reproduce its fresh-account checks and bot-mode check.
+- Reuse production feed-log startup with only the recorded prefix available at
+  its virtual read time. Retain its clock GET exactly once and pass its returned
+  year, round and seen sequence IDs to the session. Recordings arriving during
+  startup remain queued in the existing capture/inbox model. CPU/file reads are
+  instantaneous; neither startup replay nor the inbox may reveal future frames.
 - Keep the real exchange's full server limits. Apply the practice fraction once
   to client limits; independently verify that orders/positions respect 10% caps.
 - Provide complete order history, including filled and canceled orders, and
@@ -35,6 +40,13 @@ ownership requirements, or either currently frozen evaluation checkout.
   official receipt time and the irreversible terminal fence. The strategy must
   never receive future settlements while trading is possible. Matching closes
   at the last captured frame; report its gap to the official receipt.
+- `/positions` continues to use last captured marks after settlement becomes
+  available; `/symbols` and verified settlement scoring use official prices.
+  This is an explicit unverified marking convention. Label stops as occurring
+  before the terminal fence, in the terminal-to-receipt gap, or after the receipt,
+  and record whether the server market was open when the stop latched.
+  Contract/invariant failures anywhere in time advancement, fills, transport or
+  cleanup latch a fatal diagnostic error even if production code catches them.
 
 ## Stop and cleanup scheduling
 
@@ -67,7 +79,9 @@ cancellations, ownership audits, and reduction-only order rules.
 
 After cleanup, run the production final-receipt validation. Record its marked
 P&L, flat/settled/attention status, remaining positions/orders, and every stop
-or error. Then advance the market without strategy callbacks to the capture's
+or error. Preserve its separately timed observed position/order snapshots and
+distinguish those from server holdings after all receipt requests finish.
+Then advance the market without strategy callbacks to the capture's
 terminal fence to value any residual holdings. Keep stopped-run receipt P&L
 separate from residual terminal settlement P&L; do not call an unflattened
 attention result successful cleanup. Outstanding orders can still fill during
