@@ -1,0 +1,95 @@
+{
+  "elapsed_seconds": 470.9917662143707,
+  "results": [
+    {
+      "profile": "legacy",
+      "latency": 0.25,
+      "seasons": 75,
+      "mean": 1584.5005351313318,
+      "median": 1393.2763102537238,
+      "losing_seasons": 6,
+      "worst": -616.5223661426644,
+      "best": 4261.877678109217
+    },
+    {
+      "profile": "legacy",
+      "latency": 1.0,
+      "seasons": 75,
+      "mean": 1584.3507351992669,
+      "median": 1393.2763102537238,
+      "losing_seasons": 6,
+      "worst": -616.5223661426644,
+      "best": 4261.877678109217
+    },
+    {
+      "profile": "legacy",
+      "latency": 3.0,
+      "seasons": 75,
+      "mean": 1118.3011461904314,
+      "median": 1023.9415849606758,
+      "losing_seasons": 8,
+      "worst": -964.4020921232756,
+      "best": 3234.5170241742635
+    },
+    {
+      "profile": "observed_spread",
+      "latency": 0.25,
+      "seasons": 75,
+      "mean": 1493.8847768794433,
+      "median": 1314.2717666687622,
+      "losing_seasons": 6,
+      "worst": -703.0406082627258,
+      "best": 4164.125849380431
+    },
+    {
+      "profile": "observed_spread",
+      "latency": 1.0,
+      "seasons": 75,
+      "mean": 1493.8847768794433,
+      "median": 1314.2717666687622,
+      "losing_seasons": 6,
+      "worst": -703.0406082627258,
+      "best": 4164.125849380431
+    },
+    {
+      "profile": "observed_spread",
+      "latency": 3.0,
+      "seasons": 75,
+      "mean": 1037.2156476111543,
+      "median": 948.0365660336256,
+      "losing_seasons": 9,
+      "worst": -1097.4065275935407,
+      "best": 3142.233370848193
+    },
+    {
+      "profile": "observed_touch",
+      "latency": 0.25,
+      "seasons": 75,
+      "mean": 1434.4653516219028,
+      "median": 1291.9841419610343,
+      "losing_seasons": 6,
+      "worst": -765.6520153700076,
+      "best": 3965.1616176778653
+    },
+    {
+      "profile": "observed_touch",
+      "latency": 1.0,
+      "seasons": 75,
+      "mean": 1434.3056895317027,
+      "median": 1291.9841419610343,
+      "losing_seasons": 6,
+      "worst": -765.6520153700094,
+      "best": 3965.1616176778653
+    },
+    {
+      "profile": "observed_touch",
+      "latency": 3.0,
+      "seasons": 75,
+      "mean": 1027.2708154890202,
+      "median": 939.328327875729,
+      "losing_seasons": 9,
+      "worst": -1097.4065275935407,
+      "best": 3119.212256407931
+    }
+  ]
+}

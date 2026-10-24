@@ -175,6 +175,41 @@ def test_aggressive_replacement_waits_for_successful_cancel(exchange):
     assert len(exchange.actions) == 0
 
 
+@pytest.mark.parametrize('position,after_fill,side', [(200, 50, 'sell'), (-200, -50, 'buy')])
+def test_fill_during_reduction_cancel_cannot_turn_into_an_unprofitable_addition(exchange, position, after_fill, side):
+    strategy = trader(exchange)
+    strategy.carry = .5
+    strategy.model.round = 1
+    strategy.fair = {'PORT': 100.}
+    exchange.quotes['PORT'] = (98., 102.)
+    exchange.position['PORT'] = position
+    exchange.open_orders = [order(side, 200)]
+    def filled_during_cancel(symbol):
+        exchange.position['PORT'] = after_fill
+        exchange.open_orders = []
+        return True
+    with patch.object(exchange, 'cancel_all', side_effect=filled_during_cancel), \
+            patch.object(exchange, 'place') as place:
+        strategy.on_quotes(exchange)
+    place.assert_not_called()
+
+
+@pytest.mark.parametrize('cancel_succeeds', [False, True])
+def test_stale_order_cancel_requires_confirmed_usable_state_before_replacing(exchange, cancel_succeeds):
+    strategy = trader(exchange)
+    exchange.position['PORT'] = 10
+    exchange.open_orders = [{**order('buy', 190), 'price': 125.}]
+    def cancel(symbol):
+        if cancel_succeeds:
+            exchange.open_orders = []
+            exchange.state_ready = False
+        return cancel_succeeds
+    with patch.object(exchange, 'cancel_all', side_effect=cancel), \
+            patch.object(exchange, 'place') as place:
+        strategy.on_quotes(exchange)
+    place.assert_not_called()
+
+
 @pytest.mark.parametrize('passive', [False, True])
 def test_account_rollover_during_cancel_cannot_trade_old_season_fair(exchange, passive):
     strategy = trader(exchange)

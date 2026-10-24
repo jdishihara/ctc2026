@@ -197,6 +197,12 @@ class LiveExchange:
         return sum(int(o.get("quantity", 0)) - int(o.get("filled_quantity", 0)) for o in self.open_orders
                    if o.get("symbol") == symbol and o.get("side") == side)
 
+    def working_orders(self, symbol: str) -> list[dict[str, Any]]:
+        """Reconciled/local-acknowledged remaining quantities and limits."""
+        return [{'side': o['side'], 'remaining': int(o['quantity']) - int(o.get('filled_quantity', 0)),
+                 'price': o.get('price')} for o in self.open_orders
+                if o.get('symbol') == symbol and int(o['quantity']) > int(o.get('filled_quantity', 0))]
+
     # ---- orders (same signatures as Sim) ----
     def place(self, symbol: str, side: str, qty: int, price: float | None = None) -> int | None:
         if not self.market_open or not self.state_ready or qty <= 0:

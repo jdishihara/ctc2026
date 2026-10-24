@@ -221,6 +221,34 @@ class FairValueTrader(Strategy):
     def full_edge_for_phase(self) -> float:
         return self.final_edge_full if self.final_edge_full and self.model.final_exact_ready else self.edge_full
 
+    def stale_risk_orders(self, sim, symbol, fair, confidence, floor) -> bool:
+        """Check every outstanding limit that could add exposure beyond flat.
+
+        Orders can fill in either order, so if a side can cross through zero,
+        every order on that side must meet its entry-price bound.
+        """
+        orders = sim.working_orders(symbol)
+        position = sim.position[symbol]
+        totals = {side: sum(o['remaining'] for o in orders if o['side'] == side)
+                  for side in ('buy', 'sell')}
+        capacity = {'buy': max(-position, 0), 'sell': max(position, 0)}
+        passive = self.passive_order.get(symbol)
+        for order in orders:
+            side, price = order['side'], order['price']
+            if totals[side] <= capacity[side]:
+                continue
+            if type(price) not in (int, float) or not math.isfinite(price) or price <= 0:
+                return True
+            passive_quote = (passive is not None and passive[0] == side
+                             and math.isclose(passive[1], price, rel_tol=0, abs_tol=1e-8))
+            keep = floor * (self.passive if passive_quote else 1) / max(confidence, 1e-9)
+            if side == 'buy':
+                if price > fair / (1 + keep):
+                    return True
+            elif keep >= 1 or price < fair / (1 - keep):
+                return True
+        return False
+
     def price_prediction(self, sim, symbol: str) -> float | None:
         if self.price_signal is None or self._price_round_start is None or self.model.final_exact_ready:
             return None
@@ -320,6 +348,13 @@ class FairValueTrader(Strategy):
                 lim = int(round(lim * self.carry))
             floor = self.min_edge_for(sim, s)
             pos = sim.position[s]
+            if self.stale_risk_orders(sim, s, f, conf, floor):
+                if not sim.cancel_all(s):
+                    continue
+                if not self._same_competition(sim) or not getattr(sim, 'state_ready', True):
+                    return
+                self.passive_order.pop(s, None)
+                pos = sim.position[s]
             stopped = self.loss_limit is not None and self.cell_pnl.get((s, rnd), 0.0) < -self.loss_limit
             reduce = False
             if abs(edge) >= floor:
@@ -345,11 +380,12 @@ class FairValueTrader(Strategy):
                 continue                                    # small edge: hold; settlement converges for free
             target = self.price_target(sim, s, target, pos)
             self.passive_order.pop(s, None)
-            resting_net = sim.resting(s, "buy") - sim.resting(s, "sell")
+            resting_buy, resting_sell = sim.resting(s, 'buy'), sim.resting(s, 'sell')
+            resting_net = resting_buy - resting_sell
             delta = target - pos - resting_net
             if delta == 0:
                 continue
-            if resting_net != 0:
+            if resting_buy or resting_sell:
                 if not sim.cancel_all(s):                   # never replace an unconfirmed cancellation
                     continue
                 if not self._same_competition(sim):
@@ -361,17 +397,28 @@ class FairValueTrader(Strategy):
                     continue
             # pay up to the price at which the remaining edge equals the floor (liquidity-aware limit)
             keep = floor / max(conf, 1e-9)
+            adds_risk = target * delta > 0
+            entry_limit = None
+            if adds_risk:
+                entry_limit = f / (1 + keep if delta > 0 else 1 - keep)
+                crosses = entry_limit >= ask if delta > 0 else entry_limit <= bid
+                if not crosses:
+                    if pos * delta >= 0:
+                        continue
+                    # A reversal can still remove the old exposure, but the
+                    # unprofitable opening leg must not cross a wide spread.
+                    delta, target, reduce, adds_risk = -pos, 0, True, False
             if delta > 0:
-                limit = max(ask, f / (1 + keep)) if target != 0 and not reduce else ask * (1 + self.exit_slip)
-                if limit < ask and target != 0:
-                    continue
+                limit = (entry_limit if adds_risk else
+                         max(ask, f / (1 + keep)) if target != 0 and not reduce else
+                         ask * (1 + self.exit_slip))
                 if self.max_cross > 0:
                     limit = min(limit, ask * (1 + self.max_cross))
                 sim.place(s, "buy", delta, limit)
             else:
-                limit = min(bid, f / (1 - keep)) if target != 0 and not reduce else bid * (1 - self.exit_slip)
-                if limit > bid and target != 0:
-                    continue
+                limit = (entry_limit if adds_risk else
+                         min(bid, f / (1 - keep)) if target != 0 and not reduce else
+                         bid * (1 - self.exit_slip))
                 if self.max_cross > 0:
                     limit = max(limit, bid * (1 - self.max_cross))
                 sim.place(s, "sell", -delta, limit)
