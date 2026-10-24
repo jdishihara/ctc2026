@@ -1,0 +1,246 @@
+{
+  "analysis_pair_descriptions_independently_checked": 32,
+  "analysis_sha256": "986ed5f54fc76fb6a1632231dbc17d93de9ef28c1dadef77f58ecf28dd887868",
+  "analyzer_sha256": "6db56e6d7a72b0c770858c33723a1d58713dd1b17ad79bb222b6caca8f56ec75",
+  "approved_preflight_files": 359,
+  "approved_preflight_sha256": "e9ab0c1026422fb42155f5957476f6296a0fffc4658a6b6a1c8119e380c6c142",
+  "attention": 0,
+  "authorized_unique_candidate_reproductions": 2,
+  "blockers": [],
+  "bound_baseline_artifacts": 147,
+  "candidate_primary_final_mark_pnl": 986.42,
+  "candidate_primary_terminal_pnl": 985.54,
+  "candidate_replay_executions": 2,
+  "cleanup_mutations": 0,
+  "cleanup_profile_differences": "Only source stack line numbers; requests and all other profile values equal.",
+  "completed": 16,
+  "declined_to_judge": [
+    "Live ownership, orders, activation or actual account returns.",
+    "Extra-pass effectiveness on this capture; no setting reached extra mutation processing.",
+    "Unseen-weather generalization or a fully prospective capture; fitted rows 741-743 and interval predates freezes.",
+    "Quote completeness, disconnect onset, live queue priority, market impact or consistent profitability.",
+    "Any capture-249 or later outcome, alternative settings or new strategy parameters."
+  ],
+  "duplicate_candidate_replay_executions": 0,
+  "evidence_sha256": {
+    "analysis-trace-check.json": "baf44bfcf99b4d03ebe7ed55a43f0c483f16a784166b0d913ff316b895887cea",
+    "audit.json": "d3ab2e22645245949c2c245b89057a677514a756f0c54a98e25dc02d779c41cf",
+    "authorized-reruns/independent-reruns.json": "c8b536504531a42c345f5ead16c88e354ab279a466719d7d1e6d411dc07979ec"
+  },
+  "extra_pass_mutations": 0,
+  "forbidden_attempts": [],
+  "guard_counters": {
+    "cleanup_posts_at_true_server_position": 0,
+    "extra_budget_checks": 0,
+    "history_ready_strategy_posts": 116,
+    "settlement_value_reads": 72
+  },
+  "initial_rejected_preflight_files": 134,
+  "initial_rejected_preflight_sha256": "fa281c52dab08a04d6f7a90f4f1a5a996180e3612ee91dcfbc702a86c26c4948",
+  "maximum_rolling_mutations": 25,
+  "metrics": {
+    "baseline": {
+      "cleanup": {
+        "settled": 16
+      },
+      "extra_pass_mutations": 0,
+      "finished_at": 1792838484.4532769,
+      "loss_cleanup_mean": null,
+      "loss_stops": 0,
+      "lowest_marked_pnl": -138.80000000000018,
+      "maximum": 1224.0299999999997,
+      "maximum_marked_drawdown": 367.48,
+      "maximum_rolling_mutations": 25,
+      "mean": 897.9931250000001,
+      "minimum": 295.4500000000007,
+      "negative": 0,
+      "positive": 16,
+      "results_sha256": "e0ff34873cb4c26e3e7df798f51a45cf5dd5f1b1284754ae0804f37b4bd67fd1",
+      "trial": {
+        "completed": 16
+      }
+    },
+    "candidate": {
+      "cleanup": {
+        "settled": 16
+      },
+      "extra_pass_mutations": 0,
+      "finished_at": 1792838540.572074,
+      "loss_cleanup_mean": null,
+      "loss_stops": 0,
+      "lowest_marked_pnl": -138.80000000000018,
+      "maximum": 1224.0299999999997,
+      "maximum_marked_drawdown": 367.48,
+      "maximum_rolling_mutations": 25,
+      "mean": 897.9931250000001,
+      "minimum": 295.4500000000007,
+      "negative": 0,
+      "positive": 16,
+      "results_sha256": "b1e3b7c6ed902957068bcb6cad724e63dadeecd545221239f5867b5788b33835",
+      "trial": {
+        "completed": 16
+      }
+    }
+  },
+  "negative": 0,
+  "new_original_engine_reproductions": 0,
+  "original_audit_archive_files": 203,
+  "original_audit_archive_sha256": "e8105c703cb088aff4d7bbc29e7c7fa2d2a4ed828be14193cf2f4fd38ff6efbd",
+  "original_journals_byte_exact": 112,
+  "original_rows_exact": 16,
+  "other_reported_analyzer_synthetic_checks_not_repeated": 27,
+  "paired_runtime_results_identical": 16,
+  "paired_standard_journals_byte_identical": 112,
+  "positive": 16,
+  "primary_nonzero_settled_holdings": {
+    "AQUA": -50,
+    "ARCH": -5,
+    "GEN": 60,
+    "GRID": -40,
+    "HAVEN": -25,
+    "PORT": -9,
+    "REIN": -10
+  },
+  "primary_settled_not_flat": true,
+  "produced_files_verified": 288,
+  "representative_cases": [
+    {
+      "cash": 5265.25,
+      "cleanup_mutations": 0,
+      "conversions": [],
+      "exact_files": 9,
+      "extra_budget_checks": 0,
+      "fill_hash": "ba10999565c73af5298fa05c0ddeedcd42a0e95c3afe4f99ca00b5cf4705f9af",
+      "fills": 61,
+      "full_request_hash": "7263cab523b187fe2df7b4c45d93400b79c8d8ee62c604f6d5e5a40cd3d46cdc",
+      "maximum_rolling_mutations": 9,
+      "mutations": 80,
+      "pnl": 985.54,
+      "positions": {
+        "AQUA": -50,
+        "ARCH": -5,
+        "FERRY": 0,
+        "GEN": 60,
+        "GRID": -40,
+        "HAVEN": -25,
+        "ISLE": 0,
+        "MAT": 0,
+        "PORT": -9,
+        "REBLD": 0,
+        "RECON": 0,
+        "REIN": -10
+      },
+      "request_count": 4557,
+      "setting": [
+        248,
+        0.25,
+        1.0,
+        true
+      ]
+    },
+    {
+      "cash": 5402.22,
+      "cleanup_mutations": 0,
+      "conversions": [],
+      "exact_files": 9,
+      "extra_budget_checks": 0,
+      "fill_hash": "a9108e8fa0647b918d2a8429840a911a00444545e80659c5cceaea2fb1f29a59",
+      "fills": 59,
+      "full_request_hash": "22a5bf42f8feac816484eb96f7494a8b4210ba9df92065573d74042d17514215",
+      "maximum_rolling_mutations": 7,
+      "mutations": 67,
+      "pnl": 295.4499999999998,
+      "positions": {
+        "AQUA": -50,
+        "ARCH": -5,
+        "FERRY": 0,
+        "GEN": 60,
+        "GRID": -40,
+        "HAVEN": -25,
+        "ISLE": 0,
+        "MAT": 0,
+        "PORT": -8,
+        "REBLD": 0,
+        "RECON": 0,
+        "REIN": -20
+      },
+      "request_count": 2204,
+      "setting": [
+        248,
+        1.0,
+        0.5,
+        false
+      ]
+    }
+  ],
+  "representative_exact_files": 18,
+  "retained_audit_harness_failures": [
+    {
+      "invocation": 1,
+      "reason": "Initially expected a direct reference-results hash on the supervised phase. The schema binds supervised to baseline and baseline to reference. Corrected the independent assertion to verify both links; failed script/log retained. No performance rerun.",
+      "type": "read-only provenance assertion"
+    }
+  ],
+  "rows_verified": 32,
+  "runtime_or_replay_failures": [],
+  "runtime_revision": "27ab7c4b4784c9aabc92e791b0878d387cd4cc49",
+  "settings_per_phase": 16,
+  "settled": 16,
+  "source_input_artifacts_verified": 244,
+  "source_revision": "2c441aee5b5f828bc4c4e26461159a958c102067",
+  "source_unchanged": true,
+  "timing": {
+    "baseline_finished": 1792838484.4532769,
+    "baseline_started": 1792838454.9809642,
+    "candidate_finished": 1792838540.572074,
+    "candidate_started": 1792838511.802965,
+    "commit_times": {
+      "27ab7c4b4784c9aabc92e791b0878d387cd4cc49": 1792836560,
+      "2c441aee5b5f828bc4c4e26461159a958c102067": 1792838017,
+      "fd35a1e": 1792837693
+    },
+    "corrected_driver_frozen_before_receipt": true,
+    "first_frame_at": 1792835258.5583282,
+    "fully_prospective_capture": false,
+    "last_frame_at": 1792838082.529236,
+    "receipt_at": 1792838086.3271759,
+    "runtime_and_declaration_after_capture_started": true
+  },
+  "total_actual_mutations_per_phase": {
+    "baseline": 1376,
+    "candidate": 1376
+  },
+  "training_overlap": [
+    {
+      "closest_rmse": 0.0,
+      "exact_library_rows_zero_based": [
+        741
+      ],
+      "observations": 241,
+      "repeated_identical": 0,
+      "round": 1,
+      "track_sha256_float64le": "d1fb2508f2ff1dbdb13b8ffc06f873677b9b496e7a01f26c26a2b04000a9ece5"
+    },
+    {
+      "closest_rmse": 0.0,
+      "exact_library_rows_zero_based": [
+        742
+      ],
+      "observations": 241,
+      "repeated_identical": 0,
+      "round": 2,
+      "track_sha256_float64le": "9b5f46d24305d852b546c929ec3f6ccf64b0c64b061dea9cc15a272389248b6f"
+    },
+    {
+      "closest_rmse": 0.0,
+      "exact_library_rows_zero_based": [
+        743
+      ],
+      "observations": 241,
+      "repeated_identical": 0,
+      "round": 3,
+      "track_sha256_float64le": "cdf6ba37f7abe6981c429db0df8ece6a5857edce8526d5149f0f0b2f9962f554"
+    }
+  ],
+  "verdict": "PASS_PREDECLARED_CAPTURE_248_NO_OP_CONFIRMATION_NO_LIVE_ACTIVATION"
+}

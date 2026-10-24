@@ -1,5 +1,28 @@
 # Overnight practice — October 24, 2026
 
+## 10:52 UTC — capture 248 and unchanged retry confirmation verified
+
+Capture 248 is positive in all sixteen full-supervisor settings: mean $897.99,
+worst $295.45, primary $985.54. All complete and settle; the primary retains
+seven settled holdings. Independent audit verifies all 88 original engine rows,
+112 journals and six representative reproductions. All three weather tracks
+repeat fitted rows 741–743, bringing the overlap to 24 tracks in eight captures.
+See [observed-season-248.md](observed-season-248.md).
+
+The bounded retry was merged as PR 28 at 10:40:15 UTC. The competition checkout
+was fast-forwarded to its merge and passes all 652 runtime tests. A separately
+frozen follow-up evaluator rejects seventy synthetic provenance corruptions;
+the combined suite passes 713 tests. Its baseline reproduces the original
+sixteen capture-248 outputs and 112 journals. The retry candidate changes no
+outcomes because this path needs no extra cleanup. Independent audit verifies
+all pairs and two exact candidate reproductions. Initial rejected preflight and
+audit-harness failures remain preserved. See
+[cleanup-retry-forward.md](cleanup-retry-forward.md).
+
+No owned live batch resumed; account ownership remains unresolved. Capture 249
+is still active and its future outcomes have not been inspected. Original
+forward evaluators and the new retry comparison retain their frozen sources.
+
 ## 10:34 UTC — bounded cleanup retry passes independent result audit
 
 The fixed candidate preserves all pre-cleanup behavior and the first five

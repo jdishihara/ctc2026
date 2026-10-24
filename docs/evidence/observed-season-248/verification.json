@@ -1,0 +1,173 @@
+{
+  "six_authorized_reruns": [
+    {
+      "mode": "serialized",
+      "setting": [
+        0.25,
+        1.0,
+        true
+      ],
+      "pnl": 997.1500000000024,
+      "exact_fields": true,
+      "trace_hashes": {
+        "request_trace_sha256": "18715d20604bc41b70901891eb0dd0157d745080b7345a4ea2201c8c85828ab4",
+        "fill_trace_sha256": "0e5a1f3a611d2c800ae251a7c7c194407db026dd29484dc6775763cd14a3b3c1"
+      },
+      "first_settlement_access": 2823.9709079265594,
+      "cutoff": 2823.9709079265594,
+      "receipt_available": 2827.7688477039337,
+      "journal_byte_identical": false
+    },
+    {
+      "mode": "serialized",
+      "setting": [
+        1.0,
+        0.5,
+        false
+      ],
+      "pnl": 493.5399999999986,
+      "exact_fields": true,
+      "trace_hashes": {
+        "request_trace_sha256": "aa38c62d17df4dc11f1a0dbd7d35185f4e7c69f3a3dc59d222ab72f14c0aa095",
+        "fill_trace_sha256": "cdc224e83aff4887bfadf9befb67e15dd12fbd5d9669711216e9a326e4a10fac"
+      },
+      "first_settlement_access": 2823.9709079265594,
+      "cutoff": 2823.9709079265594,
+      "receipt_available": 2827.7688477039337,
+      "journal_byte_identical": false
+    },
+    {
+      "mode": "supervised",
+      "setting": [
+        0.25,
+        1.0,
+        true
+      ],
+      "pnl": 985.5400000000027,
+      "exact_fields": true,
+      "trace_hashes": {
+        "request_trace_sha256": "3158d12272b75e063aa60c55b0b65076a4a186445cb5e9bdec063d3a6848fd83",
+        "fill_trace_sha256": "ba10999565c73af5298fa05c0ddeedcd42a0e95c3afe4f99ca00b5cf4705f9af"
+      },
+      "first_settlement_access": 2832.5846297740936,
+      "cutoff": 2823.9709079265594,
+      "receipt_available": 2827.7688477039337,
+      "journal_byte_identical": true
+    },
+    {
+      "mode": "supervised",
+      "setting": [
+        1.0,
+        0.5,
+        false
+      ],
+      "pnl": 295.4500000000007,
+      "exact_fields": true,
+      "trace_hashes": {
+        "request_trace_sha256": "755f780c603e7bde337acbb7de1f9a6fae7e928cb22f3ab2c17eb785cc340f88",
+        "fill_trace_sha256": "a9108e8fa0647b918d2a8429840a911a00444545e80659c5cceaea2fb1f29a59"
+      },
+      "first_settlement_access": 2834.108051776886,
+      "cutoff": 2823.9709079265594,
+      "receipt_available": 2827.7688477039337,
+      "journal_byte_identical": true
+    },
+    {
+      "mode": "supervised",
+      "setting": [
+        0.0,
+        1.0,
+        false
+      ],
+      "pnl": 1194.090000000001,
+      "exact_fields": true,
+      "trace_hashes": {
+        "request_trace_sha256": "710714f3d2f0125c6dc44132deb309a6b81b206a3a095bcca76b942c2f77bc18",
+        "fill_trace_sha256": "038718b1fde7e88fd1753f306e3d9bd492ac73b6ff25d452909ffaee3b1e130b"
+      },
+      "first_settlement_access": 2830.2209079265594,
+      "cutoff": 2823.9709079265594,
+      "receipt_available": 2827.7688477039337,
+      "journal_byte_identical": true
+    },
+    {
+      "mode": "worker",
+      "setting": [
+        0.25,
+        1.0,
+        true
+      ],
+      "pnl": 1039.2400000000027,
+      "exact_fields": true,
+      "trace_hashes": {},
+      "first_settlement_access": 2823.9709079265594,
+      "cutoff": 2823.9709079265594,
+      "receipt_available": 2827.7688477039337,
+      "journal_byte_identical": false
+    }
+  ],
+  "performance_rerun_count": 6,
+  "candidate_runs": 0,
+  "replay_failures": [],
+  "original_rows_checked": 88,
+  "original_standard_journals_checked": 112,
+  "reproduced_supervised_journal_files_byte_identical": 21,
+  "source_files_unchanged": 91,
+  "news_sequence_range": [
+    0,
+    864
+  ],
+  "unique_news_sequences": 865,
+  "final_report_round_and_seq": [
+    [
+      1,
+      288
+    ],
+    [
+      2,
+      575
+    ],
+    [
+      3,
+      864
+    ]
+  ],
+  "largest_later_valid_quote_gap": {
+    "seconds": 52.43805527687073,
+    "round": 3,
+    "symbol": "RECON",
+    "from": 1792837973.5644858,
+    "to": 1792838026.002541
+  },
+  "initial_round1_snapshot_to_first_valid_quote_gaps": {
+    "ISLE": 120.3175916671753,
+    "AQUA": 120.31762480735779,
+    "MAT": 120.31763672828674,
+    "GRID": 120.31764507293701,
+    "GEN": 120.31765294075012,
+    "RECON": 120.3176589012146,
+    "ARCH": 120.31766486167908,
+    "FERRY": 120.31767082214355,
+    "REIN": 120.31767702102661,
+    "REBLD": 120.3176817893982,
+    "HAVEN": 120.31768798828125,
+    "PORT": 120.31769275665283
+  },
+  "subscription_acknowledgements": [
+    {
+      "at": 1792837359.0544,
+      "round": 3,
+      "seconds_since_previous_frame": 2.742575168609619
+    }
+  ],
+  "primary_terminal_settlement_pnl": 985.5400000000027,
+  "primary_final_receipt_mark_pnl": 986.4200000000014,
+  "primary_settled_not_flat": true,
+  "source_receipt_cache_hashes": {
+    "spec": "28a7f299a513ee14232861516dbbb08bb57c4657b15069c8fbc9daf1afa71301",
+    "npz": "22694387c3b612f5c20853feb9143e1bf8b8f5722a845da8ed584ab1b30bdf09",
+    "frames_value": "444689d84a43c4a3bb8f41ebed810599bc236ae345699930cdc950516c919475",
+    "receipt_value": "7b91d8fdaae8b25a125e9285cc8fb8a5a5d4cf60c69499f383965c6cc3480280",
+    "cache_file": "5614d61cc76b1fdb74192b1deab3a210eda938820c002a5945e9be8486e69759"
+  }
+}

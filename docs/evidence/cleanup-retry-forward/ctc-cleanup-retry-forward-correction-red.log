@@ -1,0 +1,700 @@
+........FFFFFFFFFFFFFFFFFFFFFFFFFFFFF                                    [100%]
+=================================== FAILURES ===================================
+____________ test_accept_only_declared_receipt_window[1792837693.0] ____________
+
+at = 1792837693.0
+
+    @pytest.mark.parametrize('at', [1792837693., 1792843199.999])
+    def test_accept_only_declared_receipt_window(at):
+        r = receipt(at)
+        r['coverage'].update(first_at=at - 10, last_at=at - 1)
+>       validate(r)
+
+tests/test_cleanup_retry_forward.py:38: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+value = {'kind': 'settlement', 'at': 1792837693.0, 'source': 'read_only_market_observer', 'competition_id': 'closed-test', ...}
+now = 1792843201.0
+
+    def validate(value, now=1792843201.):
+>       return validate_forward_receipt(value, capture=248, symbols=['X'], now=now)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       TypeError: validate_forward_receipt() got an unexpected keyword argument 'capture'
+
+tests/test_cleanup_retry_forward.py:19: TypeError
+___________ test_accept_only_declared_receipt_window[1792843199.999] ___________
+
+at = 1792843199.999
+
+    @pytest.mark.parametrize('at', [1792837693., 1792843199.999])
+    def test_accept_only_declared_receipt_window(at):
+        r = receipt(at)
+        r['coverage'].update(first_at=at - 10, last_at=at - 1)
+>       validate(r)
+
+tests/test_cleanup_retry_forward.py:38: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+value = {'kind': 'settlement', 'at': 1792843199.999, 'source': 'read_only_market_observer', 'competition_id': 'closed-test', ...}
+now = 1792843201.0
+
+    def validate(value, now=1792843201.):
+>       return validate_forward_receipt(value, capture=248, symbols=['X'], now=now)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       TypeError: validate_forward_receipt() got an unexpected keyword argument 'capture'
+
+tests/test_cleanup_retry_forward.py:19: TypeError
+________ test_reject_invalid_or_ineligible_receipt_time[1792837692.999] ________
+
+at = 1792837692.999
+
+    @pytest.mark.parametrize('at', [1792837692.999, 1792843200., float('nan'),
+                                   float('inf'), True, '1792838000', None])
+    def test_reject_invalid_or_ineligible_receipt_time(at):
+        with pytest.raises(ValueError):
+>           validate(receipt(at))
+
+tests/test_cleanup_retry_forward.py:45: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+value = {'kind': 'settlement', 'at': 1792837692.999, 'source': 'read_only_market_observer', 'competition_id': 'closed-test', ...}
+now = 1792843201.0
+
+    def validate(value, now=1792843201.):
+>       return validate_forward_receipt(value, capture=248, symbols=['X'], now=now)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       TypeError: validate_forward_receipt() got an unexpected keyword argument 'capture'
+
+tests/test_cleanup_retry_forward.py:19: TypeError
+_________ test_reject_invalid_or_ineligible_receipt_time[1792843200.0] _________
+
+at = 1792843200.0
+
+    @pytest.mark.parametrize('at', [1792837692.999, 1792843200., float('nan'),
+                                   float('inf'), True, '1792838000', None])
+    def test_reject_invalid_or_ineligible_receipt_time(at):
+        with pytest.raises(ValueError):
+>           validate(receipt(at))
+
+tests/test_cleanup_retry_forward.py:45: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+value = {'kind': 'settlement', 'at': 1792843200.0, 'source': 'read_only_market_observer', 'competition_id': 'closed-test', ...}
+now = 1792843201.0
+
+    def validate(value, now=1792843201.):
+>       return validate_forward_receipt(value, capture=248, symbols=['X'], now=now)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       TypeError: validate_forward_receipt() got an unexpected keyword argument 'capture'
+
+tests/test_cleanup_retry_forward.py:19: TypeError
+_____________ test_reject_invalid_or_ineligible_receipt_time[nan] ______________
+
+at = nan
+
+    @pytest.mark.parametrize('at', [1792837692.999, 1792843200., float('nan'),
+                                   float('inf'), True, '1792838000', None])
+    def test_reject_invalid_or_ineligible_receipt_time(at):
+        with pytest.raises(ValueError):
+>           validate(receipt(at))
+
+tests/test_cleanup_retry_forward.py:45: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+value = {'kind': 'settlement', 'at': nan, 'source': 'read_only_market_observer', 'competition_id': 'closed-test', ...}
+now = 1792843201.0
+
+    def validate(value, now=1792843201.):
+>       return validate_forward_receipt(value, capture=248, symbols=['X'], now=now)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       TypeError: validate_forward_receipt() got an unexpected keyword argument 'capture'
+
+tests/test_cleanup_retry_forward.py:19: TypeError
+_____________ test_reject_invalid_or_ineligible_receipt_time[inf] ______________
+
+at = inf
+
+    @pytest.mark.parametrize('at', [1792837692.999, 1792843200., float('nan'),
+                                   float('inf'), True, '1792838000', None])
+    def test_reject_invalid_or_ineligible_receipt_time(at):
+        with pytest.raises(ValueError):
+>           validate(receipt(at))
+
+tests/test_cleanup_retry_forward.py:45: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+value = {'kind': 'settlement', 'at': inf, 'source': 'read_only_market_observer', 'competition_id': 'closed-test', ...}
+now = 1792843201.0
+
+    def validate(value, now=1792843201.):
+>       return validate_forward_receipt(value, capture=248, symbols=['X'], now=now)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       TypeError: validate_forward_receipt() got an unexpected keyword argument 'capture'
+
+tests/test_cleanup_retry_forward.py:19: TypeError
+_____________ test_reject_invalid_or_ineligible_receipt_time[True] _____________
+
+at = True
+
+    @pytest.mark.parametrize('at', [1792837692.999, 1792843200., float('nan'),
+                                   float('inf'), True, '1792838000', None])
+    def test_reject_invalid_or_ineligible_receipt_time(at):
+        with pytest.raises(ValueError):
+>           validate(receipt(at))
+
+tests/test_cleanup_retry_forward.py:45: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+value = {'kind': 'settlement', 'at': True, 'source': 'read_only_market_observer', 'competition_id': 'closed-test', ...}
+now = 1792843201.0
+
+    def validate(value, now=1792843201.):
+>       return validate_forward_receipt(value, capture=248, symbols=['X'], now=now)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       TypeError: validate_forward_receipt() got an unexpected keyword argument 'capture'
+
+tests/test_cleanup_retry_forward.py:19: TypeError
+__________ test_reject_invalid_or_ineligible_receipt_time[1792838000] __________
+
+at = '1792838000'
+
+    @pytest.mark.parametrize('at', [1792837692.999, 1792843200., float('nan'),
+                                   float('inf'), True, '1792838000', None])
+    def test_reject_invalid_or_ineligible_receipt_time(at):
+        with pytest.raises(ValueError):
+>           validate(receipt(at))
+
+tests/test_cleanup_retry_forward.py:45: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+value = {'kind': 'settlement', 'at': '1792838000', 'source': 'read_only_market_observer', 'competition_id': 'closed-test', ...}
+now = 1792843201.0
+
+    def validate(value, now=1792843201.):
+>       return validate_forward_receipt(value, capture=248, symbols=['X'], now=now)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       TypeError: validate_forward_receipt() got an unexpected keyword argument 'capture'
+
+tests/test_cleanup_retry_forward.py:19: TypeError
+_____________ test_reject_invalid_or_ineligible_receipt_time[None] _____________
+
+at = None
+
+    @pytest.mark.parametrize('at', [1792837692.999, 1792843200., float('nan'),
+                                   float('inf'), True, '1792838000', None])
+    def test_reject_invalid_or_ineligible_receipt_time(at):
+        with pytest.raises(ValueError):
+>           validate(receipt(at))
+
+tests/test_cleanup_retry_forward.py:45: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+value = {'kind': 'settlement', 'at': None, 'source': 'read_only_market_observer', 'competition_id': 'closed-test', ...}
+now = 1792843201.0
+
+    def validate(value, now=1792843201.):
+>       return validate_forward_receipt(value, capture=248, symbols=['X'], now=now)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       TypeError: validate_forward_receipt() got an unexpected keyword argument 'capture'
+
+tests/test_cleanup_retry_forward.py:19: TypeError
+_________________ test_reject_nonsettlement_receipt[receipt0] __________________
+
+receipt = {}
+
+    @pytest.mark.parametrize('receipt', [{}, [], None, {'kind': 'clock', 'at': 1792838000.}])
+    def test_reject_nonsettlement_receipt(receipt):
+        with pytest.raises(ValueError):
+>           validate(receipt)
+
+tests/test_cleanup_retry_forward.py:51: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+value = {}, now = 1792843201.0
+
+    def validate(value, now=1792843201.):
+>       return validate_forward_receipt(value, capture=248, symbols=['X'], now=now)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       TypeError: validate_forward_receipt() got an unexpected keyword argument 'capture'
+
+tests/test_cleanup_retry_forward.py:19: TypeError
+_________________ test_reject_nonsettlement_receipt[receipt1] __________________
+
+receipt = []
+
+    @pytest.mark.parametrize('receipt', [{}, [], None, {'kind': 'clock', 'at': 1792838000.}])
+    def test_reject_nonsettlement_receipt(receipt):
+        with pytest.raises(ValueError):
+>           validate(receipt)
+
+tests/test_cleanup_retry_forward.py:51: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+value = [], now = 1792843201.0
+
+    def validate(value, now=1792843201.):
+>       return validate_forward_receipt(value, capture=248, symbols=['X'], now=now)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       TypeError: validate_forward_receipt() got an unexpected keyword argument 'capture'
+
+tests/test_cleanup_retry_forward.py:19: TypeError
+___________________ test_reject_nonsettlement_receipt[None] ____________________
+
+receipt = None
+
+    @pytest.mark.parametrize('receipt', [{}, [], None, {'kind': 'clock', 'at': 1792838000.}])
+    def test_reject_nonsettlement_receipt(receipt):
+        with pytest.raises(ValueError):
+>           validate(receipt)
+
+tests/test_cleanup_retry_forward.py:51: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+value = None, now = 1792843201.0
+
+    def validate(value, now=1792843201.):
+>       return validate_forward_receipt(value, capture=248, symbols=['X'], now=now)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       TypeError: validate_forward_receipt() got an unexpected keyword argument 'capture'
+
+tests/test_cleanup_retry_forward.py:19: TypeError
+_________________ test_reject_nonsettlement_receipt[receipt3] __________________
+
+receipt = {'kind': 'clock', 'at': 1792838000.0}
+
+    @pytest.mark.parametrize('receipt', [{}, [], None, {'kind': 'clock', 'at': 1792838000.}])
+    def test_reject_nonsettlement_receipt(receipt):
+        with pytest.raises(ValueError):
+>           validate(receipt)
+
+tests/test_cleanup_retry_forward.py:51: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+value = {'kind': 'clock', 'at': 1792838000.0}, now = 1792843201.0
+
+    def validate(value, now=1792843201.):
+>       return validate_forward_receipt(value, capture=248, symbols=['X'], now=now)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       TypeError: validate_forward_receipt() got an unexpected keyword argument 'capture'
+
+tests/test_cleanup_retry_forward.py:19: TypeError
+_____________________ test_reject_not_yet_observed_receipt _____________________
+
+    def test_reject_not_yet_observed_receipt():
+        with pytest.raises(ValueError):
+>           validate(receipt(1792838001.), now=1792838000.)
+
+tests/test_cleanup_retry_forward.py:56: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+value = {'kind': 'settlement', 'at': 1792838001.0, 'source': 'read_only_market_observer', 'competition_id': 'closed-test', ...}
+now = 1792838000.0
+
+    def validate(value, now=1792843201.):
+>       return validate_forward_receipt(value, capture=248, symbols=['X'], now=now)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       TypeError: validate_forward_receipt() got an unexpected keyword argument 'capture'
+
+tests/test_cleanup_retry_forward.py:19: TypeError
+______ test_reject_inconsistent_official_receipt[source-not_an_observer] _______
+
+field = 'source', value = 'not_an_observer'
+
+    @pytest.mark.parametrize('field,value', [('source', 'not_an_observer'), ('year', '9999'),
+                                           ('competition_id', 'other'), ('prices', {}),
+                                           ('coverage', {}), ('clock', None), ('end_clock', [])])
+    def test_reject_inconsistent_official_receipt(field, value):
+        r = receipt()
+        r[field] = value
+        with pytest.raises(ValueError):
+>           validate(r)
+
+tests/test_cleanup_retry_forward.py:66: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+value = {'kind': 'settlement', 'at': 1792838000.0, 'source': 'not_an_observer', 'competition_id': 'closed-test', ...}
+now = 1792843201.0
+
+    def validate(value, now=1792843201.):
+>       return validate_forward_receipt(value, capture=248, symbols=['X'], now=now)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       TypeError: validate_forward_receipt() got an unexpected keyword argument 'capture'
+
+tests/test_cleanup_retry_forward.py:19: TypeError
+_____________ test_reject_inconsistent_official_receipt[year-9999] _____________
+
+field = 'year', value = '9999'
+
+    @pytest.mark.parametrize('field,value', [('source', 'not_an_observer'), ('year', '9999'),
+                                           ('competition_id', 'other'), ('prices', {}),
+                                           ('coverage', {}), ('clock', None), ('end_clock', [])])
+    def test_reject_inconsistent_official_receipt(field, value):
+        r = receipt()
+        r[field] = value
+        with pytest.raises(ValueError):
+>           validate(r)
+
+tests/test_cleanup_retry_forward.py:66: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+value = {'kind': 'settlement', 'at': 1792838000.0, 'source': 'read_only_market_observer', 'competition_id': 'closed-test', ...}
+now = 1792843201.0
+
+    def validate(value, now=1792843201.):
+>       return validate_forward_receipt(value, capture=248, symbols=['X'], now=now)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       TypeError: validate_forward_receipt() got an unexpected keyword argument 'capture'
+
+tests/test_cleanup_retry_forward.py:19: TypeError
+_______ test_reject_inconsistent_official_receipt[competition_id-other] ________
+
+field = 'competition_id', value = 'other'
+
+    @pytest.mark.parametrize('field,value', [('source', 'not_an_observer'), ('year', '9999'),
+                                           ('competition_id', 'other'), ('prices', {}),
+                                           ('coverage', {}), ('clock', None), ('end_clock', [])])
+    def test_reject_inconsistent_official_receipt(field, value):
+        r = receipt()
+        r[field] = value
+        with pytest.raises(ValueError):
+>           validate(r)
+
+tests/test_cleanup_retry_forward.py:66: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+value = {'kind': 'settlement', 'at': 1792838000.0, 'source': 'read_only_market_observer', 'competition_id': 'other', ...}
+now = 1792843201.0
+
+    def validate(value, now=1792843201.):
+>       return validate_forward_receipt(value, capture=248, symbols=['X'], now=now)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       TypeError: validate_forward_receipt() got an unexpected keyword argument 'capture'
+
+tests/test_cleanup_retry_forward.py:19: TypeError
+___________ test_reject_inconsistent_official_receipt[prices-value3] ___________
+
+field = 'prices', value = {}
+
+    @pytest.mark.parametrize('field,value', [('source', 'not_an_observer'), ('year', '9999'),
+                                           ('competition_id', 'other'), ('prices', {}),
+                                           ('coverage', {}), ('clock', None), ('end_clock', [])])
+    def test_reject_inconsistent_official_receipt(field, value):
+        r = receipt()
+        r[field] = value
+        with pytest.raises(ValueError):
+>           validate(r)
+
+tests/test_cleanup_retry_forward.py:66: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+value = {'kind': 'settlement', 'at': 1792838000.0, 'source': 'read_only_market_observer', 'competition_id': 'closed-test', ...}
+now = 1792843201.0
+
+    def validate(value, now=1792843201.):
+>       return validate_forward_receipt(value, capture=248, symbols=['X'], now=now)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       TypeError: validate_forward_receipt() got an unexpected keyword argument 'capture'
+
+tests/test_cleanup_retry_forward.py:19: TypeError
+__________ test_reject_inconsistent_official_receipt[coverage-value4] __________
+
+field = 'coverage', value = {}
+
+    @pytest.mark.parametrize('field,value', [('source', 'not_an_observer'), ('year', '9999'),
+                                           ('competition_id', 'other'), ('prices', {}),
+                                           ('coverage', {}), ('clock', None), ('end_clock', [])])
+    def test_reject_inconsistent_official_receipt(field, value):
+        r = receipt()
+        r[field] = value
+        with pytest.raises(ValueError):
+>           validate(r)
+
+tests/test_cleanup_retry_forward.py:66: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+value = {'kind': 'settlement', 'at': 1792838000.0, 'source': 'read_only_market_observer', 'competition_id': 'closed-test', ...}
+now = 1792843201.0
+
+    def validate(value, now=1792843201.):
+>       return validate_forward_receipt(value, capture=248, symbols=['X'], now=now)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       TypeError: validate_forward_receipt() got an unexpected keyword argument 'capture'
+
+tests/test_cleanup_retry_forward.py:19: TypeError
+____________ test_reject_inconsistent_official_receipt[clock-None] _____________
+
+field = 'clock', value = None
+
+    @pytest.mark.parametrize('field,value', [('source', 'not_an_observer'), ('year', '9999'),
+                                           ('competition_id', 'other'), ('prices', {}),
+                                           ('coverage', {}), ('clock', None), ('end_clock', [])])
+    def test_reject_inconsistent_official_receipt(field, value):
+        r = receipt()
+        r[field] = value
+        with pytest.raises(ValueError):
+>           validate(r)
+
+tests/test_cleanup_retry_forward.py:66: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+value = {'kind': 'settlement', 'at': 1792838000.0, 'source': 'read_only_market_observer', 'competition_id': 'closed-test', ...}
+now = 1792843201.0
+
+    def validate(value, now=1792843201.):
+>       return validate_forward_receipt(value, capture=248, symbols=['X'], now=now)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       TypeError: validate_forward_receipt() got an unexpected keyword argument 'capture'
+
+tests/test_cleanup_retry_forward.py:19: TypeError
+_________ test_reject_inconsistent_official_receipt[end_clock-value6] __________
+
+field = 'end_clock', value = []
+
+    @pytest.mark.parametrize('field,value', [('source', 'not_an_observer'), ('year', '9999'),
+                                           ('competition_id', 'other'), ('prices', {}),
+                                           ('coverage', {}), ('clock', None), ('end_clock', [])])
+    def test_reject_inconsistent_official_receipt(field, value):
+        r = receipt()
+        r[field] = value
+        with pytest.raises(ValueError):
+>           validate(r)
+
+tests/test_cleanup_retry_forward.py:66: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+value = {'kind': 'settlement', 'at': 1792838000.0, 'source': 'read_only_market_observer', 'competition_id': 'closed-test', ...}
+now = 1792843201.0
+
+    def validate(value, now=1792843201.):
+>       return validate_forward_receipt(value, capture=248, symbols=['X'], now=now)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       TypeError: validate_forward_receipt() got an unexpected keyword argument 'capture'
+
+tests/test_cleanup_retry_forward.py:19: TypeError
+_____________ test_reject_running_clock_before_capture_use[clock] ______________
+
+field = 'clock'
+
+    @pytest.mark.parametrize('field', ['clock', 'end_clock'])
+    def test_reject_running_clock_before_capture_use(field):
+        r = receipt()
+        r[field]['state'] = 'running'
+        with pytest.raises(ValueError):
+>           validate(r)
+
+tests/test_cleanup_retry_forward.py:74: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+value = {'kind': 'settlement', 'at': 1792838000.0, 'source': 'read_only_market_observer', 'competition_id': 'closed-test', ...}
+now = 1792843201.0
+
+    def validate(value, now=1792843201.):
+>       return validate_forward_receipt(value, capture=248, symbols=['X'], now=now)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       TypeError: validate_forward_receipt() got an unexpected keyword argument 'capture'
+
+tests/test_cleanup_retry_forward.py:19: TypeError
+___________ test_reject_running_clock_before_capture_use[end_clock] ____________
+
+field = 'end_clock'
+
+    @pytest.mark.parametrize('field', ['clock', 'end_clock'])
+    def test_reject_running_clock_before_capture_use(field):
+        r = receipt()
+        r[field]['state'] = 'running'
+        with pytest.raises(ValueError):
+>           validate(r)
+
+tests/test_cleanup_retry_forward.py:74: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+value = {'kind': 'settlement', 'at': 1792838000.0, 'source': 'read_only_market_observer', 'competition_id': 'closed-test', ...}
+now = 1792843201.0
+
+    def validate(value, now=1792843201.):
+>       return validate_forward_receipt(value, capture=248, symbols=['X'], now=now)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       TypeError: validate_forward_receipt() got an unexpected keyword argument 'capture'
+
+tests/test_cleanup_retry_forward.py:19: TypeError
+______________ test_reject_incomplete_coverage[contiguous-False] _______________
+
+field = 'contiguous', value = False
+
+    @pytest.mark.parametrize('field,value', [('contiguous', False), ('conflicting_sequences', True),
+                                           ('final_rounds', [1, 2]), ('first_at', True),
+                                           ('last_at', float('nan')), ('last_at', 1792838001.)])
+    def test_reject_incomplete_coverage(field, value):
+        r = receipt()
+        r['coverage'][field] = value
+        with pytest.raises(ValueError):
+>           validate(r)
+
+tests/test_cleanup_retry_forward.py:84: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+value = {'kind': 'settlement', 'at': 1792838000.0, 'source': 'read_only_market_observer', 'competition_id': 'closed-test', ...}
+now = 1792843201.0
+
+    def validate(value, now=1792843201.):
+>       return validate_forward_receipt(value, capture=248, symbols=['X'], now=now)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       TypeError: validate_forward_receipt() got an unexpected keyword argument 'capture'
+
+tests/test_cleanup_retry_forward.py:19: TypeError
+_________ test_reject_incomplete_coverage[conflicting_sequences-True] __________
+
+field = 'conflicting_sequences', value = True
+
+    @pytest.mark.parametrize('field,value', [('contiguous', False), ('conflicting_sequences', True),
+                                           ('final_rounds', [1, 2]), ('first_at', True),
+                                           ('last_at', float('nan')), ('last_at', 1792838001.)])
+    def test_reject_incomplete_coverage(field, value):
+        r = receipt()
+        r['coverage'][field] = value
+        with pytest.raises(ValueError):
+>           validate(r)
+
+tests/test_cleanup_retry_forward.py:84: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+value = {'kind': 'settlement', 'at': 1792838000.0, 'source': 'read_only_market_observer', 'competition_id': 'closed-test', ...}
+now = 1792843201.0
+
+    def validate(value, now=1792843201.):
+>       return validate_forward_receipt(value, capture=248, symbols=['X'], now=now)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       TypeError: validate_forward_receipt() got an unexpected keyword argument 'capture'
+
+tests/test_cleanup_retry_forward.py:19: TypeError
+_____________ test_reject_incomplete_coverage[final_rounds-value2] _____________
+
+field = 'final_rounds', value = [1, 2]
+
+    @pytest.mark.parametrize('field,value', [('contiguous', False), ('conflicting_sequences', True),
+                                           ('final_rounds', [1, 2]), ('first_at', True),
+                                           ('last_at', float('nan')), ('last_at', 1792838001.)])
+    def test_reject_incomplete_coverage(field, value):
+        r = receipt()
+        r['coverage'][field] = value
+        with pytest.raises(ValueError):
+>           validate(r)
+
+tests/test_cleanup_retry_forward.py:84: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+value = {'kind': 'settlement', 'at': 1792838000.0, 'source': 'read_only_market_observer', 'competition_id': 'closed-test', ...}
+now = 1792843201.0
+
+    def validate(value, now=1792843201.):
+>       return validate_forward_receipt(value, capture=248, symbols=['X'], now=now)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       TypeError: validate_forward_receipt() got an unexpected keyword argument 'capture'
+
+tests/test_cleanup_retry_forward.py:19: TypeError
+________________ test_reject_incomplete_coverage[first_at-True] ________________
+
+field = 'first_at', value = True
+
+    @pytest.mark.parametrize('field,value', [('contiguous', False), ('conflicting_sequences', True),
+                                           ('final_rounds', [1, 2]), ('first_at', True),
+                                           ('last_at', float('nan')), ('last_at', 1792838001.)])
+    def test_reject_incomplete_coverage(field, value):
+        r = receipt()
+        r['coverage'][field] = value
+        with pytest.raises(ValueError):
+>           validate(r)
+
+tests/test_cleanup_retry_forward.py:84: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+value = {'kind': 'settlement', 'at': 1792838000.0, 'source': 'read_only_market_observer', 'competition_id': 'closed-test', ...}
+now = 1792843201.0
+
+    def validate(value, now=1792843201.):
+>       return validate_forward_receipt(value, capture=248, symbols=['X'], now=now)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       TypeError: validate_forward_receipt() got an unexpected keyword argument 'capture'
+
+tests/test_cleanup_retry_forward.py:19: TypeError
+_________________ test_reject_incomplete_coverage[last_at-nan] _________________
+
+field = 'last_at', value = nan
+
+    @pytest.mark.parametrize('field,value', [('contiguous', False), ('conflicting_sequences', True),
+                                           ('final_rounds', [1, 2]), ('first_at', True),
+                                           ('last_at', float('nan')), ('last_at', 1792838001.)])
+    def test_reject_incomplete_coverage(field, value):
+        r = receipt()
+        r['coverage'][field] = value
+        with pytest.raises(ValueError):
+>           validate(r)
+
+tests/test_cleanup_retry_forward.py:84: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+value = {'kind': 'settlement', 'at': 1792838000.0, 'source': 'read_only_market_observer', 'competition_id': 'closed-test', ...}
+now = 1792843201.0
+
+    def validate(value, now=1792843201.):
+>       return validate_forward_receipt(value, capture=248, symbols=['X'], now=now)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       TypeError: validate_forward_receipt() got an unexpected keyword argument 'capture'
+
+tests/test_cleanup_retry_forward.py:19: TypeError
+____________ test_reject_incomplete_coverage[last_at-1792838001.0] _____________
+
+field = 'last_at', value = 1792838001.0
+
+    @pytest.mark.parametrize('field,value', [('contiguous', False), ('conflicting_sequences', True),
+                                           ('final_rounds', [1, 2]), ('first_at', True),
+                                           ('last_at', float('nan')), ('last_at', 1792838001.)])
+    def test_reject_incomplete_coverage(field, value):
+        r = receipt()
+        r['coverage'][field] = value
+        with pytest.raises(ValueError):
+>           validate(r)
+
+tests/test_cleanup_retry_forward.py:84: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+value = {'kind': 'settlement', 'at': 1792838000.0, 'source': 'read_only_market_observer', 'competition_id': 'closed-test', ...}
+now = 1792843201.0
+
+    def validate(value, now=1792843201.):
+>       return validate_forward_receipt(value, capture=248, symbols=['X'], now=now)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       TypeError: validate_forward_receipt() got an unexpected keyword argument 'capture'
+
+tests/test_cleanup_retry_forward.py:19: TypeError
+=========================== short test summary info ============================
+FAILED tests/test_cleanup_retry_forward.py::test_accept_only_declared_receipt_window[1792837693.0]
+FAILED tests/test_cleanup_retry_forward.py::test_accept_only_declared_receipt_window[1792843199.999]
+FAILED tests/test_cleanup_retry_forward.py::test_reject_invalid_or_ineligible_receipt_time[1792837692.999]
+FAILED tests/test_cleanup_retry_forward.py::test_reject_invalid_or_ineligible_receipt_time[1792843200.0]
+FAILED tests/test_cleanup_retry_forward.py::test_reject_invalid_or_ineligible_receipt_time[nan]
+FAILED tests/test_cleanup_retry_forward.py::test_reject_invalid_or_ineligible_receipt_time[inf]
+FAILED tests/test_cleanup_retry_forward.py::test_reject_invalid_or_ineligible_receipt_time[True]
+FAILED tests/test_cleanup_retry_forward.py::test_reject_invalid_or_ineligible_receipt_time[1792838000]
+FAILED tests/test_cleanup_retry_forward.py::test_reject_invalid_or_ineligible_receipt_time[None]
+FAILED tests/test_cleanup_retry_forward.py::test_reject_nonsettlement_receipt[receipt0]
+FAILED tests/test_cleanup_retry_forward.py::test_reject_nonsettlement_receipt[receipt1]
+FAILED tests/test_cleanup_retry_forward.py::test_reject_nonsettlement_receipt[None]
+FAILED tests/test_cleanup_retry_forward.py::test_reject_nonsettlement_receipt[receipt3]
+FAILED tests/test_cleanup_retry_forward.py::test_reject_not_yet_observed_receipt
+FAILED tests/test_cleanup_retry_forward.py::test_reject_inconsistent_official_receipt[source-not_an_observer]
+FAILED tests/test_cleanup_retry_forward.py::test_reject_inconsistent_official_receipt[year-9999]
+FAILED tests/test_cleanup_retry_forward.py::test_reject_inconsistent_official_receipt[competition_id-other]
+FAILED tests/test_cleanup_retry_forward.py::test_reject_inconsistent_official_receipt[prices-value3]
+FAILED tests/test_cleanup_retry_forward.py::test_reject_inconsistent_official_receipt[coverage-value4]
+FAILED tests/test_cleanup_retry_forward.py::test_reject_inconsistent_official_receipt[clock-None]
+FAILED tests/test_cleanup_retry_forward.py::test_reject_inconsistent_official_receipt[end_clock-value6]
+FAILED tests/test_cleanup_retry_forward.py::test_reject_running_clock_before_capture_use[clock]
+FAILED tests/test_cleanup_retry_forward.py::test_reject_running_clock_before_capture_use[end_clock]
+FAILED tests/test_cleanup_retry_forward.py::test_reject_incomplete_coverage[contiguous-False]
+FAILED tests/test_cleanup_retry_forward.py::test_reject_incomplete_coverage[conflicting_sequences-True]
+FAILED tests/test_cleanup_retry_forward.py::test_reject_incomplete_coverage[final_rounds-value2]
+FAILED tests/test_cleanup_retry_forward.py::test_reject_incomplete_coverage[first_at-True]
+FAILED tests/test_cleanup_retry_forward.py::test_reject_incomplete_coverage[last_at-nan]
+FAILED tests/test_cleanup_retry_forward.py::test_reject_incomplete_coverage[last_at-1792838001.0]
+29 failed, 8 passed in 0.05s

@@ -1,0 +1,17 @@
+{"setting": [248, 0.0, 1.0, false], "status": "ok", "comparison": "exact_archive", "error": null}
+{"setting": [248, 0.0, 1.0, true], "status": "ok", "comparison": "exact_archive", "error": null}
+{"setting": [248, 0.0, 0.5, false], "status": "ok", "comparison": "exact_archive", "error": null}
+{"setting": [248, 0.0, 0.5, true], "status": "ok", "comparison": "exact_archive", "error": null}
+{"setting": [248, 0.05, 1.0, false], "status": "ok", "comparison": "exact_archive", "error": null}
+{"setting": [248, 0.05, 1.0, true], "status": "ok", "comparison": "exact_archive", "error": null}
+{"setting": [248, 0.05, 0.5, false], "status": "ok", "comparison": "exact_archive", "error": null}
+{"setting": [248, 0.05, 0.5, true], "status": "ok", "comparison": "exact_archive", "error": null}
+{"setting": [248, 0.25, 1.0, false], "status": "ok", "comparison": "exact_archive", "error": null}
+{"setting": [248, 0.25, 1.0, true], "status": "ok", "comparison": "exact_archive", "error": null}
+{"setting": [248, 0.25, 0.5, false], "status": "ok", "comparison": "exact_archive", "error": null}
+{"setting": [248, 0.25, 0.5, true], "status": "ok", "comparison": "exact_archive", "error": null}
+{"setting": [248, 1.0, 1.0, false], "status": "ok", "comparison": "exact_archive", "error": null}
+{"setting": [248, 1.0, 1.0, true], "status": "ok", "comparison": "exact_archive", "error": null}
+{"setting": [248, 1.0, 0.5, false], "status": "ok", "comparison": "exact_archive", "error": null}
+{"setting": [248, 1.0, 0.5, true], "status": "ok", "comparison": "exact_archive", "error": null}
+{"runs": 16, "errors": 0, "changed_sources": [], "forbidden_attempts": [], "finished_at": 1792838484.4532769, "results_sha256": "e0ff34873cb4c26e3e7df798f51a45cf5dd5f1b1284754ae0804f37b4bd67fd1"}

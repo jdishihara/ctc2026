@@ -1,0 +1,4 @@
+{
+  "note": "A prose-only cleanup accidentally inserted a space in one verification-script identifier. The syntax error was corrected before final packaging; the first package and receipt are preserved separately as pre-final. No evaluator was rerun and no performance artifact changed.",
+  "performance_rerun_count": 6
+}
