@@ -17,6 +17,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from ctc import strategies as S
 from ctc.valuation import SYMS
 from bot.control import ControlFile
+from bot.http_transport import JSONConnection, proxy_required
 
 HEADERS = {"User-Agent": "ctc2026-bot/1.0"}
 TICK = 0.01   # exchange rejects prices that are not a multiple of 0.01
@@ -31,9 +32,16 @@ def tick_price(price: float, side: str) -> float:
 
 
 class LiveExchange:
-    def __init__(self, url: str, key: str, dry_run: bool, rate_limit: int = 120):
+    def __init__(self, url: str, key: str, dry_run: bool, rate_limit: int = 120,
+                 *, reuse_http: bool = False):
         self.url, self.key, self.dry_run = url.rstrip("/"), key, dry_run
-        self.case = self.get("/cases/hurricane.json", api=False)
+        self.http_reuse_enabled = reuse_http and not proxy_required(self.url)
+        self._http = JSONConnection(self.url) if self.http_reuse_enabled else None
+        try:
+            self.case = self.get("/cases/hurricane.json", api=False)
+        except BaseException:
+            self.close()
+            raise
         self.limits = self.case["limits"]; self.symbols = list(self.limits)
         self.quotes: dict[str, tuple[float, float]] = {}
         self.mid: dict[str, float] = {}
@@ -63,7 +71,14 @@ class LiveExchange:
         return time.monotonic() - self.t0
 
     # ---- http ----
+    def close(self) -> None:
+        if getattr(self, '_http', None) is not None:
+            self._http.close()
+
     def get(self, path: str, api: bool = True) -> Any:
+        if getattr(self, '_http', None) is not None:
+            return self._http.request('GET', ("/api/v1" if api else "") + path,
+                                      headers={**HEADERS, "X-API-Key": self.key})
         req = urllib.request.Request(self.url + ("/api/v1" if api else "") + path, headers={**HEADERS, "X-API-Key": self.key})
         with urllib.request.urlopen(req, timeout=10) as r:
             return json.load(r)
@@ -73,6 +88,10 @@ class LiveExchange:
         req = urllib.request.Request(self.url + "/api/v1" + path, data=data, method=method,
                                      headers={**HEADERS, "X-API-Key": self.key, "Content-Type": "application/json"})
         try:
+            if getattr(self, '_http', None) is not None:
+                return self._http.request(method, '/api/v1' + path, body=body,
+                    headers={**HEADERS, "X-API-Key": self.key, "Content-Type": "application/json"},
+                    allow_empty=True)
             with urllib.request.urlopen(req, timeout=10) as r:
                 payload = r.read()
                 return json.loads(payload) if payload else {}
@@ -667,7 +686,9 @@ class LiveSession:
 
 
 async def run(args: argparse.Namespace) -> None:
-    ex = LiveExchange(args.url, args.key, args.dry_run, rate_limit=args.rate)
+    ex = LiveExchange(args.url, args.key, args.dry_run, rate_limit=args.rate,
+                      reuse_http=getattr(args, 'reuse_http', False))
+    print(f"HTTP connection reuse={ex.http_reuse_enabled}", flush=True)
     if args.nowcast:
         strat = S.FairValueTrader(min_edge=args.min_edge, edge_full=args.edge_full, project=True)
     else:   # the analog ensemble, same parameters as scripts/backtest.py --strategy analog
@@ -717,6 +738,7 @@ async def run(args: argparse.Namespace) -> None:
     finally:
         receiver.cancel()
         await asyncio.gather(receiver, return_exceptions=True)
+        ex.close()
 
 
 def main() -> None:
@@ -724,6 +746,8 @@ def main() -> None:
     ap.add_argument("--url", default="https://cornelltradingcompetition.org")
     ap.add_argument("--key", required=True)
     ap.add_argument("--dry-run", action="store_true")
+    ap.add_argument("--reuse-http", action="store_true",
+                    help="reuse HTTP connections (experimental; falls back to urllib when a proxy is configured)")
     ap.add_argument("--min-edge", type=float, default=0.025)
     ap.add_argument("--edge-full", type=float, default=0.03)
     ap.add_argument('--basket-edge', type=float, default=0.01, help='net quoted ETF/basket edge (0 disables the overlay)')

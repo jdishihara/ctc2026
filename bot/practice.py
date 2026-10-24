@@ -354,8 +354,10 @@ class PracticeSession(live.LiveSession):
 
 async def practice(args, journal):
     key = Path(args.key_file).read_text().strip()
-    ex = PracticeExchange(args.url, key, False, rate_limit=90, journal=journal)
+    ex = PracticeExchange(args.url, key, False, rate_limit=90, journal=journal,
+                          reuse_http=getattr(args, 'reuse_http', False))
     journal.exchange = ex
+    journal.event('http_transport', reuse_enabled=ex.http_reuse_enabled)
     ex.refresh()
     if not ex.state_ready or ex.open_orders or any(ex.position.values()):
         raise RuntimeError('Practice requires a reconciled flat account with no open orders')
@@ -638,12 +640,16 @@ def finish(journal):
         journal.event('receipt_attention', **journal.latest['final_receipt'])
     finally:
         journal.write(force=True)
+        if original is not None:
+            original.close()
 
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--url', default='https://cornelltradingcompetition.org')
     parser.add_argument('--key-file', default='.botkey')
+    parser.add_argument('--reuse-http', action='store_true',
+                        help='experimental connection reuse during practice; respects configured proxies')
     parser.add_argument('--out', required=True)
     parser.add_argument('--feed-log', required=True)
     parser.add_argument('--fraction', type=float, default=.1)

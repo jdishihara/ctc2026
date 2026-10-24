@@ -1,0 +1,146 @@
+{
+  "experiment": "read_only_clock_connection_reuse",
+  "requests": [
+    {
+      "pair": 0,
+      "mode": "urllib",
+      "seconds": 0.13242045799415791,
+      "status": 200,
+      "connection_reused": null,
+      "response_will_close": null,
+      "competition_id": "5edc122c-e97d-4d59-ada5-658c02c3c0da",
+      "state": "running"
+    },
+    {
+      "pair": 0,
+      "mode": "persistent",
+      "seconds": 0.061301959001866635,
+      "status": 200,
+      "connection_reused": false,
+      "response_will_close": false,
+      "competition_id": "5edc122c-e97d-4d59-ada5-658c02c3c0da",
+      "state": "running"
+    },
+    {
+      "pair": 1,
+      "mode": "persistent",
+      "seconds": 0.10157391700340668,
+      "status": 200,
+      "connection_reused": true,
+      "response_will_close": false,
+      "competition_id": "5edc122c-e97d-4d59-ada5-658c02c3c0da",
+      "state": "running"
+    },
+    {
+      "pair": 1,
+      "mode": "urllib",
+      "seconds": 0.4963110829994548,
+      "status": 200,
+      "connection_reused": null,
+      "response_will_close": null,
+      "competition_id": "5edc122c-e97d-4d59-ada5-658c02c3c0da",
+      "state": "running"
+    },
+    {
+      "pair": 2,
+      "mode": "urllib",
+      "seconds": 0.08730141699925298,
+      "status": 200,
+      "connection_reused": null,
+      "response_will_close": null,
+      "competition_id": "5edc122c-e97d-4d59-ada5-658c02c3c0da",
+      "state": "running"
+    },
+    {
+      "pair": 2,
+      "mode": "persistent",
+      "seconds": 0.027535291999811307,
+      "status": 200,
+      "connection_reused": true,
+      "response_will_close": false,
+      "competition_id": "5edc122c-e97d-4d59-ada5-658c02c3c0da",
+      "state": "running"
+    },
+    {
+      "pair": 3,
+      "mode": "persistent",
+      "seconds": 0.02826795900182333,
+      "status": 200,
+      "connection_reused": true,
+      "response_will_close": false,
+      "competition_id": "5edc122c-e97d-4d59-ada5-658c02c3c0da",
+      "state": "running"
+    },
+    {
+      "pair": 3,
+      "mode": "urllib",
+      "seconds": 0.12540625000110595,
+      "status": 200,
+      "connection_reused": null,
+      "response_will_close": null,
+      "competition_id": "5edc122c-e97d-4d59-ada5-658c02c3c0da",
+      "state": "running"
+    },
+    {
+      "pair": 4,
+      "mode": "urllib",
+      "seconds": 0.06174091700086137,
+      "status": 200,
+      "connection_reused": null,
+      "response_will_close": null,
+      "competition_id": "5edc122c-e97d-4d59-ada5-658c02c3c0da",
+      "state": "running"
+    },
+    {
+      "pair": 4,
+      "mode": "persistent",
+      "seconds": 0.03438987499976065,
+      "status": 200,
+      "connection_reused": true,
+      "response_will_close": false,
+      "competition_id": "5edc122c-e97d-4d59-ada5-658c02c3c0da",
+      "state": "running"
+    },
+    {
+      "pair": 5,
+      "mode": "persistent",
+      "seconds": 0.030441875001997687,
+      "status": 200,
+      "connection_reused": true,
+      "response_will_close": false,
+      "competition_id": "5edc122c-e97d-4d59-ada5-658c02c3c0da",
+      "state": "running"
+    },
+    {
+      "pair": 5,
+      "mode": "urllib",
+      "seconds": 0.06883720800396986,
+      "status": 200,
+      "connection_reused": null,
+      "response_will_close": null,
+      "competition_id": "5edc122c-e97d-4d59-ada5-658c02c3c0da",
+      "state": "running"
+    }
+  ],
+  "summary": {
+    "urllib": {
+      "count": 6,
+      "median_seconds": 0.10635383350017946,
+      "min_seconds": 0.06174091700086137,
+      "max_seconds": 0.4963110829994548
+    },
+    "persistent": {
+      "count": 6,
+      "median_seconds": 0.03241587500087917,
+      "min_seconds": 0.027535291999811307,
+      "max_seconds": 0.10157391700340668
+    }
+  },
+  "limitations": [
+    "Six requests per mode, one endpoint, one host, one short time window.",
+    "GET timing does not establish order/fill latency or strategy profit.",
+    "No orders, cancellations, conversions, or account-position mutations performed."
+  ],
+  "runtime": "Python 3.14.7",
+  "scope": "Read-only GET /api/v1/competitions/time; six alternating pairs. No live trading."
+}
