@@ -8,14 +8,14 @@ unchanged. Reads the news and quotes channels, keeps positions and open orders i
 mid for the operator every 10 s. Start with --dry-run: orders are printed, not sent.
 """
 from __future__ import annotations
-import argparse, asyncio, collections, json, math, sys, threading, time, urllib.error, urllib.request
+import argparse, asyncio, collections, json, math, os, sys, threading, time, urllib.error, urllib.request
 from http.client import HTTPException
 from pathlib import Path
 from typing import Any
 import websockets
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from ctc import strategies as S
-from ctc.valuation import SYMS
+from ctc.valuation import SYMS, MAX_FILL_STEPS
 from bot.control import ControlFile
 from bot.http_transport import JSONConnection, proxy_required
 
@@ -340,6 +340,10 @@ class LiveExchange:
         return response is not None
 
 
+MAX_MISSING_NEWS = 6   # a feed reconnect loses 1-2 messages; tolerate this many missing seqs per season in total (three drops), more blocks
+SEQ_RESET_GAP = 100  # a seq this far below the running maximum means a new season started (duplicates and retries never go back this far)
+
+
 def replay_feed_log(path: str, ex: "LiveExchange", strat, seen_seq: set[int], tail_bytes: int = 150_000_000) -> tuple[str, int, int]:
     """Feed every recorded news message of the current season (same fictional year as the exchange clock) through the
     model, in seq order. Returns (season year, last round seen, messages replayed)."""
@@ -350,7 +354,27 @@ def replay_feed_log(path: str, ex: "LiveExchange", strat, seen_seq: set[int], ta
     p = Path(path)
     if not year or not p.exists():
         print(f"feed-log replay skipped: {'no fictional year' if not year else path + ' missing'}", flush=True); return year, 0, 0
+    msgs, segments = load_feed_log(p, year, tail_bytes)
+    if segments:
+        print(f"feed-log replay: {segments} earlier season(s) of year {year} skipped (seq restarted); replaying the latest", flush=True)
+    for seq in sorted(msgs):
+        m = msgs[seq]
+        strat.model.on_message(m); seen_seq.add(seq)
+        if m.get('type') == 'announcement':
+            symbols = [s for s in (m.get('symbols') or []) if s in ex.symbols]
+            # Restart loses live price anchors. Re-pause these symbols and use
+            # the normal fresh-price re-anchor/explicit operator control path.
+            strat.announce(symbols, ex.t)
+    if strat.paused:
+        print(f'replayed announcement pauses: {sorted(strat.paused)}', flush=True)
+    return year, strat.model.round, len(msgs)
+
+
+def load_feed_log(p: Path, year: str, tail_bytes: int = 150_000_000) -> tuple[dict[int, dict], int]:
+    """The recorder's news messages of the latest season of `year`, by seq, and how many earlier same-year seasons
+    (seq restarts) were skipped."""
     msgs: dict[int, dict] = {}
+    max_seq = -1; segments = 0
     with p.open("rb") as f:
         size = f.seek(0, 2); f.seek(max(0, size - tail_bytes))
         if size > tail_bytes:
@@ -367,18 +391,15 @@ def replay_feed_log(path: str, ex: "LiveExchange", strat, seen_seq: set[int], ta
                 continue
             if str(m.get("time") or "")[:4] != year:
                 continue
-            msgs[m["seq"]] = m
-    for seq in sorted(msgs):
-        m = msgs[seq]
-        strat.model.on_message(m); seen_seq.add(seq)
-        if m.get('type') == 'announcement':
-            symbols = [s for s in (m.get('symbols') or []) if s in ex.symbols]
-            # Restart loses live price anchors. Re-pause these symbols and use
-            # the normal fresh-price re-anchor/explicit operator control path.
-            strat.announce(symbols, ex.t)
-    if strat.paused:
-        print(f'replayed announcement pauses: {sorted(strat.paused)}', flush=True)
-    return year, strat.model.round, len(msgs)
+            seq = m["seq"]
+            if seq < max_seq - SEQ_RESET_GAP:
+                # A season starts again from seq 0. On the testnet each season has its own fictional year, but the
+                # live exchange can run several same-year competitions in one day (a warm-up, then the real one):
+                # keep only the most recent season of this year.
+                msgs.clear(); segments += 1; max_seq = -1
+            max_seq = max(max_seq, seq)
+            msgs[seq] = m
+    return msgs, segments
 
 
 def quote_from_frame(d: dict[str, Any]) -> tuple[str, float, float] | None:
@@ -450,8 +471,11 @@ async def drive_market_data(session, inbox, receiver, interval=.25):
 
 
 class LiveSession:
-    def __init__(self, ex, strat, sync, season_year='', last_round=0, seen_seq=None, control=None):
+    def __init__(self, ex, strat, sync, season_year='', last_round=0, seen_seq=None, control=None, feed_log=None):
         self.ex, self.strat, self.sync = ex, strat, sync
+        self.feed_log = Path(feed_log) if feed_log else None   # the recorder's file: a long feed hole is repaired by a restart that replays it
+        self.hole_since = None; self.last_hole_check = -1e9
+        self.restart = lambda: os._exit(3)                      # the run_live.sh wrapper starts the bot again in 10 s
         self.season_year, self.last_round = season_year or getattr(ex, 'season_year', ''), last_round
         self.retired_years = set()
         self.seen_seq = seen_seq if seen_seq is not None else set()
@@ -462,7 +486,9 @@ class LiveSession:
         self.stopped = threading.Event()
         self.pending_news = threading.Event()
         self.latest_seq = max(self.seen_seq, default=-1)
-        self.news_complete = len(self.seen_seq) == self.latest_seq + 1
+        self.missing_seq = set(range(self.latest_seq + 1)) - self.seen_seq
+        self.unexplained_seq = set(self.missing_seq)
+        self.news_complete = not self.unexplained_seq and len(self.missing_seq) <= MAX_MISSING_NEWS
         self.feed_current = False  # Require a live news checkpoint after replay.
         self.reconnect_warmup_pending = False
         self.awaiting_competition_id = None
@@ -500,8 +526,46 @@ class LiveSession:
         basket = getattr(self.ex, 'case', {}).get('etfs', {}).get(symbol, {}).get('basket', {})
         return bool(({symbol} | set(basket)) & self.strat.paused)
 
+    def _update_news_complete(self):
+        # Lost messages are tolerated only when each one is accounted for: filled from the recorder's file, or part
+        # of a short run of storm observations that the model interpolates. An unexplained loss (it could have been
+        # an announcement, an official advisory or a report) blocks until the message arrives or a restart replays
+        # the recorder's file. The budget caps the explained ones per season.
+        self.news_complete = not self.unexplained_seq and len(self.missing_seq) <= MAX_MISSING_NEWS
+
+    def _feed_hole(self, gap, m):
+        """Seqs `gap` were never received and `m` (the first message after them) is about to be applied."""
+        model = self.strat.model
+        filled = {}
+        if self.feed_log is not None and self.feed_log.exists():
+            try:
+                filled, _ = load_feed_log(self.feed_log, self.season_year, tail_bytes=8_000_000)
+            except Exception as exc:
+                print(f'feed log unreadable ({exc})', flush=True); filled = {}
+        remaining = []
+        for g in gap:
+            if g in filled and g > self.latest_seq:
+                self._news(filled[g])          # the recorder kept its connection: apply the lost message in order
+            elif g > self.latest_seq:
+                remaining.append(g)
+        if not remaining:
+            print(f'feed hole: seqs {gap[0]}-{gap[-1]} filled from the recorder\'s file', flush=True)
+            return
+        last = model.last_obs
+        step = model.timing['obs_every']
+        observations = (m.get('type') == 'storm' and last is not None and m.get('round') == model.round
+                        and len(remaining) <= MAX_FILL_STEPS - 1
+                        and math.isclose(m.get('age', -1) - last['age'], (len(remaining) + 1) * step, abs_tol=1e-9))
+        self.missing_seq.update(remaining)
+        if not observations:
+            self.unexplained_seq.update(remaining)
+        print(f'feed hole: seqs {remaining[0]}-{remaining[-1]} lost '
+              f'({"storm observations, interpolated" if observations else "unknown types: trading blocked until they arrive or a restart replays the recorder"}; '
+              f'{len(self.missing_seq)} missing this season, {MAX_MISSING_NEWS} tolerated)', flush=True)
+
     def _reset_news(self):
         self.seen_seq.clear()
+        self.missing_seq = set(); self.unexplained_seq = set()
         self.latest_seq = -1
         self.news_complete = True
         self.feed_current = False
@@ -539,7 +603,7 @@ class LiveSession:
                 strat.competition_id = ex.competition_id
                 return True
             print('new competition id: resetting model', flush=True)
-            if self.season_year:
+            if self.season_year and self.season_year != account_year:   # a same-year competition keeps its news
                 self.retired_years.add(self.season_year)
             strat.on_start(ex)
             strat.on_round(ex)
@@ -570,10 +634,13 @@ class LiveSession:
                 if seq == self.latest_seq:
                     self.feed_current = True
                 return
-            if seq != self.latest_seq + 1:
-                self.news_complete = False
+            if seq > self.latest_seq + 1:
+                self._feed_hole(list(range(self.latest_seq + 1, seq)), m)
+            self.missing_seq.discard(seq)     # a late or re-sent message fills its hole
+            self.unexplained_seq.discard(seq)
             self.seen_seq.add(seq)
             self.latest_seq = max(seq, self.latest_seq)
+            self._update_news_complete()
             self.feed_current = True
         if m.get('type') == 'storm_formed':
             if m['round'] < self.last_round or (m['round'] == 1 and (strat.model.reported_rounds or strat.model.round)):
@@ -582,7 +649,8 @@ class LiveSession:
                 if seq is not None:
                     self.seen_seq.add(seq)
                     self.latest_seq = seq
-                    self.news_complete = seq == 0
+                    self.missing_seq = set(range(seq)); self.unexplained_seq = set(range(seq))
+                    self._update_news_complete()
                     self.feed_current = True
             self.last_round = ex.round = m['round']
         if m.get('type') == 'snapshot':
@@ -593,7 +661,9 @@ class LiveSession:
                           and self.history_block_reason() is None)
             if checkpoint is not None:
                 if checkpoint > self.latest_seq:
-                    self.news_complete = False
+                    ahead = range(self.latest_seq + 1, checkpoint + 1)
+                    self.missing_seq.update(ahead); self.unexplained_seq.update(ahead)   # until they arrive
+                    self._update_news_complete()
                 if checkpoint >= self.latest_seq:
                     self.feed_current = True
             strat.model.on_snapshot(m)
@@ -616,6 +686,45 @@ class LiveSession:
             print(f"ANNOUNCEMENT {syms}: {m.get('headline')}  -> pausing those symbols; {how}", flush=True)
             strat.announce(syms, ex.t)
         strat.on_news(ex, m)
+
+    def _repair_long_hole_by_restart(self):
+        """More than MAX_MISSING_NEWS lost messages block the rest of the season. The recorder keeps its own
+        connection, so when its file holds every missing message, exit: the wrapper restarts the bot, which replays
+        the complete season from that file (the tested restart path) and is eligible again about a minute later."""
+        ex = self.ex
+        blocked_by_hole = self.missing_seq and (not self.news_complete or not self.strat.model.live_history_ready)
+        if self.feed_log is None or not blocked_by_hole:
+            self.hole_since = None
+            return
+        if self.hole_since is None:
+            self.hole_since = ex.t
+        if ex.t - self.hole_since < 10 or ex.t - self.last_hole_check < 30:
+            return                                   # late messages get ten seconds to fill their holes
+        self.last_hole_check = ex.t
+        try:
+            msgs, _ = load_feed_log(self.feed_log, self.season_year, tail_bytes=30_000_000)
+        except Exception as exc:
+            print(f'feed log unreadable ({exc}); staying blocked', flush=True)
+            return
+        if not self.missing_seq <= set(msgs):
+            print(f'feed log lacks {len(self.missing_seq - set(msgs))} of the {len(self.missing_seq)} lost messages; staying blocked', flush=True)
+            return
+        print(f'RESTARTING: {len(self.missing_seq)} lost messages (seqs {min(self.missing_seq)}-{max(self.missing_seq)}) are in {self.feed_log}; '
+              f'the wrapper restarts the bot to replay the season', flush=True)
+        try:
+            if ex.open_orders:
+                ex.cancel_all()
+        except Exception as exc:
+            print(f'cancel before restart failed: {exc}', flush=True)
+        if self.control is not None:
+            # The next process re-applies every operator command (pauses, fair adjustments, resumes) in order.
+            try:
+                Path(self.control.path + '.replay').write_text('1')
+            except Exception as exc:
+                print(f'could not mark the control file for replay: {exc}', flush=True)
+        self.stop()
+        sys.stdout.flush()
+        self.restart()
 
     def step(self, events):
         ex, strat = self.ex, self.strat
@@ -660,6 +769,7 @@ class LiveSession:
                 ex.mid.pop(symbol, None)
                 ex.quote_times.pop(symbol, None)
         blocked = self.history_block_reason()
+        self._repair_long_hole_by_restart()
         if blocked != self.last_block_reason:
             print(f'TRADING BLOCKED: {blocked}' if blocked else 'history complete: trading eligible', flush=True)
             self.last_block_reason = blocked
@@ -709,10 +819,10 @@ async def run_exchange(args: argparse.Namespace, ex: LiveExchange) -> None:
                                   final_exact=args.final_exact, final_edge=args.final_edge, final_edge_full=args.final_edge_full,
                                   sigma=args.sigma, k=args.k, passive=args.passive, warmup=args.warmup, max_cross=args.max_cross,
                                   carry=args.carry, ent_cut=args.ent_cut, cone_w=args.cone_w, cone_s0=args.cone_s0, cone_nu=args.cone_nu, isl_w=args.isl_w,
-                                  announce_wait=args.announce_wait)
+                                  rebuild_min_edge=getattr(args, 'rebuild_min_edge', 0.0), announce_wait=args.announce_wait)
     print(f"strategy {'nowcast' if args.nowcast else 'analog'} min_edge {args.min_edge} edge_full {args.edge_full} sd_mult {args.sd_mult} sigma {args.sigma} k {args.k} passive {args.passive} warmup {args.warmup} max_cross {args.max_cross} carry {args.carry} ent_cut {args.ent_cut} cone_w {args.cone_w} cone_s0 {args.cone_s0} cone_nu {args.cone_nu} isl_w {args.isl_w}", flush=True)
     strat.on_start(ex)
-    print(f"final phase exact={strat.final_exact} entry={strat.final_edge} full={strat.final_edge_full}", flush=True)
+    print(f"final phase exact={strat.final_exact} entry={strat.final_edge} full={strat.final_edge_full}; rebuilder floor {strat.rebuild_min_edge}", flush=True)
     print(f"basket edge={strat.basket_edge} participation={strat.basket_participation} max_lot=10", flush=True)
     print(f"announcements: pause named symbols, re-anchor to the house mid after {args.announce_wait:.0f} s; commands from {args.control}", flush=True)
     season_year = ""
@@ -729,19 +839,27 @@ async def run_exchange(args: argparse.Namespace, ex: LiveExchange) -> None:
     ws_url = (args.ws or ex.url.replace("https://", "wss://", 1).replace("http://", "ws://", 1)) + "/ws/v1/market-data"
     subscribe = {"action": "subscribe", "symbols": ex.symbols, "channels": ["news", "quotes"]}
     inbox = MarketInbox()
-    session = LiveSession(ex, strat, args.sync, season_year, last_round, seen_seq, control=ControlFile(args.control))
+    session = LiveSession(ex, strat, args.sync, season_year, last_round, seen_seq, control=ControlFile(args.control),
+                          feed_log=args.feed_log)
 
     async def receive_forever():
+        drops = 0; connected_at = -1e9
         while True:
             try:
                 async with websockets.connect(ws_url, additional_headers={'X-API-Key': ex.key}) as ws:
                     await ws.send(json.dumps(subscribe))
                     print('connected', flush=True)
+                    connected_at = time.monotonic()
                     await receive_market_data(ws, inbox, lambda: ex.t)
             except (OSError, websockets.WebSocketException) as exc:
                 print(f'disconnected ({exc}); reconnecting', flush=True)
             inbox.put({'type': 'disconnected'}, ex.t)
-            await asyncio.sleep(2)
+            if time.monotonic() - connected_at > 5:
+                drops = 0                            # it was a healthy connection that dropped, not a refusal
+            drops += 1
+            # Observations arrive every 2 s and a hole of more than 3 is not repaired: reconnect at once after a
+            # single drop (the overnight pattern), and back off only when the server keeps refusing.
+            await asyncio.sleep(0.5 if drops == 1 else 2)
 
     receiver = asyncio.create_task(receive_forever())
     try:
@@ -758,13 +876,14 @@ def main() -> None:
     ap.add_argument("--dry-run", action="store_true")
     ap.add_argument("--reuse-http", action="store_true",
                     help="reuse HTTP connections (experimental; falls back to urllib when a proxy is configured)")
-    ap.add_argument("--min-edge", type=float, default=0.025)
+    ap.add_argument("--min-edge", type=float, default=0.03)
     ap.add_argument("--edge-full", type=float, default=0.03)
     ap.add_argument('--basket-edge', type=float, default=0.01, help='net quoted ETF/basket edge (0 disables the overlay)')
     ap.add_argument('--basket-participation', type=float, default=0.5, help='maximum fraction of displayed external depth per closing leg')
     ap.add_argument("--final-exact", action=argparse.BooleanOptionalAction, default=True,
                     help="use exact final rules after three reports and complete recorded weather")
-    ap.add_argument("--final-edge", type=float, default=0.005, help="entry floor in the exact final phase (0 = normal floor)")
+    ap.add_argument("--final-edge", type=float, default=0.01, help="entry floor in the exact final phase (0 = normal floor)")
+    ap.add_argument("--rebuild-min-edge", type=float, default=0.0, help="edge floor for RECON/MAT/GEN (0 = the global floor)")
     ap.add_argument("--final-edge-full", type=float, default=0.005, help="full-size edge in the exact final phase (0 = normal)")
     ap.add_argument("--sync", type=float, default=3.0, help="seconds between position/open-order polls")
     ap.add_argument("--ws", default=None, help="override the market-data host, e.g. ws://localhost:8766 for the mock")

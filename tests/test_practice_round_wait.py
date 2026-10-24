@@ -125,7 +125,7 @@ def test_real_history_corruption_still_stops_and_cannot_recover(setup, corruptio
         step(session, formed, {**first, 'age': 2})
     else:
         step(session, formed, first)
-        step(session, weather(age=4, round=2, seq=session.latest_seq + 1))
+        step(session, weather(age=10, round=2, seq=session.latest_seq + 1))   # four lost observations: beyond repair
     assert journal.stop_reason is not None
     reason = journal.stop_reason
     step(session, weather(age=0, round=2, seq=session.latest_seq + 1))

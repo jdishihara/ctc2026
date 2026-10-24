@@ -18,7 +18,7 @@ STRATS = {
     "analog": lambda a: S.FairValueTrader(min_edge=a.min_edge, edge_full=a.edge_full, analog=True, sd_mult=a.sd_mult,
                                           basket_edge=a.basket_edge, basket_participation=a.basket_participation,
                                           rebalance_every=a.rebalance_every, edge_ramp=a.edge_ramp,
-                                          final_exact=a.final_exact, final_edge=a.final_edge, final_edge_full=a.final_edge_full,
+                                          final_exact=a.final_exact, final_edge=a.final_edge, final_edge_full=a.final_edge_full, final_every=a.final_every,
                                           wind_condition=a.wind_condition,
                                           sigma=a.sigma, k=a.k, shift=not a.noshift, cone_w=a.cone_w, isl_w=a.isl_w, cone_s0=a.cone_s0, cone_nu=a.cone_nu, vel_w=a.vel_w, vel_sd=a.vel_sd, cone_all=a.cone_all, loss_limit=a.loss_limit or None, prior_mode=a.prior, passive=a.passive, warmup=a.warmup, future_sd=a.future_sd, fair_jump=a.fair_jump, max_cross=a.max_cross, carry=a.carry, ent_cut=a.ent_cut, rebuild_min_edge=a.rebuild_min_edge, late_cut=a.late_cut),
 }
@@ -42,7 +42,7 @@ def main():
     ap.add_argument("--liquidity", default="ladder", choices=["ladder", "spread"], help="ladder = measured testnet book; spread = flat half-spread model")
     ap.add_argument("--refill", type=float, default=10.0, help="ladder: seconds for consumed depth to regenerate")
     ap.add_argument("--ladder-scale", type=float, default=1.0, help="ladder: multiply all sizes")
-    ap.add_argument("--min-edge", type=float, default=0.025)
+    ap.add_argument("--min-edge", type=float, default=0.03)
     ap.add_argument("--edge-full", type=float, default=0.03)
     ap.add_argument('--basket-edge', type=float, default=0.01, help='net quoted ETF/basket edge (0 disables the overlay)')
     ap.add_argument('--basket-participation', type=float, default=0.5, help='maximum fraction of displayed external depth per closing leg')
@@ -52,8 +52,9 @@ def main():
     ap.add_argument("--wind-condition", type=float, default=0.0, help="experimental training-derived strength response (0 = original)")
     ap.add_argument("--final-exact", action=argparse.BooleanOptionalAction, default=True,
                     help="use exact final rules after three reports and complete recorded weather")
-    ap.add_argument("--final-edge", type=float, default=0.005, help="entry floor in the exact final phase (0 = normal floor)")
+    ap.add_argument("--final-edge", type=float, default=0.01, help="entry floor in the exact final phase (0 = normal floor)")
     ap.add_argument("--final-edge-full", type=float, default=0.005, help="full-size edge in the exact final phase (0 = normal)")
+    ap.add_argument("--final-every", type=float, default=0.0, help="rebalance cadence (s) once the exact final phase is active (0 = the normal --rebalance-every)")
     ap.add_argument("--verbose", action="store_true")
     ap.add_argument("--sd-mult", type=float, default=0.7)
     ap.add_argument("--sigma", type=float, default=15.0)

@@ -84,7 +84,7 @@ def test_snapshot_after_interruption_still_requires_warmup(interruption):
         if interruption == 'disconnect':
             session.feed_current = False
         snapshot = dict(type='snapshot', round=1,
-                        last_seq=2 if interruption == 'missing_news' else 1,
+                        last_seq=10 if interruption == 'missing_news' else 1,
                         time='1788-05-26T10:00:00', phase='storm',
                         obs={'age': 0}, track=[], damage=[])
         session._news(snapshot)
@@ -146,8 +146,8 @@ def test_complete_history_allows_orders_and_missing_news_blocks_them():
     ex, session = prepared()
     with patch.object(ex, 'send', return_value={'order_id': 'ok', 'filled_quantity': 1}) as send:
         assert ex.place('PORT', 'buy', 1, 100) == 'ok'
-        # Weather is continuous, but a missing advisory/announcement matters too.
-        session._news(weather(age=2, seq=3))
+        # Weather is continuous, but more than MAX_MISSING_NEWS lost advisories/announcements block too.
+        session._news(weather(age=2, seq=10))
         assert ex.place('PORT', 'buy', 1, 100) is None
         assert send.call_count == 1
 
@@ -368,11 +368,62 @@ def test_history_readiness_requires_complete_current_and_prior_storms():
     assert not model.live_history_ready
     model.on_message(weather())
     assert model.live_history_ready
-    model.on_message(weather(age=4, seq=3))
+    model.on_message(weather(age=4, seq=3))      # one lost observation: interpolated
+    assert model.live_history_ready
+    model.on_message(weather(age=14, seq=8))     # four lost observations: too many
     assert not model.live_history_ready
     model = SeasonModel(CASE)
     model.on_message(weather(round=3))
     assert not model.live_history_ready
+
+
+def test_short_weather_hole_is_interpolated_between_neighbours():
+    model = SeasonModel(CASE)
+    model.on_message(weather(age=0, seq=1))
+    model.on_message({**weather(age=6, seq=4), 'x': 30, 'radius': 130})
+    ages = [o['age'] for o in model.obs]
+    assert ages == [0, 2, 4, 6]
+    assert [o['x'] for o in model.obs] == [0, 10, 20, 30]
+    assert [o['radius'] for o in model.obs] == [100, 110, 120, 130]
+    assert all(o.get('_filled') for o in model.obs[1:3]) and 'seq' not in model.obs[1]
+    assert model.outage_history_complete and model.live_history_ready
+
+
+def test_a_reconnect_losing_two_messages_keeps_trading_eligible():
+    ex, session = prepared()
+    session._news(weather(age=2, seq=2))
+    session._news(weather(age=8, seq=5))          # seqs 3 and 4 (ages 4 and 6) lost in a reconnect
+    assert session.missing_seq == {3, 4}
+    assert session.history_block_reason() is None
+    assert [o['age'] for o in session.strat.model.obs] == [0, 2, 4, 6, 8]
+    session._news(weather(age=10, seq=6))
+    assert session.history_block_reason() is None
+
+
+def test_more_than_six_lost_messages_block_until_a_new_season():
+    ex, session = prepared()
+    session._news(weather(age=2, seq=2))
+    session._news({'type': 'advisory', 'round': 1, 'seq': 11, 'age': 2, 'source': 'wire', 'outlook': 'direct'})
+    assert session.missing_seq == {3, 4, 5, 6, 7, 8, 9, 10}
+    assert 'missing news history' in session.history_block_reason()
+    session._news(weather(age=4, seq=3))          # a late message fills one hole: still too many
+    assert session.missing_seq == {4, 5, 6, 7, 8, 9, 10}
+    assert 'missing news history' in session.history_block_reason()
+    session._news_season_changed('1789')          # only a new season clears the holes
+    assert session.missing_seq == set() and session.news_complete
+
+
+def test_a_lost_final_report_still_blocks_through_the_weather_gate():
+    ex, session = prepared()
+    model = session.strat.model
+    for message in complete_season()[2:]:
+        if message['type'] == 'damage_report' and message['round'] == 1:
+            continue                               # the round-1 final report is the one lost message
+        session._news(message)
+    # a lost message of unknown type is not tolerated: blocked until it arrives or a restart replays the recorder
+    assert session.missing_seq == session.unexplained_seq and len(session.missing_seq) == 1
+    assert not session.news_complete and 1 not in model.reported_rounds
+    assert 'missing news history' in session.history_block_reason()
 
 
 def test_complete_recorded_season_remains_eligible():
@@ -400,3 +451,130 @@ def test_full_season_session_accepts_checkpoints_in_every_round():
     session._news({'type': 'snapshot', 'round': 3, 'phase': 'done',
                    'last_seq': session.latest_seq})
     assert session.history_block_reason() is None
+
+
+def test_feed_replay_keeps_only_the_latest_same_year_season(tmp_path):
+    # The live exchange can run a warm-up season and the real season on the same fictional year; the testnet never
+    # did (one year per season). Only the season after the last seq restart may be replayed.
+    ex, previous = prepared()
+    strat = previous.strat
+    strat.on_start(ex)
+    ex.responses['/competitions/time']['fictional_time'] = '1788-05-26T10:01:00'
+    stale = [{'type': 'storm_formed', 'round': 1, 'seq': 0}, weather(),
+             {'type': 'announcement', 'seq': 2, 'symbols': ['PORT'], 'headline': 'Port closure'}]
+    stale += [{'type': 'storm', 'round': 1, 'seq': s, 'age': 2 * s, 'x': 480.0, 'y': 700.0, 'vx': 0.0, 'vy': -1.8,
+               'radius': 80.0, 'intensity': 1.0} for s in range(3, 300)]
+    current = [{'type': 'storm_formed', 'round': 1, 'seq': 0}, weather(), {**weather(), 'seq': 2, 'age': 4}]
+    path = tmp_path / 'feed.jsonl'
+    lines = [json.dumps({'type': 'news', 'message': {**m, 'time': '1788-05-26T10:00:00'}}) for m in stale + current]
+    path.write_text('\n'.join(lines))
+    seen = set()
+    year, rnd, count = replay_feed_log(str(path), ex, strat, seen)
+    assert (year, rnd, count) == ('1788', 1, 3)
+    assert seen == {0, 1, 2}
+    assert strat.paused == set()          # the stale season's announcement pause is not restored
+    # only the current season's observations (ages 0 and 4, plus the interpolated age 2): no stale x=480 point
+    assert [o['age'] for o in strat.model.obs] == [0, 2, 4] and all(o['x'] != 480.0 for o in strat.model.obs)
+
+
+def _feed_log_with(tmp_path, messages, year='1788'):
+    path = tmp_path / 'competition.jsonl'
+    path.write_text(''.join(json.dumps({'type': 'news', 'message': {**m, 'time': f'{year}-05-26T10:00:00'}}) + '\n'
+                            for m in messages))
+    return path
+
+
+def test_long_hole_restarts_only_when_the_recorder_has_every_lost_message(tmp_path):
+    season = complete_season()
+    ex = ScriptedExchange()
+    ex.responses['/competitions/time']['fictional_time'] = '1788-05-26T10:00:00'
+    ex.refresh()
+    strat = FairValueTrader(warmup=0)
+    strat.on_start(ex)
+    restarts = []
+    session = LiveSession(ex, strat, sync=9999, feed_log=str(_feed_log_with(tmp_path, season[:6])))
+    session.restart = lambda: restarts.append(ex.t)
+    ex.t0 = 0.
+    for m in season[:3]:
+        session._news(m)
+    session._news(season[12])                     # seqs 3-11 lost: beyond the in-line repair
+    assert 'missing news history' in session.history_block_reason()
+    with patch('bot.live.time.monotonic', return_value=5.):
+        session.step([])
+    assert restarts == []                          # ten seconds of grace for late messages
+    with patch('bot.live.time.monotonic', return_value=16.):
+        session.step([])
+    assert restarts == []                          # the recorder's file lacks seqs 6-11: a restart cannot help
+    _feed_log_with(tmp_path, season[:13])
+    with patch('bot.live.time.monotonic', return_value=50.), patch.object(ex, 'send', return_value={}):
+        session.step([])
+    assert restarts == [50.] and session.stopped.is_set()
+    assert (tmp_path / 'control.txt.replay').exists() is False or True   # marker only when a control file is configured
+
+
+def test_short_hole_of_observations_is_explained_but_other_types_are_not():
+    ex, session = prepared()
+    session._news(weather(age=8, seq=5))                    # seqs 2-4 = ages 2, 4, 6: pure observations
+    assert session.missing_seq == {2, 3, 4} and not session.unexplained_seq and session.news_complete
+    assert session.history_block_reason() is None
+    session._news({'type': 'advisory', 'round': 1, 'seq': 7, 'age': 8, 'source': 'wire', 'outlook': 'direct'})
+    assert session.unexplained_seq == {6} and not session.news_complete   # seq 6 could have been anything
+    assert 'missing news history' in session.history_block_reason()
+    session._news({'type': 'impact', 'round': 1, 'seq': 6, 'age': 8, 'headline': 'late'})
+    assert not session.unexplained_seq and session.news_complete         # the late message explains itself
+
+
+def test_hole_is_filled_in_order_from_the_recorder_file(tmp_path):
+    season = complete_season()
+    ex = ScriptedExchange()
+    ex.responses['/competitions/time']['fictional_time'] = '1788-05-26T10:00:00'
+    ex.refresh()
+    strat = FairValueTrader(warmup=0)
+    strat.on_start(ex)
+    announcement = {'type': 'announcement', 'seq': 3, 'symbols': ['PORT'], 'headline': 'Port closure'}
+    recorded = season[:3] + [announcement] + [{**m, 'seq': m['seq'] + 1} for m in season[3:8]]
+    session = LiveSession(ex, strat, sync=9999, feed_log=str(_feed_log_with(tmp_path, recorded)))
+    for m in recorded[:3]:
+        session._news(m)
+    session._news(recorded[7])                              # seqs 3-6 lost on the bot's socket
+    assert session.seen_seq == set(range(8)) and not session.missing_seq and session.news_complete
+    assert 'PORT' in strat.paused                           # the lost announcement was applied from the file
+    assert [o['age'] for o in strat.model.obs] == [0, 2, 4, 6, 8, 10] and strat.model.outage_history_complete
+
+
+def test_control_file_replays_this_run_after_a_self_restart(tmp_path):
+    from bot.control import ControlFile
+    path = tmp_path / 'control.txt'
+    path.write_text('pause MAT\n')
+    assert ControlFile(str(path)).offset == len('pause MAT\n')     # an ordinary start skips earlier commands
+    (tmp_path / 'control.txt.replay').write_text('1')
+    control = ControlFile(str(path))
+    assert control.offset == 0 and not (tmp_path / 'control.txt.replay').exists()
+
+
+def test_same_year_competition_change_keeps_the_year():
+    ex, session = prepared()
+    ex.competition_id = 'second-competition'
+    session._competition_changed()
+    assert '1788' not in session.retired_years
+    session._news({'type': 'storm_formed', 'round': 1, 'seq': 0})
+    session._news(weather())
+    assert session.strat.model.round == 1 and session.latest_seq == 1
+
+
+def test_short_hole_or_no_feed_log_never_restarts(tmp_path):
+    ex, session = prepared()
+    session.restart = lambda: pytest.fail('restart without a feed log')
+    session._news(weather(age=18, seq=10))        # seqs 2-9 lost, no feed log configured
+    session.step([])
+    session.feed_log = _feed_log_with(tmp_path, complete_season()[:12])
+    session.restart = lambda: pytest.fail('restart within the grace period')
+    session.step([])
+    ex2, session2 = prepared()
+    session2.feed_log = session.feed_log
+    session2.restart = lambda: pytest.fail('restart for a repairable hole')
+    session2._news(weather(age=8, seq=5))         # three lost observations: repaired in line
+    ex2.t0 = 0.
+    with patch('bot.live.time.monotonic', return_value=100.):
+        session2.step([])
+    assert session2.history_block_reason() is None

@@ -42,7 +42,10 @@ class H(BaseHTTPRequestHandler):
                     'bids': [{'price': mid * (1 - STATE['half_spread']), 'quantity': size}],
                     'asks': [{'price': mid * (1 + STATE['half_spread']), 'quantity': size}]})
         if self.path.startswith("/api/v1/competitions/time"):
-            return self._json({"state": "running" if STATE["open"] else "paused"})
+            # The bot refuses to start without a competition identity and a fictional clock (startup identity check).
+            return self._json({"competition_id": STATE.get("competition_id", "mock-season"),
+                               "fictional_time": STATE.get("fictional_time", "1576-08-01T09:30:00"),
+                               "state": "running" if STATE["open"] else "paused"})
         if self.path.startswith("/api/v1/positions"):
             with STATE["lock"]:
                 return self._json({"positions": [{"symbol": s, "quantity": q} for s, q in STATE["position"].items()]})
@@ -98,19 +101,45 @@ class H(BaseHTTPRequestHandler):
         self._json({"status": "ok"})
 
 
-async def stream(sim: Sim, speed: float, port: int):
-    clients = set()
+async def stream(sim: Sim, speed: float, port: int, start_delay: float = 0.0):
+    clients = set(); droppable = set()
 
     async def handler(ws):
-        clients.add(ws)
+        if time.time() < STATE.get("outage_until", 0.0):
+            await ws.close(code=1011)          # the server is "down" for a while after a drop (--ws-drop-outage)
+            return
         try:
-            await ws.recv()   # subscribe
+            sub = json.loads(await ws.recv())   # subscribe
+        except Exception:
+            return
+        # The recorder subscribes to trades as well; --ws-drop-every cuts only the trading bot's connection so the
+        # recorder's file stays complete, as on game day when the two connections fail independently.
+        if "trades" not in (sub.get("channels") or []):
+            clients.add(ws); droppable.add(ws)
+        else:
+            clients.add(ws)
+        try:
             await ws.wait_closed()
         finally:
-            clients.discard(ws)
+            clients.discard(ws); droppable.discard(ws)
+
+    async def drop_clients():
+        while True:
+            await asyncio.sleep(STATE["ws_drop_every"])
+            for ws in list(droppable):
+                print("dropping the bot's websocket", flush=True)
+                STATE["outage_until"] = time.time() + STATE.get("ws_drop_outage", 0.0)
+                await ws.close(code=1011)
 
     async with websockets.serve(handler, "localhost", port + 1):
         print(f"ws on ws://localhost:{port + 1}/ws/v1/market-data  (http on {port})", flush=True)
+        if STATE.get("ws_drop_every"):
+            asyncio.create_task(drop_clients())
+        if start_delay > 0:
+            STATE["open"] = False          # like the live exchange before the open: a bot can connect and wait
+            await asyncio.sleep(start_delay)
+            STATE["open"] = True
+            print("season starting", flush=True)
         t0 = time.time(); last_t = 0.0
         for t, _, kind, payload in sim.events:
             wait = (t - last_t) / speed - (time.time() - t0)
@@ -122,6 +151,8 @@ async def stream(sim: Sim, speed: float, port: int):
                     STATE["mid"] = payload
                 frames = [json.dumps({"type": "quote", "symbol": s, "bid": p * (1 - STATE["half_spread"]), "ask": p * (1 + STATE["half_spread"])}) for s, p in payload.items()]
             else:
+                if payload.get("seq") in STATE.get("drop_seqs", ()):
+                    print(f"dropping news seq {payload['seq']} ({payload.get('type')})", flush=True); continue
                 frames = [json.dumps({"type": "news", "message": payload})]
             for ws in list(clients):
                 for f in frames:
@@ -139,13 +170,23 @@ async def stream(sim: Sim, speed: float, port: int):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--season", type=int, default=451); ap.add_argument("--speed", type=float, default=20.0); ap.add_argument("--port", type=int, default=8765)
+    ap.add_argument("--start-delay", type=float, default=0.0, help="seconds to serve a closed market before the season starts (lets a bot connect first)")
+    ap.add_argument("--ws-drop-every", type=float, default=0.0, help="close every websocket client this often (seconds) to rehearse reconnects")
+    ap.add_argument("--ws-drop-outage", type=float, default=0.0, help="after each drop, refuse new websocket connections for this many seconds")
+    ap.add_argument("--drop-seqs", default="", help="comma-separated news seqs never sent (rehearses a feed hole, e.g. 300,301)")
     a = ap.parse_args()
+    STATE["drop_seqs"] = {int(x) for x in a.drop_seqs.split(",") if x.strip()}
+    STATE["ws_drop_every"] = a.ws_drop_every; STATE["ws_drop_outage"] = a.ws_drop_outage
     case = json.loads((ROOT / "case.json").read_text()); man = json.loads((ROOT / "history" / "manifest.json").read_text())
     STATE["case"] = case
     sim = Sim(ROOT / "history" / man["seasons"][a.season - 1]["dir"], case)
+    # The clock endpoint must agree with the feed's fictional year, as on the real exchange: the bot refuses to trade
+    # while the account clock and the news disagree on the season.
+    STATE["competition_id"] = f"mock-season-{a.season}"
+    STATE["fictional_time"] = next((pl["time"] for _, _, kind, pl in sim.events if kind != "price" and isinstance(pl, dict) and pl.get("time")), "2026-08-03T09:30:00")
     srv = ThreadingHTTPServer(("localhost", a.port), H)
     threading.Thread(target=srv.serve_forever, daemon=True).start()
-    asyncio.run(stream(sim, a.speed, a.port))
+    asyncio.run(stream(sim, a.speed, a.port, a.start_delay))
     srv.shutdown()
 
 

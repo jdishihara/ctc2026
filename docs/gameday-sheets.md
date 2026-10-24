@@ -11,9 +11,18 @@ Overall rank = 0.45 x Hurricane rank + 0.35 x Derivatives rank + 0.20 x Mario ra
 
 ## Hurricane (Systematic Equities, 45%): one watcher, the bot trades
 
-Before the open (15 min). Paste in order, in `~/projects/ctc2026`:
+Schedule (organisers' doc, tentative): Case II Systematic Equities **2:35-4:10 pm**. The exchange already serves the
+Hurricane competition (`/competitions/current` = "Hurricane Season", state ready, fictional date 2026-08-03, checked
+10:00). The live season is dated 2026; the bot's feed-log replay keeps only the season after the last seq restart, so a
+same-year warm-up season cannot pollute the real one (fixed 2026-10-24 10:10).
+
+Before the open (15 min). One command does all of the steps below in order and refuses to start the bot if preflight
+reports a failure: `zsh scripts/launch_competition.sh` (then `tail -f recordings/bot_live.log`). By hand, paste in
+order, in `~/projects/ctc2026`:
 
 ```bash
+bot/stop.sh                                  # the overnight testnet bot (started 00:22) and its recorders are still running: stop them first
+pkill -f record_feed.py; pkill -f record_books.py; pkill -f "mario/desk.py"
 caffeinate -i -t 36000 &                     # idle sleep only; keep the lid OPEN, or: sudo pmset -a disablesleep 1 (undo with 0)
 git pull && git status                       # clean, on main
 echo COMPETITION_KEY > .botkey               # from the captain's Team page; never commit it
@@ -36,11 +45,15 @@ for most symbols is normal; during a storm they diverge, that is the trade.
 | You see | It means | Do |
 |---|---|---|
 | `market (re)opened: warm-up` | round open, no orders for 20 s | nothing; watch the first minute |
-| `TRADING BLOCKED: missing news history` / `incomplete weather history` | new orders/conversions blocked; resting orders canceled | restart from a complete current-season recording, or wait for the next season from its beginning; manage existing holdings explicitly |
+| `TRADING BLOCKED: missing news history` / `incomplete weather history` (persisting; a few seconds at a round open is normal) | new orders/conversions blocked; resting orders canceled. Reconnects that lose up to 6 messages in a season repair themselves and do not show this | restart from a complete current-season recording (`FEED_LOG=recordings/competition.jsonl zsh bot/run_live.sh`), or wait for the next season from its beginning; manage existing holdings explicitly |
 | `waiting for a live news checkpoint` / `new-season account refresh` | feed/account not synchronized | wait for synchronization; investigate if it persists |
 | one or two `HTTP 4xx` around a halt | normal | nothing |
 | a stream of `HTTP 4xx` | tick, limits or key | `bot/stop.sh`, read the error, fix, `run_live.sh` |
 | `disconnected ... reconnecting` once | fine | nothing |
+| `feed hole: seqs a-b filled from the recorder's file` / `... storm observations, interpolated` | a reconnect; repaired | nothing |
+| `feed hole: ... unknown types: trading blocked` persisting more than ~40 s with no `RESTARTING` | both connections lost the same messages | nothing automatic can help; wait for the next round's `history complete` is NOT coming: restart by hand only if a later recording has them |
+| the organisers restart the SAME competition (seq back to 0, same year) after the bot saw a season | the bot ignores the repeated seqs | `bot/stop.sh`, then relaunch once the new season's first messages are in the recording (the replay keeps the latest seq segment) |
+| `RESTARTING: N lost messages ... are in recordings/competition.jsonl` then `=== start` | a long feed hole; the bot exits and the wrapper restarts it in 10 s, replaying the season from the recorder's file; eligible again about a minute later | nothing; if `feed log lacks ...` shows instead, both connections lost the messages: restart by hand only if a later recording has them |
 | `disconnected` every few seconds | network | check wifi; a missing sequence needs a restart with complete recorded history |
 | `ANNOUNCEMENT [SYM]: <headline> -> pausing` | model has not seen it | read docs/announcements.md rule 1; default: do nothing, it re-anchors to the house in 60 s |
 | `announcement wait over: SYM fair anchored to house mid` | resumed on the house's price | nothing |
@@ -181,9 +194,9 @@ mario/pricer.py --races ...`, type `race ...` and `fair` in the terminal and tra
 - [x] Schedule: no overlap. Per case: Hurricane = one laptop runs the bot, one watches the log, two watch the exchange UI and the
       clock. Derivatives = OIL laptop (the only one that may arm auto), PLANE laptop, one reader on the news, one on Risk.
       Mario = one desk laptop, one typist watching the stream, one clicker, one on the dashboard checking fills and limits.
-- [ ] Hurricane: a supervised testnet season on current main (nothing has run since 06:29 today; the basket overlay and
-      the merged efficiency branch have never traded live). Compare the `SEASON END` PnL with `scripts/backtest.py
-      --seasons N`.
+- [x] Hurricane: the full-size `run_live.sh` bot traded testnet seasons all night (00:22-07:50, `recordings/bot_live.log`
+      SEASON END lines): ten complete seasons, realized + last-mark unrealized +4.2k, -0.7k, +8.3k, +7.3k, +2.7k, +1.4k,
+      +13.6k, -0.5k, +11.1k, +14.4k (training-overlap seasons, not out-of-sample; the simulator's verify mean is 9.9k deep / 6.4k thin).
 - [x] Derivatives: real-speed drills with auto armed over all ten mock events (`node scripts/drill-autopilot.mjs --fast 1`,
       overnight 2026-10-24; results in EXPERIMENTS.md).
 - [x] Mario: 8-race auto-execute drills against the mock (`out/mario_drill/run_drill.sh`, overnight 2026-10-24).
