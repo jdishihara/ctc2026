@@ -56,9 +56,10 @@ counterfactual live profit claim.
 
 The audit checks all 88 worker, serialized, reference, baseline and supervised
 rows, all 112 standard supervisor journal files and 91 source paths. Six fixed
-reruns match every result field and trace: two serialized settings, three
-supervised settings and one original worker setting. All 21 reproduced
-supervisor journal files are byte-identical. There are zero forbidden-access
+reruns match every result field: two serialized settings, three supervised
+settings and one original worker setting. Request and fill hashes match for
+all five client reruns; worker traces are retained without original trace
+hashes. All 21 reproduced supervisor journal files are byte-identical. There are zero forbidden-access
 attempts and no additional performance variants.
 
 The [222-file independent archive](evidence/observed-season-249/independent-review.tar.gz)
