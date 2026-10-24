@@ -64,3 +64,60 @@ def test_parse_race_rejects_bad_input(line):
     from mario.contracts import parse_race
     with pytest.raises(ValueError):
         parse_race(line.split())
+
+
+# ---- the live exchange (cornelltradingcompetition.org, read 2026-10-24): one series at a time, no series number in any symbol ----
+LIVE = [
+    ({"symbol": "TOP_PEA", "name": "Top Scorer: Peach", "group": "TOP"}, ("swin", 1, "PEACH")),
+    ({"symbol": "TOP_BIR", "name": "Top Scorer: Birdo", "group": "TOP"}, ("swin", 1, "BIRDO")),
+    ({"symbol": "RACE1_DAI", "name": "Race 1 Winner: Daisy", "group": "RACE1"}, ("race", 1, "DAISY")),
+    ({"symbol": "RACE4_YOS", "name": "Race 4 Winner: Yoshi", "group": "RACE4"}, ("race", 4, "YOSHI")),
+    ({"symbol": "SCORE_1ST", "name": "Top Scorer's Total Points", "group": "SCORE"}, ("s1", 1)),
+    ({"symbol": "SCORE_2ND", "name": "Second Scorer's Total Points", "group": "SCORE"}, ("s2", 1)),
+    ({"symbol": "SCORE_TOP2SUM", "name": "Sum of the Top Two Totals", "group": "SCORE"}, ("top2", 1)),
+]
+
+
+@pytest.mark.parametrize("record,role", LIVE)
+def test_live_symbols_series_1(record, role):
+    from mario.contracts import load_roles
+    assert guess_role(record, series_hint=1) == role
+    roles, unmapped = load_roles([record])           # no hint: series 1
+    assert unmapped == [] and roles[record["symbol"]] == role
+
+
+@pytest.mark.parametrize("record,role", LIVE)
+def test_live_symbols_under_series_2(record, role):
+    """Under "Mario Kart Series 2" the same names are series 2 contracts and RACE1 is race 5 of the tournament."""
+    from mario.contracts import load_roles
+    roles, unmapped = load_roles([record], series_hint=2)
+    expect = ("race", role[1] + 4, role[2]) if role[0] == "race" else (role[0], 2) + role[2:]
+    assert unmapped == [] and roles[record["symbol"]] == expect
+
+
+def test_live_symbol_without_name_still_maps():
+    assert guess_role({"symbol": "TOP_YOS"}, series_hint=1) == ("swin", 1, "YOSHI")
+    assert guess_role({"symbol": "RACE3_PEA"}, series_hint=2) == ("race", 7, "PEACH")
+
+
+def test_explicit_series_and_absolute_race_numbers_ignore_the_hint():
+    assert guess_role({"symbol": "S1_WIN_PEACH"}, series_hint=2) == ("swin", 1, "PEACH")
+    assert guess_role({"symbol": "R7_YOSHI"}, series_hint=2) == ("race", 7, "YOSHI")
+    assert guess_role({"symbol": "SERIES1_SCORE1"}, series_hint=2) == ("s1", 1)
+
+
+@pytest.mark.parametrize("name,series", [("Mario Kart Series 1", 1), ("Mario Kart Series 2", 2), ("mario kart series-2", 2), ("Mario Markets", None), (None, None)])
+def test_series_from_competition(name, series):
+    from mario.contracts import series_from_competition
+    assert series_from_competition(name) == series
+
+
+def test_hint_does_not_invent_roles_for_foreign_symbols():
+    assert guess_role({"symbol": "OIL_0626_C100"}, series_hint=1) is None
+    assert guess_role({"symbol": "PORT", "name": "Cascadia Pacific Terminals"}, series_hint=1) is None
+
+
+@pytest.mark.parametrize("price,tick,text", [(36.0, 1.0, "36"), (36.4, 1.0, "36"), (36.6, 1, "37"), (48.237, 0.01, "48.24"), (48.2, None, "48.20"), (37.04, 0.1, "37.00")])
+def test_price_formatted_on_the_tick(price, tick, text):
+    from mario.tap import fmt_price
+    assert fmt_price(price, tick) == text

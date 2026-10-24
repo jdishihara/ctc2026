@@ -130,6 +130,10 @@ Black-Scholes calculator.
 Setup: `python3 mario/desk.py` (add `--host 0.0.0.0` to share the dashboard). Log in with Google in the Chrome it
 opens, once. Open `http://localhost:8787`. At the prompt type `map`: every symbol must have a role (race N / series N
 winner for a racer, or #1 / #2 / top-2 score). Fix any UNMAPPED in `mario/contracts.json` and restart before race 1.
+Checked on the live site the morning of 2026-10-24: 23 symbols (TOP_PEA.. series winners, RACE1_PEA .. RACE4_BIR,
+SCORE_1ST / SCORE_2ND / SCORE_TOP2SUM), all map, competition "Mario Kart Series 1", everything halted until the open.
+Only series 1 is listed; when the competition becomes "Series 2" the desk re-maps the same names as series 2 (races 5-8)
+and needs the four series 1 results typed (or `--races "..." x4` on a restart). Binaries trade in whole points.
 
 After every race, within seconds: `race <Birdo> <Daisy> <Peach> <Yoshi>` with the overall finishing places (1-12) in
 that alphabetical order, from the stream, or with names in any order: `race peach 5 birdo 1 yoshi 9 daisy 2` (first
@@ -161,12 +165,14 @@ Sanity checks the clicker can do without the model: before race 1 every race-win
 85%, 10 or more about 95%. #1 score settles near 48 with sd 7 before the series; maximum possible 60. Top-2 total
 maximum 108.
 
-Settlements: race winners after each race, series contracts after races 4 and 8. Series 2 contracts trade during
-series 1 at the prior (25 each binary) until race 5.
+Settlements: race winners after each race, series contracts after races 4 and 8. Series 2 contracts are not listed
+during series 1 (checked on the live site).
 
 If it breaks: dashboard not refreshing -> Chrome tab closed or logged out; the desk reopens the tab, log in again.
-Prefill fails -> type the symbol, side, size and price from the row by hand. Desk dead -> `python3 mario/pricer.py`,
-type `race ...` and `fair` in the terminal and trade from that.
+Prefill fails -> type the symbol, side, size and price from the row by hand: group tab, outcome row, BUY/SELL, Limit,
+Qty, Price (whole points for binaries), then the "Buy N SYMBOL" button (Cmd+Enter also submits). "X is halted ·
+orders rejected" in place of the form means the organisers have not opened that symbol. Desk dead -> `python3
+mario/pricer.py --races ...`, type `race ...` and `fair` in the terminal and trade from that.
 
 ---
 

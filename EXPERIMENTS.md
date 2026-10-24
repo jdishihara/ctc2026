@@ -1,3 +1,33 @@
+# Mario Markets live-setup check 2026-10-24 (08:30-08:50, Jayden's session, Fable)
+
+The live site served the Mario case this morning (competition "Mario Kart Series 1", state ready, every symbol halted).
+Read through the trading UI's own session: 23 symbols in six groups, TOP_PEA.. (series winner, limit 200, tick 1,
+1-100), RACE1_PEA .. RACE4_BIR (tick 1, limit 100), SCORE_1ST / SCORE_2ND / SCORE_TOP2SUM (tick 0.01, max 60 / 54 /
+108, limit 1000). Only series 1 is listed; no symbol carries a series number. The order form (ids #order-qty,
+#order-price, BUY/SELL, Limit/Market, button "Buy 20 TOP_PEA", Cmd+Enter submits; from the page bundle) is hidden while
+a symbol is halted ("TOP_PEA is halted · orders rejected"); the form rejects prices off the tick or outside the range.
+
+Found and fixed (branch jayden/mario-live-setup):
+1. `mario/contracts.py` mapped 16/23 live symbols; TOP_* and SCORE_* were UNMAPPED, which blocks auto-execute. Now the
+   racer abbreviations (PEA/DAI/YOS/BIR) parse, the series comes from the competition name (`series_from_competition`),
+   and under "Series 2" RACE1 is race 5. 108 Mario tests pass (28 new).
+2. `mario/tap.py` prefill clicked a tab named by the symbol, which does not exist in this UI. Now: group tab, outcome
+   row, halted check, BUY/SELL, Limit, qty, price on the tick (`fmt_price`).
+3. `mario/desk.py` re-maps when the competition name changes (series 2), warns when fewer results are entered than the
+   series needs, and takes `--races` to preload results on a restart.
+4. `mario/mock_exchange.py` now serves the live scheme (23 symbols, "Mario Kart Series 1" -> "Series 2" after race 4,
+   ticks, price ranges, `--halted-for` start) and a page with the live UI's structure; `--legacy-symbols` keeps the old.
+
+Drill (mock, race every 25 s, 20 s halted start, seed 3, headless browser tap, --auto-execute): 23 mapped, no orders
+during the halt, series switch logged with the expected transient WARNING until race 4 was typed, 108 orders sent,
+66 fills confirmed, 0 incomplete arbs, 0 failures, mock marks +44,426 (the mock's house is biased; the number means
+the loop works). Live site: the desk attached through the saved Chrome login, mapped 23/23, and `type TOP_PEA buy 1 25`
+reported "TOP_PEA is halted or settled: the UI shows no order form" after selecting the TOP tab and the Peach row.
+
+Not verifiable before the open: the form's behaviour when live (prefill + click on the real page), positions/trades
+shapes with real fills (the Hurricane bot's field names are assumed), and whether series 2 really reuses the names.
+Directions for the day: docs/mario-gameday-steps.md (emailed to the team).
+
 # Overnight report 2026-10-24 (Mario + Derivatives; session from 02:05, Fable)
 
 Scope: only mario/, derivs/, derivatives-overlay/, docs/, tests/test_mario_*.py. Hurricane code is Arjun's agent's.

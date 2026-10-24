@@ -23,7 +23,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from mario.pricer import Pricer
 from mario.engine import Engine, Params
-from mario.contracts import RACERS, load_roles, parse_race, role_label
+from mario.contracts import RACERS, SERIES_LEN, load_roles, parse_race, role_label, series_from_competition
 from mario.tap import HttpTap, BrowserTap, book_levels
 from mario.executor import Executor
 from mario.robustness import ensemble, symbol_model_sd
@@ -39,6 +39,7 @@ class Desk:
         self.engine: Engine | None = None
         self.params = Params(clip=a.clip, risk_pts=a.risk, min_profit=a.min_profit, model_sd_k=a.model_sd_k, edge_pos_frac=a.edge_pos_frac)
         self.fairs = None; self.snap = None; self.result = None; self.roles = {}; self.unmapped = []
+        self.series: int | None = None             # the series the competition name announces (the live symbols carry none)
         self.status = "starting"; self.log: list[str] = []; self.last_ok = 0.0
         self.tap = None; self.stop = False
         self.auto_seen = 0
@@ -46,6 +47,10 @@ class Desk:
         self.positions: dict = {}
         self.executor: Executor | None = None      # created on the first snapshot when --auto-execute is on
         REC.parent.mkdir(exist_ok=True)
+        for line in a.races or []:                 # --races "1 2 5 9" "3 1 7 2": results already known (a restart, or series 2 after series 1)
+            self.pricer.add_race(parse_race(line.split()))
+        if a.races:
+            self.say(f"preloaded {len(a.races)} race result(s) from --races")
 
     # ---- state changes ----
     def say(self, msg: str) -> None:
@@ -179,12 +184,20 @@ class Desk:
 
     def ingest(self, snap: dict) -> None:
         syms = snap["symbols"]
-        if self.engine is None or set(self.roles) != {s["symbol"] for s in syms} - set(self.unmapped):
-            self.roles, self.unmapped = load_roles(syms)
+        comp = snap.get("competition") or {}
+        series = series_from_competition(comp.get("name")) if isinstance(comp, dict) else None
+        if self.engine is None or series != self.series or set(self.roles) != {s["symbol"] for s in syms} - set(self.unmapped):
+            self.series = series
+            self.roles, self.unmapped = load_roles(syms, series)
             self.engine = Engine(self.roles, self.params)
             if getattr(self, "_ensemble", None):
                 self.model_sd = symbol_model_sd(self._ensemble, self.roles)
-            self.say(f"{len(self.roles)} contracts mapped" + (f"; UNMAPPED: {' '.join(self.unmapped)} (fix mario/contracts.json)" if self.unmapped else ""))
+            label = f"competition '{comp.get('name')}'" if isinstance(comp, dict) and comp.get("name") else "competition name unknown"
+            self.say(f"{len(self.roles)} contracts mapped as series {series or 1} ({label}; races {SERIES_LEN * ((series or 1) - 1) + 1}-{SERIES_LEN * (series or 1)})"
+                     + (f"; UNMAPPED: {' '.join(self.unmapped)} (fix mario/contracts.json)" if self.unmapped else ""))
+            if series and len(self.pricer.races) < SERIES_LEN * (series - 1):
+                self.say(f"WARNING: series {series} contracts but only {len(self.pricer.races)} race result(s) entered: type the earlier "
+                         f"series' results first (`race ...` x{SERIES_LEN * (series - 1) - len(self.pricer.races)}, or restart with --races)")
             if self.a.auto_execute:
                 if self.executor is None:
                     self.executor = Executor(self.tap.submit, self.tap.book, self.roles, self.say, max_per_min=self.a.max_orders_per_min)
@@ -239,7 +252,7 @@ class Desk:
         acts = [{"kind": a.kind, "legs": a.legs, "profit": a.profit, "note": a.note} for a in (r["actions"] if r else [])]
         rows = r["rows"] if r else []
         return {"status": self.status, "age": round(time.time() - self.last_ok, 1) if self.last_ok else None, "races": self.pricer.races,
-                "n_done": len(self.pricer.races), "racers": RACERS, "skill": [round(float(x), 2) for x in f["skill"]] if f else None,
+                "n_done": len(self.pricer.races), "racers": RACERS, "series": self.series, "skill": [round(float(x), 2) for x in f["skill"]] if f else None,
                 "points": [[int(x) for x in p] for p in f["points"]] if f else None, "rows": rows, "actions": acts[:15],
                 "pnl": r["pnl"] if r else None, "exchange_pnl": r.get("exchange_pnl") if r else None, "log": self.log[-12:],
                 "unmapped": self.unmapped, "prefill": bool(self.a.prefill), "cpu_skill": self.pricer.cpu_skill,
@@ -317,6 +330,7 @@ def main():
     ap.add_argument("--model-sd-k", type=float, default=1.0, help="edge margin >= k x sd of the fair across the parameter ensemble (mario/robustness.py); 0 = off")
     ap.add_argument("--edge-pos-frac", type=float, default=1.0, help="model-edge positions use at most this fraction of the exchange limit (arbs use all of it)")
     ap.add_argument("--no-repl", action="store_true", help="no terminal prompt (commands only from the dashboard)")
+    ap.add_argument("--races", nargs="*", default=[], help='results already known, oldest first: --races "1 2 5 9" "3 1 7 2" (a restart, or series 2 after series 1)')
     ap.add_argument("--auto-execute", action="store_true", help="SEND the ranked actions yourself (browser tap: prefill + click the UI's submit button; "
                     "HTTP tap: POST). Off by default: use only if the organisers approve bot submission. `stop`/`go` at the prompt.")
     ap.add_argument("--max-orders-per-min", type=int, default=36, help="auto-execute: rolling-minute order cap (the packet allows 40 from the browser)")

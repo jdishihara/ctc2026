@@ -3,7 +3,11 @@
   BrowserTap  starts a plain Google Chrome with remote debugging on its own profile (~/.ctc_mario_chrome), attaches over
               CDP, and opens the exchange; you log in there once (the login survives restarts). Every poll runs one
               fetch() batch inside that tab, so the session cookie authenticates it: no API key needed (Mario Markets).
-              `prefill()` types a symbol, side, quantity and price into the UI's order form; the human clicks the button.
+              `prefill()` selects the contract in the UI (group tab, then the outcome row), the side and Limit, and types
+              the quantity and price into the order form; the human clicks the button. The live UI (2026-10-24): group
+              tabs TOP / RACE1 .. RACE4 / SCORE, outcome rows "Top Scorer: Peach TOP_PEA", BUY / SELL and Limit / Market
+              buttons, inputs #order-qty and #order-price (price must be on the tick: 1 for binaries, 0.01 for scores),
+              submit button "Buy 20 TOP_PEA"; while a symbol is halted the form is replaced by "TOP_PEA is halted".
   HttpTap     plain HTTP with an optional X-API-Key (the mock exchange, or a key if the organisers hand one out).
 
 snapshot() -> {"t", "competition", "symbols", "books": {sym: {bids, asks}}, "positions": [...], "open_orders", "trades"}
@@ -80,6 +84,7 @@ class BrowserTap:
     def __init__(self, url: str, profile: str | None = None, headless: bool = False, port: int = 9333):
         self.url = url.rstrip("/"); self.profile = profile or os.path.expanduser("~/.ctc_mario_chrome"); self.headless = headless
         self.port = port; self.proc = None; self.pw = self.browser = self.ctx = self.page = None
+        self.symbols: dict[str, dict] = {}           # symbol -> its /api/v1/symbols record from the last snapshot (group, tick_size, ...)
 
     def _cdp_alive(self) -> bool:
         try:
@@ -175,6 +180,7 @@ class BrowserTap:
             self._recover()                        # the tab was closed or navigated away, or the session dropped
             d = self.page.evaluate(JS_POLL, symbols or [])
         d["t"] = time.time()
+        self.symbols = {s["symbol"]: s for s in d.get("symbols") or []}
         return d
 
     def book(self, symbol: str) -> dict:
@@ -197,19 +203,37 @@ class BrowserTap:
         return f"clicked '{text}'"
 
     def prefill(self, symbol: str, side: str, qty: int, price: float) -> str:
-        """Select the symbol tab, the side, Limit, and type qty and price. Nothing is submitted."""
+        """Select the contract (its group tab, then its outcome row), the side, Limit, and type qty and price. Nothing is
+        submitted. Returns "prepared ..." or the reason it could not be."""
+        import re
         pg = self.page
-        tab = pg.get_by_role("button", name=symbol, exact=True)
-        if tab.count() == 0:
-            tab = pg.get_by_text(symbol, exact=True)
-        if tab.count() == 0:
-            return f"no tab for {symbol} in the UI"
-        tab.first.click()
-        pg.get_by_role("button", name=side.upper(), exact=True).first.click()
-        pg.get_by_role("button", name="Limit", exact=True).first.click()
-        pg.fill("#order-qty", str(int(qty))); pg.fill("#order-price", f"{price:.2f}")
+        info = self.symbols.get(symbol) or {}
+        group = info.get("group")
+        if group:                                      # the live UI lists one group at a time (TOP, RACE1, ..., SCORE)
+            tab = pg.get_by_role("button", name=str(group), exact=True)
+            if tab.count():
+                tab.first.click()
+        row = pg.get_by_role("button", name=re.compile(rf"(^|\s){re.escape(symbol)}(\s|$)"))
+        if row.count() == 0:
+            row = pg.get_by_role("button", name=symbol, exact=True)
+        if row.count() == 0:
+            row = pg.get_by_text(symbol, exact=True)
+        if row.count() == 0:
+            return f"no row or tab for {symbol} in the UI" + (f" (group {group})" if group else "")
+        row.first.click()
+        if pg.get_by_text(re.compile(rf"{re.escape(symbol)} is halted|Settled at .* orders rejected")).count():
+            return f"{symbol} is halted or settled: the UI shows no order form"
+        for name in (side.upper(), "Limit"):
+            btn = pg.get_by_role("button", name=name, exact=True)
+            if btn.count() == 0:
+                return f"no '{name}' button in the UI for {symbol} (form not shown?)"
+            btn.first.click()
+        if pg.locator("#order-qty").count() == 0 or pg.locator("#order-price").count() == 0:
+            return f"no #order-qty / #order-price inputs for {symbol}: the form is not shown (halted?) or the UI changed"
+        px = fmt_price(price, info.get("tick_size"))
+        pg.fill("#order-qty", str(int(qty))); pg.fill("#order-price", px)
         pg.bring_to_front()
-        return f"prepared {side} {qty} {symbol} @ {price:.2f}: click the button in the Chrome window to send it"
+        return f"prepared {side} {qty} {symbol} @ {px}: click the button in the Chrome window to send it"
 
     def stop(self) -> None:
         try:
@@ -217,6 +241,14 @@ class BrowserTap:
             if self.pw: self.pw.stop()
         except Exception:
             pass
+
+
+def fmt_price(price: float, tick: float | None) -> str:
+    """The price as the UI's form accepts it: on the symbol's tick (the exchange rejects anything else), 2 decimals at
+    most. Binaries on the live exchange tick at 1 (integer prices), the score contracts at 0.01."""
+    tick = float(tick) if tick else 0.01
+    px = round(round(float(price) / tick) * tick, 2)
+    return str(int(round(px))) if tick >= 1 else f"{px:.2f}"
 
 
 def book_levels(book: dict | None) -> dict:

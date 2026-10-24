@@ -19,8 +19,30 @@ trades, and a human clicks them in the UI.
 Examples from the packet: scores 49/42/34/28 settle the winner at 100, #1 = 49, #2 = 42, top-2 = 91.
 Scores 45/45/34/28: both leaders settle at 50, #1 = #2 = 45, top-2 = 90.
 
-Race-winner contracts settle after each race; series contracts after race 4 and race 8. Anything unsettled trades,
-including race 5-8 winners and the series 2 contracts during series 1.
+Race-winner contracts settle after each race; series contracts after race 4 and race 8.
+
+## The live exchange (read on cornelltradingcompetition.org, 2026-10-24 morning, before the open)
+
+The competition is "Mario Kart Series 1" and lists **only that series**: 23 symbols in six groups (the UI's tabs), all
+halted until the organisers open them. Series 2 is not listed; expect a competition "Mario Kart Series 2" with the same
+symbol names (an assumption: the desk re-maps when the competition name changes, see below).
+
+| group | symbols | name | tick | price range | limit | role |
+|---|---|---|---|---|---|---|
+| TOP | TOP_PEA TOP_DAI TOP_YOS TOP_BIR | Top Scorer: Peach ... | 1 | 1-100 | 200 | series winner |
+| RACE1 .. RACE4 | RACE1_PEA ... RACE4_BIR | Race 1 Winner: Peach ... | 1 | 1-100 | 100 | race winner |
+| SCORE | SCORE_1ST | Top Scorer's Total Points | 0.01 | 0.01-60 | 1000 | #1 score |
+| SCORE | SCORE_2ND | Second Scorer's Total Points | 0.01 | 0.01-54 | 1000 | #2 score |
+| SCORE | SCORE_TOP2SUM | Sum of the Top Two Totals | 0.01 | 0.01-108 | 1000 | top-2 total |
+
+No symbol carries a series number: the desk takes it from the competition name (`series_from_competition`), and under
+"Series 2" RACE1 is race 5 of the tournament. Binaries trade in whole points (tick 1); the form rejects a price off the
+tick or outside the range. The UI: group tab, then an outcome row ("Top Scorer: Peach TOP_PEA"), then BUY / SELL,
+Limit / Market, `#order-qty`, `#order-price`, and a button "Buy 20 TOP_PEA"; Cmd+Enter in the form also submits. While a
+symbol is halted the form is replaced by "TOP_PEA is halted · orders rejected", so `prepare` reports that instead of
+typing. The page talks to `/api/v1/symbols`, `orderbook/{sym}`, `positions`, `orders/open`, `trades`,
+`competitions/current` (and `groups/{code}`, `trades/market`) with the login cookie, and `/ws/v1/market-data`.
+Rate limits from the packet: 40 orders a minute from the browser, 600 API requests a second per team.
 
 ## The desk (bot)
 
@@ -51,6 +73,7 @@ python3 mario/desk.py                                 # starts its own Chrome (r
 open http://localhost:8787                            # the dashboard, on a second screen next to the exchange tab
                                                       # --host 0.0.0.0 shares it with teammates' laptops at http://<this laptop's IP>:8787 (ipconfig getifaddr en0)
 > map                                                 # check every symbol's role; fix mario/contracts.json and restart if any is wrong or UNMAPPED
+python3 mario/desk.py --races "1 2 5 9" "3 1 7 2"     # results already known (a restart, or series 2 after series 1: the skill estimates carry over)
 > race 1 2 5 9                                        # after each race: overall places of BIRDO DAISY PEACH YOSHI (alphabetical), from the stream
 > race peach 5 birdo 1 yoshi 9 daisy 2           # or names (first three letters) with places, any order
 > undo | cpu -0.3                                     # typo, or re-centre the CPU strength prior (see the calibration table below)
@@ -91,13 +114,22 @@ without race results typed in, the desk loses (that is the one input it cannot s
 Flags: `--interval 1.0` (poll period; 46 book requests per poll, well inside the packet's 600 requests per second per team; the packet also caps the browser at 40 orders per minute, so the clicker has about one order every 1.5 s), `--clip 50` (max
 size per action), `--risk 1500` (score contracts: size x sd <= risk), `--min-profit 5`, `--cpu-skill -0.6`.
 
+### Series 2
+
+When the competition name changes to "... Series 2" the desk re-maps the (same) symbols as series 2 contracts and logs
+`contracts mapped as series 2 (races 5-8)`. The pricer needs the four series 1 results to be in: keep typing `race ...`
+in the same desk, or restart it with `--races` listing them. A `WARNING: series 2 contracts but only N race result(s)
+entered` line means the fairs are being computed from the wrong series.
+
 ### Drill (no exchange needed)
 
 ```bash
-python3 mario/mock_exchange.py --race-every 60 --seed 3     # a tournament: a race every minute, a biased house, settlements
+python3 mario/mock_exchange.py --race-every 60 --seed 3     # a tournament: a race every minute, a biased house, settlements; the live
+                                                            # symbol scheme, "Mario Kart Series 1" then "Series 2" after race 4 (--legacy-symbols for the old 46)
+python3 mario/mock_exchange.py --race-every 60 --halted-for 30   # start halted like the live open (no order form, orders rejected)
 python3 mario/desk.py --mock                                # type the results the mock prints ("RACE 1 finished: places ...")
 python3 mario/desk.py --mock --auto-results                 # or let the desk read them
-> fill S1_WIN_PEACH buy 30 36.7                             # in mock mode the desk sends the order (stands in for the click)
+> fill TOP_PEA buy 30 36                                    # in mock mode the desk sends the order (stands in for the click)
 ```
 Measured 2026-10-23: taking the top three actions every 3 s against the mock (house bias sd 4 points) over six races
 made +6.5k in the mock's own marks (+2.5k realized at settlements); the browser tap works against the mock page too

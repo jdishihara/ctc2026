@@ -4,7 +4,12 @@ A role is a tuple: ("race", r, racer) for the race-winner contract of race r (1-
 winner contract of series s (1-2), ("s1", s) / ("s2", s) / ("top2", s) for the score contracts. Racer is the character
 name (DAISY, PEACH, BIRDO, YOSHI).
 
-The real symbol names are unknown until the day. `guess_role` parses the symbol, its name, group and market name;
+The live exchange (seen 2026-10-24 on cornelltradingcompetition.org, competition "Mario Kart Series 1") lists only the
+current series: TOP_PEA/DAI/YOS/BIR "Top Scorer: Peach" (the series winner, limit 200), RACE1_PEA .. RACE4_BIR "Race 1
+Winner: Peach" (limit 100), SCORE_1ST "Top Scorer's Total Points", SCORE_2ND "Second Scorer's Total Points" and
+SCORE_TOP2SUM "Sum of the Top Two Totals" (limit 1000). None of them carries the series number: it comes from the
+competition name (`series_from_competition`), and the race numbers are relative to that series (RACE1 under "Series 2"
+is race 5 of the tournament). `guess_role` also parses the generic schemes (terse codes, descriptive names);
 `mario/contracts.json` (optional, {"SYMBOL": ["race", 1, "DAISY"], ...}) overrides the guess. The desk prints every
 symbol it could not map and the `map` command prints the whole mapping: check it before the first race.
 """
@@ -13,6 +18,8 @@ import json, re
 from pathlib import Path
 
 RACERS = ["BIRDO", "DAISY", "PEACH", "YOSHI"]          # alphabetical: the pricer's humans A B C D
+ABBREV = {r[:3]: r for r in RACERS}                       # the live exchange's PEA / DAI / YOS / BIR
+SERIES_LEN = 4
 POINTS = [15, 12, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1]
 LIMITS = {"race": 100, "swin": 200, "s1": 1000, "s2": 1000, "top2": 1000}
 OVERRIDE = Path(__file__).resolve().parent / "contracts.json"
@@ -26,12 +33,26 @@ def _num(text: str, *keys: str) -> int | None:
     return None
 
 
-def _classify(text: str, symbol_only: bool) -> tuple | None:
+def _racer(text: str) -> str | None:
+    full = next((r for r in RACERS if r in text), None)
+    if full:
+        return full
+    m = re.search(r"\b(" + "|".join(ABBREV) + r")\b", text)
+    return ABBREV[m.group(1)] if m else None
+
+
+def _classify(text: str, symbol_only: bool, series_hint: int | None = None) -> tuple | None:
     """One pass over an upper-cased, de-punctuated text. symbol_only enables the terse rules (S1_1, S1_P2, S1_T2) that are
-    only safe when the text is the bare symbol, not the symbol joined with its name and group."""
-    racer = next((r for r in RACERS if r in text), None)
+    only safe when the text is the bare symbol, not the symbol joined with its name and group. series_hint (the series
+    named by the competition) stands in when the text names no series, and makes a race number relative to it."""
+    racer = _racer(text)
     series = _num(text, "SERIES", "SER", "SWIN", "S")
     race = _num(text, "RACE", "RC", "R")
+    explicit_series = series is not None
+    if series is None and series_hint and (racer or re.search(r"SCORE|POINTS|TOTAL|SUM|TOP", text)):
+        series = series_hint
+    if race is not None and series_hint and series_hint > 1 and race <= SERIES_LEN and not explicit_series:
+        race += SERIES_LEN * (series_hint - 1)       # RACE1 under "Series 2" is race 5 of the tournament
     # score contracts first. Packet names: "#1 Score", "#2 Score", "Top-2 Total"; a bare "TOP2" is read as the total
     is_top2 = re.search(r"TOP\s*[- ]?\s*2|TOP\s*TWO|TOTAL|SUM|\bT\s*2\b", text)
     is_s2 = re.search(r"#\s*2|NO\.?\s*2|NUM\s*2|SCORE\s*2|2ND|SECOND|RUNNER|\bP\s*2\b", text)
@@ -55,26 +76,34 @@ def _classify(text: str, symbol_only: bool) -> tuple | None:
     return None
 
 
-def guess_role(sym: dict) -> tuple | None:
+def series_from_competition(name: str | None) -> int | None:
+    """The series number in a competition name ("Mario Kart Series 1" -> 1), or None."""
+    m = re.search(r"SERIES\s*[-_ ]?\s*(\d)\b", str(name or "").upper())
+    return int(m.group(1)) if m else None
+
+
+def guess_role(sym: dict, series_hint: int | None = None) -> tuple | None:
     """Best guess of the role of one symbol record ({"symbol", "name", "group", "market_name", ...}): the bare symbol
-    first (terse exchange codes), then the symbol joined with its descriptive fields."""
+    first (terse exchange codes), then the symbol joined with its descriptive fields. series_hint is the series the
+    competition name announces (the live symbols do not carry it)."""
     clean = lambda t: t.upper().replace("_", " ").replace("-", " ")
-    role = _classify(clean(str(sym.get("symbol") or "")), symbol_only=True)
+    role = _classify(clean(str(sym.get("symbol") or "")), symbol_only=True, series_hint=series_hint)
     if role is not None:
         return role
     text = clean(" ".join(str(sym.get(k) or "") for k in ("symbol", "name", "group", "market_name", "message")))
-    return _classify(text, symbol_only=False)
+    return _classify(text, symbol_only=False, series_hint=series_hint)
 
 
-def load_roles(symbols: list[dict]) -> tuple[dict[str, tuple], list[str]]:
-    """Roles for every symbol (override file first, then the guess) and the list of unmapped symbols."""
+def load_roles(symbols: list[dict], series_hint: int | None = None) -> tuple[dict[str, tuple], list[str]]:
+    """Roles for every symbol (override file first, then the guess) and the list of unmapped symbols. series_hint: the
+    series number from the competition name; the live exchange's symbols need it (default 1 when it is unknown)."""
     override = {}
     if OVERRIDE.exists():
         override = {k: tuple(v) for k, v in json.loads(OVERRIDE.read_text()).items()}
     roles, unmapped = {}, []
     for s in symbols:
         name = s["symbol"]
-        role = override.get(name) or guess_role(s)
+        role = override.get(name) or guess_role(s, series_hint or 1)
         if role is None:
             unmapped.append(name)
         else:
