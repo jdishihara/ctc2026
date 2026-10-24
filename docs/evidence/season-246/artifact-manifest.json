@@ -1,0 +1,131 @@
+{
+  "capture": 246,
+  "competition_id": "83fc18b9-e9fd-4634-bc8e-c7a1a77768a7",
+  "artifact_count": 31,
+  "artifacts": {
+    "baseline/metadata.json": {
+      "bytes": 21691,
+      "sha256": "84b84602aacfac94843429d155fba4564d1e01f917c736ff3657d92eba23a633"
+    },
+    "baseline/results.jsonl": {
+      "bytes": 27040,
+      "sha256": "5018086013f145ceec1813ab69d954d1d7fde926c9f2d33abe3a7954c8273af7"
+    },
+    "baseline/stderr.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "baseline/stdout.log": {
+      "bytes": 2048,
+      "sha256": "a211ef80b9c6ca64f16e3053d85c85150775cb24d15dd14742bd551b03b0582a"
+    },
+    "baseline/summary.json": {
+      "bytes": 199,
+      "sha256": "da0b2536943d9661e044a897576a07c4f2c199574873f3dd1b7eb8d51db0025d"
+    },
+    "independent-review.tar.gz": {
+      "bytes": 1046281,
+      "sha256": "ec707deeccad278ef0411cb4e2ba0694fbc2fc6e629a85f7fef94fa3447bfe23"
+    },
+    "observations-prefix.jsonl": {
+      "bytes": 181390,
+      "sha256": "ce355c7f99d661ad66e03d3fc29de415f84f44841547b29e9a58ffd1c9902485"
+    },
+    "original/ledger-prefix.jsonl": {
+      "bytes": 3287,
+      "sha256": "763ea263d3c0ba991c86760eb17e2236988187c619adb1f5d383c68472328844"
+    },
+    "original/manifest.json": {
+      "bytes": 4253,
+      "sha256": "4ccf4ee43071b1df86b9b160176e496d25af8376c819d379c7fcfb5881ce6244"
+    },
+    "original/results.json": {
+      "bytes": 28342,
+      "sha256": "e73b4210ca760c1849ee5b440824b38a49063198518bb474d374cd4685bef01b"
+    },
+    "reference/metadata.json": {
+      "bytes": 25813,
+      "sha256": "ff572ac0b30f234f58f8e6830afb822bdad899a4c4164da41b73a0309811b083"
+    },
+    "reference/results.jsonl": {
+      "bytes": 26880,
+      "sha256": "26b267e0183a447251400d7a28537959d81fcdea235cfd29d8e24561073a9dc6"
+    },
+    "reference/stderr.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "reference/stdout.log": {
+      "bytes": 1889,
+      "sha256": "5d0443095c735c80621f2065d0c75b1ade2c27f25b6f2ac678a06462137921f0"
+    },
+    "reference/summary.json": {
+      "bytes": 200,
+      "sha256": "d57d9e5a3a8cfadea736cb337ff114c192e6ba09e0d09227757c208555359661"
+    },
+    "serialized/metadata.json": {
+      "bytes": 11873,
+      "sha256": "d28d46d9f2e55d0b23df7c0115a8261b86390e0c58934e6c2427fe6b60b0c86a"
+    },
+    "serialized/results.jsonl": {
+      "bytes": 22704,
+      "sha256": "46676e0a872eedf5b38d0bcae14f9a1ad9ee1ee4025cd9b5a7a210b1802fde82"
+    },
+    "serialized/stderr.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "serialized/stdout.log": {
+      "bytes": 2047,
+      "sha256": "4ca4fa05af2bcb76b3858bc6792bda0379d4f44e86d1ffd0ca6d8f2761f1493e"
+    },
+    "serialized/summary.json": {
+      "bytes": 1366,
+      "sha256": "1b635af6174109b61b0a6ecca56985700b4fb129e41d65c358c9d490769ace13"
+    },
+    "serialized-ledger-prefix.jsonl": {
+      "bytes": 15161,
+      "sha256": "39e878ab2baa4b458902ac3fa541dc53ef165e781b8a6c8abd257988f9942072"
+    },
+    "serialized-reviewed-ledger-prefix.jsonl": {
+      "bytes": 15619,
+      "sha256": "17e2512f5843b40459223ae7506ade3e83079b88323abc214e08cbcc90c687e3"
+    },
+    "spec.json": {
+      "bytes": 1328,
+      "sha256": "3c0fbf1cb944baca147d4d31c28cb0c4590f040c2b78905b99a82b610408db38"
+    },
+    "supervised/metadata.json": {
+      "bytes": 21693,
+      "sha256": "8879ab3f516798a6d5d13ca09353af67eb35c9856deb3947e74179f4e513797f"
+    },
+    "supervised/results.jsonl": {
+      "bytes": 98773,
+      "sha256": "60960b091422ac4cbfcc4e9c88f60d561e6ecf095a215405de11818436e591cb"
+    },
+    "supervised/stderr.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "supervised/stdout.log": {
+      "bytes": 2193,
+      "sha256": "104214dac27968886cb34ad469ff6e5e8166e4ce8f917e2033b116ed644a9c96"
+    },
+    "supervised/summary.json": {
+      "bytes": 200,
+      "sha256": "3a77f054e137392471bbc02af084d83448932ea2473bd7cb79c239b2e571fd2e"
+    },
+    "supervised-journals.tar.gz": {
+      "bytes": 530931,
+      "sha256": "7dad0997df196fb83c414c2f7838968243b5bac68e94357967a3161722ae67f5"
+    },
+    "supervised-ledger-prefix.jsonl": {
+      "bytes": 23737,
+      "sha256": "5be1d5bba213d40cfee73e729643479a5403bea4658ef62f9efad4ef50db50fc"
+    },
+    "supervised-reviewed-ledger-prefix.jsonl": {
+      "bytes": 24195,
+      "sha256": "1ffb1c0a7461a3210403f38424cfb707071c8f8d5bbf02fc90eb35921af80c24"
+    }
+  }
+}

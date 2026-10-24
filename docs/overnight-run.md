@@ -1,5 +1,15 @@
 # Overnight practice — October 24, 2026
 
+## 09:10 UTC — capture 246 independently verified
+
+All 16 full-supervisor settings complete and finish positive; primary
++$1,539.17, range +$1,439.61 to +$1,937.04. Independent review verifies all
+phase/source/input gates, six representative exact reruns, journal bytes and
+settlement arithmetic. All three weather tracks exactly match fitted-library
+rows 735–737, so chronological source freezes do not make this unseen-weather
+validation. No owned live orders resumed; fixed forward evaluators continue.
+Full evidence: [observed-season-246.md](observed-season-246.md).
+
 ## 09:04 UTC — narrower cleanup refresh experiment rejected
 
 All 80 fixed comparisons and twelve independent representative reruns match.
