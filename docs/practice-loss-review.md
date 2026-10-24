@@ -76,9 +76,31 @@ Strategy parameters, sizing thresholds, fitted models, and research data were no
 - Portable tests cover complete three-storm histories, missing news, missing weather, late snapshots, stale quotes,
    queued news during HTTP, disconnect checkpoints, news/account rollover, announcement replay, and shutdown during a blocked worker.
 
-These checks establish the repaired behavior, not a winning strategy or full-season live profitability. Three captured
-official advisories differ from the published research feed; that separate discrepancy remains unresolved and was not
-used to tune parameters. Full-season performance against competition-day opponents remains unverified.
+These checks establish the repaired behavior. Full-season live profitability and performance against
+competition-day opponents remain unverified.
+
+## Advisory differences: measured with complete history
+
+The original recording contains 132 unique news messages, sequences 630–761 of season 239.
+Only advisories 664, 698, and 733 differ from the published feed. Their captured payloads are preserved in
+[`evidence/practice-advisories.json`](evidence/practice-advisories.json).
+
+Two models with identical complete prior history and the accepted forecast parameters were evaluated after
+each of those 132 messages. One used the published advisories; the other substituted the three captured advisories.
+The largest absolute fair-value change across all symbols and checkpoints was **0.264848 per ARCH unit** at
+sequence 698. The largest HAVEN change was **0.162024 per unit** at sequence 699. An independent reviewer
+checked the raw capture and reproduced every per-symbol maximum using `SeasonModel` and `AnalogEnsemble` directly.
+
+Reproduce with:
+
+```bash
+.venv/bin/python scripts/audit_practice_advisories.py
+```
+
+The diagnostic reads only the news prefix through sequence 761. It uses no prices, settlement values,
+API credentials, network requests, or current-season data. This measures sensitivity to the changed advisories;
+it does not calculate counterfactual trading P&L. The reason the exchange generated different advisories remains
+unknown. No strategy parameters were changed based on this check.
 
 ## Operating rule
 

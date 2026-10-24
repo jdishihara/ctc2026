@@ -152,7 +152,10 @@ python3 bot/live.py --url http://localhost:8765 --ws ws://localhost:8766 --key t
 The mock's response shapes (positions, open orders, order acks, quote frames) are guesses; fix `bot/live.py`
 after the first testnet session if the real API differs.
 
-Seasons 1–450 are for fitting, 451–525 for tuning, and 526–600 for verification.
+Seasons 1–450 are for fitting, 451–525 for tuning, and 526–600 for confirmation.
+The last 75 seasons have been inspected in earlier iterations; current results
+therefore use reused confirmation data. See the evaluation limits in
+[the research report](docs/research-continuation.md).
 
 ## Forecast efficiency and execution checks (2026-10-23)
 
