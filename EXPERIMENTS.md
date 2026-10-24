@@ -29,7 +29,7 @@ Baseline at 99b530a: 17 Mario tests pass; overlay 131/132 (the autopilot integra
 
 ## Results
 
-### M2 Mario baseline drill (02:23-02:31, code at 99b530a): mock race every 60 s, seed 3, --auto-execute, HTTP tap
+### M2 Mario drills (02:23-03:28; baseline code at 99b530a): mock race every 60 s, seed 3, --auto-execute, HTTP tap
 PnL +66,649 in the mock's own marks (33 contracts touched; 288 orders, 0 INCOMPLETE ARB, 0 failures, 0 errors). Fairs
 recompute in 0.0 s after each race; the result typed by `--auto-results` lands within 1 s of the mock's race line. The
 mock's house is biased sd 4 around a pricer with the desk's own parameters, so the number means "the loop works", not
@@ -45,7 +45,14 @@ Engine: margin = max(old margin, 1.0 x model sd); the desk recomputes the ensemb
 dashboard shows a "model sd" column. Brier under three truths (60 tournaments each, n_particles 1000): the ensemble
 mean is not better than the base pricer (race-winner 0.655 vs 0.654 as modelled; 0.755 vs 0.742 under noisier races,
 i.e. no better than a flat 25% quote; 0.743 vs 0.740 with strong CPUs), so the fair stays the base pricer and only the
-margin uses the ensemble. Cost of the wider margin on the mock (same seed) and under a mis-specified truth: below.
+margin uses the ensemble. Paired mock drills (same seed, same race results; the house's path diverges with our fills):
+- truth as modelled, seed 3: k=0 (baseline) **+66,649** -> k=1 **+84,080** (288 orders both, 0 incomplete arbs, 0 errors)
+- strong CPUs (mock --cpu-skill 0, desk still assumes -0.6), seed 5: k=0 **+34,614** -> k=1 **+43,503**
+The ensemble costs 0.0-0.2 s per race in the desk. ACCEPTED: --model-sd-k 1.0 is the default.
+Browser-tap drill (headless Chrome launched by the desk, prefill + click on the mock's copy of the real form), seed 7,
+k=1: 277 orders, 252 filled, 0 incomplete arbs, 0 session errors, PnL **-27,794** in the mock's marks. Seed 7's true
+skills are Birdo -0.8, Daisy -1.3, Peach -0.25, Yoshi +0.4 (all humans below the CPU prior); HTTP-tap runs on seed 7 with
+k=1 and k=0 follow to separate the seed from the browser path.
 
 ### M3 Mario symbol parser (ACCEPTED): 8/37 plausible codes were UNMAPPED (S1_1, S1_2, S1_P1, S1_P2, S1_T2, S1_TOP,
 S1_RUNNERUP, SWIN2_PEACH) and "Second-highest score" read as #1. Fixed with a symbol-only pass; 48-case battery in
