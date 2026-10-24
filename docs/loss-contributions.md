@@ -34,8 +34,9 @@ would ignore its contribution in the other seasons.
 | REIN | $19.22 | $11.70 |
 
 Orders submitted during a storm account for mean contributions of $1,329.34 and
-$1,005.85, but −$2,667.93 in the worst scenario. This identifies exposure to
-forecast errors as a substantial source of both gains and losses. It does not
+$1,005.85, but −$2,667.93 in the worst scenario. Both gains and losses are
+concentrated in trades submitted during storms. This accounting does not isolate
+forecast error from price paths or execution effects. It does not
 establish that skipping a phase or symbol would retain the other contributions:
 entry orders, reductions, later trades, basket legs, and risk limits interact.
 
