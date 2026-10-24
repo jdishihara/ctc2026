@@ -98,9 +98,9 @@ def check_code() -> None:
 def check_strategy(args) -> None:
     try:
         from ctc.strategies import FairValueTrader
-        st = FairValueTrader(min_edge=0.025, edge_full=0.03, analog=True, sd_mult=0.7, sigma=15.0, k=100, passive=0.75, warmup=20.0, max_cross=0.02, ent_cut=1.2, carry=0.5, cone_w=1.0, cone_s0=20.0,
+        st = FairValueTrader(min_edge=0.03, edge_full=0.03, analog=True, sd_mult=0.7, sigma=15.0, k=100, passive=0.75, warmup=20.0, max_cross=0.02, ent_cut=1.2, carry=0.5, cone_w=1.0, cone_s0=20.0,
                              basket_edge=args.basket_edge, basket_participation=args.basket_participation,
-                             final_exact=True, final_edge=0.005, final_edge_full=0.005)
+                             final_exact=True, final_edge=0.01, final_edge_full=0.005)
         report("PASS", "strategy constructs", f"analog={st.analog} min_edge={st.min_edge} edge_full={st.edge_full} sd_mult={st.sd_mult} passive={st.passive} warmup={st.warmup} max_cross={st.max_cross} carry={st.carry} ent_cut={st.ent_cut} cone_w={st.analog_kw.get('cone_w')} cone_s0={st.analog_kw.get('cone_s0')}")
         report("PASS", "final phase", f"exact={st.final_exact} entry={st.final_edge} full={st.final_edge_full}; requires all reports and complete weather")
         report('PASS', 'basket overlay', f'edge={st.basket_edge} participation={st.basket_participation}; max lot 10, requires fresh external depth')
