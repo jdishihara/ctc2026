@@ -1,0 +1,28 @@
+{
+  "finished_at": 1792834648.708308,
+  "runs": 150,
+  "storm_scans": 225,
+  "groups": {
+    "False": {
+      "mean": 1476.4297796871826,
+      "worst": -723.1007052140435,
+      "best": 4132.793328384176,
+      "negative": 6
+    },
+    "True": {
+      "mean": 1476.4297796871826,
+      "worst": -723.1007052140435,
+      "best": 4132.793328384176,
+      "negative": 6
+    }
+  },
+  "activated_storms": 0,
+  "diverged_storms": 0,
+  "paired_mismatches": [],
+  "unmatched_paired_mismatches": [],
+  "changed_sources_or_inputs": [],
+  "forbidden_attempts": [],
+  "guard_violations": [],
+  "results_sha256": "0f1b73b4368d66528659c5dd0dd4e95037b382cabc861b63d6a57f045c67c3d2",
+  "scan_sha256": "0aa8e682f55e8b8ac4269df91faaef45206481ffee730bc0bc2d28328d4880c7"
+}

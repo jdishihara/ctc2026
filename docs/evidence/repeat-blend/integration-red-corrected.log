@@ -1,0 +1,2542 @@
+FFFFFFFFFFFFFFFFF.FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF      [100%]
+=================================== FAILURES ===================================
+________________ test_cli_switch_reaches_runner[False-practice] ________________
+
+tmp_path = PosixPath('/private/var/folders/5_/4_9w4ch971l2mm9c6fqtg5400000gn/T/pytest-of-arjunhans/pytest-282/test_cli_switch_reaches_runner0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x109719810>
+launcher = 'practice', enabled = False
+
+    @pytest.mark.parametrize('launcher', ['practice', 'live'])
+    @pytest.mark.parametrize('enabled', [False, True])
+    def test_cli_switch_reaches_runner(tmp_path, monkeypatch, launcher, enabled):
+        observed = {}
+    
+        async def capture(args, *unused):
+            observed['enabled'] = args.repeat_prefix_blend
+    
+        if launcher == 'practice':
+            module = practice
+            argv = ['practice', '--out', str(tmp_path / 'out'), '--feed-log', 'unused']
+            monkeypatch.setattr(module, 'practice', capture)
+            monkeypatch.setattr(module, 'Journal', lambda *a: SimpleNamespace(stop=lambda reason: None))
+            monkeypatch.setattr(module, 'finish', lambda journal: None)
+        else:
+            module = live
+            argv = ['live', '--key', 'test-only']
+            monkeypatch.setattr(module, 'run', capture)
+        if enabled:
+            argv.append('--repeat-prefix-blend')
+        monkeypatch.setattr(sys, 'argv', argv)
+>       module.main()
+
+tests/test_repeat_blend_launch.py:41: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+bot/practice.py:734: in main
+    asyncio.run(practice(args, journal))
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/asyncio/runners.py:205: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/asyncio/runners.py:128: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/asyncio/base_events.py:720: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+args = Namespace(url='https://cornelltradingcompetition.org', key_file='.botkey', reuse_http=False, out='/private/var/folders...st-282/test_cli_switch_reaches_runner0/out', feed_log='unused', fraction=0.1, loss_trigger=250.0, seasons=3, hours=3.0)
+unused = (namespace(stop=<function test_cli_switch_reaches_runner.<locals>.<lambda>.<locals>.<lambda> at 0x109e5d640>),)
+
+    async def capture(args, *unused):
+>       observed['enabled'] = args.repeat_prefix_blend
+                              ^^^^^^^^^^^^^^^^^^^^^^^^
+E       AttributeError: 'Namespace' object has no attribute 'repeat_prefix_blend'
+
+tests/test_repeat_blend_launch.py:26: AttributeError
+__________________ test_cli_switch_reaches_runner[False-live] __________________
+
+tmp_path = PosixPath('/private/var/folders/5_/4_9w4ch971l2mm9c6fqtg5400000gn/T/pytest-of-arjunhans/pytest-282/test_cli_switch_reaches_runner1')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x109719220>
+launcher = 'live', enabled = False
+
+    @pytest.mark.parametrize('launcher', ['practice', 'live'])
+    @pytest.mark.parametrize('enabled', [False, True])
+    def test_cli_switch_reaches_runner(tmp_path, monkeypatch, launcher, enabled):
+        observed = {}
+    
+        async def capture(args, *unused):
+            observed['enabled'] = args.repeat_prefix_blend
+    
+        if launcher == 'practice':
+            module = practice
+            argv = ['practice', '--out', str(tmp_path / 'out'), '--feed-log', 'unused']
+            monkeypatch.setattr(module, 'practice', capture)
+            monkeypatch.setattr(module, 'Journal', lambda *a: SimpleNamespace(stop=lambda reason: None))
+            monkeypatch.setattr(module, 'finish', lambda journal: None)
+        else:
+            module = live
+            argv = ['live', '--key', 'test-only']
+            monkeypatch.setattr(module, 'run', capture)
+        if enabled:
+            argv.append('--repeat-prefix-blend')
+        monkeypatch.setattr(sys, 'argv', argv)
+>       module.main()
+
+tests/test_repeat_blend_launch.py:41: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+bot/live.py:788: in main
+    asyncio.run(run(ap.parse_args()))
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/asyncio/runners.py:205: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/asyncio/runners.py:128: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/asyncio/base_events.py:720: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+args = Namespace(url='https://cornelltradingcompetition.org', key='test-only', dry_run=False, reuse_http=False, min_edge=0.02...5, cone_w=1.0, cone_s0=20.0, cone_nu=0.0, isl_w=0.0, ent_cut=1.2, announce_wait=60.0, control='recordings/control.txt')
+unused = ()
+
+    async def capture(args, *unused):
+>       observed['enabled'] = args.repeat_prefix_blend
+                              ^^^^^^^^^^^^^^^^^^^^^^^^
+E       AttributeError: 'Namespace' object has no attribute 'repeat_prefix_blend'
+
+tests/test_repeat_blend_launch.py:26: AttributeError
+________________ test_cli_switch_reaches_runner[True-practice] _________________
+
+tmp_path = PosixPath('/private/var/folders/5_/4_9w4ch971l2mm9c6fqtg5400000gn/T/pytest-of-arjunhans/pytest-282/test_cli_switch_reaches_runner2')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x109e0d5b0>
+launcher = 'practice', enabled = True
+
+    @pytest.mark.parametrize('launcher', ['practice', 'live'])
+    @pytest.mark.parametrize('enabled', [False, True])
+    def test_cli_switch_reaches_runner(tmp_path, monkeypatch, launcher, enabled):
+        observed = {}
+    
+        async def capture(args, *unused):
+            observed['enabled'] = args.repeat_prefix_blend
+    
+        if launcher == 'practice':
+            module = practice
+            argv = ['practice', '--out', str(tmp_path / 'out'), '--feed-log', 'unused']
+            monkeypatch.setattr(module, 'practice', capture)
+            monkeypatch.setattr(module, 'Journal', lambda *a: SimpleNamespace(stop=lambda reason: None))
+            monkeypatch.setattr(module, 'finish', lambda journal: None)
+        else:
+            module = live
+            argv = ['live', '--key', 'test-only']
+            monkeypatch.setattr(module, 'run', capture)
+        if enabled:
+            argv.append('--repeat-prefix-blend')
+        monkeypatch.setattr(sys, 'argv', argv)
+>       module.main()
+
+tests/test_repeat_blend_launch.py:41: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+bot/practice.py:729: in main
+    args = parser.parse_args()
+           ^^^^^^^^^^^^^^^^^^^
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/argparse.py:2012: in parse_args
+    self.error(msg)
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/argparse.py:2785: in error
+    self.exit(2, _('%(prog)s: error: %(message)s\n') % args)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = ArgumentParser(prog='practice', usage=None, description='Bounded simulated-exchange practice. Reads .botkey locally; n... guards remain in force.\n', formatter_class=<class 'argparse.HelpFormatter'>, conflict_handler='error', add_help=True)
+status = 2
+message = 'practice: error: unrecognized arguments: --repeat-prefix-blend\n'
+
+    def exit(self, status=0, message=None):
+        if message:
+            self._print_message(message, _sys.stderr)
+>       _sys.exit(status)
+E       SystemExit: 2
+
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/argparse.py:2772: SystemExit
+----------------------------- Captured stderr call -----------------------------
+usage: practice [-h] [--url URL] [--key-file KEY_FILE] [--reuse-http]
+                --out OUT --feed-log FEED_LOG [--fraction FRACTION]
+                [--loss-trigger LOSS_TRIGGER] [--seasons SEASONS]
+                [--hours HOURS]
+practice: error: unrecognized arguments: --repeat-prefix-blend
+__________________ test_cli_switch_reaches_runner[True-live] ___________________
+
+tmp_path = PosixPath('/private/var/folders/5_/4_9w4ch971l2mm9c6fqtg5400000gn/T/pytest-of-arjunhans/pytest-282/test_cli_switch_reaches_runner3')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x1096faf10>
+launcher = 'live', enabled = True
+
+    @pytest.mark.parametrize('launcher', ['practice', 'live'])
+    @pytest.mark.parametrize('enabled', [False, True])
+    def test_cli_switch_reaches_runner(tmp_path, monkeypatch, launcher, enabled):
+        observed = {}
+    
+        async def capture(args, *unused):
+            observed['enabled'] = args.repeat_prefix_blend
+    
+        if launcher == 'practice':
+            module = practice
+            argv = ['practice', '--out', str(tmp_path / 'out'), '--feed-log', 'unused']
+            monkeypatch.setattr(module, 'practice', capture)
+            monkeypatch.setattr(module, 'Journal', lambda *a: SimpleNamespace(stop=lambda reason: None))
+            monkeypatch.setattr(module, 'finish', lambda journal: None)
+        else:
+            module = live
+            argv = ['live', '--key', 'test-only']
+            monkeypatch.setattr(module, 'run', capture)
+        if enabled:
+            argv.append('--repeat-prefix-blend')
+        monkeypatch.setattr(sys, 'argv', argv)
+>       module.main()
+
+tests/test_repeat_blend_launch.py:41: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+bot/live.py:788: in main
+    asyncio.run(run(ap.parse_args()))
+                    ^^^^^^^^^^^^^^^
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/argparse.py:2012: in parse_args
+    self.error(msg)
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/argparse.py:2785: in error
+    self.exit(2, _('%(prog)s: error: %(message)s\n') % args)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = ArgumentParser(prog='live', usage=None, description='Live bot for the Hurricane Season exchange (testnet or competitio... not sent.\n', formatter_class=<class 'argparse.RawDescriptionHelpFormatter'>, conflict_handler='error', add_help=True)
+status = 2
+message = 'live: error: unrecognized arguments: --repeat-prefix-blend\n'
+
+    def exit(self, status=0, message=None):
+        if message:
+            self._print_message(message, _sys.stderr)
+>       _sys.exit(status)
+E       SystemExit: 2
+
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/argparse.py:2772: SystemExit
+----------------------------- Captured stderr call -----------------------------
+usage: live [-h] [--url URL] --key KEY [--dry-run] [--reuse-http]
+            [--min-edge MIN_EDGE] [--edge-full EDGE_FULL]
+            [--basket-edge BASKET_EDGE]
+            [--basket-participation BASKET_PARTICIPATION]
+            [--final-exact | --no-final-exact] [--final-edge FINAL_EDGE]
+            [--final-edge-full FINAL_EDGE_FULL] [--sync SYNC] [--ws WS]
+            [--rate RATE] [--nowcast] [--sd-mult SD_MULT] [--sigma SIGMA]
+            [--k K] [--passive PASSIVE] [--warmup WARMUP]
+            [--max-cross MAX_CROSS] [--feed-log FEED_LOG] [--carry CARRY]
+            [--cone-w CONE_W] [--cone-s0 CONE_S0] [--cone-nu CONE_NU]
+            [--isl-w ISL_W] [--ent-cut ENT_CUT]
+            [--announce-wait ANNOUNCE_WAIT] [--control CONTROL]
+live: error: unrecognized arguments: --repeat-prefix-blend
+____________ test_launcher_constructs_fixed_blend[absent-practice] _____________
+
+tmp_path = PosixPath('/private/var/folders/5_/4_9w4ch971l2mm9c6fqtg5400000gn/T/pytest-of-arjunhans/pytest-282/test_launcher_constructs_fixed0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x1096fb350>
+launcher = 'practice', selection = 'absent'
+
+    @pytest.mark.parametrize('launcher', ['practice', 'live'])
+    @pytest.mark.parametrize('selection', ['absent', False, True])
+    def test_launcher_constructs_fixed_blend(tmp_path, monkeypatch, launcher, selection):
+        exchange = ColdExchange()
+        exchange.responses['/positions'] = {'positions': []}
+        exchange.responses['/system/bot-trading'] = {'mode': 'full'}
+        args = arguments(tmp_path)
+        if selection != 'absent':
+            args.repeat_prefix_blend = selection
+        observed = {}
+    
+        class HandoffComplete(Exception):
+            pass
+    
+        def inspect_model(ex, trader, *unused, **kwargs):
+            model = trader.model.ensemble
+            observed.update(enabled=model.repeat_prefix, weight=model.repeat_weight,
+                            strategy_identity=trader.competition_id,
+                            account_identity=ex.competition_id)
+            raise HandoffComplete
+    
+        monkeypatch.setattr(live, 'replay_feed_log', lambda *a: ('', 0, 0))
+        if launcher == 'practice':
+            key = tmp_path / 'test-key'
+            key.write_text('test-only')
+            args.key_file, args.url = str(key), 'http://example.invalid'
+            journal = SimpleNamespace(event=lambda *a, **k: None)
+            monkeypatch.setattr(practice, 'PracticeExchange', lambda *a, **k: exchange)
+            monkeypatch.setattr(practice, 'PracticeSession', inspect_model)
+            run = practice.practice(args, journal)
+        else:
+            monkeypatch.setattr(live, 'LiveSession', inspect_model)
+            run = live.run_exchange(args, exchange)
+        with pytest.raises(HandoffComplete):
+>           asyncio.run(run)
+
+tests/test_repeat_blend_launch.py:79: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/asyncio/runners.py:205: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/asyncio/runners.py:128: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/asyncio/base_events.py:720: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+bot/practice.py:446: in practice
+    session = PracticeSession(ex, strat, sync=3., season_year=year, last_round=rnd,
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+ex = <test_live_startup.ColdExchange object at 0x1096bbcb0>
+trader = <ctc.strategies.FairValueTrader object at 0x1096bbe00>, unused = ()
+kwargs = {'sync': 3.0, 'season_year': '', 'last_round': 0, 'seen_seq': set(), ...}
+
+    def inspect_model(ex, trader, *unused, **kwargs):
+        model = trader.model.ensemble
+>       observed.update(enabled=model.repeat_prefix, weight=model.repeat_weight,
+                                ^^^^^^^^^^^^^^^^^^^
+                        strategy_identity=trader.competition_id,
+                        account_identity=ex.competition_id)
+E       AttributeError: 'AnalogEnsemble' object has no attribute 'repeat_prefix'
+
+tests/test_repeat_blend_launch.py:61: AttributeError
+______________ test_launcher_constructs_fixed_blend[absent-live] _______________
+
+tmp_path = PosixPath('/private/var/folders/5_/4_9w4ch971l2mm9c6fqtg5400000gn/T/pytest-of-arjunhans/pytest-282/test_launcher_constructs_fixed1')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x109e8ac50>
+launcher = 'live', selection = 'absent'
+
+    @pytest.mark.parametrize('launcher', ['practice', 'live'])
+    @pytest.mark.parametrize('selection', ['absent', False, True])
+    def test_launcher_constructs_fixed_blend(tmp_path, monkeypatch, launcher, selection):
+        exchange = ColdExchange()
+        exchange.responses['/positions'] = {'positions': []}
+        exchange.responses['/system/bot-trading'] = {'mode': 'full'}
+        args = arguments(tmp_path)
+        if selection != 'absent':
+            args.repeat_prefix_blend = selection
+        observed = {}
+    
+        class HandoffComplete(Exception):
+            pass
+    
+        def inspect_model(ex, trader, *unused, **kwargs):
+            model = trader.model.ensemble
+            observed.update(enabled=model.repeat_prefix, weight=model.repeat_weight,
+                            strategy_identity=trader.competition_id,
+                            account_identity=ex.competition_id)
+            raise HandoffComplete
+    
+        monkeypatch.setattr(live, 'replay_feed_log', lambda *a: ('', 0, 0))
+        if launcher == 'practice':
+            key = tmp_path / 'test-key'
+            key.write_text('test-only')
+            args.key_file, args.url = str(key), 'http://example.invalid'
+            journal = SimpleNamespace(event=lambda *a, **k: None)
+            monkeypatch.setattr(practice, 'PracticeExchange', lambda *a, **k: exchange)
+            monkeypatch.setattr(practice, 'PracticeSession', inspect_model)
+            run = practice.practice(args, journal)
+        else:
+            monkeypatch.setattr(live, 'LiveSession', inspect_model)
+            run = live.run_exchange(args, exchange)
+        with pytest.raises(HandoffComplete):
+>           asyncio.run(run)
+
+tests/test_repeat_blend_launch.py:79: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/asyncio/runners.py:205: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/asyncio/runners.py:128: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/asyncio/base_events.py:720: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+bot/live.py:732: in run_exchange
+    session = LiveSession(ex, strat, args.sync, season_year, last_round, seen_seq, control=ControlFile(args.control))
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+ex = <test_live_startup.ColdExchange object at 0x109e73890>
+trader = <ctc.strategies.FairValueTrader object at 0x1096bbb60>
+unused = (3, '', 0, set())
+kwargs = {'control': <bot.control.ControlFile object at 0x109eb0980>}
+
+    def inspect_model(ex, trader, *unused, **kwargs):
+        model = trader.model.ensemble
+>       observed.update(enabled=model.repeat_prefix, weight=model.repeat_weight,
+                                ^^^^^^^^^^^^^^^^^^^
+                        strategy_identity=trader.competition_id,
+                        account_identity=ex.competition_id)
+E       AttributeError: 'AnalogEnsemble' object has no attribute 'repeat_prefix'
+
+tests/test_repeat_blend_launch.py:61: AttributeError
+----------------------------- Captured stdout call -----------------------------
+HTTP connection reuse=False
+strategy analog min_edge 0.025 edge_full 0.03 sd_mult 0.7 sigma 15 k 100 passive 0.75 warmup 20 max_cross 0.02 carry 0.5 ent_cut 1.2 cone_w 1 cone_s0 20 cone_nu 0 isl_w 0
+final phase exact=True entry=0.005 full=0.005
+basket edge=0.01 participation=0.5 max_lot=10
+announcements: pause named symbols, re-anchor to the house mid after 60 s; commands from /private/var/folders/5_/4_9w4ch971l2mm9c6fqtg5400000gn/T/pytest-of-arjunhans/pytest-282/test_launcher_constructs_fixed1/commands
+_____________ test_launcher_constructs_fixed_blend[False-practice] _____________
+
+tmp_path = PosixPath('/private/var/folders/5_/4_9w4ch971l2mm9c6fqtg5400000gn/T/pytest-of-arjunhans/pytest-282/test_launcher_constructs_fixed2')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x109e53d50>
+launcher = 'practice', selection = False
+
+    @pytest.mark.parametrize('launcher', ['practice', 'live'])
+    @pytest.mark.parametrize('selection', ['absent', False, True])
+    def test_launcher_constructs_fixed_blend(tmp_path, monkeypatch, launcher, selection):
+        exchange = ColdExchange()
+        exchange.responses['/positions'] = {'positions': []}
+        exchange.responses['/system/bot-trading'] = {'mode': 'full'}
+        args = arguments(tmp_path)
+        if selection != 'absent':
+            args.repeat_prefix_blend = selection
+        observed = {}
+    
+        class HandoffComplete(Exception):
+            pass
+    
+        def inspect_model(ex, trader, *unused, **kwargs):
+            model = trader.model.ensemble
+            observed.update(enabled=model.repeat_prefix, weight=model.repeat_weight,
+                            strategy_identity=trader.competition_id,
+                            account_identity=ex.competition_id)
+            raise HandoffComplete
+    
+        monkeypatch.setattr(live, 'replay_feed_log', lambda *a: ('', 0, 0))
+        if launcher == 'practice':
+            key = tmp_path / 'test-key'
+            key.write_text('test-only')
+            args.key_file, args.url = str(key), 'http://example.invalid'
+            journal = SimpleNamespace(event=lambda *a, **k: None)
+            monkeypatch.setattr(practice, 'PracticeExchange', lambda *a, **k: exchange)
+            monkeypatch.setattr(practice, 'PracticeSession', inspect_model)
+            run = practice.practice(args, journal)
+        else:
+            monkeypatch.setattr(live, 'LiveSession', inspect_model)
+            run = live.run_exchange(args, exchange)
+        with pytest.raises(HandoffComplete):
+>           asyncio.run(run)
+
+tests/test_repeat_blend_launch.py:79: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/asyncio/runners.py:205: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/asyncio/runners.py:128: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/asyncio/base_events.py:720: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+bot/practice.py:446: in practice
+    session = PracticeSession(ex, strat, sync=3., season_year=year, last_round=rnd,
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+ex = <test_live_startup.ColdExchange object at 0x108bb8050>
+trader = <ctc.strategies.FairValueTrader object at 0x1096bbcb0>, unused = ()
+kwargs = {'sync': 3.0, 'season_year': '', 'last_round': 0, 'seen_seq': set(), ...}
+
+    def inspect_model(ex, trader, *unused, **kwargs):
+        model = trader.model.ensemble
+>       observed.update(enabled=model.repeat_prefix, weight=model.repeat_weight,
+                                ^^^^^^^^^^^^^^^^^^^
+                        strategy_identity=trader.competition_id,
+                        account_identity=ex.competition_id)
+E       AttributeError: 'AnalogEnsemble' object has no attribute 'repeat_prefix'
+
+tests/test_repeat_blend_launch.py:61: AttributeError
+_______________ test_launcher_constructs_fixed_blend[False-live] _______________
+
+tmp_path = PosixPath('/private/var/folders/5_/4_9w4ch971l2mm9c6fqtg5400000gn/T/pytest-of-arjunhans/pytest-282/test_launcher_constructs_fixed3')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x109e6e8a0>
+launcher = 'live', selection = False
+
+    @pytest.mark.parametrize('launcher', ['practice', 'live'])
+    @pytest.mark.parametrize('selection', ['absent', False, True])
+    def test_launcher_constructs_fixed_blend(tmp_path, monkeypatch, launcher, selection):
+        exchange = ColdExchange()
+        exchange.responses['/positions'] = {'positions': []}
+        exchange.responses['/system/bot-trading'] = {'mode': 'full'}
+        args = arguments(tmp_path)
+        if selection != 'absent':
+            args.repeat_prefix_blend = selection
+        observed = {}
+    
+        class HandoffComplete(Exception):
+            pass
+    
+        def inspect_model(ex, trader, *unused, **kwargs):
+            model = trader.model.ensemble
+            observed.update(enabled=model.repeat_prefix, weight=model.repeat_weight,
+                            strategy_identity=trader.competition_id,
+                            account_identity=ex.competition_id)
+            raise HandoffComplete
+    
+        monkeypatch.setattr(live, 'replay_feed_log', lambda *a: ('', 0, 0))
+        if launcher == 'practice':
+            key = tmp_path / 'test-key'
+            key.write_text('test-only')
+            args.key_file, args.url = str(key), 'http://example.invalid'
+            journal = SimpleNamespace(event=lambda *a, **k: None)
+            monkeypatch.setattr(practice, 'PracticeExchange', lambda *a, **k: exchange)
+            monkeypatch.setattr(practice, 'PracticeSession', inspect_model)
+            run = practice.practice(args, journal)
+        else:
+            monkeypatch.setattr(live, 'LiveSession', inspect_model)
+            run = live.run_exchange(args, exchange)
+        with pytest.raises(HandoffComplete):
+>           asyncio.run(run)
+
+tests/test_repeat_blend_launch.py:79: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/asyncio/runners.py:205: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/asyncio/runners.py:128: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/asyncio/base_events.py:720: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+bot/live.py:732: in run_exchange
+    session = LiveSession(ex, strat, args.sync, season_year, last_round, seen_seq, control=ControlFile(args.control))
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+ex = <test_live_startup.ColdExchange object at 0x109e725d0>
+trader = <ctc.strategies.FairValueTrader object at 0x1096bba10>
+unused = (3, '', 0, set())
+kwargs = {'control': <bot.control.ControlFile object at 0x109e71bd0>}
+
+    def inspect_model(ex, trader, *unused, **kwargs):
+        model = trader.model.ensemble
+>       observed.update(enabled=model.repeat_prefix, weight=model.repeat_weight,
+                                ^^^^^^^^^^^^^^^^^^^
+                        strategy_identity=trader.competition_id,
+                        account_identity=ex.competition_id)
+E       AttributeError: 'AnalogEnsemble' object has no attribute 'repeat_prefix'
+
+tests/test_repeat_blend_launch.py:61: AttributeError
+----------------------------- Captured stdout call -----------------------------
+HTTP connection reuse=False
+strategy analog min_edge 0.025 edge_full 0.03 sd_mult 0.7 sigma 15 k 100 passive 0.75 warmup 20 max_cross 0.02 carry 0.5 ent_cut 1.2 cone_w 1 cone_s0 20 cone_nu 0 isl_w 0
+final phase exact=True entry=0.005 full=0.005
+basket edge=0.01 participation=0.5 max_lot=10
+announcements: pause named symbols, re-anchor to the house mid after 60 s; commands from /private/var/folders/5_/4_9w4ch971l2mm9c6fqtg5400000gn/T/pytest-of-arjunhans/pytest-282/test_launcher_constructs_fixed3/commands
+_____________ test_launcher_constructs_fixed_blend[True-practice] ______________
+
+tmp_path = PosixPath('/private/var/folders/5_/4_9w4ch971l2mm9c6fqtg5400000gn/T/pytest-of-arjunhans/pytest-282/test_launcher_constructs_fixed4')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x109e6dc70>
+launcher = 'practice', selection = True
+
+    @pytest.mark.parametrize('launcher', ['practice', 'live'])
+    @pytest.mark.parametrize('selection', ['absent', False, True])
+    def test_launcher_constructs_fixed_blend(tmp_path, monkeypatch, launcher, selection):
+        exchange = ColdExchange()
+        exchange.responses['/positions'] = {'positions': []}
+        exchange.responses['/system/bot-trading'] = {'mode': 'full'}
+        args = arguments(tmp_path)
+        if selection != 'absent':
+            args.repeat_prefix_blend = selection
+        observed = {}
+    
+        class HandoffComplete(Exception):
+            pass
+    
+        def inspect_model(ex, trader, *unused, **kwargs):
+            model = trader.model.ensemble
+            observed.update(enabled=model.repeat_prefix, weight=model.repeat_weight,
+                            strategy_identity=trader.competition_id,
+                            account_identity=ex.competition_id)
+            raise HandoffComplete
+    
+        monkeypatch.setattr(live, 'replay_feed_log', lambda *a: ('', 0, 0))
+        if launcher == 'practice':
+            key = tmp_path / 'test-key'
+            key.write_text('test-only')
+            args.key_file, args.url = str(key), 'http://example.invalid'
+            journal = SimpleNamespace(event=lambda *a, **k: None)
+            monkeypatch.setattr(practice, 'PracticeExchange', lambda *a, **k: exchange)
+            monkeypatch.setattr(practice, 'PracticeSession', inspect_model)
+            run = practice.practice(args, journal)
+        else:
+            monkeypatch.setattr(live, 'LiveSession', inspect_model)
+            run = live.run_exchange(args, exchange)
+        with pytest.raises(HandoffComplete):
+>           asyncio.run(run)
+
+tests/test_repeat_blend_launch.py:79: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/asyncio/runners.py:205: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/asyncio/runners.py:128: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/asyncio/base_events.py:720: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+bot/practice.py:446: in practice
+    session = PracticeSession(ex, strat, sync=3., season_year=year, last_round=rnd,
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+ex = <test_live_startup.ColdExchange object at 0x109e71f90>
+trader = <ctc.strategies.FairValueTrader object at 0x1096bb0e0>, unused = ()
+kwargs = {'sync': 3.0, 'season_year': '', 'last_round': 0, 'seen_seq': set(), ...}
+
+    def inspect_model(ex, trader, *unused, **kwargs):
+        model = trader.model.ensemble
+>       observed.update(enabled=model.repeat_prefix, weight=model.repeat_weight,
+                                ^^^^^^^^^^^^^^^^^^^
+                        strategy_identity=trader.competition_id,
+                        account_identity=ex.competition_id)
+E       AttributeError: 'AnalogEnsemble' object has no attribute 'repeat_prefix'
+
+tests/test_repeat_blend_launch.py:61: AttributeError
+_______________ test_launcher_constructs_fixed_blend[True-live] ________________
+
+tmp_path = PosixPath('/private/var/folders/5_/4_9w4ch971l2mm9c6fqtg5400000gn/T/pytest-of-arjunhans/pytest-282/test_launcher_constructs_fixed5')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x10a160670>
+launcher = 'live', selection = True
+
+    @pytest.mark.parametrize('launcher', ['practice', 'live'])
+    @pytest.mark.parametrize('selection', ['absent', False, True])
+    def test_launcher_constructs_fixed_blend(tmp_path, monkeypatch, launcher, selection):
+        exchange = ColdExchange()
+        exchange.responses['/positions'] = {'positions': []}
+        exchange.responses['/system/bot-trading'] = {'mode': 'full'}
+        args = arguments(tmp_path)
+        if selection != 'absent':
+            args.repeat_prefix_blend = selection
+        observed = {}
+    
+        class HandoffComplete(Exception):
+            pass
+    
+        def inspect_model(ex, trader, *unused, **kwargs):
+            model = trader.model.ensemble
+            observed.update(enabled=model.repeat_prefix, weight=model.repeat_weight,
+                            strategy_identity=trader.competition_id,
+                            account_identity=ex.competition_id)
+            raise HandoffComplete
+    
+        monkeypatch.setattr(live, 'replay_feed_log', lambda *a: ('', 0, 0))
+        if launcher == 'practice':
+            key = tmp_path / 'test-key'
+            key.write_text('test-only')
+            args.key_file, args.url = str(key), 'http://example.invalid'
+            journal = SimpleNamespace(event=lambda *a, **k: None)
+            monkeypatch.setattr(practice, 'PracticeExchange', lambda *a, **k: exchange)
+            monkeypatch.setattr(practice, 'PracticeSession', inspect_model)
+            run = practice.practice(args, journal)
+        else:
+            monkeypatch.setattr(live, 'LiveSession', inspect_model)
+            run = live.run_exchange(args, exchange)
+        with pytest.raises(HandoffComplete):
+>           asyncio.run(run)
+
+tests/test_repeat_blend_launch.py:79: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/asyncio/runners.py:205: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/asyncio/runners.py:128: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/asyncio/base_events.py:720: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+bot/live.py:732: in run_exchange
+    session = LiveSession(ex, strat, args.sync, season_year, last_round, seen_seq, control=ControlFile(args.control))
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+ex = <test_live_startup.ColdExchange object at 0x109e71310>
+trader = <ctc.strategies.FairValueTrader object at 0x1096bbe00>
+unused = (3, '', 0, set())
+kwargs = {'control': <bot.control.ControlFile object at 0x109e70b90>}
+
+    def inspect_model(ex, trader, *unused, **kwargs):
+        model = trader.model.ensemble
+>       observed.update(enabled=model.repeat_prefix, weight=model.repeat_weight,
+                                ^^^^^^^^^^^^^^^^^^^
+                        strategy_identity=trader.competition_id,
+                        account_identity=ex.competition_id)
+E       AttributeError: 'AnalogEnsemble' object has no attribute 'repeat_prefix'
+
+tests/test_repeat_blend_launch.py:61: AttributeError
+----------------------------- Captured stdout call -----------------------------
+HTTP connection reuse=False
+strategy analog min_edge 0.025 edge_full 0.03 sd_mult 0.7 sigma 15 k 100 passive 0.75 warmup 20 max_cross 0.02 carry 0.5 ent_cut 1.2 cone_w 1 cone_s0 20 cone_nu 0 isl_w 0
+final phase exact=True entry=0.005 full=0.005
+basket edge=0.01 participation=0.5 max_lot=10
+announcements: pause named symbols, re-anchor to the house mid after 60 s; commands from /private/var/folders/5_/4_9w4ch971l2mm9c6fqtg5400000gn/T/pytest-of-arjunhans/pytest-282/test_launcher_constructs_fixed5/commands
+________ test_invalid_programmatic_selection_precedes_io[yes-practice] _________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x109ddf690>
+launcher = 'practice', invalid = 'yes'
+
+    @pytest.mark.parametrize('launcher', ['practice', 'live'])
+    @pytest.mark.parametrize('invalid', ['yes', 1, None])
+    def test_invalid_programmatic_selection_precedes_io(monkeypatch, launcher, invalid):
+        args = SimpleNamespace(repeat_prefix_blend=invalid, nowcast=False)
+        run = practice.practice(args, object()) if launcher == 'practice' else live.run_exchange(args, object())
+        with pytest.raises(ValueError, match='repeat_prefix_blend must be a bool'):
+>           asyncio.run(run)
+
+tests/test_repeat_blend_launch.py:91: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/asyncio/runners.py:205: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/asyncio/runners.py:128: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/asyncio/base_events.py:720: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+args = namespace(repeat_prefix_blend='yes', nowcast=False)
+journal = <object object at 0x109ff61c0>
+
+    async def practice(args, journal):
+>       key = Path(args.key_file).read_text().strip()
+                   ^^^^^^^^^^^^^
+E       AttributeError: 'types.SimpleNamespace' object has no attribute 'key_file'
+
+bot/practice.py:426: AttributeError
+__________ test_invalid_programmatic_selection_precedes_io[yes-live] ___________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x109641300>
+launcher = 'live', invalid = 'yes'
+
+    @pytest.mark.parametrize('launcher', ['practice', 'live'])
+    @pytest.mark.parametrize('invalid', ['yes', 1, None])
+    def test_invalid_programmatic_selection_precedes_io(monkeypatch, launcher, invalid):
+        args = SimpleNamespace(repeat_prefix_blend=invalid, nowcast=False)
+        run = practice.practice(args, object()) if launcher == 'practice' else live.run_exchange(args, object())
+        with pytest.raises(ValueError, match='repeat_prefix_blend must be a bool'):
+>           asyncio.run(run)
+
+tests/test_repeat_blend_launch.py:91: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/asyncio/runners.py:205: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/asyncio/runners.py:128: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/asyncio/base_events.py:720: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+args = namespace(repeat_prefix_blend='yes', nowcast=False)
+ex = <object object at 0x1094da5c0>
+
+    async def run_exchange(args: argparse.Namespace, ex: LiveExchange) -> None:
+>       print(f"HTTP connection reuse={ex.http_reuse_enabled}", flush=True)
+                                       ^^^^^^^^^^^^^^^^^^^^^
+E       AttributeError: 'object' object has no attribute 'http_reuse_enabled'
+
+bot/live.py:698: AttributeError
+_________ test_invalid_programmatic_selection_precedes_io[1-practice] __________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x109de3350>
+launcher = 'practice', invalid = 1
+
+    @pytest.mark.parametrize('launcher', ['practice', 'live'])
+    @pytest.mark.parametrize('invalid', ['yes', 1, None])
+    def test_invalid_programmatic_selection_precedes_io(monkeypatch, launcher, invalid):
+        args = SimpleNamespace(repeat_prefix_blend=invalid, nowcast=False)
+        run = practice.practice(args, object()) if launcher == 'practice' else live.run_exchange(args, object())
+        with pytest.raises(ValueError, match='repeat_prefix_blend must be a bool'):
+>           asyncio.run(run)
+
+tests/test_repeat_blend_launch.py:91: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/asyncio/runners.py:205: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/asyncio/runners.py:128: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/asyncio/base_events.py:720: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+args = namespace(repeat_prefix_blend=1, nowcast=False)
+journal = <object object at 0x10a37fc20>
+
+    async def practice(args, journal):
+>       key = Path(args.key_file).read_text().strip()
+                   ^^^^^^^^^^^^^
+E       AttributeError: 'types.SimpleNamespace' object has no attribute 'key_file'
+
+bot/practice.py:426: AttributeError
+___________ test_invalid_programmatic_selection_precedes_io[1-live] ____________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x109de3e90>
+launcher = 'live', invalid = 1
+
+    @pytest.mark.parametrize('launcher', ['practice', 'live'])
+    @pytest.mark.parametrize('invalid', ['yes', 1, None])
+    def test_invalid_programmatic_selection_precedes_io(monkeypatch, launcher, invalid):
+        args = SimpleNamespace(repeat_prefix_blend=invalid, nowcast=False)
+        run = practice.practice(args, object()) if launcher == 'practice' else live.run_exchange(args, object())
+        with pytest.raises(ValueError, match='repeat_prefix_blend must be a bool'):
+>           asyncio.run(run)
+
+tests/test_repeat_blend_launch.py:91: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/asyncio/runners.py:205: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/asyncio/runners.py:128: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/asyncio/base_events.py:720: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+args = namespace(repeat_prefix_blend=1, nowcast=False)
+ex = <object object at 0x1094da9c0>
+
+    async def run_exchange(args: argparse.Namespace, ex: LiveExchange) -> None:
+>       print(f"HTTP connection reuse={ex.http_reuse_enabled}", flush=True)
+                                       ^^^^^^^^^^^^^^^^^^^^^
+E       AttributeError: 'object' object has no attribute 'http_reuse_enabled'
+
+bot/live.py:698: AttributeError
+________ test_invalid_programmatic_selection_precedes_io[None-practice] ________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x109e23d80>
+launcher = 'practice', invalid = None
+
+    @pytest.mark.parametrize('launcher', ['practice', 'live'])
+    @pytest.mark.parametrize('invalid', ['yes', 1, None])
+    def test_invalid_programmatic_selection_precedes_io(monkeypatch, launcher, invalid):
+        args = SimpleNamespace(repeat_prefix_blend=invalid, nowcast=False)
+        run = practice.practice(args, object()) if launcher == 'practice' else live.run_exchange(args, object())
+        with pytest.raises(ValueError, match='repeat_prefix_blend must be a bool'):
+>           asyncio.run(run)
+
+tests/test_repeat_blend_launch.py:91: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/asyncio/runners.py:205: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/asyncio/runners.py:128: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/asyncio/base_events.py:720: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+args = namespace(repeat_prefix_blend=None, nowcast=False)
+journal = <object object at 0x109ff7110>
+
+    async def practice(args, journal):
+>       key = Path(args.key_file).read_text().strip()
+                   ^^^^^^^^^^^^^
+E       AttributeError: 'types.SimpleNamespace' object has no attribute 'key_file'
+
+bot/practice.py:426: AttributeError
+__________ test_invalid_programmatic_selection_precedes_io[None-live] __________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x10a15e0a0>
+launcher = 'live', invalid = None
+
+    @pytest.mark.parametrize('launcher', ['practice', 'live'])
+    @pytest.mark.parametrize('invalid', ['yes', 1, None])
+    def test_invalid_programmatic_selection_precedes_io(monkeypatch, launcher, invalid):
+        args = SimpleNamespace(repeat_prefix_blend=invalid, nowcast=False)
+        run = practice.practice(args, object()) if launcher == 'practice' else live.run_exchange(args, object())
+        with pytest.raises(ValueError, match='repeat_prefix_blend must be a bool'):
+>           asyncio.run(run)
+
+tests/test_repeat_blend_launch.py:91: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/asyncio/runners.py:205: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/asyncio/runners.py:128: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/asyncio/base_events.py:720: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+args = namespace(repeat_prefix_blend=None, nowcast=False)
+ex = <object object at 0x1094d9b10>
+
+    async def run_exchange(args: argparse.Namespace, ex: LiveExchange) -> None:
+>       print(f"HTTP connection reuse={ex.http_reuse_enabled}", flush=True)
+                                       ^^^^^^^^^^^^^^^^^^^^^
+E       AttributeError: 'object' object has no attribute 'http_reuse_enabled'
+
+bot/live.py:698: AttributeError
+__________________ test_nowcast_conflict_precedes_account_io ___________________
+
+    def test_nowcast_conflict_precedes_account_io():
+        args = SimpleNamespace(repeat_prefix_blend=True, nowcast=True)
+        with pytest.raises(ValueError, match='requires the analog model'):
+>           asyncio.run(live.run_exchange(args, object()))
+
+tests/test_repeat_blend_launch.py:97: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/asyncio/runners.py:205: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/asyncio/runners.py:128: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/asyncio/base_events.py:720: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+args = namespace(repeat_prefix_blend=True, nowcast=True)
+ex = <object object at 0x10a37d150>
+
+    async def run_exchange(args: argparse.Namespace, ex: LiveExchange) -> None:
+>       print(f"HTTP connection reuse={ex.http_reuse_enabled}", flush=True)
+                                       ^^^^^^^^^^^^^^^^^^^^^
+E       AttributeError: 'object' object has no attribute 'http_reuse_enabled'
+
+bot/live.py:698: AttributeError
+______________ test_disabled_is_default_and_does_not_concentrate _______________
+
+models = (<function models.<locals>.create at 0x10a15d010>, array([[[ 0.00e+00,  5.00e+02,  1.00e+02,  1.00e+00],
+        [ 2.0...4.78e+01,  5.00e+02,  1.00e+02,  1.00e+00],
+        [-4.80e+01,  5.00e+02,  1.00e+02,  1.00e+00]]], shape=(3, 241, 4)))
+
+    def test_disabled_is_default_and_does_not_concentrate(models):
+        create, tracks = models
+        obs = observations(tracks)
+        default = create(None).weights(obs, [], [])
+>       disabled = create(False).weights(obs, [], [])
+                   ^^^^^^^^^^^^^
+
+tests/test_repeat_prefix.py:51: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+enabled = False, values = None, extra = {}
+
+    def create(enabled, values=None, **extra):
+        path = tmp_path / f'library-{len(list(tmp_path.iterdir()))}.npz'
+        np.savez(path, tracks=tracks if values is None else values,
+                 pattern=np.array([0, 1, 2]), flip=np.full(3, -1),
+                 C_off=np.full((6, 6), 1 / 6), C_wire=np.full((6, 6), 1 / 6))
+        kwargs = {} if enabled is None else {'repeat_prefix': enabled}
+>       return AnalogEnsemble(case, lib=path, sigma=15, k=0, **kwargs, **extra)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       TypeError: AnalogEnsemble.__init__() got an unexpected keyword argument 'repeat_prefix'
+
+tests/test_repeat_prefix.py:29: TypeError
+_______________ test_option_requires_an_explicit_boolean[false] ________________
+
+models = (<function models.<locals>.create at 0x10a15f060>, array([[[ 0.00e+00,  5.00e+02,  1.00e+02,  1.00e+00],
+        [ 2.0...4.78e+01,  5.00e+02,  1.00e+02,  1.00e+00],
+        [-4.80e+01,  5.00e+02,  1.00e+02,  1.00e+00]]], shape=(3, 241, 4)))
+value = 'false'
+
+    @pytest.mark.parametrize('value', ['false', 1, None, [], 0.5])
+    def test_option_requires_an_explicit_boolean(models, value):
+        create, _ = models
+        if value is None:
+            base = create(False)
+            with pytest.raises(ValueError, match='repeat_prefix'):
+                AnalogEnsemble(base.case, repeat_prefix=None)
+        else:
+            with pytest.raises(ValueError, match='repeat_prefix'):
+>               create(value)
+
+tests/test_repeat_prefix.py:65: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+enabled = 'false', values = None, extra = {}
+
+    def create(enabled, values=None, **extra):
+        path = tmp_path / f'library-{len(list(tmp_path.iterdir()))}.npz'
+        np.savez(path, tracks=tracks if values is None else values,
+                 pattern=np.array([0, 1, 2]), flip=np.full(3, -1),
+                 C_off=np.full((6, 6), 1 / 6), C_wire=np.full((6, 6), 1 / 6))
+        kwargs = {} if enabled is None else {'repeat_prefix': enabled}
+>       return AnalogEnsemble(case, lib=path, sigma=15, k=0, **kwargs, **extra)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       TypeError: AnalogEnsemble.__init__() got an unexpected keyword argument 'repeat_prefix'
+
+tests/test_repeat_prefix.py:29: TypeError
+_________________ test_option_requires_an_explicit_boolean[1] __________________
+
+models = (<function models.<locals>.create at 0x10a15e610>, array([[[ 0.00e+00,  5.00e+02,  1.00e+02,  1.00e+00],
+        [ 2.0...4.78e+01,  5.00e+02,  1.00e+02,  1.00e+00],
+        [-4.80e+01,  5.00e+02,  1.00e+02,  1.00e+00]]], shape=(3, 241, 4)))
+value = 1
+
+    @pytest.mark.parametrize('value', ['false', 1, None, [], 0.5])
+    def test_option_requires_an_explicit_boolean(models, value):
+        create, _ = models
+        if value is None:
+            base = create(False)
+            with pytest.raises(ValueError, match='repeat_prefix'):
+                AnalogEnsemble(base.case, repeat_prefix=None)
+        else:
+            with pytest.raises(ValueError, match='repeat_prefix'):
+>               create(value)
+
+tests/test_repeat_prefix.py:65: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+enabled = 1, values = None, extra = {}
+
+    def create(enabled, values=None, **extra):
+        path = tmp_path / f'library-{len(list(tmp_path.iterdir()))}.npz'
+        np.savez(path, tracks=tracks if values is None else values,
+                 pattern=np.array([0, 1, 2]), flip=np.full(3, -1),
+                 C_off=np.full((6, 6), 1 / 6), C_wire=np.full((6, 6), 1 / 6))
+        kwargs = {} if enabled is None else {'repeat_prefix': enabled}
+>       return AnalogEnsemble(case, lib=path, sigma=15, k=0, **kwargs, **extra)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       TypeError: AnalogEnsemble.__init__() got an unexpected keyword argument 'repeat_prefix'
+
+tests/test_repeat_prefix.py:29: TypeError
+________________ test_option_requires_an_explicit_boolean[None] ________________
+
+models = (<function models.<locals>.create at 0x10a15ec40>, array([[[ 0.00e+00,  5.00e+02,  1.00e+02,  1.00e+00],
+        [ 2.0...4.78e+01,  5.00e+02,  1.00e+02,  1.00e+00],
+        [-4.80e+01,  5.00e+02,  1.00e+02,  1.00e+00]]], shape=(3, 241, 4)))
+value = None
+
+    @pytest.mark.parametrize('value', ['false', 1, None, [], 0.5])
+    def test_option_requires_an_explicit_boolean(models, value):
+        create, _ = models
+        if value is None:
+>           base = create(False)
+                   ^^^^^^^^^^^^^
+
+tests/test_repeat_prefix.py:60: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+enabled = False, values = None, extra = {}
+
+    def create(enabled, values=None, **extra):
+        path = tmp_path / f'library-{len(list(tmp_path.iterdir()))}.npz'
+        np.savez(path, tracks=tracks if values is None else values,
+                 pattern=np.array([0, 1, 2]), flip=np.full(3, -1),
+                 C_off=np.full((6, 6), 1 / 6), C_wire=np.full((6, 6), 1 / 6))
+        kwargs = {} if enabled is None else {'repeat_prefix': enabled}
+>       return AnalogEnsemble(case, lib=path, sigma=15, k=0, **kwargs, **extra)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       TypeError: AnalogEnsemble.__init__() got an unexpected keyword argument 'repeat_prefix'
+
+tests/test_repeat_prefix.py:29: TypeError
+_______________ test_option_requires_an_explicit_boolean[value3] _______________
+
+models = (<function models.<locals>.create at 0x10a15d6f0>, array([[[ 0.00e+00,  5.00e+02,  1.00e+02,  1.00e+00],
+        [ 2.0...4.78e+01,  5.00e+02,  1.00e+02,  1.00e+00],
+        [-4.80e+01,  5.00e+02,  1.00e+02,  1.00e+00]]], shape=(3, 241, 4)))
+value = []
+
+    @pytest.mark.parametrize('value', ['false', 1, None, [], 0.5])
+    def test_option_requires_an_explicit_boolean(models, value):
+        create, _ = models
+        if value is None:
+            base = create(False)
+            with pytest.raises(ValueError, match='repeat_prefix'):
+                AnalogEnsemble(base.case, repeat_prefix=None)
+        else:
+            with pytest.raises(ValueError, match='repeat_prefix'):
+>               create(value)
+
+tests/test_repeat_prefix.py:65: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+enabled = [], values = None, extra = {}
+
+    def create(enabled, values=None, **extra):
+        path = tmp_path / f'library-{len(list(tmp_path.iterdir()))}.npz'
+        np.savez(path, tracks=tracks if values is None else values,
+                 pattern=np.array([0, 1, 2]), flip=np.full(3, -1),
+                 C_off=np.full((6, 6), 1 / 6), C_wire=np.full((6, 6), 1 / 6))
+        kwargs = {} if enabled is None else {'repeat_prefix': enabled}
+>       return AnalogEnsemble(case, lib=path, sigma=15, k=0, **kwargs, **extra)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       TypeError: AnalogEnsemble.__init__() got an unexpected keyword argument 'repeat_prefix'
+
+tests/test_repeat_prefix.py:29: TypeError
+________________ test_option_requires_an_explicit_boolean[0.5] _________________
+
+models = (<function models.<locals>.create at 0x10a15cb40>, array([[[ 0.00e+00,  5.00e+02,  1.00e+02,  1.00e+00],
+        [ 2.0...4.78e+01,  5.00e+02,  1.00e+02,  1.00e+00],
+        [-4.80e+01,  5.00e+02,  1.00e+02,  1.00e+00]]], shape=(3, 241, 4)))
+value = 0.5
+
+    @pytest.mark.parametrize('value', ['false', 1, None, [], 0.5])
+    def test_option_requires_an_explicit_boolean(models, value):
+        create, _ = models
+        if value is None:
+            base = create(False)
+            with pytest.raises(ValueError, match='repeat_prefix'):
+                AnalogEnsemble(base.case, repeat_prefix=None)
+        else:
+            with pytest.raises(ValueError, match='repeat_prefix'):
+>               create(value)
+
+tests/test_repeat_prefix.py:65: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+enabled = 0.5, values = None, extra = {}
+
+    def create(enabled, values=None, **extra):
+        path = tmp_path / f'library-{len(list(tmp_path.iterdir()))}.npz'
+        np.savez(path, tracks=tracks if values is None else values,
+                 pattern=np.array([0, 1, 2]), flip=np.full(3, -1),
+                 C_off=np.full((6, 6), 1 / 6), C_wire=np.full((6, 6), 1 / 6))
+        kwargs = {} if enabled is None else {'repeat_prefix': enabled}
+>       return AnalogEnsemble(case, lib=path, sigma=15, k=0, **kwargs, **extra)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       TypeError: AnalogEnsemble.__init__() got an unexpected keyword argument 'repeat_prefix'
+
+tests/test_repeat_prefix.py:29: TypeError
+____________ test_activation_requires_21_complete_points_and_age_40 ____________
+
+models = (<function models.<locals>.create at 0x10a15e2a0>, array([[[ 0.00e+00,  5.00e+02,  1.00e+02,  1.00e+00],
+        [ 2.0...4.78e+01,  5.00e+02,  1.00e+02,  1.00e+00],
+        [-4.80e+01,  5.00e+02,  1.00e+02,  1.00e+00]]], shape=(3, 241, 4)))
+
+    def test_activation_requires_21_complete_points_and_age_40(models):
+        create, tracks = models
+>       candidate, baseline = create(True), create(False)
+                              ^^^^^^^^^^^^
+
+tests/test_repeat_prefix.py:70: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+enabled = True, values = None, extra = {}
+
+    def create(enabled, values=None, **extra):
+        path = tmp_path / f'library-{len(list(tmp_path.iterdir()))}.npz'
+        np.savez(path, tracks=tracks if values is None else values,
+                 pattern=np.array([0, 1, 2]), flip=np.full(3, -1),
+                 C_off=np.full((6, 6), 1 / 6), C_wire=np.full((6, 6), 1 / 6))
+        kwargs = {} if enabled is None else {'repeat_prefix': enabled}
+>       return AnalogEnsemble(case, lib=path, sigma=15, k=0, **kwargs, **extra)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       TypeError: AnalogEnsemble.__init__() got an unexpected keyword argument 'repeat_prefix'
+
+tests/test_repeat_prefix.py:29: TypeError
+______ test_every_weather_channel_and_earliest_observation_must_match[x] _______
+
+models = (<function models.<locals>.create at 0x10a15f1c0>, array([[[ 0.00e+00,  5.00e+02,  1.00e+02,  1.00e+00],
+        [ 2.0...4.78e+01,  5.00e+02,  1.00e+02,  1.00e+00],
+        [-4.80e+01,  5.00e+02,  1.00e+02,  1.00e+00]]], shape=(3, 241, 4)))
+channel = 'x'
+
+    @pytest.mark.parametrize('channel', ['x', 'y', 'radius', 'intensity'])
+    def test_every_weather_channel_and_earliest_observation_must_match(models, channel):
+        create, tracks = models
+>       candidate, baseline = create(True), create(False)
+                              ^^^^^^^^^^^^
+
+tests/test_repeat_prefix.py:79: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+enabled = True, values = None, extra = {}
+
+    def create(enabled, values=None, **extra):
+        path = tmp_path / f'library-{len(list(tmp_path.iterdir()))}.npz'
+        np.savez(path, tracks=tracks if values is None else values,
+                 pattern=np.array([0, 1, 2]), flip=np.full(3, -1),
+                 C_off=np.full((6, 6), 1 / 6), C_wire=np.full((6, 6), 1 / 6))
+        kwargs = {} if enabled is None else {'repeat_prefix': enabled}
+>       return AnalogEnsemble(case, lib=path, sigma=15, k=0, **kwargs, **extra)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       TypeError: AnalogEnsemble.__init__() got an unexpected keyword argument 'repeat_prefix'
+
+tests/test_repeat_prefix.py:29: TypeError
+______ test_every_weather_channel_and_earliest_observation_must_match[y] _______
+
+models = (<function models.<locals>.create at 0x10a15dbc0>, array([[[ 0.00e+00,  5.00e+02,  1.00e+02,  1.00e+00],
+        [ 2.0...4.78e+01,  5.00e+02,  1.00e+02,  1.00e+00],
+        [-4.80e+01,  5.00e+02,  1.00e+02,  1.00e+00]]], shape=(3, 241, 4)))
+channel = 'y'
+
+    @pytest.mark.parametrize('channel', ['x', 'y', 'radius', 'intensity'])
+    def test_every_weather_channel_and_earliest_observation_must_match(models, channel):
+        create, tracks = models
+>       candidate, baseline = create(True), create(False)
+                              ^^^^^^^^^^^^
+
+tests/test_repeat_prefix.py:79: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+enabled = True, values = None, extra = {}
+
+    def create(enabled, values=None, **extra):
+        path = tmp_path / f'library-{len(list(tmp_path.iterdir()))}.npz'
+        np.savez(path, tracks=tracks if values is None else values,
+                 pattern=np.array([0, 1, 2]), flip=np.full(3, -1),
+                 C_off=np.full((6, 6), 1 / 6), C_wire=np.full((6, 6), 1 / 6))
+        kwargs = {} if enabled is None else {'repeat_prefix': enabled}
+>       return AnalogEnsemble(case, lib=path, sigma=15, k=0, **kwargs, **extra)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       TypeError: AnalogEnsemble.__init__() got an unexpected keyword argument 'repeat_prefix'
+
+tests/test_repeat_prefix.py:29: TypeError
+____ test_every_weather_channel_and_earliest_observation_must_match[radius] ____
+
+models = (<function models.<locals>.create at 0x10a15f3d0>, array([[[ 0.00e+00,  5.00e+02,  1.00e+02,  1.00e+00],
+        [ 2.0...4.78e+01,  5.00e+02,  1.00e+02,  1.00e+00],
+        [-4.80e+01,  5.00e+02,  1.00e+02,  1.00e+00]]], shape=(3, 241, 4)))
+channel = 'radius'
+
+    @pytest.mark.parametrize('channel', ['x', 'y', 'radius', 'intensity'])
+    def test_every_weather_channel_and_earliest_observation_must_match(models, channel):
+        create, tracks = models
+>       candidate, baseline = create(True), create(False)
+                              ^^^^^^^^^^^^
+
+tests/test_repeat_prefix.py:79: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+enabled = True, values = None, extra = {}
+
+    def create(enabled, values=None, **extra):
+        path = tmp_path / f'library-{len(list(tmp_path.iterdir()))}.npz'
+        np.savez(path, tracks=tracks if values is None else values,
+                 pattern=np.array([0, 1, 2]), flip=np.full(3, -1),
+                 C_off=np.full((6, 6), 1 / 6), C_wire=np.full((6, 6), 1 / 6))
+        kwargs = {} if enabled is None else {'repeat_prefix': enabled}
+>       return AnalogEnsemble(case, lib=path, sigma=15, k=0, **kwargs, **extra)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       TypeError: AnalogEnsemble.__init__() got an unexpected keyword argument 'repeat_prefix'
+
+tests/test_repeat_prefix.py:29: TypeError
+__ test_every_weather_channel_and_earliest_observation_must_match[intensity] ___
+
+models = (<function models.<locals>.create at 0x10a15f8a0>, array([[[ 0.00e+00,  5.00e+02,  1.00e+02,  1.00e+00],
+        [ 2.0...4.78e+01,  5.00e+02,  1.00e+02,  1.00e+00],
+        [-4.80e+01,  5.00e+02,  1.00e+02,  1.00e+00]]], shape=(3, 241, 4)))
+channel = 'intensity'
+
+    @pytest.mark.parametrize('channel', ['x', 'y', 'radius', 'intensity'])
+    def test_every_weather_channel_and_earliest_observation_must_match(models, channel):
+        create, tracks = models
+>       candidate, baseline = create(True), create(False)
+                              ^^^^^^^^^^^^
+
+tests/test_repeat_prefix.py:79: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+enabled = True, values = None, extra = {}
+
+    def create(enabled, values=None, **extra):
+        path = tmp_path / f'library-{len(list(tmp_path.iterdir()))}.npz'
+        np.savez(path, tracks=tracks if values is None else values,
+                 pattern=np.array([0, 1, 2]), flip=np.full(3, -1),
+                 C_off=np.full((6, 6), 1 / 6), C_wire=np.full((6, 6), 1 / 6))
+        kwargs = {} if enabled is None else {'repeat_prefix': enabled}
+>       return AnalogEnsemble(case, lib=path, sigma=15, k=0, **kwargs, **extra)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       TypeError: AnalogEnsemble.__init__() got an unexpected keyword argument 'repeat_prefix'
+
+tests/test_repeat_prefix.py:29: TypeError
+___ test_duplicate_library_prefix_stays_ambiguous_until_observed_divergence ____
+
+models = (<function models.<locals>.create at 0x10a1500f0>, array([[[ 0.00e+00,  5.00e+02,  1.00e+02,  1.00e+00],
+        [ 2.0...4.78e+01,  5.00e+02,  1.00e+02,  1.00e+00],
+        [-4.80e+01,  5.00e+02,  1.00e+02,  1.00e+00]]], shape=(3, 241, 4)))
+
+    def test_duplicate_library_prefix_stays_ambiguous_until_observed_divergence(models):
+        create, tracks = models
+        altered = tracks.copy()
+        altered[1, :21] = altered[0, :21]
+>       candidate, baseline = create(True, altered), create(False, altered)
+                              ^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_repeat_prefix.py:90: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+enabled = True
+values = array([[[ 0.00e+00,  5.00e+02,  1.00e+02,  1.00e+00],
+        [ 2.00e-01,  5.00e+02,  1.00e+02,  1.00e+00],
+        [ ...-4.78e+01,  5.00e+02,  1.00e+02,  1.00e+00],
+        [-4.80e+01,  5.00e+02,  1.00e+02,  1.00e+00]]], shape=(3, 241, 4))
+extra = {}
+
+    def create(enabled, values=None, **extra):
+        path = tmp_path / f'library-{len(list(tmp_path.iterdir()))}.npz'
+        np.savez(path, tracks=tracks if values is None else values,
+                 pattern=np.array([0, 1, 2]), flip=np.full(3, -1),
+                 C_off=np.full((6, 6), 1 / 6), C_wire=np.full((6, 6), 1 / 6))
+        kwargs = {} if enabled is None else {'repeat_prefix': enabled}
+>       return AnalogEnsemble(case, lib=path, sigma=15, k=0, **kwargs, **extra)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       TypeError: AnalogEnsemble.__init__() got an unexpected keyword argument 'repeat_prefix'
+
+tests/test_repeat_prefix.py:29: TypeError
+_______ test_incomplete_or_malformed_age_grid_falls_back[missing_first] ________
+
+models = (<function models.<locals>.create at 0x10a150720>, array([[[ 0.00e+00,  5.00e+02,  1.00e+02,  1.00e+00],
+        [ 2.0...4.78e+01,  5.00e+02,  1.00e+02,  1.00e+00],
+        [-4.80e+01,  5.00e+02,  1.00e+02,  1.00e+00]]], shape=(3, 241, 4)))
+fault = 'missing_first'
+
+    @pytest.mark.parametrize('fault', ['missing_first', 'gap', 'duplicate', 'reverse', 'off_grid', 'too_long'])
+    def test_incomplete_or_malformed_age_grid_falls_back(models, fault):
+        create, tracks = models
+        obs = observations(tracks, count=23)
+        if fault == 'missing_first':
+            obs.pop(0)
+        elif fault == 'gap':
+            obs.pop(7)
+        elif fault == 'duplicate':
+            obs.insert(8, copy.deepcopy(obs[7]))
+        elif fault == 'reverse':
+            obs[7], obs[8] = obs[8], obs[7]
+        elif fault == 'off_grid':
+            obs[7]['age'] += 0.5
+        else:
+            obs = observations(tracks, count=241)
+            obs.append({**obs[-1], 'age': 482})
+>       compare_fallback(create(True), create(False), obs)
+                         ^^^^^^^^^^^^
+
+tests/test_repeat_prefix.py:112: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+enabled = True, values = None, extra = {}
+
+    def create(enabled, values=None, **extra):
+        path = tmp_path / f'library-{len(list(tmp_path.iterdir()))}.npz'
+        np.savez(path, tracks=tracks if values is None else values,
+                 pattern=np.array([0, 1, 2]), flip=np.full(3, -1),
+                 C_off=np.full((6, 6), 1 / 6), C_wire=np.full((6, 6), 1 / 6))
+        kwargs = {} if enabled is None else {'repeat_prefix': enabled}
+>       return AnalogEnsemble(case, lib=path, sigma=15, k=0, **kwargs, **extra)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       TypeError: AnalogEnsemble.__init__() got an unexpected keyword argument 'repeat_prefix'
+
+tests/test_repeat_prefix.py:29: TypeError
+____________ test_incomplete_or_malformed_age_grid_falls_back[gap] _____________
+
+models = (<function models.<locals>.create at 0x10a150930>, array([[[ 0.00e+00,  5.00e+02,  1.00e+02,  1.00e+00],
+        [ 2.0...4.78e+01,  5.00e+02,  1.00e+02,  1.00e+00],
+        [-4.80e+01,  5.00e+02,  1.00e+02,  1.00e+00]]], shape=(3, 241, 4)))
+fault = 'gap'
+
+    @pytest.mark.parametrize('fault', ['missing_first', 'gap', 'duplicate', 'reverse', 'off_grid', 'too_long'])
+    def test_incomplete_or_malformed_age_grid_falls_back(models, fault):
+        create, tracks = models
+        obs = observations(tracks, count=23)
+        if fault == 'missing_first':
+            obs.pop(0)
+        elif fault == 'gap':
+            obs.pop(7)
+        elif fault == 'duplicate':
+            obs.insert(8, copy.deepcopy(obs[7]))
+        elif fault == 'reverse':
+            obs[7], obs[8] = obs[8], obs[7]
+        elif fault == 'off_grid':
+            obs[7]['age'] += 0.5
+        else:
+            obs = observations(tracks, count=241)
+            obs.append({**obs[-1], 'age': 482})
+>       compare_fallback(create(True), create(False), obs)
+                         ^^^^^^^^^^^^
+
+tests/test_repeat_prefix.py:112: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+enabled = True, values = None, extra = {}
+
+    def create(enabled, values=None, **extra):
+        path = tmp_path / f'library-{len(list(tmp_path.iterdir()))}.npz'
+        np.savez(path, tracks=tracks if values is None else values,
+                 pattern=np.array([0, 1, 2]), flip=np.full(3, -1),
+                 C_off=np.full((6, 6), 1 / 6), C_wire=np.full((6, 6), 1 / 6))
+        kwargs = {} if enabled is None else {'repeat_prefix': enabled}
+>       return AnalogEnsemble(case, lib=path, sigma=15, k=0, **kwargs, **extra)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       TypeError: AnalogEnsemble.__init__() got an unexpected keyword argument 'repeat_prefix'
+
+tests/test_repeat_prefix.py:29: TypeError
+_________ test_incomplete_or_malformed_age_grid_falls_back[duplicate] __________
+
+models = (<function models.<locals>.create at 0x10a15cca0>, array([[[ 0.00e+00,  5.00e+02,  1.00e+02,  1.00e+00],
+        [ 2.0...4.78e+01,  5.00e+02,  1.00e+02,  1.00e+00],
+        [-4.80e+01,  5.00e+02,  1.00e+02,  1.00e+00]]], shape=(3, 241, 4)))
+fault = 'duplicate'
+
+    @pytest.mark.parametrize('fault', ['missing_first', 'gap', 'duplicate', 'reverse', 'off_grid', 'too_long'])
+    def test_incomplete_or_malformed_age_grid_falls_back(models, fault):
+        create, tracks = models
+        obs = observations(tracks, count=23)
+        if fault == 'missing_first':
+            obs.pop(0)
+        elif fault == 'gap':
+            obs.pop(7)
+        elif fault == 'duplicate':
+            obs.insert(8, copy.deepcopy(obs[7]))
+        elif fault == 'reverse':
+            obs[7], obs[8] = obs[8], obs[7]
+        elif fault == 'off_grid':
+            obs[7]['age'] += 0.5
+        else:
+            obs = observations(tracks, count=241)
+            obs.append({**obs[-1], 'age': 482})
+>       compare_fallback(create(True), create(False), obs)
+                         ^^^^^^^^^^^^
+
+tests/test_repeat_prefix.py:112: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+enabled = True, values = None, extra = {}
+
+    def create(enabled, values=None, **extra):
+        path = tmp_path / f'library-{len(list(tmp_path.iterdir()))}.npz'
+        np.savez(path, tracks=tracks if values is None else values,
+                 pattern=np.array([0, 1, 2]), flip=np.full(3, -1),
+                 C_off=np.full((6, 6), 1 / 6), C_wire=np.full((6, 6), 1 / 6))
+        kwargs = {} if enabled is None else {'repeat_prefix': enabled}
+>       return AnalogEnsemble(case, lib=path, sigma=15, k=0, **kwargs, **extra)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       TypeError: AnalogEnsemble.__init__() got an unexpected keyword argument 'repeat_prefix'
+
+tests/test_repeat_prefix.py:29: TypeError
+__________ test_incomplete_or_malformed_age_grid_falls_back[reverse] ___________
+
+models = (<function models.<locals>.create at 0x10a15f320>, array([[[ 0.00e+00,  5.00e+02,  1.00e+02,  1.00e+00],
+        [ 2.0...4.78e+01,  5.00e+02,  1.00e+02,  1.00e+00],
+        [-4.80e+01,  5.00e+02,  1.00e+02,  1.00e+00]]], shape=(3, 241, 4)))
+fault = 'reverse'
+
+    @pytest.mark.parametrize('fault', ['missing_first', 'gap', 'duplicate', 'reverse', 'off_grid', 'too_long'])
+    def test_incomplete_or_malformed_age_grid_falls_back(models, fault):
+        create, tracks = models
+        obs = observations(tracks, count=23)
+        if fault == 'missing_first':
+            obs.pop(0)
+        elif fault == 'gap':
+            obs.pop(7)
+        elif fault == 'duplicate':
+            obs.insert(8, copy.deepcopy(obs[7]))
+        elif fault == 'reverse':
+            obs[7], obs[8] = obs[8], obs[7]
+        elif fault == 'off_grid':
+            obs[7]['age'] += 0.5
+        else:
+            obs = observations(tracks, count=241)
+            obs.append({**obs[-1], 'age': 482})
+>       compare_fallback(create(True), create(False), obs)
+                         ^^^^^^^^^^^^
+
+tests/test_repeat_prefix.py:112: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+enabled = True, values = None, extra = {}
+
+    def create(enabled, values=None, **extra):
+        path = tmp_path / f'library-{len(list(tmp_path.iterdir()))}.npz'
+        np.savez(path, tracks=tracks if values is None else values,
+                 pattern=np.array([0, 1, 2]), flip=np.full(3, -1),
+                 C_off=np.full((6, 6), 1 / 6), C_wire=np.full((6, 6), 1 / 6))
+        kwargs = {} if enabled is None else {'repeat_prefix': enabled}
+>       return AnalogEnsemble(case, lib=path, sigma=15, k=0, **kwargs, **extra)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       TypeError: AnalogEnsemble.__init__() got an unexpected keyword argument 'repeat_prefix'
+
+tests/test_repeat_prefix.py:29: TypeError
+__________ test_incomplete_or_malformed_age_grid_falls_back[off_grid] __________
+
+models = (<function models.<locals>.create at 0x10a15f480>, array([[[ 0.00e+00,  5.00e+02,  1.00e+02,  1.00e+00],
+        [ 2.0...4.78e+01,  5.00e+02,  1.00e+02,  1.00e+00],
+        [-4.80e+01,  5.00e+02,  1.00e+02,  1.00e+00]]], shape=(3, 241, 4)))
+fault = 'off_grid'
+
+    @pytest.mark.parametrize('fault', ['missing_first', 'gap', 'duplicate', 'reverse', 'off_grid', 'too_long'])
+    def test_incomplete_or_malformed_age_grid_falls_back(models, fault):
+        create, tracks = models
+        obs = observations(tracks, count=23)
+        if fault == 'missing_first':
+            obs.pop(0)
+        elif fault == 'gap':
+            obs.pop(7)
+        elif fault == 'duplicate':
+            obs.insert(8, copy.deepcopy(obs[7]))
+        elif fault == 'reverse':
+            obs[7], obs[8] = obs[8], obs[7]
+        elif fault == 'off_grid':
+            obs[7]['age'] += 0.5
+        else:
+            obs = observations(tracks, count=241)
+            obs.append({**obs[-1], 'age': 482})
+>       compare_fallback(create(True), create(False), obs)
+                         ^^^^^^^^^^^^
+
+tests/test_repeat_prefix.py:112: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+enabled = True, values = None, extra = {}
+
+    def create(enabled, values=None, **extra):
+        path = tmp_path / f'library-{len(list(tmp_path.iterdir()))}.npz'
+        np.savez(path, tracks=tracks if values is None else values,
+                 pattern=np.array([0, 1, 2]), flip=np.full(3, -1),
+                 C_off=np.full((6, 6), 1 / 6), C_wire=np.full((6, 6), 1 / 6))
+        kwargs = {} if enabled is None else {'repeat_prefix': enabled}
+>       return AnalogEnsemble(case, lib=path, sigma=15, k=0, **kwargs, **extra)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       TypeError: AnalogEnsemble.__init__() got an unexpected keyword argument 'repeat_prefix'
+
+tests/test_repeat_prefix.py:29: TypeError
+__________ test_incomplete_or_malformed_age_grid_falls_back[too_long] __________
+
+models = (<function models.<locals>.create at 0x10a15fe20>, array([[[ 0.00e+00,  5.00e+02,  1.00e+02,  1.00e+00],
+        [ 2.0...4.78e+01,  5.00e+02,  1.00e+02,  1.00e+00],
+        [-4.80e+01,  5.00e+02,  1.00e+02,  1.00e+00]]], shape=(3, 241, 4)))
+fault = 'too_long'
+
+    @pytest.mark.parametrize('fault', ['missing_first', 'gap', 'duplicate', 'reverse', 'off_grid', 'too_long'])
+    def test_incomplete_or_malformed_age_grid_falls_back(models, fault):
+        create, tracks = models
+        obs = observations(tracks, count=23)
+        if fault == 'missing_first':
+            obs.pop(0)
+        elif fault == 'gap':
+            obs.pop(7)
+        elif fault == 'duplicate':
+            obs.insert(8, copy.deepcopy(obs[7]))
+        elif fault == 'reverse':
+            obs[7], obs[8] = obs[8], obs[7]
+        elif fault == 'off_grid':
+            obs[7]['age'] += 0.5
+        else:
+            obs = observations(tracks, count=241)
+            obs.append({**obs[-1], 'age': 482})
+>       compare_fallback(create(True), create(False), obs)
+                         ^^^^^^^^^^^^
+
+tests/test_repeat_prefix.py:112: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+enabled = True, values = None, extra = {}
+
+    def create(enabled, values=None, **extra):
+        path = tmp_path / f'library-{len(list(tmp_path.iterdir()))}.npz'
+        np.savez(path, tracks=tracks if values is None else values,
+                 pattern=np.array([0, 1, 2]), flip=np.full(3, -1),
+                 C_off=np.full((6, 6), 1 / 6), C_wire=np.full((6, 6), 1 / 6))
+        kwargs = {} if enabled is None else {'repeat_prefix': enabled}
+>       return AnalogEnsemble(case, lib=path, sigma=15, k=0, **kwargs, **extra)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       TypeError: AnalogEnsemble.__init__() got an unexpected keyword argument 'repeat_prefix'
+
+tests/test_repeat_prefix.py:29: TypeError
+__________ test_invalid_strength_values_do_not_activate[radius-None] ___________
+
+models = (<function models.<locals>.create at 0x10a150510>, array([[[ 0.00e+00,  5.00e+02,  1.00e+02,  1.00e+00],
+        [ 2.0...4.78e+01,  5.00e+02,  1.00e+02,  1.00e+00],
+        [-4.80e+01,  5.00e+02,  1.00e+02,  1.00e+00]]], shape=(3, 241, 4)))
+value = None, channel = 'radius'
+
+    @pytest.mark.parametrize('value', [None, float('nan'), float('inf'), -float('inf'), '100', True])
+    @pytest.mark.parametrize('channel', ['radius', 'intensity'])
+    def test_invalid_strength_values_do_not_activate(models, value, channel):
+        create, tracks = models
+        obs = observations(tracks)
+        obs[5][channel] = value
+>       compare_fallback(create(True), create(False), obs)
+                         ^^^^^^^^^^^^
+
+tests/test_repeat_prefix.py:121: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+enabled = True, values = None, extra = {}
+
+    def create(enabled, values=None, **extra):
+        path = tmp_path / f'library-{len(list(tmp_path.iterdir()))}.npz'
+        np.savez(path, tracks=tracks if values is None else values,
+                 pattern=np.array([0, 1, 2]), flip=np.full(3, -1),
+                 C_off=np.full((6, 6), 1 / 6), C_wire=np.full((6, 6), 1 / 6))
+        kwargs = {} if enabled is None else {'repeat_prefix': enabled}
+>       return AnalogEnsemble(case, lib=path, sigma=15, k=0, **kwargs, **extra)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       TypeError: AnalogEnsemble.__init__() got an unexpected keyword argument 'repeat_prefix'
+
+tests/test_repeat_prefix.py:29: TypeError
+___________ test_invalid_strength_values_do_not_activate[radius-nan] ___________
+
+models = (<function models.<locals>.create at 0x10a150a90>, array([[[ 0.00e+00,  5.00e+02,  1.00e+02,  1.00e+00],
+        [ 2.0...4.78e+01,  5.00e+02,  1.00e+02,  1.00e+00],
+        [-4.80e+01,  5.00e+02,  1.00e+02,  1.00e+00]]], shape=(3, 241, 4)))
+value = nan, channel = 'radius'
+
+    @pytest.mark.parametrize('value', [None, float('nan'), float('inf'), -float('inf'), '100', True])
+    @pytest.mark.parametrize('channel', ['radius', 'intensity'])
+    def test_invalid_strength_values_do_not_activate(models, value, channel):
+        create, tracks = models
+        obs = observations(tracks)
+        obs[5][channel] = value
+>       compare_fallback(create(True), create(False), obs)
+                         ^^^^^^^^^^^^
+
+tests/test_repeat_prefix.py:121: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+enabled = True, values = None, extra = {}
+
+    def create(enabled, values=None, **extra):
+        path = tmp_path / f'library-{len(list(tmp_path.iterdir()))}.npz'
+        np.savez(path, tracks=tracks if values is None else values,
+                 pattern=np.array([0, 1, 2]), flip=np.full(3, -1),
+                 C_off=np.full((6, 6), 1 / 6), C_wire=np.full((6, 6), 1 / 6))
+        kwargs = {} if enabled is None else {'repeat_prefix': enabled}
+>       return AnalogEnsemble(case, lib=path, sigma=15, k=0, **kwargs, **extra)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       TypeError: AnalogEnsemble.__init__() got an unexpected keyword argument 'repeat_prefix'
+
+tests/test_repeat_prefix.py:29: TypeError
+___________ test_invalid_strength_values_do_not_activate[radius-inf] ___________
+
+models = (<function models.<locals>.create at 0x10a150bf0>, array([[[ 0.00e+00,  5.00e+02,  1.00e+02,  1.00e+00],
+        [ 2.0...4.78e+01,  5.00e+02,  1.00e+02,  1.00e+00],
+        [-4.80e+01,  5.00e+02,  1.00e+02,  1.00e+00]]], shape=(3, 241, 4)))
+value = inf, channel = 'radius'
+
+    @pytest.mark.parametrize('value', [None, float('nan'), float('inf'), -float('inf'), '100', True])
+    @pytest.mark.parametrize('channel', ['radius', 'intensity'])
+    def test_invalid_strength_values_do_not_activate(models, value, channel):
+        create, tracks = models
+        obs = observations(tracks)
+        obs[5][channel] = value
+>       compare_fallback(create(True), create(False), obs)
+                         ^^^^^^^^^^^^
+
+tests/test_repeat_prefix.py:121: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+enabled = True, values = None, extra = {}
+
+    def create(enabled, values=None, **extra):
+        path = tmp_path / f'library-{len(list(tmp_path.iterdir()))}.npz'
+        np.savez(path, tracks=tracks if values is None else values,
+                 pattern=np.array([0, 1, 2]), flip=np.full(3, -1),
+                 C_off=np.full((6, 6), 1 / 6), C_wire=np.full((6, 6), 1 / 6))
+        kwargs = {} if enabled is None else {'repeat_prefix': enabled}
+>       return AnalogEnsemble(case, lib=path, sigma=15, k=0, **kwargs, **extra)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       TypeError: AnalogEnsemble.__init__() got an unexpected keyword argument 'repeat_prefix'
+
+tests/test_repeat_prefix.py:29: TypeError
+__________ test_invalid_strength_values_do_not_activate[radius--inf] ___________
+
+models = (<function models.<locals>.create at 0x10a151170>, array([[[ 0.00e+00,  5.00e+02,  1.00e+02,  1.00e+00],
+        [ 2.0...4.78e+01,  5.00e+02,  1.00e+02,  1.00e+00],
+        [-4.80e+01,  5.00e+02,  1.00e+02,  1.00e+00]]], shape=(3, 241, 4)))
+value = -inf, channel = 'radius'
+
+    @pytest.mark.parametrize('value', [None, float('nan'), float('inf'), -float('inf'), '100', True])
+    @pytest.mark.parametrize('channel', ['radius', 'intensity'])
+    def test_invalid_strength_values_do_not_activate(models, value, channel):
+        create, tracks = models
+        obs = observations(tracks)
+        obs[5][channel] = value
+>       compare_fallback(create(True), create(False), obs)
+                         ^^^^^^^^^^^^
+
+tests/test_repeat_prefix.py:121: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+enabled = True, values = None, extra = {}
+
+    def create(enabled, values=None, **extra):
+        path = tmp_path / f'library-{len(list(tmp_path.iterdir()))}.npz'
+        np.savez(path, tracks=tracks if values is None else values,
+                 pattern=np.array([0, 1, 2]), flip=np.full(3, -1),
+                 C_off=np.full((6, 6), 1 / 6), C_wire=np.full((6, 6), 1 / 6))
+        kwargs = {} if enabled is None else {'repeat_prefix': enabled}
+>       return AnalogEnsemble(case, lib=path, sigma=15, k=0, **kwargs, **extra)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       TypeError: AnalogEnsemble.__init__() got an unexpected keyword argument 'repeat_prefix'
+
+tests/test_repeat_prefix.py:29: TypeError
+___________ test_invalid_strength_values_do_not_activate[radius-100] ___________
+
+models = (<function models.<locals>.create at 0x10a151590>, array([[[ 0.00e+00,  5.00e+02,  1.00e+02,  1.00e+00],
+        [ 2.0...4.78e+01,  5.00e+02,  1.00e+02,  1.00e+00],
+        [-4.80e+01,  5.00e+02,  1.00e+02,  1.00e+00]]], shape=(3, 241, 4)))
+value = '100', channel = 'radius'
+
+    @pytest.mark.parametrize('value', [None, float('nan'), float('inf'), -float('inf'), '100', True])
+    @pytest.mark.parametrize('channel', ['radius', 'intensity'])
+    def test_invalid_strength_values_do_not_activate(models, value, channel):
+        create, tracks = models
+        obs = observations(tracks)
+        obs[5][channel] = value
+>       compare_fallback(create(True), create(False), obs)
+                         ^^^^^^^^^^^^
+
+tests/test_repeat_prefix.py:121: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+enabled = True, values = None, extra = {}
+
+    def create(enabled, values=None, **extra):
+        path = tmp_path / f'library-{len(list(tmp_path.iterdir()))}.npz'
+        np.savez(path, tracks=tracks if values is None else values,
+                 pattern=np.array([0, 1, 2]), flip=np.full(3, -1),
+                 C_off=np.full((6, 6), 1 / 6), C_wire=np.full((6, 6), 1 / 6))
+        kwargs = {} if enabled is None else {'repeat_prefix': enabled}
+>       return AnalogEnsemble(case, lib=path, sigma=15, k=0, **kwargs, **extra)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       TypeError: AnalogEnsemble.__init__() got an unexpected keyword argument 'repeat_prefix'
+
+tests/test_repeat_prefix.py:29: TypeError
+__________ test_invalid_strength_values_do_not_activate[radius-True] ___________
+
+models = (<function models.<locals>.create at 0x10a1519b0>, array([[[ 0.00e+00,  5.00e+02,  1.00e+02,  1.00e+00],
+        [ 2.0...4.78e+01,  5.00e+02,  1.00e+02,  1.00e+00],
+        [-4.80e+01,  5.00e+02,  1.00e+02,  1.00e+00]]], shape=(3, 241, 4)))
+value = True, channel = 'radius'
+
+    @pytest.mark.parametrize('value', [None, float('nan'), float('inf'), -float('inf'), '100', True])
+    @pytest.mark.parametrize('channel', ['radius', 'intensity'])
+    def test_invalid_strength_values_do_not_activate(models, value, channel):
+        create, tracks = models
+        obs = observations(tracks)
+        obs[5][channel] = value
+>       compare_fallback(create(True), create(False), obs)
+                         ^^^^^^^^^^^^
+
+tests/test_repeat_prefix.py:121: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+enabled = True, values = None, extra = {}
+
+    def create(enabled, values=None, **extra):
+        path = tmp_path / f'library-{len(list(tmp_path.iterdir()))}.npz'
+        np.savez(path, tracks=tracks if values is None else values,
+                 pattern=np.array([0, 1, 2]), flip=np.full(3, -1),
+                 C_off=np.full((6, 6), 1 / 6), C_wire=np.full((6, 6), 1 / 6))
+        kwargs = {} if enabled is None else {'repeat_prefix': enabled}
+>       return AnalogEnsemble(case, lib=path, sigma=15, k=0, **kwargs, **extra)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       TypeError: AnalogEnsemble.__init__() got an unexpected keyword argument 'repeat_prefix'
+
+tests/test_repeat_prefix.py:29: TypeError
+_________ test_invalid_strength_values_do_not_activate[intensity-None] _________
+
+models = (<function models.<locals>.create at 0x10a151dd0>, array([[[ 0.00e+00,  5.00e+02,  1.00e+02,  1.00e+00],
+        [ 2.0...4.78e+01,  5.00e+02,  1.00e+02,  1.00e+00],
+        [-4.80e+01,  5.00e+02,  1.00e+02,  1.00e+00]]], shape=(3, 241, 4)))
+value = None, channel = 'intensity'
+
+    @pytest.mark.parametrize('value', [None, float('nan'), float('inf'), -float('inf'), '100', True])
+    @pytest.mark.parametrize('channel', ['radius', 'intensity'])
+    def test_invalid_strength_values_do_not_activate(models, value, channel):
+        create, tracks = models
+        obs = observations(tracks)
+        obs[5][channel] = value
+>       compare_fallback(create(True), create(False), obs)
+                         ^^^^^^^^^^^^
+
+tests/test_repeat_prefix.py:121: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+enabled = True, values = None, extra = {}
+
+    def create(enabled, values=None, **extra):
+        path = tmp_path / f'library-{len(list(tmp_path.iterdir()))}.npz'
+        np.savez(path, tracks=tracks if values is None else values,
+                 pattern=np.array([0, 1, 2]), flip=np.full(3, -1),
+                 C_off=np.full((6, 6), 1 / 6), C_wire=np.full((6, 6), 1 / 6))
+        kwargs = {} if enabled is None else {'repeat_prefix': enabled}
+>       return AnalogEnsemble(case, lib=path, sigma=15, k=0, **kwargs, **extra)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       TypeError: AnalogEnsemble.__init__() got an unexpected keyword argument 'repeat_prefix'
+
+tests/test_repeat_prefix.py:29: TypeError
+_________ test_invalid_strength_values_do_not_activate[intensity-nan] __________
+
+models = (<function models.<locals>.create at 0x10a1521f0>, array([[[ 0.00e+00,  5.00e+02,  1.00e+02,  1.00e+00],
+        [ 2.0...4.78e+01,  5.00e+02,  1.00e+02,  1.00e+00],
+        [-4.80e+01,  5.00e+02,  1.00e+02,  1.00e+00]]], shape=(3, 241, 4)))
+value = nan, channel = 'intensity'
+
+    @pytest.mark.parametrize('value', [None, float('nan'), float('inf'), -float('inf'), '100', True])
+    @pytest.mark.parametrize('channel', ['radius', 'intensity'])
+    def test_invalid_strength_values_do_not_activate(models, value, channel):
+        create, tracks = models
+        obs = observations(tracks)
+        obs[5][channel] = value
+>       compare_fallback(create(True), create(False), obs)
+                         ^^^^^^^^^^^^
+
+tests/test_repeat_prefix.py:121: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+enabled = True, values = None, extra = {}
+
+    def create(enabled, values=None, **extra):
+        path = tmp_path / f'library-{len(list(tmp_path.iterdir()))}.npz'
+        np.savez(path, tracks=tracks if values is None else values,
+                 pattern=np.array([0, 1, 2]), flip=np.full(3, -1),
+                 C_off=np.full((6, 6), 1 / 6), C_wire=np.full((6, 6), 1 / 6))
+        kwargs = {} if enabled is None else {'repeat_prefix': enabled}
+>       return AnalogEnsemble(case, lib=path, sigma=15, k=0, **kwargs, **extra)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       TypeError: AnalogEnsemble.__init__() got an unexpected keyword argument 'repeat_prefix'
+
+tests/test_repeat_prefix.py:29: TypeError
+_________ test_invalid_strength_values_do_not_activate[intensity-inf] __________
+
+models = (<function models.<locals>.create at 0x10a15e610>, array([[[ 0.00e+00,  5.00e+02,  1.00e+02,  1.00e+00],
+        [ 2.0...4.78e+01,  5.00e+02,  1.00e+02,  1.00e+00],
+        [-4.80e+01,  5.00e+02,  1.00e+02,  1.00e+00]]], shape=(3, 241, 4)))
+value = inf, channel = 'intensity'
+
+    @pytest.mark.parametrize('value', [None, float('nan'), float('inf'), -float('inf'), '100', True])
+    @pytest.mark.parametrize('channel', ['radius', 'intensity'])
+    def test_invalid_strength_values_do_not_activate(models, value, channel):
+        create, tracks = models
+        obs = observations(tracks)
+        obs[5][channel] = value
+>       compare_fallback(create(True), create(False), obs)
+                         ^^^^^^^^^^^^
+
+tests/test_repeat_prefix.py:121: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+enabled = True, values = None, extra = {}
+
+    def create(enabled, values=None, **extra):
+        path = tmp_path / f'library-{len(list(tmp_path.iterdir()))}.npz'
+        np.savez(path, tracks=tracks if values is None else values,
+                 pattern=np.array([0, 1, 2]), flip=np.full(3, -1),
+                 C_off=np.full((6, 6), 1 / 6), C_wire=np.full((6, 6), 1 / 6))
+        kwargs = {} if enabled is None else {'repeat_prefix': enabled}
+>       return AnalogEnsemble(case, lib=path, sigma=15, k=0, **kwargs, **extra)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       TypeError: AnalogEnsemble.__init__() got an unexpected keyword argument 'repeat_prefix'
+
+tests/test_repeat_prefix.py:29: TypeError
+_________ test_invalid_strength_values_do_not_activate[intensity--inf] _________
+
+models = (<function models.<locals>.create at 0x10a15cca0>, array([[[ 0.00e+00,  5.00e+02,  1.00e+02,  1.00e+00],
+        [ 2.0...4.78e+01,  5.00e+02,  1.00e+02,  1.00e+00],
+        [-4.80e+01,  5.00e+02,  1.00e+02,  1.00e+00]]], shape=(3, 241, 4)))
+value = -inf, channel = 'intensity'
+
+    @pytest.mark.parametrize('value', [None, float('nan'), float('inf'), -float('inf'), '100', True])
+    @pytest.mark.parametrize('channel', ['radius', 'intensity'])
+    def test_invalid_strength_values_do_not_activate(models, value, channel):
+        create, tracks = models
+        obs = observations(tracks)
+        obs[5][channel] = value
+>       compare_fallback(create(True), create(False), obs)
+                         ^^^^^^^^^^^^
+
+tests/test_repeat_prefix.py:121: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+enabled = True, values = None, extra = {}
+
+    def create(enabled, values=None, **extra):
+        path = tmp_path / f'library-{len(list(tmp_path.iterdir()))}.npz'
+        np.savez(path, tracks=tracks if values is None else values,
+                 pattern=np.array([0, 1, 2]), flip=np.full(3, -1),
+                 C_off=np.full((6, 6), 1 / 6), C_wire=np.full((6, 6), 1 / 6))
+        kwargs = {} if enabled is None else {'repeat_prefix': enabled}
+>       return AnalogEnsemble(case, lib=path, sigma=15, k=0, **kwargs, **extra)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       TypeError: AnalogEnsemble.__init__() got an unexpected keyword argument 'repeat_prefix'
+
+tests/test_repeat_prefix.py:29: TypeError
+_________ test_invalid_strength_values_do_not_activate[intensity-100] __________
+
+models = (<function models.<locals>.create at 0x10a152610>, array([[[ 0.00e+00,  5.00e+02,  1.00e+02,  1.00e+00],
+        [ 2.0...4.78e+01,  5.00e+02,  1.00e+02,  1.00e+00],
+        [-4.80e+01,  5.00e+02,  1.00e+02,  1.00e+00]]], shape=(3, 241, 4)))
+value = '100', channel = 'intensity'
+
+    @pytest.mark.parametrize('value', [None, float('nan'), float('inf'), -float('inf'), '100', True])
+    @pytest.mark.parametrize('channel', ['radius', 'intensity'])
+    def test_invalid_strength_values_do_not_activate(models, value, channel):
+        create, tracks = models
+        obs = observations(tracks)
+        obs[5][channel] = value
+>       compare_fallback(create(True), create(False), obs)
+                         ^^^^^^^^^^^^
+
+tests/test_repeat_prefix.py:121: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+enabled = True, values = None, extra = {}
+
+    def create(enabled, values=None, **extra):
+        path = tmp_path / f'library-{len(list(tmp_path.iterdir()))}.npz'
+        np.savez(path, tracks=tracks if values is None else values,
+                 pattern=np.array([0, 1, 2]), flip=np.full(3, -1),
+                 C_off=np.full((6, 6), 1 / 6), C_wire=np.full((6, 6), 1 / 6))
+        kwargs = {} if enabled is None else {'repeat_prefix': enabled}
+>       return AnalogEnsemble(case, lib=path, sigma=15, k=0, **kwargs, **extra)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       TypeError: AnalogEnsemble.__init__() got an unexpected keyword argument 'repeat_prefix'
+
+tests/test_repeat_prefix.py:29: TypeError
+_________ test_invalid_strength_values_do_not_activate[intensity-True] _________
+
+models = (<function models.<locals>.create at 0x10a151f30>, array([[[ 0.00e+00,  5.00e+02,  1.00e+02,  1.00e+00],
+        [ 2.0...4.78e+01,  5.00e+02,  1.00e+02,  1.00e+00],
+        [-4.80e+01,  5.00e+02,  1.00e+02,  1.00e+00]]], shape=(3, 241, 4)))
+value = True, channel = 'intensity'
+
+    @pytest.mark.parametrize('value', [None, float('nan'), float('inf'), -float('inf'), '100', True])
+    @pytest.mark.parametrize('channel', ['radius', 'intensity'])
+    def test_invalid_strength_values_do_not_activate(models, value, channel):
+        create, tracks = models
+        obs = observations(tracks)
+        obs[5][channel] = value
+>       compare_fallback(create(True), create(False), obs)
+                         ^^^^^^^^^^^^
+
+tests/test_repeat_prefix.py:121: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+enabled = True, values = None, extra = {}
+
+    def create(enabled, values=None, **extra):
+        path = tmp_path / f'library-{len(list(tmp_path.iterdir()))}.npz'
+        np.savez(path, tracks=tracks if values is None else values,
+                 pattern=np.array([0, 1, 2]), flip=np.full(3, -1),
+                 C_off=np.full((6, 6), 1 / 6), C_wire=np.full((6, 6), 1 / 6))
+        kwargs = {} if enabled is None else {'repeat_prefix': enabled}
+>       return AnalogEnsemble(case, lib=path, sigma=15, k=0, **kwargs, **extra)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       TypeError: AnalogEnsemble.__init__() got an unexpected keyword argument 'repeat_prefix'
+
+tests/test_repeat_prefix.py:29: TypeError
+_________________ test_missing_strength_field_retains_baseline _________________
+
+models = (<function models.<locals>.create at 0x10a1517a0>, array([[[ 0.00e+00,  5.00e+02,  1.00e+02,  1.00e+00],
+        [ 2.0...4.78e+01,  5.00e+02,  1.00e+02,  1.00e+00],
+        [-4.80e+01,  5.00e+02,  1.00e+02,  1.00e+00]]], shape=(3, 241, 4)))
+
+    def test_missing_strength_field_retains_baseline(models):
+        create, tracks = models
+        obs = observations(tracks)
+        del obs[8]['radius']
+>       compare_fallback(create(True), create(False), obs)
+                         ^^^^^^^^^^^^
+
+tests/test_repeat_prefix.py:128: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+enabled = True, values = None, extra = {}
+
+    def create(enabled, values=None, **extra):
+        path = tmp_path / f'library-{len(list(tmp_path.iterdir()))}.npz'
+        np.savez(path, tracks=tracks if values is None else values,
+                 pattern=np.array([0, 1, 2]), flip=np.full(3, -1),
+                 C_off=np.full((6, 6), 1 / 6), C_wire=np.full((6, 6), 1 / 6))
+        kwargs = {} if enabled is None else {'repeat_prefix': enabled}
+>       return AnalogEnsemble(case, lib=path, sigma=15, k=0, **kwargs, **extra)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       TypeError: AnalogEnsemble.__init__() got an unexpected keyword argument 'repeat_prefix'
+
+tests/test_repeat_prefix.py:29: TypeError
+___________ test_divergence_then_correction_truncation_and_new_storm ___________
+
+models = (<function models.<locals>.create at 0x10a152820>, array([[[ 0.00e+00,  5.00e+02,  1.00e+02,  1.00e+00],
+        [ 2.0...4.78e+01,  5.00e+02,  1.00e+02,  1.00e+00],
+        [-4.80e+01,  5.00e+02,  1.00e+02,  1.00e+00]]], shape=(3, 241, 4)))
+
+    def test_divergence_then_correction_truncation_and_new_storm(models):
+        create, tracks = models
+>       candidate, baseline = create(True), create(False)
+                              ^^^^^^^^^^^^
+
+tests/test_repeat_prefix.py:133: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+enabled = True, values = None, extra = {}
+
+    def create(enabled, values=None, **extra):
+        path = tmp_path / f'library-{len(list(tmp_path.iterdir()))}.npz'
+        np.savez(path, tracks=tracks if values is None else values,
+                 pattern=np.array([0, 1, 2]), flip=np.full(3, -1),
+                 C_off=np.full((6, 6), 1 / 6), C_wire=np.full((6, 6), 1 / 6))
+        kwargs = {} if enabled is None else {'repeat_prefix': enabled}
+>       return AnalogEnsemble(case, lib=path, sigma=15, k=0, **kwargs, **extra)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       TypeError: AnalogEnsemble.__init__() got an unexpected keyword argument 'repeat_prefix'
+
+tests/test_repeat_prefix.py:29: TypeError
+___________ test_strength_correction_invalidates_owned_prefix_cache ____________
+
+models = (<function models.<locals>.create at 0x10a152e50>, array([[[ 0.00e+00,  5.00e+02,  1.00e+02,  1.00e+00],
+        [ 2.0...4.78e+01,  5.00e+02,  1.00e+02,  1.00e+00],
+        [-4.80e+01,  5.00e+02,  1.00e+02,  1.00e+00]]], shape=(3, 241, 4)))
+
+    def test_strength_correction_invalidates_owned_prefix_cache(models):
+        create, tracks = models
+>       candidate, baseline = create(True), create(False)
+                              ^^^^^^^^^^^^
+
+tests/test_repeat_prefix.py:146: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+enabled = True, values = None, extra = {}
+
+    def create(enabled, values=None, **extra):
+        path = tmp_path / f'library-{len(list(tmp_path.iterdir()))}.npz'
+        np.savez(path, tracks=tracks if values is None else values,
+                 pattern=np.array([0, 1, 2]), flip=np.full(3, -1),
+                 C_off=np.full((6, 6), 1 / 6), C_wire=np.full((6, 6), 1 / 6))
+        kwargs = {} if enabled is None else {'repeat_prefix': enabled}
+>       return AnalogEnsemble(case, lib=path, sigma=15, k=0, **kwargs, **extra)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       TypeError: AnalogEnsemble.__init__() got an unexpected keyword argument 'repeat_prefix'
+
+tests/test_repeat_prefix.py:29: TypeError
+________ test_matching_selection_cannot_read_unobserved_library_suffix _________
+
+models = (<function models.<locals>.create at 0x10a153270>, array([[[ 0.00e+00,  5.00e+02,  1.00e+02,  1.00e+00],
+        [ 2.0...4.78e+01,  5.00e+02,  1.00e+02,  1.00e+00],
+        [-4.80e+01,  5.00e+02,  1.00e+02,  1.00e+00]]], shape=(3, 241, 4)))
+
+    def test_matching_selection_cannot_read_unobserved_library_suffix(models):
+        create, tracks = models
+        altered = tracks.copy()
+        altered[:, 21:, :] = np.random.default_rng(7).normal(size=altered[:, 21:, :].shape)
+        obs = observations(tracks)
+>       np.testing.assert_array_equal(create(True, altered).weights(obs, [], []), [1, 0, 0])
+                                      ^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_repeat_prefix.py:160: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+enabled = True
+values = array([[[ 0.00000000e+00,  5.00000000e+02,  1.00000000e+02,
+          1.00000000e+00],
+        [ 2.00000000e-01,  5.00...29735e-01],
+        [-8.45630148e-01, -1.48583595e+00,  2.60910088e+00,
+          3.25825379e-01]]], shape=(3, 241, 4))
+extra = {}
+
+    def create(enabled, values=None, **extra):
+        path = tmp_path / f'library-{len(list(tmp_path.iterdir()))}.npz'
+        np.savez(path, tracks=tracks if values is None else values,
+                 pattern=np.array([0, 1, 2]), flip=np.full(3, -1),
+                 C_off=np.full((6, 6), 1 / 6), C_wire=np.full((6, 6), 1 / 6))
+        kwargs = {} if enabled is None else {'repeat_prefix': enabled}
+>       return AnalogEnsemble(case, lib=path, sigma=15, k=0, **kwargs, **extra)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       TypeError: AnalogEnsemble.__init__() got an unexpected keyword argument 'repeat_prefix'
+
+tests/test_repeat_prefix.py:29: TypeError
+________________ test_advisory_does_not_break_exact_recognition ________________
+
+models = (<function models.<locals>.create at 0x10a1535e0>, array([[[ 0.00e+00,  5.00e+02,  1.00e+02,  1.00e+00],
+        [ 2.0...4.78e+01,  5.00e+02,  1.00e+02,  1.00e+00],
+        [-4.80e+01,  5.00e+02,  1.00e+02,  1.00e+00]]], shape=(3, 241, 4)))
+
+    def test_advisory_does_not_break_exact_recognition(models):
+        create, tracks = models
+>       candidate = create(True)
+                    ^^^^^^^^^^^^
+
+tests/test_repeat_prefix.py:166: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+enabled = True, values = None, extra = {}
+
+    def create(enabled, values=None, **extra):
+        path = tmp_path / f'library-{len(list(tmp_path.iterdir()))}.npz'
+        np.savez(path, tracks=tracks if values is None else values,
+                 pattern=np.array([0, 1, 2]), flip=np.full(3, -1),
+                 C_off=np.full((6, 6), 1 / 6), C_wire=np.full((6, 6), 1 / 6))
+        kwargs = {} if enabled is None else {'repeat_prefix': enabled}
+>       return AnalogEnsemble(case, lib=path, sigma=15, k=0, **kwargs, **extra)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       TypeError: AnalogEnsemble.__init__() got an unexpected keyword argument 'repeat_prefix'
+
+tests/test_repeat_prefix.py:29: TypeError
+________ test_ordinary_cache_remains_current_after_long_matching_period ________
+
+models = (<function models.<locals>.create at 0x10a0b10c0>, array([[[ 0.00e+00,  5.00e+02,  1.00e+02,  1.00e+00],
+        [ 2.0...4.78e+01,  5.00e+02,  1.00e+02,  1.00e+00],
+        [-4.80e+01,  5.00e+02,  1.00e+02,  1.00e+00]]], shape=(3, 241, 4)))
+
+    def test_ordinary_cache_remains_current_after_long_matching_period(models):
+        create, tracks = models
+>       candidate, baseline = create(True), create(False)
+                              ^^^^^^^^^^^^
+
+tests/test_repeat_prefix.py:174: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+enabled = True, values = None, extra = {}
+
+    def create(enabled, values=None, **extra):
+        path = tmp_path / f'library-{len(list(tmp_path.iterdir()))}.npz'
+        np.savez(path, tracks=tracks if values is None else values,
+                 pattern=np.array([0, 1, 2]), flip=np.full(3, -1),
+                 C_off=np.full((6, 6), 1 / 6), C_wire=np.full((6, 6), 1 / 6))
+        kwargs = {} if enabled is None else {'repeat_prefix': enabled}
+>       return AnalogEnsemble(case, lib=path, sigma=15, k=0, **kwargs, **extra)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       TypeError: AnalogEnsemble.__init__() got an unexpected keyword argument 'repeat_prefix'
+
+tests/test_repeat_prefix.py:29: TypeError
+___ test_prediction_uses_matched_historical_continuation_without_mutating_it ___
+
+models = (<function models.<locals>.create at 0x10a0b14e0>, array([[[ 0.00e+00,  5.00e+02,  1.00e+02,  1.00e+00],
+        [ 2.0...4.78e+01,  5.00e+02,  1.00e+02,  1.00e+00],
+        [-4.80e+01,  5.00e+02,  1.00e+02,  1.00e+00]]], shape=(3, 241, 4)))
+
+    def test_prediction_uses_matched_historical_continuation_without_mutating_it(models):
+        create, tracks = models
+>       candidate = create(True)
+                    ^^^^^^^^^^^^
+
+tests/test_repeat_prefix.py:185: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+enabled = True, values = None, extra = {}
+
+    def create(enabled, values=None, **extra):
+        path = tmp_path / f'library-{len(list(tmp_path.iterdir()))}.npz'
+        np.savez(path, tracks=tracks if values is None else values,
+                 pattern=np.array([0, 1, 2]), flip=np.full(3, -1),
+                 C_off=np.full((6, 6), 1 / 6), C_wire=np.full((6, 6), 1 / 6))
+        kwargs = {} if enabled is None else {'repeat_prefix': enabled}
+>       return AnalogEnsemble(case, lib=path, sigma=15, k=0, **kwargs, **extra)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       TypeError: AnalogEnsemble.__init__() got an unexpected keyword argument 'repeat_prefix'
+
+tests/test_repeat_prefix.py:29: TypeError
+____ test_half_weight_recognition_preserves_half_the_ordinary_distribution _____
+
+models = (<function models.<locals>.create at 0x10a0b1900>, array([[[ 0.00e+00,  5.00e+02,  1.00e+02,  1.00e+00],
+        [ 2.0...4.78e+01,  5.00e+02,  1.00e+02,  1.00e+00],
+        [-4.80e+01,  5.00e+02,  1.00e+02,  1.00e+00]]], shape=(3, 241, 4)))
+
+    def test_half_weight_recognition_preserves_half_the_ordinary_distribution(models):
+        create, tracks = models
+        obs = observations(tracks)
+>       ordinary = create(False).weights(obs, [], [])
+                   ^^^^^^^^^^^^^
+
+tests/test_repeat_prefix.py:198: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+enabled = False, values = None, extra = {}
+
+    def create(enabled, values=None, **extra):
+        path = tmp_path / f'library-{len(list(tmp_path.iterdir()))}.npz'
+        np.savez(path, tracks=tracks if values is None else values,
+                 pattern=np.array([0, 1, 2]), flip=np.full(3, -1),
+                 C_off=np.full((6, 6), 1 / 6), C_wire=np.full((6, 6), 1 / 6))
+        kwargs = {} if enabled is None else {'repeat_prefix': enabled}
+>       return AnalogEnsemble(case, lib=path, sigma=15, k=0, **kwargs, **extra)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       TypeError: AnalogEnsemble.__init__() got an unexpected keyword argument 'repeat_prefix'
+
+tests/test_repeat_prefix.py:29: TypeError
+__________ test_weight_endpoints_preserve_original_modes_exactly[0.0] __________
+
+models = (<function models.<locals>.create at 0x10a153270>, array([[[ 0.00e+00,  5.00e+02,  1.00e+02,  1.00e+00],
+        [ 2.0...4.78e+01,  5.00e+02,  1.00e+02,  1.00e+00],
+        [-4.80e+01,  5.00e+02,  1.00e+02,  1.00e+00]]], shape=(3, 241, 4)))
+strength = 0.0
+
+    @pytest.mark.parametrize('strength', [0., 1.])
+    def test_weight_endpoints_preserve_original_modes_exactly(models, strength):
+        create, tracks = models
+        obs = observations(tracks)
+>       actual = create(True, repeat_weight=strength).weights(obs, [], [])
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_repeat_prefix.py:212: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+enabled = True, values = None, extra = {'repeat_weight': 0.0}
+
+    def create(enabled, values=None, **extra):
+        path = tmp_path / f'library-{len(list(tmp_path.iterdir()))}.npz'
+        np.savez(path, tracks=tracks if values is None else values,
+                 pattern=np.array([0, 1, 2]), flip=np.full(3, -1),
+                 C_off=np.full((6, 6), 1 / 6), C_wire=np.full((6, 6), 1 / 6))
+        kwargs = {} if enabled is None else {'repeat_prefix': enabled}
+>       return AnalogEnsemble(case, lib=path, sigma=15, k=0, **kwargs, **extra)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       TypeError: AnalogEnsemble.__init__() got an unexpected keyword argument 'repeat_prefix'
+
+tests/test_repeat_prefix.py:29: TypeError
+__________ test_weight_endpoints_preserve_original_modes_exactly[1.0] __________
+
+models = (<function models.<locals>.create at 0x109e5f3d0>, array([[[ 0.00e+00,  5.00e+02,  1.00e+02,  1.00e+00],
+        [ 2.0...4.78e+01,  5.00e+02,  1.00e+02,  1.00e+00],
+        [-4.80e+01,  5.00e+02,  1.00e+02,  1.00e+00]]], shape=(3, 241, 4)))
+strength = 1.0
+
+    @pytest.mark.parametrize('strength', [0., 1.])
+    def test_weight_endpoints_preserve_original_modes_exactly(models, strength):
+        create, tracks = models
+        obs = observations(tracks)
+>       actual = create(True, repeat_weight=strength).weights(obs, [], [])
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_repeat_prefix.py:212: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+enabled = True, values = None, extra = {'repeat_weight': 1.0}
+
+    def create(enabled, values=None, **extra):
+        path = tmp_path / f'library-{len(list(tmp_path.iterdir()))}.npz'
+        np.savez(path, tracks=tracks if values is None else values,
+                 pattern=np.array([0, 1, 2]), flip=np.full(3, -1),
+                 C_off=np.full((6, 6), 1 / 6), C_wire=np.full((6, 6), 1 / 6))
+        kwargs = {} if enabled is None else {'repeat_prefix': enabled}
+>       return AnalogEnsemble(case, lib=path, sigma=15, k=0, **kwargs, **extra)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       TypeError: AnalogEnsemble.__init__() got an unexpected keyword argument 'repeat_prefix'
+
+tests/test_repeat_prefix.py:29: TypeError
+________________ test_invalid_repeat_weights_are_rejected[-0.1] ________________
+
+models = (<function models.<locals>.create at 0x109e5f950>, array([[[ 0.00e+00,  5.00e+02,  1.00e+02,  1.00e+00],
+        [ 2.0...4.78e+01,  5.00e+02,  1.00e+02,  1.00e+00],
+        [-4.80e+01,  5.00e+02,  1.00e+02,  1.00e+00]]], shape=(3, 241, 4)))
+strength = -0.1
+
+    @pytest.mark.parametrize('strength', [-.1, 1.1, float('nan'), float('inf'), '0.5', None, True])
+    def test_invalid_repeat_weights_are_rejected(models, strength):
+        create, _ = models
+        with pytest.raises(ValueError, match='repeat_weight'):
+>           create(True, repeat_weight=strength)
+
+tests/test_repeat_prefix.py:221: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+enabled = True, values = None, extra = {'repeat_weight': -0.1}
+
+    def create(enabled, values=None, **extra):
+        path = tmp_path / f'library-{len(list(tmp_path.iterdir()))}.npz'
+        np.savez(path, tracks=tracks if values is None else values,
+                 pattern=np.array([0, 1, 2]), flip=np.full(3, -1),
+                 C_off=np.full((6, 6), 1 / 6), C_wire=np.full((6, 6), 1 / 6))
+        kwargs = {} if enabled is None else {'repeat_prefix': enabled}
+>       return AnalogEnsemble(case, lib=path, sigma=15, k=0, **kwargs, **extra)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       TypeError: AnalogEnsemble.__init__() got an unexpected keyword argument 'repeat_prefix'
+
+tests/test_repeat_prefix.py:29: TypeError
+________________ test_invalid_repeat_weights_are_rejected[1.1] _________________
+
+models = (<function models.<locals>.create at 0x10a153530>, array([[[ 0.00e+00,  5.00e+02,  1.00e+02,  1.00e+00],
+        [ 2.0...4.78e+01,  5.00e+02,  1.00e+02,  1.00e+00],
+        [-4.80e+01,  5.00e+02,  1.00e+02,  1.00e+00]]], shape=(3, 241, 4)))
+strength = 1.1
+
+    @pytest.mark.parametrize('strength', [-.1, 1.1, float('nan'), float('inf'), '0.5', None, True])
+    def test_invalid_repeat_weights_are_rejected(models, strength):
+        create, _ = models
+        with pytest.raises(ValueError, match='repeat_weight'):
+>           create(True, repeat_weight=strength)
+
+tests/test_repeat_prefix.py:221: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+enabled = True, values = None, extra = {'repeat_weight': 1.1}
+
+    def create(enabled, values=None, **extra):
+        path = tmp_path / f'library-{len(list(tmp_path.iterdir()))}.npz'
+        np.savez(path, tracks=tracks if values is None else values,
+                 pattern=np.array([0, 1, 2]), flip=np.full(3, -1),
+                 C_off=np.full((6, 6), 1 / 6), C_wire=np.full((6, 6), 1 / 6))
+        kwargs = {} if enabled is None else {'repeat_prefix': enabled}
+>       return AnalogEnsemble(case, lib=path, sigma=15, k=0, **kwargs, **extra)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       TypeError: AnalogEnsemble.__init__() got an unexpected keyword argument 'repeat_prefix'
+
+tests/test_repeat_prefix.py:29: TypeError
+________________ test_invalid_repeat_weights_are_rejected[nan] _________________
+
+models = (<function models.<locals>.create at 0x10a152820>, array([[[ 0.00e+00,  5.00e+02,  1.00e+02,  1.00e+00],
+        [ 2.0...4.78e+01,  5.00e+02,  1.00e+02,  1.00e+00],
+        [-4.80e+01,  5.00e+02,  1.00e+02,  1.00e+00]]], shape=(3, 241, 4)))
+strength = nan
+
+    @pytest.mark.parametrize('strength', [-.1, 1.1, float('nan'), float('inf'), '0.5', None, True])
+    def test_invalid_repeat_weights_are_rejected(models, strength):
+        create, _ = models
+        with pytest.raises(ValueError, match='repeat_weight'):
+>           create(True, repeat_weight=strength)
+
+tests/test_repeat_prefix.py:221: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+enabled = True, values = None, extra = {'repeat_weight': nan}
+
+    def create(enabled, values=None, **extra):
+        path = tmp_path / f'library-{len(list(tmp_path.iterdir()))}.npz'
+        np.savez(path, tracks=tracks if values is None else values,
+                 pattern=np.array([0, 1, 2]), flip=np.full(3, -1),
+                 C_off=np.full((6, 6), 1 / 6), C_wire=np.full((6, 6), 1 / 6))
+        kwargs = {} if enabled is None else {'repeat_prefix': enabled}
+>       return AnalogEnsemble(case, lib=path, sigma=15, k=0, **kwargs, **extra)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       TypeError: AnalogEnsemble.__init__() got an unexpected keyword argument 'repeat_prefix'
+
+tests/test_repeat_prefix.py:29: TypeError
+________________ test_invalid_repeat_weights_are_rejected[inf] _________________
+
+models = (<function models.<locals>.create at 0x10a150b40>, array([[[ 0.00e+00,  5.00e+02,  1.00e+02,  1.00e+00],
+        [ 2.0...4.78e+01,  5.00e+02,  1.00e+02,  1.00e+00],
+        [-4.80e+01,  5.00e+02,  1.00e+02,  1.00e+00]]], shape=(3, 241, 4)))
+strength = inf
+
+    @pytest.mark.parametrize('strength', [-.1, 1.1, float('nan'), float('inf'), '0.5', None, True])
+    def test_invalid_repeat_weights_are_rejected(models, strength):
+        create, _ = models
+        with pytest.raises(ValueError, match='repeat_weight'):
+>           create(True, repeat_weight=strength)
+
+tests/test_repeat_prefix.py:221: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+enabled = True, values = None, extra = {'repeat_weight': inf}
+
+    def create(enabled, values=None, **extra):
+        path = tmp_path / f'library-{len(list(tmp_path.iterdir()))}.npz'
+        np.savez(path, tracks=tracks if values is None else values,
+                 pattern=np.array([0, 1, 2]), flip=np.full(3, -1),
+                 C_off=np.full((6, 6), 1 / 6), C_wire=np.full((6, 6), 1 / 6))
+        kwargs = {} if enabled is None else {'repeat_prefix': enabled}
+>       return AnalogEnsemble(case, lib=path, sigma=15, k=0, **kwargs, **extra)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       TypeError: AnalogEnsemble.__init__() got an unexpected keyword argument 'repeat_prefix'
+
+tests/test_repeat_prefix.py:29: TypeError
+________________ test_invalid_repeat_weights_are_rejected[0.5] _________________
+
+models = (<function models.<locals>.create at 0x10a151fe0>, array([[[ 0.00e+00,  5.00e+02,  1.00e+02,  1.00e+00],
+        [ 2.0...4.78e+01,  5.00e+02,  1.00e+02,  1.00e+00],
+        [-4.80e+01,  5.00e+02,  1.00e+02,  1.00e+00]]], shape=(3, 241, 4)))
+strength = '0.5'
+
+    @pytest.mark.parametrize('strength', [-.1, 1.1, float('nan'), float('inf'), '0.5', None, True])
+    def test_invalid_repeat_weights_are_rejected(models, strength):
+        create, _ = models
+        with pytest.raises(ValueError, match='repeat_weight'):
+>           create(True, repeat_weight=strength)
+
+tests/test_repeat_prefix.py:221: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+enabled = True, values = None, extra = {'repeat_weight': '0.5'}
+
+    def create(enabled, values=None, **extra):
+        path = tmp_path / f'library-{len(list(tmp_path.iterdir()))}.npz'
+        np.savez(path, tracks=tracks if values is None else values,
+                 pattern=np.array([0, 1, 2]), flip=np.full(3, -1),
+                 C_off=np.full((6, 6), 1 / 6), C_wire=np.full((6, 6), 1 / 6))
+        kwargs = {} if enabled is None else {'repeat_prefix': enabled}
+>       return AnalogEnsemble(case, lib=path, sigma=15, k=0, **kwargs, **extra)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       TypeError: AnalogEnsemble.__init__() got an unexpected keyword argument 'repeat_prefix'
+
+tests/test_repeat_prefix.py:29: TypeError
+________________ test_invalid_repeat_weights_are_rejected[None] ________________
+
+models = (<function models.<locals>.create at 0x10a15f060>, array([[[ 0.00e+00,  5.00e+02,  1.00e+02,  1.00e+00],
+        [ 2.0...4.78e+01,  5.00e+02,  1.00e+02,  1.00e+00],
+        [-4.80e+01,  5.00e+02,  1.00e+02,  1.00e+00]]], shape=(3, 241, 4)))
+strength = None
+
+    @pytest.mark.parametrize('strength', [-.1, 1.1, float('nan'), float('inf'), '0.5', None, True])
+    def test_invalid_repeat_weights_are_rejected(models, strength):
+        create, _ = models
+        with pytest.raises(ValueError, match='repeat_weight'):
+>           create(True, repeat_weight=strength)
+
+tests/test_repeat_prefix.py:221: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+enabled = True, values = None, extra = {'repeat_weight': None}
+
+    def create(enabled, values=None, **extra):
+        path = tmp_path / f'library-{len(list(tmp_path.iterdir()))}.npz'
+        np.savez(path, tracks=tracks if values is None else values,
+                 pattern=np.array([0, 1, 2]), flip=np.full(3, -1),
+                 C_off=np.full((6, 6), 1 / 6), C_wire=np.full((6, 6), 1 / 6))
+        kwargs = {} if enabled is None else {'repeat_prefix': enabled}
+>       return AnalogEnsemble(case, lib=path, sigma=15, k=0, **kwargs, **extra)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       TypeError: AnalogEnsemble.__init__() got an unexpected keyword argument 'repeat_prefix'
+
+tests/test_repeat_prefix.py:29: TypeError
+________________ test_invalid_repeat_weights_are_rejected[True] ________________
+
+models = (<function models.<locals>.create at 0x10a15d9b0>, array([[[ 0.00e+00,  5.00e+02,  1.00e+02,  1.00e+00],
+        [ 2.0...4.78e+01,  5.00e+02,  1.00e+02,  1.00e+00],
+        [-4.80e+01,  5.00e+02,  1.00e+02,  1.00e+00]]], shape=(3, 241, 4)))
+strength = True
+
+    @pytest.mark.parametrize('strength', [-.1, 1.1, float('nan'), float('inf'), '0.5', None, True])
+    def test_invalid_repeat_weights_are_rejected(models, strength):
+        create, _ = models
+        with pytest.raises(ValueError, match='repeat_weight'):
+>           create(True, repeat_weight=strength)
+
+tests/test_repeat_prefix.py:221: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+enabled = True, values = None, extra = {'repeat_weight': True}
+
+    def create(enabled, values=None, **extra):
+        path = tmp_path / f'library-{len(list(tmp_path.iterdir()))}.npz'
+        np.savez(path, tracks=tracks if values is None else values,
+                 pattern=np.array([0, 1, 2]), flip=np.full(3, -1),
+                 C_off=np.full((6, 6), 1 / 6), C_wire=np.full((6, 6), 1 / 6))
+        kwargs = {} if enabled is None else {'repeat_prefix': enabled}
+>       return AnalogEnsemble(case, lib=path, sigma=15, k=0, **kwargs, **extra)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       TypeError: AnalogEnsemble.__init__() got an unexpected keyword argument 'repeat_prefix'
+
+tests/test_repeat_prefix.py:29: TypeError
+__________ test_half_weight_has_exact_disabled_and_unmatched_fallback __________
+
+models = (<function models.<locals>.create at 0x10a15cbf0>, array([[[ 0.00e+00,  5.00e+02,  1.00e+02,  1.00e+00],
+        [ 2.0...4.78e+01,  5.00e+02,  1.00e+02,  1.00e+00],
+        [-4.80e+01,  5.00e+02,  1.00e+02,  1.00e+00]]], shape=(3, 241, 4)))
+
+    def test_half_weight_has_exact_disabled_and_unmatched_fallback(models):
+        create, tracks = models
+        obs = observations(tracks)
+>       baseline = create(False)
+                   ^^^^^^^^^^^^^
+
+tests/test_repeat_prefix.py:227: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+enabled = False, values = None, extra = {}
+
+    def create(enabled, values=None, **extra):
+        path = tmp_path / f'library-{len(list(tmp_path.iterdir()))}.npz'
+        np.savez(path, tracks=tracks if values is None else values,
+                 pattern=np.array([0, 1, 2]), flip=np.full(3, -1),
+                 C_off=np.full((6, 6), 1 / 6), C_wire=np.full((6, 6), 1 / 6))
+        kwargs = {} if enabled is None else {'repeat_prefix': enabled}
+>       return AnalogEnsemble(case, lib=path, sigma=15, k=0, **kwargs, **extra)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       TypeError: AnalogEnsemble.__init__() got an unexpected keyword argument 'repeat_prefix'
+
+tests/test_repeat_prefix.py:29: TypeError
+_____________ test_half_weight_recomputes_after_a_corrected_prefix _____________
+
+models = (<function models.<locals>.create at 0x10a0b14e0>, array([[[ 0.00e+00,  5.00e+02,  1.00e+02,  1.00e+00],
+        [ 2.0...4.78e+01,  5.00e+02,  1.00e+02,  1.00e+00],
+        [-4.80e+01,  5.00e+02,  1.00e+02,  1.00e+00]]], shape=(3, 241, 4)))
+
+    def test_half_weight_recomputes_after_a_corrected_prefix(models):
+        create, tracks = models
+        obs = observations(tracks)
+>       candidate, baseline = create(True, repeat_weight=.5), create(False)
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_repeat_prefix.py:238: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+enabled = True, values = None, extra = {'repeat_weight': 0.5}
+
+    def create(enabled, values=None, **extra):
+        path = tmp_path / f'library-{len(list(tmp_path.iterdir()))}.npz'
+        np.savez(path, tracks=tracks if values is None else values,
+                 pattern=np.array([0, 1, 2]), flip=np.full(3, -1),
+                 C_off=np.full((6, 6), 1 / 6), C_wire=np.full((6, 6), 1 / 6))
+        kwargs = {} if enabled is None else {'repeat_prefix': enabled}
+>       return AnalogEnsemble(case, lib=path, sigma=15, k=0, **kwargs, **extra)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       TypeError: AnalogEnsemble.__init__() got an unexpected keyword argument 'repeat_prefix'
+
+tests/test_repeat_prefix.py:29: TypeError
+=========================== short test summary info ============================
+FAILED tests/test_repeat_blend_launch.py::test_cli_switch_reaches_runner[False-practice]
+FAILED tests/test_repeat_blend_launch.py::test_cli_switch_reaches_runner[False-live]
+FAILED tests/test_repeat_blend_launch.py::test_cli_switch_reaches_runner[True-practice]
+FAILED tests/test_repeat_blend_launch.py::test_cli_switch_reaches_runner[True-live]
+FAILED tests/test_repeat_blend_launch.py::test_launcher_constructs_fixed_blend[absent-practice]
+FAILED tests/test_repeat_blend_launch.py::test_launcher_constructs_fixed_blend[absent-live]
+FAILED tests/test_repeat_blend_launch.py::test_launcher_constructs_fixed_blend[False-practice]
+FAILED tests/test_repeat_blend_launch.py::test_launcher_constructs_fixed_blend[False-live]
+FAILED tests/test_repeat_blend_launch.py::test_launcher_constructs_fixed_blend[True-practice]
+FAILED tests/test_repeat_blend_launch.py::test_launcher_constructs_fixed_blend[True-live]
+FAILED tests/test_repeat_blend_launch.py::test_invalid_programmatic_selection_precedes_io[yes-practice]
+FAILED tests/test_repeat_blend_launch.py::test_invalid_programmatic_selection_precedes_io[yes-live]
+FAILED tests/test_repeat_blend_launch.py::test_invalid_programmatic_selection_precedes_io[1-practice]
+FAILED tests/test_repeat_blend_launch.py::test_invalid_programmatic_selection_precedes_io[1-live]
+FAILED tests/test_repeat_blend_launch.py::test_invalid_programmatic_selection_precedes_io[None-practice]
+FAILED tests/test_repeat_blend_launch.py::test_invalid_programmatic_selection_precedes_io[None-live]
+FAILED tests/test_repeat_blend_launch.py::test_nowcast_conflict_precedes_account_io
+FAILED tests/test_repeat_prefix.py::test_disabled_is_default_and_does_not_concentrate
+FAILED tests/test_repeat_prefix.py::test_option_requires_an_explicit_boolean[false]
+FAILED tests/test_repeat_prefix.py::test_option_requires_an_explicit_boolean[1]
+FAILED tests/test_repeat_prefix.py::test_option_requires_an_explicit_boolean[None]
+FAILED tests/test_repeat_prefix.py::test_option_requires_an_explicit_boolean[value3]
+FAILED tests/test_repeat_prefix.py::test_option_requires_an_explicit_boolean[0.5]
+FAILED tests/test_repeat_prefix.py::test_activation_requires_21_complete_points_and_age_40
+FAILED tests/test_repeat_prefix.py::test_every_weather_channel_and_earliest_observation_must_match[x]
+FAILED tests/test_repeat_prefix.py::test_every_weather_channel_and_earliest_observation_must_match[y]
+FAILED tests/test_repeat_prefix.py::test_every_weather_channel_and_earliest_observation_must_match[radius]
+FAILED tests/test_repeat_prefix.py::test_every_weather_channel_and_earliest_observation_must_match[intensity]
+FAILED tests/test_repeat_prefix.py::test_duplicate_library_prefix_stays_ambiguous_until_observed_divergence
+FAILED tests/test_repeat_prefix.py::test_incomplete_or_malformed_age_grid_falls_back[missing_first]
+FAILED tests/test_repeat_prefix.py::test_incomplete_or_malformed_age_grid_falls_back[gap]
+FAILED tests/test_repeat_prefix.py::test_incomplete_or_malformed_age_grid_falls_back[duplicate]
+FAILED tests/test_repeat_prefix.py::test_incomplete_or_malformed_age_grid_falls_back[reverse]
+FAILED tests/test_repeat_prefix.py::test_incomplete_or_malformed_age_grid_falls_back[off_grid]
+FAILED tests/test_repeat_prefix.py::test_incomplete_or_malformed_age_grid_falls_back[too_long]
+FAILED tests/test_repeat_prefix.py::test_invalid_strength_values_do_not_activate[radius-None]
+FAILED tests/test_repeat_prefix.py::test_invalid_strength_values_do_not_activate[radius-nan]
+FAILED tests/test_repeat_prefix.py::test_invalid_strength_values_do_not_activate[radius-inf]
+FAILED tests/test_repeat_prefix.py::test_invalid_strength_values_do_not_activate[radius--inf]
+FAILED tests/test_repeat_prefix.py::test_invalid_strength_values_do_not_activate[radius-100]
+FAILED tests/test_repeat_prefix.py::test_invalid_strength_values_do_not_activate[radius-True]
+FAILED tests/test_repeat_prefix.py::test_invalid_strength_values_do_not_activate[intensity-None]
+FAILED tests/test_repeat_prefix.py::test_invalid_strength_values_do_not_activate[intensity-nan]
+FAILED tests/test_repeat_prefix.py::test_invalid_strength_values_do_not_activate[intensity-inf]
+FAILED tests/test_repeat_prefix.py::test_invalid_strength_values_do_not_activate[intensity--inf]
+FAILED tests/test_repeat_prefix.py::test_invalid_strength_values_do_not_activate[intensity-100]
+FAILED tests/test_repeat_prefix.py::test_invalid_strength_values_do_not_activate[intensity-True]
+FAILED tests/test_repeat_prefix.py::test_missing_strength_field_retains_baseline
+FAILED tests/test_repeat_prefix.py::test_divergence_then_correction_truncation_and_new_storm
+FAILED tests/test_repeat_prefix.py::test_strength_correction_invalidates_owned_prefix_cache
+FAILED tests/test_repeat_prefix.py::test_matching_selection_cannot_read_unobserved_library_suffix
+FAILED tests/test_repeat_prefix.py::test_advisory_does_not_break_exact_recognition
+FAILED tests/test_repeat_prefix.py::test_ordinary_cache_remains_current_after_long_matching_period
+FAILED tests/test_repeat_prefix.py::test_prediction_uses_matched_historical_continuation_without_mutating_it
+FAILED tests/test_repeat_prefix.py::test_half_weight_recognition_preserves_half_the_ordinary_distribution
+FAILED tests/test_repeat_prefix.py::test_weight_endpoints_preserve_original_modes_exactly[0.0]
+FAILED tests/test_repeat_prefix.py::test_weight_endpoints_preserve_original_modes_exactly[1.0]
+FAILED tests/test_repeat_prefix.py::test_invalid_repeat_weights_are_rejected[-0.1]
+FAILED tests/test_repeat_prefix.py::test_invalid_repeat_weights_are_rejected[1.1]
+FAILED tests/test_repeat_prefix.py::test_invalid_repeat_weights_are_rejected[nan]
+FAILED tests/test_repeat_prefix.py::test_invalid_repeat_weights_are_rejected[inf]
+FAILED tests/test_repeat_prefix.py::test_invalid_repeat_weights_are_rejected[0.5]
+FAILED tests/test_repeat_prefix.py::test_invalid_repeat_weights_are_rejected[None]
+FAILED tests/test_repeat_prefix.py::test_invalid_repeat_weights_are_rejected[True]
+FAILED tests/test_repeat_prefix.py::test_half_weight_has_exact_disabled_and_unmatched_fallback
+FAILED tests/test_repeat_prefix.py::test_half_weight_recomputes_after_a_corrected_prefix
+66 failed, 1 passed in 0.73s

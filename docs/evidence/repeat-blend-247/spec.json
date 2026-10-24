@@ -1,0 +1,16 @@
+{
+  "baseline_root": "/Users/arjunhans/Documents/ctc2026/.worktrees/practice-history",
+  "captures": [
+    {
+      "capture": 247,
+      "input": "/Users/arjunhans/Documents/ctc2026/out/repeat-blend-247-20261024/247.json",
+      "input_sha256": "905e7bf98dbd13c913340a9a1999d49a00b6cd6a9209602e089fe20f88d3698e",
+      "archive": "/Users/arjunhans/Documents/ctc2026/recordings/consistency-20261024/supervised-forward/fd1ebff9-0f96-4533-b283-bc0a5c60cd4b/attempt-01/supervised",
+      "archive_sha256": {
+        "metadata.json": "1eaf35352d50a1f873224cf98512c54a207bdebf0937777521a8bbf8c686c425",
+        "results.jsonl": "9f49c0207913893e2fa1ac1dd836e459f8604bcf42f1016d57507921109ff00a",
+        "summary.json": "cffb9844d8adec2d12609793054de24e104b73a012ae314c3b0bff717f2af4fa"
+      }
+    }
+  ]
+}

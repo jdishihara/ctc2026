@@ -1,0 +1,894 @@
+{
+  "source_result_hashes": {
+    "baseline": "11e15305bbaa38506e8ed7ffc95d82fe80b5ac99f26ea15eeb05fb377d7f8fe7",
+    "candidate": "ac5faae13c4b1ee7848746ba5f233654551af2fdc35ca9e151b9e852d4d28753"
+  },
+  "aggregate": {
+    "baseline": {
+      "settings": 16,
+      "mean": -332.11374999999845,
+      "worst": -573.9099999999964,
+      "best": 15.360000000000582,
+      "positive": 1,
+      "negative": 15,
+      "zero": 0,
+      "trial_states": {
+        "incomplete_trial": 12,
+        "completed": 4
+      },
+      "cleanup_states": {
+        "attention": 3,
+        "flat": 9,
+        "settled": 4
+      },
+      "recognized_calls": 0,
+      "weight_calls": 2894
+    },
+    "candidate": {
+      "settings": 16,
+      "mean": -214.0737499999995,
+      "worst": -443.5200000000002,
+      "best": 161.3199999999997,
+      "positive": 4,
+      "negative": 12,
+      "zero": 0,
+      "trial_states": {
+        "incomplete_trial": 10,
+        "completed": 6
+      },
+      "cleanup_states": {
+        "flat": 8,
+        "attention": 2,
+        "settled": 6
+      },
+      "recognized_calls": 2635,
+      "weight_calls": 2928
+    }
+  },
+  "pnl_comparison": {
+    "improved": 13,
+    "worsened": 3,
+    "unchanged": 0
+  },
+  "per_capture": {
+    "247": {
+      "baseline": {
+        "settings": 16,
+        "mean": -332.11374999999845,
+        "worst": -573.9099999999964,
+        "best": 15.360000000000582,
+        "positive": 1,
+        "negative": 15,
+        "zero": 0,
+        "trial_states": {
+          "incomplete_trial": 12,
+          "completed": 4
+        },
+        "cleanup_states": {
+          "attention": 3,
+          "flat": 9,
+          "settled": 4
+        },
+        "recognized_calls": 0,
+        "weight_calls": 2894
+      },
+      "candidate": {
+        "settings": 16,
+        "mean": -214.0737499999995,
+        "worst": -443.5200000000002,
+        "best": 161.3199999999997,
+        "positive": 4,
+        "negative": 12,
+        "zero": 0,
+        "trial_states": {
+          "incomplete_trial": 10,
+          "completed": 6
+        },
+        "cleanup_states": {
+          "flat": 8,
+          "attention": 2,
+          "settled": 6
+        },
+        "recognized_calls": 2635,
+        "weight_calls": 2928
+      }
+    }
+  },
+  "primary": [
+    {
+      "setting": [
+        247,
+        0.25,
+        1.0,
+        true
+      ],
+      "baseline_pnl": -239.98999999999802,
+      "candidate_pnl": -319.63000000000136,
+      "delta": -79.64000000000334,
+      "baseline_trial": "incomplete_trial",
+      "candidate_trial": "incomplete_trial",
+      "baseline_cleanup": "flat",
+      "candidate_cleanup": "flat",
+      "baseline_stop": "cumulative simulated P&L reached loss trigger (-269.88)",
+      "candidate_stop": "cumulative simulated P&L reached loss trigger (-257.21)",
+      "baseline_low": -315.8299999999988,
+      "candidate_low": -462.9850000000006,
+      "baseline_drawdown": 544.3450000000003,
+      "candidate_drawdown": 798.4350000000004,
+      "baseline_orders": 52,
+      "candidate_orders": 58,
+      "baseline_fills": 53,
+      "candidate_fills": 61,
+      "baseline_conversions": 0,
+      "candidate_conversions": 0,
+      "recognized_calls": 148,
+      "matched_rows": {
+        "738": {
+          "calls": 62,
+          "first_age": 44,
+          "last_age": 468
+        },
+        "739": {
+          "calls": 75,
+          "first_age": 44,
+          "last_age": 464
+        },
+        "740": {
+          "calls": 11,
+          "first_age": 48,
+          "last_age": 108
+        }
+      }
+    }
+  ],
+  "new_attention_settings": [],
+  "increased_residual_settings": [
+    [
+      247,
+      0.0,
+      0.5,
+      false
+    ],
+    [
+      247,
+      0.0,
+      0.5,
+      true
+    ]
+  ],
+  "decision": "reject",
+  "failed_rules": [
+    "increased_residual_exposure",
+    "not_all_settings_positive",
+    "not_all_trials_completed",
+    "not_all_receipts_settled"
+  ],
+  "pairs": [
+    {
+      "setting": [
+        247,
+        0.0,
+        0.5,
+        false
+      ],
+      "baseline_pnl": -522.3799999999983,
+      "candidate_pnl": -443.5200000000002,
+      "delta": 78.85999999999808,
+      "baseline_trial": "incomplete_trial",
+      "candidate_trial": "incomplete_trial",
+      "baseline_cleanup": "attention",
+      "candidate_cleanup": "attention",
+      "baseline_stop": "cumulative simulated P&L reached loss trigger (-292.19)",
+      "candidate_stop": "cumulative simulated P&L reached loss trigger (-268.10)",
+      "baseline_low": -523.4599999999983,
+      "candidate_low": -517.1500000000001,
+      "baseline_drawdown": 713.1550000000005,
+      "candidate_drawdown": 827.3050000000003,
+      "baseline_orders": 74,
+      "candidate_orders": 71,
+      "baseline_fills": 85,
+      "candidate_fills": 82,
+      "baseline_conversions": 0,
+      "candidate_conversions": 0,
+      "recognized_calls": 143,
+      "matched_rows": {
+        "738": {
+          "calls": 63,
+          "first_age": 44,
+          "last_age": 468
+        },
+        "739": {
+          "calls": 75,
+          "first_age": 44,
+          "last_age": 464
+        },
+        "740": {
+          "calls": 5,
+          "first_age": 46,
+          "last_age": 76
+        }
+      }
+    },
+    {
+      "setting": [
+        247,
+        0.0,
+        0.5,
+        true
+      ],
+      "baseline_pnl": -490.7099999999973,
+      "candidate_pnl": -435.10000000000036,
+      "delta": 55.609999999996944,
+      "baseline_trial": "incomplete_trial",
+      "candidate_trial": "incomplete_trial",
+      "baseline_cleanup": "attention",
+      "candidate_cleanup": "attention",
+      "baseline_stop": "cumulative simulated P&L reached loss trigger (-260.51)",
+      "candidate_stop": "cumulative simulated P&L reached loss trigger (-271.01)",
+      "baseline_low": -491.78999999999735,
+      "candidate_low": -470.10000000000036,
+      "baseline_drawdown": 713.1550000000005,
+      "candidate_drawdown": 811.9250000000006,
+      "baseline_orders": 95,
+      "candidate_orders": 96,
+      "baseline_fills": 106,
+      "candidate_fills": 106,
+      "baseline_conversions": 3,
+      "candidate_conversions": 4,
+      "recognized_calls": 143,
+      "matched_rows": {
+        "738": {
+          "calls": 63,
+          "first_age": 44,
+          "last_age": 468
+        },
+        "739": {
+          "calls": 75,
+          "first_age": 44,
+          "last_age": 464
+        },
+        "740": {
+          "calls": 5,
+          "first_age": 46,
+          "last_age": 76
+        }
+      }
+    },
+    {
+      "setting": [
+        247,
+        0.0,
+        1.0,
+        false
+      ],
+      "baseline_pnl": -403.969999999998,
+      "candidate_pnl": -381.42999999999734,
+      "delta": 22.540000000000646,
+      "baseline_trial": "incomplete_trial",
+      "candidate_trial": "incomplete_trial",
+      "baseline_cleanup": "attention",
+      "candidate_cleanup": "flat",
+      "baseline_stop": "cumulative simulated P&L reached loss trigger (-270.61)",
+      "candidate_stop": "cumulative simulated P&L reached loss trigger (-254.11)",
+      "baseline_low": -405.049999999998,
+      "candidate_low": -381.42999999999734,
+      "baseline_drawdown": 607.0850000000004,
+      "candidate_drawdown": 706.6949999999997,
+      "baseline_orders": 72,
+      "candidate_orders": 74,
+      "baseline_fills": 63,
+      "candidate_fills": 69,
+      "baseline_conversions": 0,
+      "candidate_conversions": 0,
+      "recognized_calls": 143,
+      "matched_rows": {
+        "738": {
+          "calls": 63,
+          "first_age": 44,
+          "last_age": 468
+        },
+        "739": {
+          "calls": 75,
+          "first_age": 44,
+          "last_age": 464
+        },
+        "740": {
+          "calls": 5,
+          "first_age": 46,
+          "last_age": 76
+        }
+      }
+    },
+    {
+      "setting": [
+        247,
+        0.0,
+        1.0,
+        true
+      ],
+      "baseline_pnl": -463.9099999999985,
+      "candidate_pnl": -339.6699999999969,
+      "delta": 124.2400000000016,
+      "baseline_trial": "incomplete_trial",
+      "candidate_trial": "incomplete_trial",
+      "baseline_cleanup": "flat",
+      "candidate_cleanup": "flat",
+      "baseline_stop": "cumulative simulated P&L reached loss trigger (-329.33)",
+      "candidate_stop": "cumulative simulated P&L reached loss trigger (-280.33)",
+      "baseline_low": -463.9099999999985,
+      "candidate_low": -339.6699999999969,
+      "baseline_drawdown": 717.1850000000006,
+      "candidate_drawdown": 716.1749999999995,
+      "baseline_orders": 101,
+      "candidate_orders": 106,
+      "baseline_fills": 90,
+      "candidate_fills": 99,
+      "baseline_conversions": 4,
+      "candidate_conversions": 5,
+      "recognized_calls": 143,
+      "matched_rows": {
+        "738": {
+          "calls": 63,
+          "first_age": 44,
+          "last_age": 468
+        },
+        "739": {
+          "calls": 75,
+          "first_age": 44,
+          "last_age": 464
+        },
+        "740": {
+          "calls": 5,
+          "first_age": 46,
+          "last_age": 76
+        }
+      }
+    },
+    {
+      "setting": [
+        247,
+        0.05,
+        0.5,
+        false
+      ],
+      "baseline_pnl": -573.9099999999964,
+      "candidate_pnl": -365.9499999999997,
+      "delta": 207.95999999999674,
+      "baseline_trial": "incomplete_trial",
+      "candidate_trial": "incomplete_trial",
+      "baseline_cleanup": "flat",
+      "candidate_cleanup": "flat",
+      "baseline_stop": "cumulative simulated P&L reached loss trigger (-341.10)",
+      "candidate_stop": "cumulative simulated P&L reached loss trigger (-276.98)",
+      "baseline_low": -573.9099999999964,
+      "candidate_low": -366.9499999999995,
+      "baseline_drawdown": 890.024999999999,
+      "candidate_drawdown": 794.5849999999995,
+      "baseline_orders": 72,
+      "candidate_orders": 67,
+      "baseline_fills": 88,
+      "candidate_fills": 78,
+      "baseline_conversions": 0,
+      "candidate_conversions": 0,
+      "recognized_calls": 148,
+      "matched_rows": {
+        "738": {
+          "calls": 63,
+          "first_age": 44,
+          "last_age": 468
+        },
+        "739": {
+          "calls": 75,
+          "first_age": 44,
+          "last_age": 464
+        },
+        "740": {
+          "calls": 10,
+          "first_age": 46,
+          "last_age": 94
+        }
+      }
+    },
+    {
+      "setting": [
+        247,
+        0.05,
+        0.5,
+        true
+      ],
+      "baseline_pnl": -573.9099999999964,
+      "candidate_pnl": -367.6700000000003,
+      "delta": 206.23999999999614,
+      "baseline_trial": "incomplete_trial",
+      "candidate_trial": "incomplete_trial",
+      "baseline_cleanup": "flat",
+      "candidate_cleanup": "flat",
+      "baseline_stop": "cumulative simulated P&L reached loss trigger (-341.10)",
+      "candidate_stop": "cumulative simulated P&L reached loss trigger (-260.74)",
+      "baseline_low": -573.9099999999964,
+      "candidate_low": -367.6700000000003,
+      "baseline_drawdown": 890.024999999999,
+      "candidate_drawdown": 795.3050000000003,
+      "baseline_orders": 72,
+      "candidate_orders": 66,
+      "baseline_fills": 88,
+      "candidate_fills": 79,
+      "baseline_conversions": 0,
+      "candidate_conversions": 0,
+      "recognized_calls": 146,
+      "matched_rows": {
+        "738": {
+          "calls": 63,
+          "first_age": 44,
+          "last_age": 468
+        },
+        "739": {
+          "calls": 75,
+          "first_age": 44,
+          "last_age": 464
+        },
+        "740": {
+          "calls": 8,
+          "first_age": 46,
+          "last_age": 90
+        }
+      }
+    },
+    {
+      "setting": [
+        247,
+        0.05,
+        1.0,
+        false
+      ],
+      "baseline_pnl": -439.0399999999986,
+      "candidate_pnl": -338.6599999999978,
+      "delta": 100.38000000000079,
+      "baseline_trial": "incomplete_trial",
+      "candidate_trial": "incomplete_trial",
+      "baseline_cleanup": "flat",
+      "candidate_cleanup": "flat",
+      "baseline_stop": "cumulative simulated P&L reached loss trigger (-317.43)",
+      "candidate_stop": "cumulative simulated P&L reached loss trigger (-256.38)",
+      "baseline_low": -439.0399999999986,
+      "candidate_low": -338.6599999999978,
+      "baseline_drawdown": 790.2600000000009,
+      "candidate_drawdown": 797.2399999999993,
+      "baseline_orders": 66,
+      "candidate_orders": 66,
+      "baseline_fills": 60,
+      "candidate_fills": 61,
+      "baseline_conversions": 0,
+      "candidate_conversions": 0,
+      "recognized_calls": 146,
+      "matched_rows": {
+        "738": {
+          "calls": 63,
+          "first_age": 44,
+          "last_age": 468
+        },
+        "739": {
+          "calls": 75,
+          "first_age": 44,
+          "last_age": 464
+        },
+        "740": {
+          "calls": 8,
+          "first_age": 46,
+          "last_age": 90
+        }
+      }
+    },
+    {
+      "setting": [
+        247,
+        0.05,
+        1.0,
+        true
+      ],
+      "baseline_pnl": -439.0399999999986,
+      "candidate_pnl": -314.09999999999854,
+      "delta": 124.94000000000005,
+      "baseline_trial": "incomplete_trial",
+      "candidate_trial": "incomplete_trial",
+      "baseline_cleanup": "flat",
+      "candidate_cleanup": "flat",
+      "baseline_stop": "cumulative simulated P&L reached loss trigger (-317.43)",
+      "candidate_stop": "cumulative simulated P&L reached loss trigger (-259.92)",
+      "baseline_low": -439.0399999999986,
+      "candidate_low": -321.15499999999844,
+      "baseline_drawdown": 790.2600000000009,
+      "candidate_drawdown": 779.7349999999999,
+      "baseline_orders": 66,
+      "candidate_orders": 66,
+      "baseline_fills": 60,
+      "candidate_fills": 59,
+      "baseline_conversions": 0,
+      "candidate_conversions": 0,
+      "recognized_calls": 146,
+      "matched_rows": {
+        "738": {
+          "calls": 63,
+          "first_age": 44,
+          "last_age": 468
+        },
+        "739": {
+          "calls": 75,
+          "first_age": 44,
+          "last_age": 464
+        },
+        "740": {
+          "calls": 8,
+          "first_age": 46,
+          "last_age": 90
+        }
+      }
+    },
+    {
+      "setting": [
+        247,
+        0.25,
+        0.5,
+        false
+      ],
+      "baseline_pnl": -321.72999999999894,
+      "candidate_pnl": 35.90000000000009,
+      "delta": 357.62999999999903,
+      "baseline_trial": "incomplete_trial",
+      "candidate_trial": "completed",
+      "baseline_cleanup": "flat",
+      "candidate_cleanup": "settled",
+      "baseline_stop": "cumulative simulated P&L reached loss trigger (-250.80)",
+      "candidate_stop": "requested complete practice seasons recorded",
+      "baseline_low": -345.8699999999984,
+      "candidate_low": -218.34500000000025,
+      "baseline_drawdown": 551.8000000000003,
+      "candidate_drawdown": 521.1950000000006,
+      "baseline_orders": 50,
+      "candidate_orders": 55,
+      "baseline_fills": 71,
+      "candidate_fills": 59,
+      "baseline_conversions": 0,
+      "candidate_conversions": 0,
+      "recognized_calls": 213,
+      "matched_rows": {
+        "738": {
+          "calls": 62,
+          "first_age": 44,
+          "last_age": 468
+        },
+        "739": {
+          "calls": 75,
+          "first_age": 44,
+          "last_age": 464
+        },
+        "740": {
+          "calls": 76,
+          "first_age": 48,
+          "last_age": 478
+        }
+      }
+    },
+    {
+      "setting": [
+        247,
+        0.25,
+        0.5,
+        true
+      ],
+      "baseline_pnl": -276.5299999999988,
+      "candidate_pnl": -324.1599999999994,
+      "delta": -47.63000000000062,
+      "baseline_trial": "incomplete_trial",
+      "candidate_trial": "incomplete_trial",
+      "baseline_cleanup": "flat",
+      "candidate_cleanup": "flat",
+      "baseline_stop": "cumulative simulated P&L reached loss trigger (-255.34)",
+      "candidate_stop": "cumulative simulated P&L reached loss trigger (-274.80)",
+      "baseline_low": -356.0899999999988,
+      "candidate_low": -324.1599999999994,
+      "baseline_drawdown": 549.2000000000005,
+      "candidate_drawdown": 628.190000000001,
+      "baseline_orders": 51,
+      "candidate_orders": 62,
+      "baseline_fills": 71,
+      "candidate_fills": 76,
+      "baseline_conversions": 0,
+      "candidate_conversions": 0,
+      "recognized_calls": 147,
+      "matched_rows": {
+        "738": {
+          "calls": 62,
+          "first_age": 44,
+          "last_age": 468
+        },
+        "739": {
+          "calls": 75,
+          "first_age": 44,
+          "last_age": 464
+        },
+        "740": {
+          "calls": 10,
+          "first_age": 48,
+          "last_age": 94
+        }
+      }
+    },
+    {
+      "setting": [
+        247,
+        0.25,
+        1.0,
+        false
+      ],
+      "baseline_pnl": -237.70999999999918,
+      "candidate_pnl": 37.409999999999854,
+      "delta": 275.11999999999904,
+      "baseline_trial": "incomplete_trial",
+      "candidate_trial": "completed",
+      "baseline_cleanup": "flat",
+      "candidate_cleanup": "settled",
+      "baseline_stop": "cumulative simulated P&L reached loss trigger (-267.60)",
+      "candidate_stop": "requested complete practice seasons recorded",
+      "baseline_low": -313.5499999999995,
+      "candidate_low": -216.8350000000005,
+      "baseline_drawdown": 544.3450000000003,
+      "candidate_drawdown": 521.1950000000002,
+      "baseline_orders": 50,
+      "candidate_orders": 51,
+      "baseline_fills": 53,
+      "candidate_fills": 48,
+      "baseline_conversions": 0,
+      "candidate_conversions": 0,
+      "recognized_calls": 213,
+      "matched_rows": {
+        "738": {
+          "calls": 62,
+          "first_age": 44,
+          "last_age": 468
+        },
+        "739": {
+          "calls": 75,
+          "first_age": 44,
+          "last_age": 464
+        },
+        "740": {
+          "calls": 76,
+          "first_age": 48,
+          "last_age": 478
+        }
+      }
+    },
+    {
+      "setting": [
+        247,
+        0.25,
+        1.0,
+        true
+      ],
+      "baseline_pnl": -239.98999999999802,
+      "candidate_pnl": -319.63000000000136,
+      "delta": -79.64000000000334,
+      "baseline_trial": "incomplete_trial",
+      "candidate_trial": "incomplete_trial",
+      "baseline_cleanup": "flat",
+      "candidate_cleanup": "flat",
+      "baseline_stop": "cumulative simulated P&L reached loss trigger (-269.88)",
+      "candidate_stop": "cumulative simulated P&L reached loss trigger (-257.21)",
+      "baseline_low": -315.8299999999988,
+      "candidate_low": -462.9850000000006,
+      "baseline_drawdown": 544.3450000000003,
+      "candidate_drawdown": 798.4350000000004,
+      "baseline_orders": 52,
+      "candidate_orders": 58,
+      "baseline_fills": 53,
+      "candidate_fills": 61,
+      "baseline_conversions": 0,
+      "candidate_conversions": 0,
+      "recognized_calls": 148,
+      "matched_rows": {
+        "738": {
+          "calls": 62,
+          "first_age": 44,
+          "last_age": 468
+        },
+        "739": {
+          "calls": 75,
+          "first_age": 44,
+          "last_age": 464
+        },
+        "740": {
+          "calls": 11,
+          "first_age": 48,
+          "last_age": 108
+        }
+      }
+    },
+    {
+      "setting": [
+        247,
+        1.0,
+        0.5,
+        false
+      ],
+      "baseline_pnl": -94.88000000000011,
+      "candidate_pnl": -119.65999999999985,
+      "delta": -24.779999999999745,
+      "baseline_trial": "completed",
+      "candidate_trial": "completed",
+      "baseline_cleanup": "settled",
+      "candidate_cleanup": "settled",
+      "baseline_stop": "requested complete practice seasons recorded",
+      "candidate_stop": "requested complete practice seasons recorded",
+      "baseline_low": -254.45999999999992,
+      "candidate_low": -266.3750000000002,
+      "baseline_drawdown": 534.4950000000007,
+      "candidate_drawdown": 548.7050000000006,
+      "baseline_orders": 39,
+      "candidate_orders": 42,
+      "baseline_fills": 41,
+      "candidate_fills": 45,
+      "baseline_conversions": 0,
+      "candidate_conversions": 0,
+      "recognized_calls": 186,
+      "matched_rows": {
+        "738": {
+          "calls": 56,
+          "first_age": 50,
+          "last_age": 468
+        },
+        "739": {
+          "calls": 65,
+          "first_age": 44,
+          "last_age": 474
+        },
+        "740": {
+          "calls": 65,
+          "first_age": 44,
+          "last_age": 466
+        }
+      }
+    },
+    {
+      "setting": [
+        247,
+        1.0,
+        0.5,
+        true
+      ],
+      "baseline_pnl": -94.88000000000011,
+      "candidate_pnl": 142.4400000000005,
+      "delta": 237.32000000000062,
+      "baseline_trial": "completed",
+      "candidate_trial": "completed",
+      "baseline_cleanup": "settled",
+      "candidate_cleanup": "settled",
+      "baseline_stop": "requested complete practice seasons recorded",
+      "candidate_stop": "requested complete practice seasons recorded",
+      "baseline_low": -254.45999999999992,
+      "candidate_low": -31.59999999999991,
+      "baseline_drawdown": 534.4950000000007,
+      "candidate_drawdown": 265.47500000000036,
+      "baseline_orders": 39,
+      "candidate_orders": 38,
+      "baseline_fills": 41,
+      "candidate_fills": 39,
+      "baseline_conversions": 0,
+      "candidate_conversions": 0,
+      "recognized_calls": 192,
+      "matched_rows": {
+        "738": {
+          "calls": 56,
+          "first_age": 50,
+          "last_age": 468
+        },
+        "739": {
+          "calls": 67,
+          "first_age": 50,
+          "last_age": 472
+        },
+        "740": {
+          "calls": 69,
+          "first_age": 54,
+          "last_age": 464
+        }
+      }
+    },
+    {
+      "setting": [
+        247,
+        1.0,
+        1.0,
+        false
+      ],
+      "baseline_pnl": -156.58999999999833,
+      "candidate_pnl": -52.70000000000027,
+      "delta": 103.88999999999805,
+      "baseline_trial": "completed",
+      "candidate_trial": "completed",
+      "baseline_cleanup": "settled",
+      "candidate_cleanup": "settled",
+      "baseline_stop": "requested complete practice seasons recorded",
+      "candidate_stop": "requested complete practice seasons recorded",
+      "baseline_low": -288.2649999999985,
+      "candidate_low": -108.42000000000053,
+      "baseline_drawdown": 530.0349999999994,
+      "candidate_drawdown": 391.0600000000009,
+      "baseline_orders": 46,
+      "candidate_orders": 47,
+      "baseline_fills": 41,
+      "candidate_fills": 46,
+      "baseline_conversions": 0,
+      "candidate_conversions": 0,
+      "recognized_calls": 186,
+      "matched_rows": {
+        "738": {
+          "calls": 56,
+          "first_age": 50,
+          "last_age": 468
+        },
+        "739": {
+          "calls": 65,
+          "first_age": 44,
+          "last_age": 474
+        },
+        "740": {
+          "calls": 65,
+          "first_age": 52,
+          "last_age": 466
+        }
+      }
+    },
+    {
+      "setting": [
+        247,
+        1.0,
+        1.0,
+        true
+      ],
+      "baseline_pnl": 15.360000000000582,
+      "candidate_pnl": 161.3199999999997,
+      "delta": 145.95999999999913,
+      "baseline_trial": "completed",
+      "candidate_trial": "completed",
+      "baseline_cleanup": "settled",
+      "candidate_cleanup": "settled",
+      "baseline_stop": "requested complete practice seasons recorded",
+      "candidate_stop": "requested complete practice seasons recorded",
+      "baseline_low": -127.03999999999996,
+      "candidate_low": -31.59999999999991,
+      "baseline_drawdown": 433.7050000000004,
+      "candidate_drawdown": 265.4750000000006,
+      "baseline_orders": 43,
+      "candidate_orders": 39,
+      "baseline_fills": 35,
+      "candidate_fills": 35,
+      "baseline_conversions": 0,
+      "candidate_conversions": 0,
+      "recognized_calls": 192,
+      "matched_rows": {
+        "738": {
+          "calls": 56,
+          "first_age": 50,
+          "last_age": 468
+        },
+        "739": {
+          "calls": 67,
+          "first_age": 50,
+          "last_age": 472
+        },
+        "740": {
+          "calls": 69,
+          "first_age": 54,
+          "last_age": 464
+        }
+      }
+    }
+  ],
+  "limitations": [
+    "Captures exactly overlap fitted weather; gains are not unseen-weather evidence.",
+    "Execution settings are correlated, not independent seasons.",
+    "The model was frozen before closure, but this check was declared after original-247 results were known.",
+    "Matching prefixes do not guarantee identical future continuation."
+  ]
+}

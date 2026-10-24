@@ -1,0 +1,21 @@
+{
+  "reference_root": "/Users/arjunhans/Documents/ctc2026/.worktrees/serialized-forward",
+  "reference_revision": "505a5ad2d5a6f81e7c711cb550871ce7aa7f3734",
+  "captures": [
+    {
+      "capture": 247,
+      "mode": "observed",
+      "competition_id": "fd1ebff9-0f96-4533-b283-bc0a5c60cd4b",
+      "observations": "/Users/arjunhans/Documents/ctc2026/recordings/consistency-20261024/supervised-forward/scans/scan-003.observations.jsonl",
+      "observations_bytes": 221524,
+      "observations_sha256": "9e98c0fe5b5a503dc6c6f1566b785572896c5e35ba0be8f8fcfae49dd273b195",
+      "feed": "/Users/arjunhans/Documents/ctc2026/recordings/consistency-20261024/supervised-forward/fd1ebff9-0f96-4533-b283-bc0a5c60cd4b/attempt-01/feed.jsonl",
+      "feed_bytes": 50016422,
+      "feed_sha256": "0df79451a59a031710d63271c1558f2711a7d28458b064ae4c4c0340877352f7",
+      "archive_results": "/Users/arjunhans/Documents/ctc2026/recordings/consistency-20261024/serialized-forward/fd1ebff9-0f96-4533-b283-bc0a5c60cd4b/results.jsonl",
+      "archive_results_sha256": "3a8a90b4bd16819471954b28a88cb86e89223a6b01fb9dd489c351538951d831",
+      "archive_metadata_sha256": "3f5b037a82fc93f302bf755de8c8970daccd08f20c416c9caacd8c92976de732",
+      "archive_summary_sha256": "dfcc2dc561f31b2b8aa94497c623c3a242e2ba171adac30b912dd8b1658cf8dd"
+    }
+  ]
+}
