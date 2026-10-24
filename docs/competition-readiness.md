@@ -130,7 +130,8 @@ has not been demonstrated.
   positive average contribution. This does not justify removing it based on
   selected losses. See [loss-contributions.md](loss-contributions.md).
 
-The integrated branch suite passes **409 Python tests**, including the offline worker's
+After integrating the teammate's Mario/Derivatives commit `aca0ec4`, the combined
+branch passes **460 Python tests**, including the offline worker's
 restart-integrity and cutoff checks. Independent reviews reproduced
 representative results and checked every stored scenario pair. Neither the
 entry correction nor final-report-only research has a new attributable live

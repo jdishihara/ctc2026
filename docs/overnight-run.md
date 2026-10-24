@@ -58,7 +58,8 @@ Update after the 06:29 UTC close: PRs 5–12 are merged. The entry-price correct
 and tested; its recorded-market and 675-run development profit effects are
 mixed. Final-report-only trading was evaluated and is not promoted. No new live
 batch has run, and the shared-account question remains unresolved. The latest
-integrated Python suite has 409 passing tests. Optional HTTP connection reuse
+integrated Python suite has 460 passing tests after including teammate commit
+`aca0ec4`. Optional HTTP connection reuse
 remains off by default. The fixed worker evaluated the third captured season:
 all 24 simulated outcomes were positive; the 12 using current snapshot behavior
 ranged from $156.65 to $389.27. These are virtual results, not account profit.
