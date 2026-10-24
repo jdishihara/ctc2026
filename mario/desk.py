@@ -26,6 +26,7 @@ from mario.engine import Engine, Params
 from mario.contracts import RACERS, load_roles, role_label
 from mario.tap import HttpTap, BrowserTap, book_levels
 from mario.executor import Executor
+from mario.robustness import ensemble, symbol_model_sd
 
 REC = Path(__file__).resolve().parents[1] / "recordings" / "mario_desk.jsonl"
 
@@ -36,11 +37,12 @@ class Desk:
         self.lock = threading.Lock()
         self.pricer = Pricer(cpu_skill=a.cpu_skill, cpu_sd=a.cpu_sd, noise_sd=a.noise, skill_sd=a.skill_sd)
         self.engine: Engine | None = None
-        self.params = Params(clip=a.clip, risk_pts=a.risk, min_profit=a.min_profit)
+        self.params = Params(clip=a.clip, risk_pts=a.risk, min_profit=a.min_profit, model_sd_k=a.model_sd_k)
         self.fairs = None; self.snap = None; self.result = None; self.roles = {}; self.unmapped = []
         self.status = "starting"; self.log: list[str] = []; self.last_ok = 0.0
         self.tap = None; self.stop = False
         self.auto_seen = 0
+        self.model_sd: dict = {}                   # symbol -> sd of the fair across the parameter ensemble (mario/robustness.py)
         self.positions: dict = {}
         self.executor: Executor | None = None      # created on the first snapshot when --auto-execute is on
         REC.parent.mkdir(exist_ok=True)
@@ -58,6 +60,18 @@ class Desk:
             self.fairs = f
         n = len(self.pricer.races)
         self.say(f"fairs recomputed after {n} race(s) in {time.time() - t0:.1f} s; skill " + " ".join(f"{h} {s:+.2f}" for h, s in zip(RACERS, f["skill"])))
+        if self.a.model_sd_k > 0:
+            t1 = time.time()
+            try:
+                fl = ensemble(list(self.pricer.races), cpu_base=self.pricer.cpu_skill, n_particles=1500, n_sims=1200)
+                with self.lock:
+                    self._ensemble = fl
+                    if self.roles:
+                        self.model_sd = symbol_model_sd(fl, self.roles)
+                worst = sorted(self.model_sd.items(), key=lambda kv: -kv[1])[:3]
+                self.say(f"model-uncertainty ensemble ({len(fl)} parameterisations) in {time.time() - t1:.1f} s; widest: " + ", ".join(f"{s} {v:.1f}" for s, v in worst))
+            except Exception as exc:
+                self.say(f"ensemble failed: {exc}")
 
     def command(self, line: str) -> str:
         line = line.strip(); parts = line.split()
@@ -168,6 +182,8 @@ class Desk:
         if self.engine is None or set(self.roles) != {s["symbol"] for s in syms} - set(self.unmapped):
             self.roles, self.unmapped = load_roles(syms)
             self.engine = Engine(self.roles, self.params)
+            if getattr(self, "_ensemble", None):
+                self.model_sd = symbol_model_sd(self._ensemble, self.roles)
             self.say(f"{len(self.roles)} contracts mapped" + (f"; UNMAPPED: {' '.join(self.unmapped)} (fix mario/contracts.json)" if self.unmapped else ""))
             if self.a.auto_execute:
                 if self.executor is None:
@@ -198,7 +214,7 @@ class Desk:
         tradable = {s["symbol"] for s in syms if not s.get("settlement_active") and not s.get("trading_halted")}
         with self.lock:
             fairs = self.fairs
-        res = self.engine.evaluate(fairs, books, positions, len(self.pricer.races), tradable)
+        res = self.engine.evaluate(fairs, books, positions, len(self.pricer.races), tradable, model_sd=self.model_sd)
         res["exchange_pnl"] = round(sum(float(p.get("realized") or 0) + float(p.get("unrealized") or 0) for p in positions.values()), 1)
         with self.lock:
             self.snap = snap; self.result = res; self.positions = positions
@@ -257,7 +273,7 @@ document.getElementById('skill').textContent=s.skill?s.racers.map((h,i)=>h+' '+(
 document.getElementById('points').textContent=s.points?s.points.map((p,k)=>'S'+(k+1)+' '+s.racers.map((h,i)=>h.slice(0,2)+p[i]).join(' ')).join(' | '):'';
 document.getElementById('pnl').textContent=s.pnl?('  PnL mark-to-fair '+f(s.pnl.total,0)+' (realized '+f(s.pnl.realized,0)+')  exchange '+f(s.exchange_pnl,0)):'';
 document.getElementById('acts').innerHTML='<tr><th>#</th><th>legs</th><th>profit</th><th>why</th>'+(s.prefill?'<th></th>':'')+'</tr>'+s.actions.map((a,i)=>'<tr class="'+a.kind+'"><td>'+(i+1)+'</td><td>'+a.legs.map(l=>'<span class="'+l[1]+'">'+l[1].toUpperCase()+' '+l[2]+' '+l[0]+' @ '+l[3]+'</span>').join(' + ')+'</td><td>'+f(a.profit,0)+'</td><td style="text-align:left">'+a.note+'</td>'+(s.prefill?'<td>'+a.legs.map((l,k)=>'<button onclick="prep('+(i+1)+','+(k+1)+')">'+(a.legs.length>1?'leg '+(k+1):'prepare')+'</button>').join(' ')+'</td>':'')+'</tr>').join('');
-document.getElementById('rows').innerHTML='<tr><th>symbol</th><th>contract</th><th>bid</th><th>ask</th><th>fair</th><th>sd</th><th>edge buy</th><th>edge sell</th><th>bounds</th><th>pos</th><th>avg</th><th>action</th></tr>'+s.rows.map(r=>'<tr class="'+(r.bid==null&&r.ask==null?'settled':'')+'"><td>'+r.symbol+'</td><td>'+r.role+'</td><td>'+f(r.bid)+(r.bid_qty?'<span class=dim>×'+r.bid_qty+'</span>':'')+'</td><td>'+f(r.ask)+(r.ask_qty?'<span class=dim>×'+r.ask_qty+'</span>':'')+'</td><td><b>'+f(r.fair)+'</b></td><td class=dim>'+f(r.sd)+'</td><td class="'+(r.edge_buy>0?'buy':'')+'">'+f(r.edge_buy)+'</td><td class="'+(r.edge_sell>0?'sell':'')+'">'+f(r.edge_sell)+'</td><td class=dim>'+(r.lo==null?'':f(r.lo,0)+'-'+f(r.hi,0))+'</td><td>'+(r.pos||'')+'</td><td class=dim>'+f(r.avg)+'</td><td class="'+(r.action.startsWith('BUY')?'buy':r.action?'sell':'')+'">'+r.action+'</td></tr>').join('');
+document.getElementById('rows').innerHTML='<tr><th>symbol</th><th>contract</th><th>bid</th><th>ask</th><th>fair</th><th>sd</th><th>model sd</th><th>edge buy</th><th>edge sell</th><th>bounds</th><th>pos</th><th>avg</th><th>action</th></tr>'+s.rows.map(r=>'<tr class="'+(r.bid==null&&r.ask==null?'settled':'')+'"><td>'+r.symbol+'</td><td>'+r.role+'</td><td>'+f(r.bid)+(r.bid_qty?'<span class=dim>×'+r.bid_qty+'</span>':'')+'</td><td>'+f(r.ask)+(r.ask_qty?'<span class=dim>×'+r.ask_qty+'</span>':'')+'</td><td><b>'+f(r.fair)+'</b></td><td class=dim>'+f(r.sd)+'</td><td class=dim>'+f(r.model_sd)+'</td><td class="'+(r.edge_buy>0?'buy':'')+'">'+f(r.edge_buy)+'</td><td class="'+(r.edge_sell>0?'sell':'')+'">'+f(r.edge_sell)+'</td><td class=dim>'+(r.lo==null?'':f(r.lo,0)+'-'+f(r.hi,0))+'</td><td>'+(r.pos||'')+'</td><td class=dim>'+f(r.avg)+'</td><td class="'+(r.action.startsWith('BUY')?'buy':r.action?'sell':'')+'">'+r.action+'</td></tr>').join('');
 document.getElementById('log').textContent=s.log.slice().reverse().join('\n');}catch(e){}}
 setInterval(tick,700);tick();
 </script></body></html>"""
@@ -298,6 +314,7 @@ def main():
     ap.add_argument("--cpu-skill", type=float, default=-0.6); ap.add_argument("--cpu-sd", type=float, default=0.5)
     ap.add_argument("--noise", type=float, default=1.0); ap.add_argument("--skill-sd", type=float, default=1.0)
     ap.add_argument("--clip", type=int, default=50); ap.add_argument("--risk", type=float, default=1500.0); ap.add_argument("--min-profit", type=float, default=5.0)
+    ap.add_argument("--model-sd-k", type=float, default=1.0, help="edge margin >= k x sd of the fair across the parameter ensemble (mario/robustness.py); 0 = off")
     ap.add_argument("--no-repl", action="store_true", help="no terminal prompt (commands only from the dashboard)")
     ap.add_argument("--auto-execute", action="store_true", help="SEND the ranked actions yourself (browser tap: prefill + click the UI's submit button; "
                     "HTTP tap: POST). Off by default: use only if the organisers approve bot submission. `stop`/`go` at the prompt.")

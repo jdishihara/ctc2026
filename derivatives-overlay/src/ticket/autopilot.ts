@@ -48,7 +48,9 @@ export class Autopilot {
     const ph = d.phase?.phase;
     if (!d.autoArmed) return null;
     if (ph === 'NEWS' || ph === 'UNDERLYING_MOVED') return 'edge';
-    if (ph === 'SNAPPED') return 'flatten';
+    // after the snap, and in the open minutes before a day's first news, work the book back to flat: a position carried
+    // past a close (the snap-to-close window is 30 real seconds) would otherwise sit through the next event un-hedged
+    if (ph === 'SNAPPED' || ph === 'WAITING') return 'flatten';
     return null;
   }
 

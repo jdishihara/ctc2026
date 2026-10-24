@@ -12,6 +12,7 @@ import { CONVERTERS, convertToSigma, ConverterId, normalizeVol } from '../engine
 import { Baseline, computeEdges, EdgeRow, Resting } from '../engine/fairValue';
 import { extractStructured, HeadlineParse, parseHeadline } from '../engine/headline';
 import { Breach, capBreaches, contractsBySymbol, flattenOrders, needsFlatten, Portfolio, portfolio } from '../engine/risk';
+import type { PanelProbe } from './readiness';
 import { isOrderAction, RateMeter } from '../engine/rateLimit';
 import { EventSpec, phaseAt, PhaseInfo, realSecondsToNext } from '../engine/schedule';
 import { straddles, Structure, syntheticForwards } from '../engine/structures';
@@ -181,6 +182,8 @@ export interface Raw {
   fills: FillObs[];
   seenTradeIds: string[];
   ws: { open: boolean; url: string | null; lastMsgAt: number; subscribeSeen: unknown };
+  /** last DOM probe of the order form (content script, every DOM read) */
+  panelProbe: PanelProbe | null;
   ui: UiState;
   toast: { text: string; t: number; level: 'info' | 'warn' | 'error' } | null;
   phaseKey: string | null;
@@ -265,6 +268,7 @@ export class Store {
       converter: { id: 'variance', K: null, formula: 'sqrt(x)' },
       history: [], timeline: {}, manualQueue: [], loaded: null, recentLoads: [], fills: [], seenTradeIds: [],
       ws: { open: false, url: null, lastMsgAt: 0, subscribeSeen: null },
+      panelProbe: null,
       ui: defaultUi(), toast: null, phaseKey: null, learnAt: null,
       auto: { targets: {}, converter: { status: 'idle', id: null, reason: '', event: null, ranked: [] }, paused: false, log: [], lastSubmitAt: 0 },
     };

@@ -57,3 +57,7 @@ details summary { cursor: pointer; color: #8da2bd; }
 .autobtn { font-size: 10px; } .autobtn.on { background: #7a2e2a; color: #fff; border-color: #a33; }
 .autoreason { font-size: 10px; }
 .autoreason.ok { color: #2bb673; } .autoreason.manual { color: #f0b429; }
+
+.ready .row { gap: 6px; align-items: baseline; } .chk { display: inline-block; width: 10px; }
+.chk-ok { color: #2bb673; } .chk-warn { color: #f0b429; } .chk-bad { color: #ff7b72; } .chk-wait { color: #8b949e; }
+.ready.ready-bad { border-color: #7a2e2a; }
