@@ -107,3 +107,13 @@ exactly. The combined branch passes 536 Python tests. See
 [serialized-client-replay.md](serialized-client-replay.md) for full results,
 both archived versions, and the source-manifest limitation. No new live trial
 has started; the shared-account ownership question remains unresolved.
+
+07:23 UTC capture update: season 244 closed at 07:18:25 UTC. Its earlier frozen
+24-scenario grid is positive throughout, with current behavior ranging from
+$1,031.57 to $1,189.38. The later serial grid has 16 positive rows; its primary
+scenario earns $628.14 but dips to −$263.29, and does not model supervisor loss
+stops or cleanup. Independent reviewers reproduced four cases from each engine
+and checked all rows/hashes. The serial source is now frozen at `505a5ad` for
+later closes under PR #17's fixed plan. Capture 244 is explicitly carryover for
+that plan. Both frozen checkouts remain unchanged; this is offline evidence
+and no new owned live trial has occurred. See [observed-season-244.md](observed-season-244.md).
