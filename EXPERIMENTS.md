@@ -52,7 +52,10 @@ The ensemble costs 0.0-0.2 s per race in the desk. ACCEPTED: --model-sd-k 1.0 is
 Browser-tap drill (headless Chrome launched by the desk, prefill + click on the mock's copy of the real form), seed 7,
 k=1: 277 orders, 252 filled, 0 incomplete arbs, 0 session errors, PnL **-27,794** in the mock's marks. Seed 7's true
 skills are Birdo -0.8, Daisy -1.3, Peach -0.25, Yoshi +0.4 (all humans below the CPU prior); HTTP-tap runs on seed 7 with
-k=1 and k=0 follow to separate the seed from the browser path.
+k=1 and k=0 follow to separate the seed from the browser path. Result (HTTP tap): k=1 **-11,502**, k=0 **-37,004** (273/277
+orders, 0 incomplete, 0 errors). Seed 7 is an adverse scenario, not a bug: Birdo and Peach were tied at 30 points going
+into race 8 and the desk was short Birdo's series contract at about 40 when Birdo won (a coin flip that settled at 100);
+the three biggest losers are the same contracts in all three seed-7 runs. The margin helped on every seed tried.
 
 ### M3 Mario symbol parser (ACCEPTED): 8/37 plausible codes were UNMAPPED (S1_1, S1_2, S1_P1, S1_P2, S1_T2, S1_TOP,
 S1_RUNNERUP, SWIN2_PEACH) and "Second-highest score" read as #1. Fixed with a symbol-only pass; 48-case battery in
