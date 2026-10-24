@@ -30,6 +30,8 @@ the login cookie). Nobody fills forms or clicks Buy. Exactly ONE laptop is armed
 
 ## The only human inputs
 - A target line says **needs you: …** (incomplete or insane parse): `Alt+S` / `Alt+V`, type the number, Enter, `Alt+A`.
+  Lines that say **auto: waiting for …** are not requests (analysts still arriving). The other underlying keeps trading
+  on its own confirmed targets meanwhile.
 - Round 3: Vol tab says **not identified**: pick the converter the analyst message names, check the σ it gives.
 - `Alt+P` the moment anything looks wrong (then **disarm** if it stays wrong). Everything else is automatic.
 
