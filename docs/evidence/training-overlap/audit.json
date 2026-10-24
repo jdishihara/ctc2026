@@ -1,0 +1,240 @@
+{
+  "audit": "closed-capture fitted-analog overlap",
+  "completed_at": 1792832075.0327811,
+  "library_shape": [
+    1350,
+    241,
+    4
+  ],
+  "source_sha256": {
+    "/Users/arjunhans/Documents/ctc2026/out/cleanup-quotes-v1-20261024/spec.json": "8d08de8cca753d3333f141a0a462ce2f24914ab366cc0cdcf27ed87e0845fc6f",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/practice-history/ctc/analog_library.npz": "22694387c3b612f5c20853feb9143e1bf8b8f5722a845da8ed584ab1b30bdf09",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/training-overlap-audit/scripts/audit_analog_overlap.py": "ae1f26acbbcb635f59ad68f89fbbb687a2d158131bd46c3771791be1ffe23841",
+    "/Users/arjunhans/Documents/ctc2026/out/cleanup-quotes-v1-20261024/inputs/241.json": "84a0c1f7662a0e10b6fd14d653bcacd8e557aa20a6d5a862aabdc40e1a8a4ad9",
+    "/Users/arjunhans/Documents/ctc2026/out/cleanup-quotes-v1-20261024/inputs/242.json": "134d250ca2af61b6828e01acd8135c19a5daa85520111bed5412a5acbcb639b6",
+    "/Users/arjunhans/Documents/ctc2026/out/cleanup-quotes-v1-20261024/inputs/243.json": "126ccd306b0c8aff6895cfb626c88c9e2ab4afaebe213c4d99473eef060e157e",
+    "/Users/arjunhans/Documents/ctc2026/out/cleanup-quotes-v1-20261024/inputs/244.json": "99226507701f6ba1b368d9e3190245195cb1bc0048fb2ddd5120682d10080b91",
+    "/Users/arjunhans/Documents/ctc2026/out/cleanup-quotes-v1-20261024/inputs/245.json": "0a727b84851cf7d00bba4da7f1b0da0ad6df79fce884b1ebaccad3ecac92887a"
+  },
+  "results": [
+    {
+      "capture": 241,
+      "round": 1,
+      "competition_id": "6650d983-93c3-45d2-96dd-15209dcd8320",
+      "receipt_at": 1792817469.3986921,
+      "observations": 241,
+      "repeated_identical_observations": 0,
+      "exact_match_count": 1,
+      "exact_library_rows_zero_based": [
+        720
+      ],
+      "closest_full_track_rmse": 0.0,
+      "captured_track_sha256": "a8f1644764e324f63cbe00838166e4f019c0c8fb3cba6efe59f50ab39373ab61"
+    },
+    {
+      "capture": 241,
+      "round": 2,
+      "competition_id": "6650d983-93c3-45d2-96dd-15209dcd8320",
+      "receipt_at": 1792817469.3986921,
+      "observations": 241,
+      "repeated_identical_observations": 0,
+      "exact_match_count": 1,
+      "exact_library_rows_zero_based": [
+        721
+      ],
+      "closest_full_track_rmse": 0.0,
+      "captured_track_sha256": "c6cd2618c6dfa5a9061564c3ef11eaed6683d4badd523f0fa2293f7a7a4df286"
+    },
+    {
+      "capture": 241,
+      "round": 3,
+      "competition_id": "6650d983-93c3-45d2-96dd-15209dcd8320",
+      "receipt_at": 1792817469.3986921,
+      "observations": 241,
+      "repeated_identical_observations": 0,
+      "exact_match_count": 1,
+      "exact_library_rows_zero_based": [
+        722
+      ],
+      "closest_full_track_rmse": 0.0,
+      "captured_track_sha256": "35be9062e566d6b0dba04f726f428a58a213f295e61f9cd86a55642615e5bb69"
+    },
+    {
+      "capture": 242,
+      "round": 1,
+      "competition_id": "0d7afac2-6acd-4223-aa8a-8c1a067091f0",
+      "receipt_at": 1792820424.18974,
+      "observations": 241,
+      "repeated_identical_observations": 0,
+      "exact_match_count": 1,
+      "exact_library_rows_zero_based": [
+        723
+      ],
+      "closest_full_track_rmse": 0.0,
+      "captured_track_sha256": "56d0921dae3db60c439b2b5787ce98df72ac47f50478c6b1c24110a6030a693c"
+    },
+    {
+      "capture": 242,
+      "round": 2,
+      "competition_id": "0d7afac2-6acd-4223-aa8a-8c1a067091f0",
+      "receipt_at": 1792820424.18974,
+      "observations": 241,
+      "repeated_identical_observations": 0,
+      "exact_match_count": 1,
+      "exact_library_rows_zero_based": [
+        724
+      ],
+      "closest_full_track_rmse": 0.0,
+      "captured_track_sha256": "fa427a3422c2f46e8dae7feedc91dff553db8d1835ac3d71b748a0693c112c45"
+    },
+    {
+      "capture": 242,
+      "round": 3,
+      "competition_id": "0d7afac2-6acd-4223-aa8a-8c1a067091f0",
+      "receipt_at": 1792820424.18974,
+      "observations": 241,
+      "repeated_identical_observations": 0,
+      "exact_match_count": 1,
+      "exact_library_rows_zero_based": [
+        725
+      ],
+      "closest_full_track_rmse": 0.0,
+      "captured_track_sha256": "0cef8da6a9c89884431eccae2b2023264871ec82ce5de52362c9e01878bf29f8"
+    },
+    {
+      "capture": 243,
+      "round": 1,
+      "competition_id": "5edc122c-e97d-4d59-ada5-658c02c3c0da",
+      "receipt_at": 1792823359.863008,
+      "observations": 241,
+      "repeated_identical_observations": 0,
+      "exact_match_count": 1,
+      "exact_library_rows_zero_based": [
+        726
+      ],
+      "closest_full_track_rmse": 0.0,
+      "captured_track_sha256": "12f938e8488a24769ba6036aad2440e140e021bf5137757d7b6a75c1e12d2bd1"
+    },
+    {
+      "capture": 243,
+      "round": 2,
+      "competition_id": "5edc122c-e97d-4d59-ada5-658c02c3c0da",
+      "receipt_at": 1792823359.863008,
+      "observations": 241,
+      "repeated_identical_observations": 0,
+      "exact_match_count": 1,
+      "exact_library_rows_zero_based": [
+        727
+      ],
+      "closest_full_track_rmse": 0.0,
+      "captured_track_sha256": "11b24dddeacdadadcea43c10dcdea5e8a642829b3d02e4214bfe909bea1d6f6d"
+    },
+    {
+      "capture": 243,
+      "round": 3,
+      "competition_id": "5edc122c-e97d-4d59-ada5-658c02c3c0da",
+      "receipt_at": 1792823359.863008,
+      "observations": 241,
+      "repeated_identical_observations": 0,
+      "exact_match_count": 1,
+      "exact_library_rows_zero_based": [
+        728
+      ],
+      "closest_full_track_rmse": 0.0,
+      "captured_track_sha256": "b67aa768f5d9c84c716d8ab912d0e47d13b71e38073f932dac7b7b0230ea6001"
+    },
+    {
+      "capture": 244,
+      "round": 1,
+      "competition_id": "2cf67e88-9081-4258-aa6a-3648c41925de",
+      "receipt_at": 1792826305.620034,
+      "observations": 241,
+      "repeated_identical_observations": 0,
+      "exact_match_count": 1,
+      "exact_library_rows_zero_based": [
+        729
+      ],
+      "closest_full_track_rmse": 0.0,
+      "captured_track_sha256": "2fe34a279c0163a9df4129ecc31e0ef3666fb5b330299f7c0f9d35d9c9d018bc"
+    },
+    {
+      "capture": 244,
+      "round": 2,
+      "competition_id": "2cf67e88-9081-4258-aa6a-3648c41925de",
+      "receipt_at": 1792826305.620034,
+      "observations": 241,
+      "repeated_identical_observations": 0,
+      "exact_match_count": 1,
+      "exact_library_rows_zero_based": [
+        730
+      ],
+      "closest_full_track_rmse": 0.0,
+      "captured_track_sha256": "2fe677b49ec970104eee0f51549f4c1dda82e045efd6c38d79a695b326171172"
+    },
+    {
+      "capture": 244,
+      "round": 3,
+      "competition_id": "2cf67e88-9081-4258-aa6a-3648c41925de",
+      "receipt_at": 1792826305.620034,
+      "observations": 241,
+      "repeated_identical_observations": 0,
+      "exact_match_count": 1,
+      "exact_library_rows_zero_based": [
+        731
+      ],
+      "closest_full_track_rmse": 0.0,
+      "captured_track_sha256": "fde7c9d2073f9a408eb10296db316794d70dcf06f931cd15264aeb6ad13d4286"
+    },
+    {
+      "capture": 245,
+      "round": 1,
+      "competition_id": "a7e77935-0ddd-4c77-8ce9-5494a9941962",
+      "receipt_at": 1792829250.818968,
+      "observations": 241,
+      "repeated_identical_observations": 0,
+      "exact_match_count": 1,
+      "exact_library_rows_zero_based": [
+        732
+      ],
+      "closest_full_track_rmse": 0.0,
+      "captured_track_sha256": "ed684294f0330f735b4618f60ba490ba3eebb5ce841c5c7ec41e2372cae13d86"
+    },
+    {
+      "capture": 245,
+      "round": 2,
+      "competition_id": "a7e77935-0ddd-4c77-8ce9-5494a9941962",
+      "receipt_at": 1792829250.818968,
+      "observations": 241,
+      "repeated_identical_observations": 0,
+      "exact_match_count": 1,
+      "exact_library_rows_zero_based": [
+        733
+      ],
+      "closest_full_track_rmse": 0.0,
+      "captured_track_sha256": "a8a907c1501bd7ee7298721002d42e1ed6f7d87d3fa34f8a941ce526435400ab"
+    },
+    {
+      "capture": 245,
+      "round": 3,
+      "competition_id": "a7e77935-0ddd-4c77-8ce9-5494a9941962",
+      "receipt_at": 1792829250.818968,
+      "observations": 241,
+      "repeated_identical_observations": 0,
+      "exact_match_count": 1,
+      "exact_library_rows_zero_based": [
+        734
+      ],
+      "closest_full_track_rmse": 0.0,
+      "captured_track_sha256": "91b4ed56acf2d66dbf2e7e2db1410992af505179185e7c8d00108633bde97a10"
+    }
+  ],
+  "captured_storms": 15,
+  "exact_matching_storms": 15,
+  "changed_sources": [],
+  "forbidden_attempts": [],
+  "limitations": [
+    "Exact weather-track overlap does not establish identical advisories, market quotes or execution.",
+    "Chronological source freezes do not make these storms independent of model fitting.",
+    "No active capture, downloaded-history file, trading call or alternative performance run was used."
+  ]
+}

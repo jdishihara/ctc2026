@@ -1,5 +1,10 @@
 # Completed season 241: replaying the recorded market
 
+**Later evidence, 08:53 UTC:** all 15 storm tracks in closed captures 241–245
+exactly match the fitted analog training library. Source-freeze chronology
+does not establish unseen-weather validation. Results below are retained;
+see [training-overlap-audit.md](training-overlap-audit.md) for the limitation.
+
 The first bounded live trial settled at **+$141.16**. A second diagnostic now
 uses its 865 captured news messages, 92 snapshots, and 16,992 quote frames,
 including recorded bid/ask prices and displayed quantities. The model and

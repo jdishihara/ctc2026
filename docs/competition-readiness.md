@@ -1,9 +1,17 @@
 # Competition readiness — 2026-10-24
 
-Status updated after the 08:35 UTC cleanup-ordering comparison (04:35 EDT). One complete small-size live season
+Status updated after the 08:53 UTC training-overlap discovery (04:53 EDT). One complete small-size live season
 has a verified settlement receipt. The next trial contains mixed activity.
 Live practice remains stopped pending shared-account ownership clarification.
 Market recording and offline evaluations continue.
+
+**Validation limitation:** all 15 complete storm tracks in closed captures
+241–245 exactly match tracks in the fitted analog training library. Their
+replays and the +$141.16 actual completed trial therefore do not establish
+performance on unfamiliar weather. Source-freeze dates describe chronology,
+not independence from model training. See
+[training-overlap-audit.md](training-overlap-audit.md) for the exact matches,
+retained evidence and implications for the prior reports.
 
 ## What the evidence supports
 

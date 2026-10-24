@@ -1,5 +1,10 @@
 # Prospective completed-market evaluation
 
+**Later evidence, 08:53 UTC:** all 15 storm tracks in closed captures 241–245
+exactly match the fitted analog training library. Source-freeze chronology
+does not establish unseen-weather validation. Results below are retained;
+see [training-overlap-audit.md](training-overlap-audit.md) for the limitation.
+
 Declared on 2026-10-24 at approximately 06:06 UTC, during observed season 243.
 Keep the entry-corrected strategy and the existing 24-scenario observed-market
 grid fixed while the read-only recorder and observer continue through 12:00 UTC.

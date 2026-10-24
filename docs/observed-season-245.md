@@ -1,5 +1,10 @@
 # Completed capture 245: fixed offline evaluations
 
+**Later evidence, 08:53 UTC:** all 15 storm tracks in closed captures 241–245
+exactly match the fitted analog training library. Source-freeze chronology
+does not establish unseen-weather validation. Results below are retained;
+see [training-overlap-audit.md](training-overlap-audit.md) for the limitation.
+
 Competition ID `a7e77935-0ddd-4c77-8ce9-5494a9941962`, fictional year 1782.
 The official ready receipt is **2026-10-24 08:07:30.818968 UTC**. All results
 below are virtual executions on recorded data at 10% limits. No account orders
