@@ -10,24 +10,72 @@ Baseline at 99b530a: 17 Mario tests pass; overlay 131/132 (the autopilot integra
 
 - [ ] D2 Derivatives: full 10-event mock run with auto-pilot armed (Playwright headless, mock --fast 4); PnL per event,
       orders, rejections, flat-between-events check. Baseline numbers before any change.
-- [ ] M2 Mario: 8-race auto-execute drill against the mock (HTTP tap; then one pass with the browser tap headless):
+- [x] M2 Mario: 8-race auto-execute drill against the mock (HTTP tap; then one pass with the browser tap headless):
       orders, fills, INCOMPLETE ARB lines, rate cap, PnL at settlements. Baseline.
-- [ ] D1 Derivatives: live-readiness self-check in the overlay (the NOTES "verify in the first live minutes" list made
+- [x] D1 Derivatives: live-readiness self-check in the overlay (the NOTES "verify in the first live minutes" list made
       automatic: symbols/strikes parsed, spot source, news parsed, positions shape, clock rate, T, order-form elements),
       each line green/red with the Config field to patch when red.
-- [ ] M1 Mario: model-uncertainty margin: fair values under an ensemble of (noise sd, skill sd, CPU prior); the spread
+- [x] M1 Mario: model-uncertainty margin: fair values under an ensemble of (noise sd, skill sd, CPU prior); the spread
       widens the trading margin where the parameterisations disagree. Measure on the mock drill and on Brier under
       mis-specified truths.
-- [ ] D3 Derivatives: headline/news parser battery (price and vol phrasings, structured fields, analyst phrasings,
+- [x] D3 Derivatives: headline/news parser battery (price and vol phrasings, structured fields, analyst phrasings,
       Round 3 quantities); add tests; fix misses.
-- [ ] M3 Mario: symbol-mapping battery (plausible exchange naming schemes) for guess_role; `race` accepts racer names in
+- [x] M3 Mario: symbol-mapping battery (plausible exchange naming schemes) for guess_role; `race` accepts racer names in
       any order (e.g. `race peach 1 birdo 3 yoshi 5 daisy 7`).
-- [ ] D5 Derivatives: Round 3 converter auto-identification across every converter kind with mock analyst data.
-- [ ] D4 Derivatives: make the autopilot integration test deterministic.
+- [x] D5 Derivatives: Round 3 converter auto-identification across every converter kind with mock analyst data.
+- [x] D4 Derivatives: make the autopilot integration test deterministic.
 - [ ] B1 docs/gameday-sheets.md: per desk, the exact list of human inputs and what each self-check line means.
 - [ ] B2 06:45 final report here; everything pushed.
 
 ## Results
+
+### M2 Mario baseline drill (02:23-02:31, code at 99b530a): mock race every 60 s, seed 3, --auto-execute, HTTP tap
+PnL +66,649 in the mock's own marks (33 contracts touched; 288 orders, 0 INCOMPLETE ARB, 0 failures, 0 errors). Fairs
+recompute in 0.0 s after each race; the result typed by `--auto-results` lands within 1 s of the mock's race line. The
+mock's house is biased sd 4 around a pricer with the desk's own parameters, so the number means "the loop works", not
+"expect this on the day".
+
+### M1 Mario model-uncertainty margin (mario/robustness.py; ACCEPTED, --model-sd-k 1.0, 0 disables)
+Fairs under 8 (noise sd, skill sd, CPU prior) parameterisations; sd across them per contract:
+- before race 1: race/series binaries 0.8-1.5 pts (margin 6: safe); #1 score 40.6-50.9 (sd 3.3), top-2 73.0-89.6 (sd 5.4)
+  against the engine's score margin of max(2, 0.35 x sd) = 2.6: the score contracts were the model-risky trades.
+- after race 1 (1 2 5 9): R2 win Birdo 29.7-43.1 (sd 4.5) vs margin 4; Yoshi 5.7-18.0 (sd 4.1). Series binaries sd 1-2.
+- after two races: R3 win Daisy 31.1-48.6 (sd 5.5).
+Engine: margin = max(old margin, 1.0 x model sd); the desk recomputes the ensemble after every race (0.6 s) and the
+dashboard shows a "model sd" column. Brier under three truths (60 tournaments each, n_particles 1000): the ensemble
+mean is not better than the base pricer (race-winner 0.655 vs 0.654 as modelled; 0.755 vs 0.742 under noisier races,
+i.e. no better than a flat 25% quote; 0.743 vs 0.740 with strong CPUs), so the fair stays the base pricer and only the
+margin uses the ensemble. Cost of the wider margin on the mock (same seed) and under a mis-specified truth: below.
+
+### M3 Mario symbol parser (ACCEPTED): 8/37 plausible codes were UNMAPPED (S1_1, S1_2, S1_P1, S1_P2, S1_T2, S1_TOP,
+S1_RUNNERUP, SWIN2_PEACH) and "Second-highest score" read as #1. Fixed with a symbol-only pass; 48-case battery in
+tests/test_mario_contracts.py; 68 Mario tests pass.
+
+### D2 Derivatives drill, fast 4 (02:12-02:20, code at 99b530a): +8,593 over 10 events, 130 orders, 0 page errors, 0 extra
+WebSocket frames. Findings: (1) positions were carried across events and days (gross 400-1,100 contracts at the closes)
+because the auto-pilot only flattened in SNAPPED and the snap-to-close window is 7.5 s at 4x (30 s live), and flatten
+tickets priced at the touch fill only the top level (10-60) per order; (2) no orders at all in event 2; (3) event 1
+traded only after the +60 s move. Diagnosis of (2)/(3) continues on the real-speed run (the overlay text sampler read
+the host element instead of the shadow root, fixed). Fixes so far: flatten also in the WAITING phase; flatten tickets
+priced max(2% of mid, 5 ticks) through the touch (thresholds.flattenThroughPct / flattenThroughTicks).
+
+### D1 Derivatives live-readiness checklist (ACCEPTED): Edge tab "Ready n/m" with case, feed, contracts per underlying
+(count + strikes), quotes, spot source, clock source + rate vs the round's expected 52/39, T, positions source, order
+form probe (QTY/PRICE/BUY/SELL/Limit/submit found), news parse; each non-green line names the Config field or key that
+fixes it. Unit-tested (fresh page all red with fixes; full mock state all green; R3 rate 52 flagged; missing QTY named).
+
+### D3 Derivatives headline parser (ACCEPTED): misses found on 15 phrasings: plural cues ("Implied vols: OIL 65%"),
+price cue after an IV cue in the same clause ("OIL IV: 65% | PLANE price: 36.20" read 36.20 as PLANE's IV), "4.4% for
+OIL and 6.0% for PLANE" (number before the name), structured {prices:{}, ivs:{}} containers (ivs read as spots) and
+structured analyst messages ({analyst: 2, estimates: {OIL: 0.555}} read as spots). All fixed; 19 parser tests.
+Not handled (shows "needs you"): "IVs 60% and 70% respectively".
+
+### D5 Round 3 converter (verified, no change): with the analyst message naming the quantity, identification is right
+for every evaluable kind (variance, daily move $ and %, move to expiry, ATM straddle, call/put price, IV). Without a
+keyword, variance, move-to-expiry, straddle and call price are unique; IV vs P(ITM), daily $ vs put price and put vs
+call price are ambiguous and the Vol tab asks for a pick. P(ITM) and vega need a strike: pick by hand.
+
+### D4 (ACCEPTED): the auto-pilot integration test retried its step for up to 4 s instead of judging one tick.
 
 ---
 

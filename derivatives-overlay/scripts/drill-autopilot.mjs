@@ -111,7 +111,11 @@ while (Date.now() - t0 < maxRealMs) {
   if (row.t >= nextDiag) {
     nextDiag = row.t + DIAG_EVERY;
     try {
-      const txt = (await ov.innerText()).replace(/\n{2,}/g, '\n');
+      const txt = (await page.evaluate(() => {
+        const root = document.querySelector('[data-deriv-overlay]')?.shadowRoot;
+        const el = root?.querySelector('div');
+        return el ? el.innerText : '';
+      })).replace(/\n{2,}/g, '\n');
       appendFileSync(diagPath, `\n===== t=${row.t.toFixed(0)} ft=${stats.fictional_time} ${stats.state} news=${news.length} pnl=${pnl.total_pnl} gross=${gross}\n${txt.slice(0, 2500)}\n`);
     } catch { /* overlay busy */ }
   }
@@ -134,7 +138,7 @@ let autoLog = '';
 try {
   await ov.getByRole('button', { name: 'Capture', exact: true }).click();
   await sleep(300);
-  const txt = await ov.innerText();
+  const txt = await page.evaluate(() => document.querySelector('[data-deriv-overlay]')?.shadowRoot?.querySelector('div')?.innerText ?? '');
   const i = txt.indexOf('Auto submissions');
   autoLog = i >= 0 ? txt.slice(i, i + 4000) : '';
 } catch { /* ignore */ }

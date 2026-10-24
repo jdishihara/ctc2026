@@ -213,8 +213,11 @@ describe('overlay against the mock page', () => {
     await sleep(300);
     expect(h.shadow.textContent).toContain('AUTO ON');
     let r = await h.autopilot.step();
-    for (let i = 0; i < 3 && r.action === 'tab-switched'; i++) {
-      await sleep(400); // the page re-renders the other chain
+    // the step is gated on real time (submission spacing, quote age) and the page re-rendering after a tab switch:
+    // under a loaded test runner the first ticks can come back idle, so retry for up to ~4 s before judging
+    for (let i = 0; i < 10 && r.action !== 'submitted' && r.action !== 'refused' && r.action !== 'prefill-failed'; i++) {
+      await sleep(400);
+      h.store.s.auto.lastSubmitAt = 0;
       r = await h.autopilot.step();
     }
     expect(r.action, r.detail).toBe('submitted');

@@ -73,10 +73,18 @@ storm unless it is broken: a restart during round 1 on the testnet missed half t
 
 ## Derivatives (35%): reader confirms, clicker clicks, 2.5 minutes per event
 
-Setup: load `derivatives-overlay/dist` in `chrome://extensions` (Developer mode, Load unpacked), hard-reload the
-exchange tab. Header must say **DERIVATIVES**. Capture tab: `ws:quote` counting up. Edge tab: `spot: WS` (or DOM).
-Press `Alt+1` on the OIL laptop and `Alt+2` on the PLANE laptop if you split underlyings. Dry run `Alt+A`, `Alt+N`,
-look at the form, do not submit.
+Setup: `cd derivatives-overlay && npm run build`, load `derivatives-overlay/dist` in `chrome://extensions` (Developer
+mode, Load unpacked), hard-reload the exchange tab. Header must say **DERIVATIVES**. Then the Edge tab's **Ready n/m**
+box: every line green before the first event. A red or amber line says what is wrong and what fixes it (the Config field
+to patch, or the key to type), e.g. `OIL contracts: none parsed -> Config symbolRegex`, `order form: not found -> Config
+dom.qtyLabel / buyText / sellText`, `clock: rate 52, expected ~39 in R3`. `news` stays grey until the first headline, then
+shows what was parsed from it. Press `Alt+1` on the OIL laptop and `Alt+2` on the PLANE laptop if you split underlyings.
+Dry run `Alt+A`, `Alt+N`, look at the form, do not submit.
+
+**The only human inputs on this desk:** (1) press **arm auto** on ONE laptop if the organisers allow a bot to click (else
+the clicker clicks `Alt+N` tickets); (2) type a spot or vol (`Alt+S` / `Alt+V`, Enter, then `Alt+A`) only when a target
+shows **needs you: ...**; (3) Round 3: pick the converter only when the Vol tab says **not identified** (P(ITM) and
+vega also need the strike); (4) `Alt+P` the moment anything looks wrong. Everything else is automatic.
 
 Scoring is the sum over rounds of rank^1.5: one bad round costs more than a great one earns. Be flat between events.
 
@@ -97,9 +105,11 @@ targets are accepted without `Alt+A`. The reader only acts on a line that says "
 Round 3 the converter is identified from the first analyst message by matching the market IV; the Vol tab says
 "auto-identified" or asks you to pick. **Auto-submit is off by default.** If the organisers confirm a bot may submit,
 press **arm auto** in the header (or Config -> Auto-submit): the overlay then loads, verifies and clicks each ticket
-itself, edge tickets during the event and flatten tickets after the snap, at most 36 orders a minute. The header shows a
-red AUTO ON badge; `Alt+P` pauses and resumes; the Capture tab lists every auto submission with the exchange's answer.
-With it armed the clicker only watches the queue and the Risk tab.
+itself, edge tickets during the event, flatten tickets after the snap and in the open minutes before a day's first news,
+at most 36 orders a minute. Flatten orders are priced up to 2% (at least 5 ticks) through the touch so one order clears
+several levels: the snap-to-next-news window is only 30 s. The header shows a red AUTO ON badge; `Alt+P` pauses and
+resumes; the Capture tab lists every auto submission with the exchange's answer. With it armed the clicker only watches
+the queue and the Risk tab. Overnight drills (2026-10-24, mock, all ten events armed, real speed): EXPERIMENTS.md.
 
 Round 2 (analysts, no IV): the three estimates arrive in the news and fill the Vol tab grid; type any the parser
 missed (Tab between cells, Enter). Event 4: blend = median. From event 5: switch blend to **weighted (learned)**.
@@ -122,7 +132,14 @@ opens, once. Open `http://localhost:8787`. At the prompt type `map`: every symbo
 winner for a racer, or #1 / #2 / top-2 score). Fix any UNMAPPED in `mario/contracts.json` and restart before race 1.
 
 After every race, within seconds: `race <Birdo> <Daisy> <Peach> <Yoshi>` with the overall finishing places (1-12) in
-that alphabetical order, from the stream. Typo: `undo`, retype. The dashboard reprices all 46 contracts.
+that alphabetical order, from the stream, or with names in any order: `race peach 5 birdo 1 yoshi 9 daisy 2` (first
+three letters are enough). A bad line is refused with the reason. Typo: `undo`, retype. The dashboard reprices all 46
+contracts and recomputes the **model sd** column (how much the fair moves between reasonable model settings); the
+engine demands at least that much edge, so before race 1 the score contracts need 3-5 points of edge, not 2.
+
+**The only human inputs on this desk:** the `race ...` line after each race, `cpu 0` after race 1 if all four humans
+finished behind several CPUs, and (without organiser approval of bot clicks) clicking the prepared order. Everything
+else is automatic; with `--auto-execute` the clicking is too.
 
 After race 1 only: if the humans all finished behind several CPUs, `cpu 0`; if a human won outright and the others were
 top 4, leave it.
@@ -161,6 +178,7 @@ type `race ...` and `fair` in the terminal and trade from that.
 - [ ] Hurricane: a supervised testnet season on current main (nothing has run since 06:29 today; the basket overlay and
       the merged efficiency branch have never traded live). Compare the `SEASON END` PnL with `scripts/backtest.py
       --seasons N`.
-- [ ] Derivatives: one real-speed drill (`npm run mock`, dev build loaded, `derivs/drill.py --round 2`).
-- [ ] Mario: one drill (`mario/mock_exchange.py --race-every 60`, `mario/desk.py --mock --tap browser`).
+- [x] Derivatives: real-speed drills with auto armed over all ten mock events (`node scripts/drill-autopilot.mjs --fast 1`,
+      overnight 2026-10-24; results in EXPERIMENTS.md).
+- [x] Mario: 8-race auto-execute drills against the mock (`out/mario_drill/run_drill.sh`, overnight 2026-10-24).
 - [ ] Charge laptops. Business casual. Check-in 8:00-8:30, 34 N Loop Rd, Roosevelt Island.

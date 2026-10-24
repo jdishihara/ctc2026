@@ -68,6 +68,14 @@ snaps at +120 s. Round 2 has three analysts (one accurate, one biased, one noisy
 quoting annual variance. Fills go against the mock book, so PnL and positions update. `GET /__mock/stats` shows how
 many order POSTs the server has received.
 
+## First live minutes: the Ready box
+
+The Edge tab starts with **Ready n/m**: case detected, feed frames flowing, contracts parsed per underlying (count and
+strikes), quotes fresh, spot source per underlying, exchange clock source and rate (about 52/min in Rounds 1-2, 39 in
+Round 3), T, positions source, the order form found (QTY, PRICE, BUY, SELL, Limit, submit), and what the last news
+message parsed to. Each amber or red line ends with the fix: the Config field to patch or the key to type. "show all"
+lists the green lines too. It is the automatic form of the checklist in NOTES.md ("Verify in the first live minutes").
+
 ## Using it
 
 The overlay docks bottom-left. Drag it by its header, collapse it with `—` or hide it with `×` / `Alt+O`. Its
@@ -114,7 +122,8 @@ can change:
 - `dom.*`: the visible texts and patterns used to find the order form, chain, LATEST bar, Spot and Fair-tab T
 - `schedule`, `session` (expiry, open/close, holidays), `T_mode` (`dom` / `computed` / `fixed20` / `manual`) and
   `manualTDays`
-- `thresholds` (min edge, IV outlier points, arb ε, position limit, per-ticket cap, delta/vega caps, staleness)
+- `thresholds` (min edge, IV outlier points, arb ε, position limit, per-ticket cap, delta/vega caps, staleness,
+  `flattenThroughPct` / `flattenThroughTicks`: how far through the touch flatten tickets are priced, default 2% / 5 ticks)
 - `blend` (analyst blend mode, λ, band k), `headline.aliases`, `priceMode`, `prefillEnabled`, `focus`, `multiplier`,
   `tick`
 
