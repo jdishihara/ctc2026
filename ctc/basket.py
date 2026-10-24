@@ -14,6 +14,7 @@ class BasketOverlay:
         self.competition_id = None
         self.round_start = None
         self.last_attempt = self.last_submit = self.last_cancel = -math.inf
+        self.leg_submit = {}
         self.submitted = False
         self.cycles = self.timeouts = 0
 
@@ -60,6 +61,7 @@ class BasketOverlay:
         self.round_start = None
         self.submitted = False
         self.last_attempt = self.last_submit = self.last_cancel = -math.inf
+        self.leg_submit.clear()
         self.competition_id = getattr(sim, 'competition_id', None)
         return False
 
@@ -78,6 +80,7 @@ class BasketOverlay:
         if (all(sim.position[s] == target for s, target in self.targets.items())
                 and not any(self._resting(sim, s) for s in self.targets)):
             self.targets = None
+            self.leg_submit.clear()
             return True
         return False
 
@@ -98,37 +101,50 @@ class BasketOverlay:
                 if self._complete(sim):
                     return False
             return True
-        if self.submitted and sim.t - self.last_submit < 10:
-            return True
         # Cancellation needs no quote. Remove expired legs even during a feed
         # outage or when the remaining action budget cannot also replace them.
-        outstanding = sum(bool(self._resting(sim, s)) for s in symbols)
-        if outstanding:
-            if sim.t - self.last_cancel < 1 or not self._headroom(sim, outstanding):
+        expired = [s for s in symbols if self._resting(sim, s)
+                   and sim.t - self.leg_submit.get(s, -math.inf) >= 10]
+        if expired:
+            if sim.t - self.last_cancel < 1 or not self._headroom(sim, len(expired)):
                 return True
             self.last_cancel = sim.t
-            if not self._cancel(sim, symbols, competition_id):
+            if not self._cancel(sim, expired, competition_id):
                 return self.targets is not None
             if self._complete(sim):
                 return False
-        if not self._fresh(sim, symbols) or not self._headroom(sim, len(symbols)):
+        # A stale quote or pending news can interrupt a submission batch after
+        # one leg. Unsent legs must not inherit that leg's retry delay.
+        due = [s for s in symbols if not self._resting(sim, s)
+               and sim.t - self.leg_submit.get(s, -math.inf) >= 10]
+        if not due or not self._fresh(sim, symbols) or not self._headroom(sim, len(due)):
             return True
-        crossing = .02 if self.submitted else .001
-        if self.submitted:
-            self.timeouts += 1
-        self.last_submit = sim.t
-        self.submitted = True
-        for symbol, target in self.targets.items():
+        counted_retry = False
+        for symbol in due:
             if not self._same_competition(sim, competition_id):
                 return False
             if not self._ready(sim) or not self._fresh(sim, symbols):
                 break
-            delta = target - sim.position[symbol]
+            delta = self.targets[symbol] - sim.position[symbol]
             if not delta:
                 continue
+            retry = symbol in self.leg_submit
+            crossing = .02 if retry else .001
             side = 'buy' if delta > 0 else 'sell'
             limit = self._limit(sim, symbol, side, crossing)
-            sim.place(symbol, side, abs(delta), limit)
+            submitted_at = sim.t
+            order = sim.place(symbol, side, abs(delta), limit)
+            if not self._same_competition(sim, competition_id):
+                return False
+            if order is not None or not getattr(sim, 'state_ready', True):
+                # An uncertain acknowledgement must also await reconciliation.
+                self.leg_submit[symbol] = self.last_submit = submitted_at
+                self.submitted = True
+                if retry and not counted_retry:
+                    self.timeouts += 1
+                    counted_retry = True
+            if order is None:
+                break
         return self._same_competition(sim, competition_id)
 
     @staticmethod
@@ -204,6 +220,7 @@ class BasketOverlay:
             self.targets = {s: sim.position[s] for s in symbols}
             self.competition_id = competition_id
             self.submitted = False
+            self.leg_submit.clear()
             self.cycles += 1
             (sim.create if create else sim.redeem)(etf, size)
             if not getattr(sim, 'state_ready', True) and hasattr(sim, 'refresh'):

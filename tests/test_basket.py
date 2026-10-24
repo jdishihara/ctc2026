@@ -210,6 +210,49 @@ def test_slow_order_ack_cannot_price_later_legs_from_expired_quotes(setup, monke
     assert overlay.targets is not None
 
 
+def test_fresh_quotes_resume_unsent_legs_without_waiting_for_other_leg_retry(setup, monkeypatch):
+    overlay, sim = setup()
+    sim.quote_times = {s: sim.t for s in sim.quotes}
+    place = sim.place
+    def first_slow_ack(*args):
+        result = place(*args)
+        sim.t += 6
+        return result
+    monkeypatch.setattr(sim, 'place', first_slow_ack)
+    assert overlay.on_quotes(sim)
+    assert [order.symbol for order in sim.pending] == ['ETF']
+    first_order = sim.pending[0]
+    monkeypatch.setattr(sim, 'place', place)
+    sim.quote_times = {s: sim.t for s in sim.quotes}
+    assert overlay.on_quotes(sim)
+    assert sorted(order.symbol for order in sim.pending) == ['A', 'B', 'ETF']
+    assert first_order in sim.pending  # No early cancel or duplicate ETF order.
+    component_orders = [order for order in sim.pending if order.symbol != 'ETF']
+    sim.t = 130
+    sim.quote_times = {s: sim.t for s in sim.quotes}
+    assert overlay.on_quotes(sim)
+    assert first_order not in sim.pending  # ETF has had its full ten seconds.
+    assert all(order in sim.pending for order in component_orders)  # Components have not.
+    assert len(sim.pending) == 3
+
+
+def test_guard_blocked_leg_is_eligible_as_soon_as_guard_recovers(setup, monkeypatch):
+    overlay, sim = setup()
+    place = sim.place
+    calls = 0
+    def news_interrupts(*args):
+        nonlocal calls
+        calls += 1
+        return place(*args) if calls == 1 else None
+    monkeypatch.setattr(sim, 'place', news_interrupts)
+    assert overlay.on_quotes(sim)
+    assert [order.symbol for order in sim.pending] == ['ETF']
+    monkeypatch.setattr(sim, 'place', place)
+    sim.t += 1
+    assert overlay.on_quotes(sim)
+    assert sorted(order.symbol for order in sim.pending) == ['A', 'B', 'ETF']
+
+
 def change_competition(sim):
     sim.competition_id = 'next-season'
     sim.quotes.clear()

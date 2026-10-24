@@ -1,0 +1,97 @@
+{
+  "source": "Authenticated read-only /api/v1/trades?limit=500 response, captured 2026-10-24 around 04:40 UTC",
+  "time_zone": "America/New_York",
+  "competition_id": "6650d983-93c3-45d2-96dd-15209dcd8320",
+  "runner_version": "59603dd",
+  "conversion": {
+    "symbol": "ARCH",
+    "kind": "etf_create",
+    "quantity": 5,
+    "reported_price": 303.15,
+    "executed_at": "2026-10-24T00:39:28.430351",
+    "basket": {
+      "PORT": 1,
+      "ISLE": 1,
+      "AQUA": 2,
+      "GRID": 1,
+      "FERRY": 2,
+      "HAVEN": 1
+    }
+  },
+  "trades": [
+    {
+      "symbol": "ARCH",
+      "side": "sell",
+      "quantity": 3,
+      "price": 310.13,
+      "executed_at": "2026-10-24T00:39:29.385942"
+    },
+    {
+      "symbol": "ARCH",
+      "side": "sell",
+      "quantity": 1,
+      "price": 310.13,
+      "executed_at": "2026-10-24T00:39:30.637441"
+    },
+    {
+      "symbol": "ARCH",
+      "side": "sell",
+      "quantity": 1,
+      "price": 309.3,
+      "executed_at": "2026-10-24T00:39:39.763257"
+    },
+    {
+      "symbol": "PORT",
+      "side": "buy",
+      "quantity": 5,
+      "price": 74.24,
+      "executed_at": "2026-10-24T00:39:40.829902"
+    },
+    {
+      "symbol": "ISLE",
+      "side": "buy",
+      "quantity": 5,
+      "price": 53.89,
+      "executed_at": "2026-10-24T00:39:49.738017"
+    },
+    {
+      "symbol": "AQUA",
+      "side": "buy",
+      "quantity": 10,
+      "price": 26.93,
+      "executed_at": "2026-10-24T00:40:00.997962"
+    },
+    {
+      "symbol": "GRID",
+      "side": "buy",
+      "quantity": 5,
+      "price": 39.95,
+      "executed_at": "2026-10-24T00:40:10.946696"
+    },
+    {
+      "symbol": "FERRY",
+      "side": "buy",
+      "quantity": 10,
+      "price": 21.7,
+      "executed_at": "2026-10-24T00:40:21.046011"
+    },
+    {
+      "symbol": "HAVEN",
+      "side": "buy",
+      "quantity": 5,
+      "price": 46.37,
+      "executed_at": "2026-10-24T00:40:31.307331"
+    }
+  ],
+  "trade_cashflow": -8.73,
+  "inventory_change_after_all_legs": {
+    "PORT": 0,
+    "ISLE": 0,
+    "AQUA": 0,
+    "GRID": 0,
+    "FERRY": 0,
+    "HAVEN": 0,
+    "ARCH": 0
+  },
+  "interpretation": "Market-trade cashflow only; no separate fees included. Component replenishment fully offsets the conversion. This is not a counterfactual calculation of what faster execution would have earned."
+}

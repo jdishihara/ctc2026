@@ -51,6 +51,82 @@ def prepared():
     return ex, session
 
 
+def test_continuous_snapshot_keeps_completed_warmup_and_allows_signal():
+    with patch('bot.live.time.monotonic', return_value=100.):
+        ex, session = prepared()
+        ex.t0 = 0.
+        strat = session.strat
+        strat.warmup = 20.
+        strat.round_open_t = 50.
+        fair = {symbol: 120. if symbol == 'PORT' else 99.5 for symbol in ex.symbols}
+        snapshot = dict(type='snapshot', round=1, last_seq=1,
+                        time='1788-05-26T10:00:00', phase='storm',
+                        obs={'age': 0}, track=[], damage=[])
+        with patch.object(strat, 'compute_fair', return_value=fair), \
+                patch.object(strat, 'confidence', return_value=1.), \
+                patch.object(strat, 'min_edge_for', return_value=.01), \
+                patch.object(ex, 'place') as place:
+            session._news(snapshot)
+            strat.on_quotes(ex)
+        assert session.history_block_reason() is None
+        assert any(call.args[:2] == ('PORT', 'buy') for call in place.call_args_list)
+        assert strat.round_open_t == 50.
+
+
+@pytest.mark.parametrize('interruption', ['disconnect', 'missing_news'])
+def test_snapshot_after_interruption_still_requires_warmup(interruption):
+    with patch('bot.live.time.monotonic', return_value=100.):
+        ex, session = prepared()
+        ex.t0 = 0.
+        strat = session.strat
+        strat.warmup = 20.
+        strat.round_open_t = 50.
+        if interruption == 'disconnect':
+            session.feed_current = False
+        snapshot = dict(type='snapshot', round=1,
+                        last_seq=2 if interruption == 'missing_news' else 1,
+                        time='1788-05-26T10:00:00', phase='storm',
+                        obs={'age': 0}, track=[], damage=[])
+        session._news(snapshot)
+        with patch.object(ex, 'place') as place:
+            strat.on_quotes(ex)
+        place.assert_not_called()
+        assert strat.round_open_t == 100.
+        if interruption == 'missing_news':
+            assert 'missing news history' in session.history_block_reason()
+
+
+@pytest.mark.parametrize('include_snapshot', [False, True])
+def test_contiguous_news_after_disconnect_cannot_skip_reconnect_warmup(include_snapshot):
+    with patch('bot.live.time.monotonic', return_value=100.) as clock:
+        ex, session = prepared()
+        ex.t0 = 0.
+        ex.reopened = False
+        strat = session.strat
+        strat.warmup = 20.
+        strat.round_open_t = 50.
+        fair = {symbol: 120. if symbol == 'PORT' else 99.5 for symbol in ex.symbols}
+        session.step([({'type': 'disconnected'}, 100.)])
+        events = [({'type': 'news', 'message': weather(age=2, seq=2)}, 100.)]
+        if include_snapshot:
+            events.append(({'type': 'news', 'message': dict(
+                type='snapshot', round=1, last_seq=2, phase='storm',
+                time='1788-05-26T10:00:00', obs={'age': 2}, track=[], damage=[])}, 100.))
+        quotes = [({'type': 'quote', 'symbol': symbol, 'bid': 99., 'ask': 100.}, 100.)
+                  for symbol in ex.symbols]
+        with patch.object(strat, 'compute_fair', return_value=fair), \
+                patch.object(strat, 'confidence', return_value=1.), \
+                patch.object(strat, 'min_edge_for', return_value=.01), \
+                patch.object(ex, 'place') as place:
+            session.step(events + quotes)
+            assert session.history_block_reason() is None
+            place.assert_not_called()
+            assert strat.round_open_t == 100.
+            clock.return_value = 121.
+            session.step([(frame, 121.) for frame, _ in quotes])
+            assert any(call.args[:2] == ('PORT', 'buy') for call in place.call_args_list)
+
+
 def test_captured_late_start_cannot_submit_even_after_snapshot_recovery():
     ex, session = prepared()
     session.strat.on_start(ex)

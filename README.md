@@ -96,6 +96,9 @@ rounded to the 0.01 tick (buys down, sells up). On the testnet the fictional yea
 `bot/preflight.py` checks API/account connectivity; the running bot separately checks history and execution readiness.
 `bot/stop.sh` is the kill switch. See the [practice loss review](docs/practice-loss-review.md) for the late-start failure and verified fixes.
 
+For bounded simulated practice with smaller positions, explicit stop conditions,
+and settlement receipts, use [the controlled practice runner](docs/controlled-practice.md).
+
 ## Competition day runbook (Hurricane Season bot)
 
 One-page sheets for all three desks: [docs/gameday-sheets.md](docs/gameday-sheets.md).
@@ -163,7 +166,10 @@ python3 bot/live.py --url http://localhost:8765 --ws ws://localhost:8766 --key t
 The mock's response shapes (positions, open orders, order acks, quote frames) are guesses; fix `bot/live.py`
 after the first testnet session if the real API differs.
 
-Seasons 1–450 are for fitting, 451–525 for tuning, and 526–600 for verification.
+Seasons 1–450 are for fitting, 451–525 for tuning, and 526–600 for confirmation.
+The last 75 seasons have been inspected in earlier iterations; current results
+therefore use reused confirmation data. See the evaluation limits in
+[the research report](docs/research-continuation.md).
 
 ## Forecast efficiency and execution checks (2026-10-23)
 
