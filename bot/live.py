@@ -439,6 +439,7 @@ class LiveSession:
         self.latest_seq = max(self.seen_seq, default=-1)
         self.news_complete = len(self.seen_seq) == self.latest_seq + 1
         self.feed_current = False  # Require a live news checkpoint after replay.
+        self.reconnect_warmup_pending = False
         self.awaiting_competition_id = None
         self.last_block_reason = None
         ex.submission_guard = self.submission_allowed
@@ -561,6 +562,10 @@ class LiveSession:
             self.last_round = ex.round = m['round']
         if m.get('type') == 'snapshot':
             checkpoint = m.get('last_seq')
+            continuous = (not self.reconnect_warmup_pending
+                          and checkpoint is not None and 0 <= checkpoint <= self.latest_seq
+                          and m.get('round') == self.last_round == strat.model.round
+                          and self.history_block_reason() is None)
             if checkpoint is not None:
                 if checkpoint > self.latest_seq:
                     self.news_complete = False
@@ -569,9 +574,14 @@ class LiveSession:
             strat.model.on_snapshot(m)
             self.last_round = ex.round = strat.model.round
             strat.fair = strat.compute_fair()
-            strat.last_trade_t = -1e9
-            print('snapshot processed: warm-up before trading', flush=True)
-            strat.on_round(ex)
+            # Healthy periodic checkpoints are not round opens or reconnects.
+            # Restarting warm-up on every checkpoint suppresses valid signals.
+            if not continuous or self.history_block_reason() is not None:
+                strat.last_trade_t = -1e9
+                print('snapshot processed: warm-up before trading', flush=True)
+                strat.on_round(ex)
+                if self.history_block_reason() is None:
+                    self.reconnect_warmup_pending = False
             return
         if m.get('type') == 'announcement':
             syms = [s for s in (m.get('symbols') or []) if s in ex.symbols]
@@ -612,6 +622,11 @@ class LiveSession:
                 ex.mid.clear()
                 ex.quote_times.clear()
                 self.feed_current = False
+                self.reconnect_warmup_pending = True
+        if self.reconnect_warmup_pending and self.history_block_reason() is None:
+            # Contiguous news may restore readiness before a reconnect snapshot.
+            strat.on_round(ex)
+            self.reconnect_warmup_pending = False
         # Cached quotes cannot stay executable because other symbols/news tick.
         now = ex.t
         for symbol in list(ex.quotes):
