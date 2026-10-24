@@ -42,7 +42,7 @@ def main():
     ap.add_argument("--liquidity", default="ladder", choices=["ladder", "spread"], help="ladder = measured testnet book; spread = flat half-spread model")
     ap.add_argument("--refill", type=float, default=10.0, help="ladder: seconds for consumed depth to regenerate")
     ap.add_argument("--ladder-scale", type=float, default=1.0, help="ladder: multiply all sizes")
-    ap.add_argument("--min-edge", type=float, default=0.025)
+    ap.add_argument("--min-edge", type=float, default=0.03)
     ap.add_argument("--edge-full", type=float, default=0.03)
     ap.add_argument('--basket-edge', type=float, default=0.01, help='net quoted ETF/basket edge (0 disables the overlay)')
     ap.add_argument('--basket-participation', type=float, default=0.5, help='maximum fraction of displayed external depth per closing leg')
@@ -52,7 +52,7 @@ def main():
     ap.add_argument("--wind-condition", type=float, default=0.0, help="experimental training-derived strength response (0 = original)")
     ap.add_argument("--final-exact", action=argparse.BooleanOptionalAction, default=True,
                     help="use exact final rules after three reports and complete recorded weather")
-    ap.add_argument("--final-edge", type=float, default=0.005, help="entry floor in the exact final phase (0 = normal floor)")
+    ap.add_argument("--final-edge", type=float, default=0.01, help="entry floor in the exact final phase (0 = normal floor)")
     ap.add_argument("--final-edge-full", type=float, default=0.005, help="full-size edge in the exact final phase (0 = normal)")
     ap.add_argument("--final-every", type=float, default=0.0, help="rebalance cadence (s) once the exact final phase is active (0 = the normal --rebalance-every)")
     ap.add_argument("--verbose", action="store_true")

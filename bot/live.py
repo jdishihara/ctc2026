@@ -722,10 +722,10 @@ async def run_exchange(args: argparse.Namespace, ex: LiveExchange) -> None:
                                   final_exact=args.final_exact, final_edge=args.final_edge, final_edge_full=args.final_edge_full,
                                   sigma=args.sigma, k=args.k, passive=args.passive, warmup=args.warmup, max_cross=args.max_cross,
                                   carry=args.carry, ent_cut=args.ent_cut, cone_w=args.cone_w, cone_s0=args.cone_s0, cone_nu=args.cone_nu, isl_w=args.isl_w,
-                                  announce_wait=args.announce_wait)
+                                  rebuild_min_edge=getattr(args, 'rebuild_min_edge', 0.0), announce_wait=args.announce_wait)
     print(f"strategy {'nowcast' if args.nowcast else 'analog'} min_edge {args.min_edge} edge_full {args.edge_full} sd_mult {args.sd_mult} sigma {args.sigma} k {args.k} passive {args.passive} warmup {args.warmup} max_cross {args.max_cross} carry {args.carry} ent_cut {args.ent_cut} cone_w {args.cone_w} cone_s0 {args.cone_s0} cone_nu {args.cone_nu} isl_w {args.isl_w}", flush=True)
     strat.on_start(ex)
-    print(f"final phase exact={strat.final_exact} entry={strat.final_edge} full={strat.final_edge_full}", flush=True)
+    print(f"final phase exact={strat.final_exact} entry={strat.final_edge} full={strat.final_edge_full}; rebuilder floor {strat.rebuild_min_edge}", flush=True)
     print(f"basket edge={strat.basket_edge} participation={strat.basket_participation} max_lot=10", flush=True)
     print(f"announcements: pause named symbols, re-anchor to the house mid after {args.announce_wait:.0f} s; commands from {args.control}", flush=True)
     season_year = ""
@@ -771,13 +771,14 @@ def main() -> None:
     ap.add_argument("--dry-run", action="store_true")
     ap.add_argument("--reuse-http", action="store_true",
                     help="reuse HTTP connections (experimental; falls back to urllib when a proxy is configured)")
-    ap.add_argument("--min-edge", type=float, default=0.025)
+    ap.add_argument("--min-edge", type=float, default=0.03)
     ap.add_argument("--edge-full", type=float, default=0.03)
     ap.add_argument('--basket-edge', type=float, default=0.01, help='net quoted ETF/basket edge (0 disables the overlay)')
     ap.add_argument('--basket-participation', type=float, default=0.5, help='maximum fraction of displayed external depth per closing leg')
     ap.add_argument("--final-exact", action=argparse.BooleanOptionalAction, default=True,
                     help="use exact final rules after three reports and complete recorded weather")
-    ap.add_argument("--final-edge", type=float, default=0.005, help="entry floor in the exact final phase (0 = normal floor)")
+    ap.add_argument("--final-edge", type=float, default=0.01, help="entry floor in the exact final phase (0 = normal floor)")
+    ap.add_argument("--rebuild-min-edge", type=float, default=0.0, help="edge floor for RECON/MAT/GEN (0 = the global floor)")
     ap.add_argument("--final-edge-full", type=float, default=0.005, help="full-size edge in the exact final phase (0 = normal)")
     ap.add_argument("--sync", type=float, default=3.0, help="seconds between position/open-order polls")
     ap.add_argument("--ws", default=None, help="override the market-data host, e.g. ws://localhost:8766 for the mock")
