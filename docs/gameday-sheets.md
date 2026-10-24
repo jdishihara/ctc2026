@@ -107,7 +107,7 @@ Round 3 the converter is identified from the first analyst message by matching t
 press **arm auto** in the header (or Config -> Auto-submit): the overlay then loads, verifies and clicks each ticket
 itself, edge tickets during the event, flatten tickets after the snap and in the open minutes before a day's first news,
 at most 36 orders a minute. Flatten orders are priced up to 2% (at least 5 ticks) through the touch so one order clears
-several levels: the snap-to-next-news window is only 30 s. The header shows a red AUTO ON badge; `Alt+P` pauses and
+several levels: the snap-to-next-news window is only 30 s, and 12 of the 36 orders a minute are kept for it. The header shows a red AUTO ON badge; `Alt+P` pauses and
 resumes; the Capture tab lists every auto submission with the exchange's answer. With it armed the clicker only watches
 the queue and the Risk tab. Overnight drills (2026-10-24, mock, all ten events armed, real speed): EXPERIMENTS.md.
 
