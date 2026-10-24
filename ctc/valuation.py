@@ -204,6 +204,8 @@ class SeasonModel:
         elif t == "storm":
             dt = m.get("_dt", 2.0)
             step = self.timing["obs_every"]
+            if self.last_obs is not None and not m.get("_filled") and m["age"] <= self.last_obs["age"]:
+                return   # a late or re-sent observation whose slot is already filled (interpolated or received)
             if self.last_obs is not None and dt == step and not m.get("_filled"):
                 k = (m["age"] - self.last_obs["age"]) / step
                 if 1 < k <= MAX_FILL_STEPS and math.isclose(k, round(k), abs_tol=1e-9):
@@ -273,8 +275,15 @@ class SeasonModel:
         step = self.timing["obs_every"]
         ages_seen = {o["age"] for o in cur_obs}
         last_age = max(ages_seen | {obs.get("age", 0) if obs else 0})
-        missing_weather = any(a not in ages_seen for a in np.arange(0, last_age + 1e-9, step))
         need_rounds = not ({r["round"] for r in finals} <= self.reported_rounds)
+        if (same_storm and obs and ages_seen and not need_rounds
+                and not any(a not in ages_seen for a in np.arange(0, max(ages_seen) + 1e-9, step))
+                and 0 < (obs.get("age", 0) - max(ages_seen)) / step <= MAX_FILL_STEPS):
+            # Our observations are complete up to a short trailing hole (a reconnect) and the snapshot carries the
+            # next real observation: apply it as a live one (the short hole is interpolated) instead of rebuilding.
+            self.on_message({"type": "storm", "round": rnd, **{k: v for k, v in obs.items() if k != "type"}})
+            return
+        missing_weather = any(a not in ages_seen for a in np.arange(0, last_age + 1e-9, step))
         need_storm = phase in ("storm", "aftermath") and missing_weather
         if not (need_rounds or need_storm):
             return

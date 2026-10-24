@@ -50,6 +50,9 @@ for most symbols is normal; during a storm they diverge, that is the trade.
 | one or two `HTTP 4xx` around a halt | normal | nothing |
 | a stream of `HTTP 4xx` | tick, limits or key | `bot/stop.sh`, read the error, fix, `run_live.sh` |
 | `disconnected ... reconnecting` once | fine | nothing |
+| `feed hole: seqs a-b filled from the recorder's file` / `... storm observations, interpolated` | a reconnect; repaired | nothing |
+| `feed hole: ... unknown types: trading blocked` persisting more than ~40 s with no `RESTARTING` | both connections lost the same messages | nothing automatic can help; wait for the next round's `history complete` is NOT coming: restart by hand only if a later recording has them |
+| the organisers restart the SAME competition (seq back to 0, same year) after the bot saw a season | the bot ignores the repeated seqs | `bot/stop.sh`, then relaunch once the new season's first messages are in the recording (the replay keeps the latest seq segment) |
 | `RESTARTING: N lost messages ... are in recordings/competition.jsonl` then `=== start` | a long feed hole; the bot exits and the wrapper restarts it in 10 s, replaying the season from the recorder's file; eligible again about a minute later | nothing; if `feed log lacks ...` shows instead, both connections lost the messages: restart by hand only if a later recording has them |
 | `disconnected` every few seconds | network | check wifi; a missing sequence needs a restart with complete recorded history |
 | `ANNOUNCEMENT [SYM]: <headline> -> pausing` | model has not seen it | read docs/announcements.md rule 1; default: do nothing, it re-anchors to the house in 60 s |

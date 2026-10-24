@@ -15,7 +15,7 @@ from typing import Any
 import websockets
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from ctc import strategies as S
-from ctc.valuation import SYMS
+from ctc.valuation import SYMS, MAX_FILL_STEPS
 from bot.control import ControlFile
 from bot.http_transport import JSONConnection, proxy_required
 
@@ -487,7 +487,8 @@ class LiveSession:
         self.pending_news = threading.Event()
         self.latest_seq = max(self.seen_seq, default=-1)
         self.missing_seq = set(range(self.latest_seq + 1)) - self.seen_seq
-        self.news_complete = len(self.missing_seq) <= MAX_MISSING_NEWS
+        self.unexplained_seq = set(self.missing_seq)
+        self.news_complete = not self.unexplained_seq and len(self.missing_seq) <= MAX_MISSING_NEWS
         self.feed_current = False  # Require a live news checkpoint after replay.
         self.reconnect_warmup_pending = False
         self.awaiting_competition_id = None
@@ -525,9 +526,46 @@ class LiveSession:
         basket = getattr(self.ex, 'case', {}).get('etfs', {}).get(symbol, {}).get('basket', {})
         return bool(({symbol} | set(basket)) & self.strat.paused)
 
+    def _update_news_complete(self):
+        # Lost messages are tolerated only when each one is accounted for: filled from the recorder's file, or part
+        # of a short run of storm observations that the model interpolates. An unexplained loss (it could have been
+        # an announcement, an official advisory or a report) blocks until the message arrives or a restart replays
+        # the recorder's file. The budget caps the explained ones per season.
+        self.news_complete = not self.unexplained_seq and len(self.missing_seq) <= MAX_MISSING_NEWS
+
+    def _feed_hole(self, gap, m):
+        """Seqs `gap` were never received and `m` (the first message after them) is about to be applied."""
+        model = self.strat.model
+        filled = {}
+        if self.feed_log is not None and self.feed_log.exists():
+            try:
+                filled, _ = load_feed_log(self.feed_log, self.season_year, tail_bytes=8_000_000)
+            except Exception as exc:
+                print(f'feed log unreadable ({exc})', flush=True); filled = {}
+        remaining = []
+        for g in gap:
+            if g in filled and g > self.latest_seq:
+                self._news(filled[g])          # the recorder kept its connection: apply the lost message in order
+            elif g > self.latest_seq:
+                remaining.append(g)
+        if not remaining:
+            print(f'feed hole: seqs {gap[0]}-{gap[-1]} filled from the recorder\'s file', flush=True)
+            return
+        last = model.last_obs
+        step = model.timing['obs_every']
+        observations = (m.get('type') == 'storm' and last is not None and m.get('round') == model.round
+                        and len(remaining) <= MAX_FILL_STEPS - 1
+                        and math.isclose(m.get('age', -1) - last['age'], (len(remaining) + 1) * step, abs_tol=1e-9))
+        self.missing_seq.update(remaining)
+        if not observations:
+            self.unexplained_seq.update(remaining)
+        print(f'feed hole: seqs {remaining[0]}-{remaining[-1]} lost '
+              f'({"storm observations, interpolated" if observations else "unknown types: trading blocked until they arrive or a restart replays the recorder"}; '
+              f'{len(self.missing_seq)} missing this season, {MAX_MISSING_NEWS} tolerated)', flush=True)
+
     def _reset_news(self):
         self.seen_seq.clear()
-        self.missing_seq = set()
+        self.missing_seq = set(); self.unexplained_seq = set()
         self.latest_seq = -1
         self.news_complete = True
         self.feed_current = False
@@ -565,7 +603,7 @@ class LiveSession:
                 strat.competition_id = ex.competition_id
                 return True
             print('new competition id: resetting model', flush=True)
-            if self.season_year:
+            if self.season_year and self.season_year != account_year:   # a same-year competition keeps its news
                 self.retired_years.add(self.season_year)
             strat.on_start(ex)
             strat.on_round(ex)
@@ -597,15 +635,12 @@ class LiveSession:
                     self.feed_current = True
                 return
             if seq > self.latest_seq + 1:
-                self.missing_seq.update(range(self.latest_seq + 1, seq))
-                print(f'feed hole: seqs {self.latest_seq + 1}-{seq - 1} lost ({len(self.missing_seq)} missing this season, '
-                      f'{MAX_MISSING_NEWS} tolerated)', flush=True)
+                self._feed_hole(list(range(self.latest_seq + 1, seq)), m)
             self.missing_seq.discard(seq)     # a late or re-sent message fills its hole
+            self.unexplained_seq.discard(seq)
             self.seen_seq.add(seq)
             self.latest_seq = max(seq, self.latest_seq)
-            # A few lost messages (a reconnect) are tolerated: the weather gate still requires every observation
-            # or an interpolated short hole, and a lost final report keeps live_history_ready false.
-            self.news_complete = len(self.missing_seq) <= MAX_MISSING_NEWS
+            self._update_news_complete()
             self.feed_current = True
         if m.get('type') == 'storm_formed':
             if m['round'] < self.last_round or (m['round'] == 1 and (strat.model.reported_rounds or strat.model.round)):
@@ -614,8 +649,8 @@ class LiveSession:
                 if seq is not None:
                     self.seen_seq.add(seq)
                     self.latest_seq = seq
-                    self.missing_seq = set(range(seq))
-                    self.news_complete = len(self.missing_seq) <= MAX_MISSING_NEWS
+                    self.missing_seq = set(range(seq)); self.unexplained_seq = set(range(seq))
+                    self._update_news_complete()
                     self.feed_current = True
             self.last_round = ex.round = m['round']
         if m.get('type') == 'snapshot':
@@ -626,8 +661,9 @@ class LiveSession:
                           and self.history_block_reason() is None)
             if checkpoint is not None:
                 if checkpoint > self.latest_seq:
-                    self.missing_seq.update(range(self.latest_seq + 1, checkpoint + 1))
-                    self.news_complete = len(self.missing_seq) <= MAX_MISSING_NEWS
+                    ahead = range(self.latest_seq + 1, checkpoint + 1)
+                    self.missing_seq.update(ahead); self.unexplained_seq.update(ahead)   # until they arrive
+                    self._update_news_complete()
                 if checkpoint >= self.latest_seq:
                     self.feed_current = True
             strat.model.on_snapshot(m)
@@ -656,16 +692,17 @@ class LiveSession:
         connection, so when its file holds every missing message, exit: the wrapper restarts the bot, which replays
         the complete season from that file (the tested restart path) and is eligible again about a minute later."""
         ex = self.ex
-        if self.feed_log is None or len(self.missing_seq) <= MAX_MISSING_NEWS:
+        blocked_by_hole = self.missing_seq and (not self.news_complete or not self.strat.model.live_history_ready)
+        if self.feed_log is None or not blocked_by_hole:
             self.hole_since = None
             return
         if self.hole_since is None:
             self.hole_since = ex.t
-        if ex.t - self.hole_since < 10 or ex.t - self.last_hole_check < 15:
+        if ex.t - self.hole_since < 10 or ex.t - self.last_hole_check < 30:
             return                                   # late messages get ten seconds to fill their holes
         self.last_hole_check = ex.t
         try:
-            msgs, _ = load_feed_log(self.feed_log, self.season_year)
+            msgs, _ = load_feed_log(self.feed_log, self.season_year, tail_bytes=30_000_000)
         except Exception as exc:
             print(f'feed log unreadable ({exc}); staying blocked', flush=True)
             return
@@ -679,6 +716,12 @@ class LiveSession:
                 ex.cancel_all()
         except Exception as exc:
             print(f'cancel before restart failed: {exc}', flush=True)
+        if self.control is not None:
+            # The next process re-applies every operator command (pauses, fair adjustments, resumes) in order.
+            try:
+                Path(self.control.path + '.replay').write_text('1')
+            except Exception as exc:
+                print(f'could not mark the control file for replay: {exc}', flush=True)
         self.stop()
         sys.stdout.flush()
         self.restart()
@@ -800,17 +843,19 @@ async def run_exchange(args: argparse.Namespace, ex: LiveExchange) -> None:
                           feed_log=args.feed_log)
 
     async def receive_forever():
-        drops = 0
+        drops = 0; connected_at = -1e9
         while True:
             try:
                 async with websockets.connect(ws_url, additional_headers={'X-API-Key': ex.key}) as ws:
                     await ws.send(json.dumps(subscribe))
                     print('connected', flush=True)
-                    drops = 0
+                    connected_at = time.monotonic()
                     await receive_market_data(ws, inbox, lambda: ex.t)
             except (OSError, websockets.WebSocketException) as exc:
                 print(f'disconnected ({exc}); reconnecting', flush=True)
             inbox.put({'type': 'disconnected'}, ex.t)
+            if time.monotonic() - connected_at > 5:
+                drops = 0                            # it was a healthy connection that dropped, not a refusal
             drops += 1
             # Observations arrive every 2 s and a hole of more than 3 is not repaired: reconnect at once after a
             # single drop (the overnight pattern), and back off only when the server keeps refusing.

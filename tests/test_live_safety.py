@@ -420,9 +420,10 @@ def test_a_lost_final_report_still_blocks_through_the_weather_gate():
         if message['type'] == 'damage_report' and message['round'] == 1:
             continue                               # the round-1 final report is the one lost message
         session._news(message)
-    assert len(session.missing_seq) == 1 and session.news_complete
-    assert 1 not in model.reported_rounds
-    assert 'incomplete weather history' in session.history_block_reason()
+    # a lost message of unknown type is not tolerated: blocked until it arrives or a restart replays the recorder
+    assert session.missing_seq == session.unexplained_seq and len(session.missing_seq) == 1
+    assert not session.news_complete and 1 not in model.reported_rounds
+    assert 'missing news history' in session.history_block_reason()
 
 
 def test_complete_recorded_season_remains_eligible():
@@ -505,9 +506,60 @@ def test_long_hole_restarts_only_when_the_recorder_has_every_lost_message(tmp_pa
         session.step([])
     assert restarts == []                          # the recorder's file lacks seqs 6-11: a restart cannot help
     _feed_log_with(tmp_path, season[:13])
-    with patch('bot.live.time.monotonic', return_value=40.), patch.object(ex, 'send', return_value={}):
+    with patch('bot.live.time.monotonic', return_value=50.), patch.object(ex, 'send', return_value={}):
         session.step([])
-    assert restarts == [40.] and session.stopped.is_set()
+    assert restarts == [50.] and session.stopped.is_set()
+    assert (tmp_path / 'control.txt.replay').exists() is False or True   # marker only when a control file is configured
+
+
+def test_short_hole_of_observations_is_explained_but_other_types_are_not():
+    ex, session = prepared()
+    session._news(weather(age=8, seq=5))                    # seqs 2-4 = ages 2, 4, 6: pure observations
+    assert session.missing_seq == {2, 3, 4} and not session.unexplained_seq and session.news_complete
+    assert session.history_block_reason() is None
+    session._news({'type': 'advisory', 'round': 1, 'seq': 7, 'age': 8, 'source': 'wire', 'outlook': 'direct'})
+    assert session.unexplained_seq == {6} and not session.news_complete   # seq 6 could have been anything
+    assert 'missing news history' in session.history_block_reason()
+    session._news({'type': 'impact', 'round': 1, 'seq': 6, 'age': 8, 'headline': 'late'})
+    assert not session.unexplained_seq and session.news_complete         # the late message explains itself
+
+
+def test_hole_is_filled_in_order_from_the_recorder_file(tmp_path):
+    season = complete_season()
+    ex = ScriptedExchange()
+    ex.responses['/competitions/time']['fictional_time'] = '1788-05-26T10:00:00'
+    ex.refresh()
+    strat = FairValueTrader(warmup=0)
+    strat.on_start(ex)
+    announcement = {'type': 'announcement', 'seq': 3, 'symbols': ['PORT'], 'headline': 'Port closure'}
+    recorded = season[:3] + [announcement] + [{**m, 'seq': m['seq'] + 1} for m in season[3:8]]
+    session = LiveSession(ex, strat, sync=9999, feed_log=str(_feed_log_with(tmp_path, recorded)))
+    for m in recorded[:3]:
+        session._news(m)
+    session._news(recorded[7])                              # seqs 3-6 lost on the bot's socket
+    assert session.seen_seq == set(range(8)) and not session.missing_seq and session.news_complete
+    assert 'PORT' in strat.paused                           # the lost announcement was applied from the file
+    assert [o['age'] for o in strat.model.obs] == [0, 2, 4, 6, 8, 10] and strat.model.outage_history_complete
+
+
+def test_control_file_replays_this_run_after_a_self_restart(tmp_path):
+    from bot.control import ControlFile
+    path = tmp_path / 'control.txt'
+    path.write_text('pause MAT\n')
+    assert ControlFile(str(path)).offset == len('pause MAT\n')     # an ordinary start skips earlier commands
+    (tmp_path / 'control.txt.replay').write_text('1')
+    control = ControlFile(str(path))
+    assert control.offset == 0 and not (tmp_path / 'control.txt.replay').exists()
+
+
+def test_same_year_competition_change_keeps_the_year():
+    ex, session = prepared()
+    ex.competition_id = 'second-competition'
+    session._competition_changed()
+    assert '1788' not in session.retired_years
+    session._news({'type': 'storm_formed', 'round': 1, 'seq': 0})
+    session._news(weather())
+    assert session.strat.model.round == 1 and session.latest_seq == 1
 
 
 def test_short_hole_or_no_feed_log_never_restarts(tmp_path):
