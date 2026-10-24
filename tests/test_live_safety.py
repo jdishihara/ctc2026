@@ -84,7 +84,7 @@ def test_snapshot_after_interruption_still_requires_warmup(interruption):
         if interruption == 'disconnect':
             session.feed_current = False
         snapshot = dict(type='snapshot', round=1,
-                        last_seq=2 if interruption == 'missing_news' else 1,
+                        last_seq=6 if interruption == 'missing_news' else 1,
                         time='1788-05-26T10:00:00', phase='storm',
                         obs={'age': 0}, track=[], damage=[])
         session._news(snapshot)
@@ -146,8 +146,8 @@ def test_complete_history_allows_orders_and_missing_news_blocks_them():
     ex, session = prepared()
     with patch.object(ex, 'send', return_value={'order_id': 'ok', 'filled_quantity': 1}) as send:
         assert ex.place('PORT', 'buy', 1, 100) == 'ok'
-        # Weather is continuous, but a missing advisory/announcement matters too.
-        session._news(weather(age=2, seq=3))
+        # Weather is continuous, but more than MAX_MISSING_NEWS lost advisories/announcements block too.
+        session._news(weather(age=2, seq=6))
         assert ex.place('PORT', 'buy', 1, 100) is None
         assert send.call_count == 1
 
@@ -368,11 +368,61 @@ def test_history_readiness_requires_complete_current_and_prior_storms():
     assert not model.live_history_ready
     model.on_message(weather())
     assert model.live_history_ready
-    model.on_message(weather(age=4, seq=3))
+    model.on_message(weather(age=4, seq=3))      # one lost observation: interpolated
+    assert model.live_history_ready
+    model.on_message(weather(age=14, seq=8))     # four lost observations: too many
     assert not model.live_history_ready
     model = SeasonModel(CASE)
     model.on_message(weather(round=3))
     assert not model.live_history_ready
+
+
+def test_short_weather_hole_is_interpolated_between_neighbours():
+    model = SeasonModel(CASE)
+    model.on_message(weather(age=0, seq=1))
+    model.on_message({**weather(age=6, seq=4), 'x': 30, 'radius': 130})
+    ages = [o['age'] for o in model.obs]
+    assert ages == [0, 2, 4, 6]
+    assert [o['x'] for o in model.obs] == [0, 10, 20, 30]
+    assert [o['radius'] for o in model.obs] == [100, 110, 120, 130]
+    assert all(o.get('_filled') for o in model.obs[1:3]) and 'seq' not in model.obs[1]
+    assert model.outage_history_complete and model.live_history_ready
+
+
+def test_a_reconnect_losing_two_messages_keeps_trading_eligible():
+    ex, session = prepared()
+    session._news(weather(age=2, seq=2))
+    session._news(weather(age=8, seq=5))          # seqs 3 and 4 (ages 4 and 6) lost in a reconnect
+    assert session.missing_seq == {3, 4}
+    assert session.history_block_reason() is None
+    assert [o['age'] for o in session.strat.model.obs] == [0, 2, 4, 6, 8]
+    session._news(weather(age=10, seq=6))
+    assert session.history_block_reason() is None
+
+
+def test_more_than_three_lost_messages_block_until_a_new_season():
+    ex, session = prepared()
+    session._news(weather(age=2, seq=2))
+    session._news({'type': 'advisory', 'round': 1, 'seq': 8, 'age': 2, 'source': 'wire', 'outlook': 'direct'})
+    assert session.missing_seq == {3, 4, 5, 6, 7}
+    assert 'missing news history' in session.history_block_reason()
+    session._news(weather(age=4, seq=3))          # a late message fills one hole: still too many
+    assert session.missing_seq == {4, 5, 6, 7}
+    assert 'missing news history' in session.history_block_reason()
+    session._news_season_changed('1789')          # only a new season clears the holes
+    assert session.missing_seq == set() and session.news_complete
+
+
+def test_a_lost_final_report_still_blocks_through_the_weather_gate():
+    ex, session = prepared()
+    model = session.strat.model
+    for message in complete_season()[2:]:
+        if message['type'] == 'damage_report' and message['round'] == 1:
+            continue                               # the round-1 final report is the one lost message
+        session._news(message)
+    assert len(session.missing_seq) == 1 and session.news_complete
+    assert 1 not in model.reported_rounds
+    assert 'incomplete weather history' in session.history_block_reason()
 
 
 def test_complete_recorded_season_remains_eligible():
@@ -422,4 +472,5 @@ def test_feed_replay_keeps_only_the_latest_same_year_season(tmp_path):
     assert (year, rnd, count) == ('1788', 1, 3)
     assert seen == {0, 1, 2}
     assert strat.paused == set()          # the stale season's announcement pause is not restored
-    assert len(strat.model.obs) <= 2      # only the current season's two observations
+    # only the current season's observations (ages 0 and 4, plus the interpolated age 2): no stale x=480 point
+    assert [o['age'] for o in strat.model.obs] == [0, 2, 4] and all(o['x'] != 480.0 for o in strat.model.obs)

@@ -142,6 +142,7 @@ def values(cum: dict[str, float], outage: dict[str, float], loss: float, case: d
 
 # closure seconds per damage point (least squares through the origin on ctc/storm_sample.npz, seasons 1-450; corr 0.7-0.8):
 # used only when a model is rebuilt from a snapshot and the wind history of earlier storms is gone
+MAX_FILL_STEPS = 4   # interpolate up to 3 missing consecutive observations (an 8 s feed hole); more blocks trading
 OUTAGE_PER_DMG = {"PORT": 1.70, "ISLE": 2.27, "AQUA": 1.98, "GRID": 1.67, "FERRY": 2.14}
 
 
@@ -202,7 +203,22 @@ class SeasonModel:
             self.adv = None; self.adv_prev = None
         elif t == "storm":
             dt = m.get("_dt", 2.0)
-            expected_age = self.last_obs["age"] + self.timing["obs_every"] if self.last_obs else 0
+            step = self.timing["obs_every"]
+            if self.last_obs is not None and dt == step and not m.get("_filled"):
+                k = (m["age"] - self.last_obs["age"]) / step
+                if 1 < k <= MAX_FILL_STEPS and math.isclose(k, round(k), abs_tol=1e-9):
+                    # A feed reconnect of a few seconds loses one or two observations (overnight 2026-10-24: 1-2 seqs
+                    # per drop, and each drop cost the rest of the season). The storm moves smoothly over 8 s, so the
+                    # missing points are interpolated between their neighbours; larger holes keep the history
+                    # incomplete and trading blocked.
+                    a, b = self.last_obs, m
+                    keys = [f for f in ("age", "x", "y", "vx", "vy", "radius", "intensity")
+                            if isinstance(a.get(f), (int, float)) and isinstance(b.get(f), (int, float))]
+                    base = {f: v for f, v in a.items() if f != "seq"}
+                    for i in range(1, int(round(k))):
+                        w = i / k
+                        self.on_message({**base, **{f: a[f] + w * (b[f] - a[f]) for f in keys}, "_filled": True, "_dt": step})
+            expected_age = self.last_obs["age"] + step if self.last_obs else 0
             if (not math.isclose(m["age"], expected_age, rel_tol=0, abs_tol=1e-9)
                     or dt != self.timing["obs_every"]):
                 self.outage_history_complete = False

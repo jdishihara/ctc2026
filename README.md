@@ -138,7 +138,7 @@ What to look for:
 
 - `strategy analog min_edge 0.03 edge_full 0.03 … carry 0.5 … cone_w 1.0 cone_s0 20.0` at start, then `replayed N feed messages of season year Y`: check the configuration and recording. A replay count alone does not establish completeness.
 - `history complete: trading eligible`: the history gate passed. Start the recorder and bot **before the first storm**.
-- `TRADING BLOCKED: …`: no new orders or conversions. Missing news/weather requires restarting with a complete current-season recording or observing the next season from its beginning. A reconnect snapshot does not clear missing history. Resting orders are canceled; existing positions remain for explicit operator management.
+- `TRADING BLOCKED: …`: no new orders or conversions. A short feed hole repairs itself (up to 3 lost news messages per season, and up to 3 consecutive lost observations are interpolated between their neighbours; 2026-10-24). Longer missing news/weather requires restarting with a complete current-season recording or observing the next season from its beginning. A reconnect snapshot does not clear missing history. Resting orders are canceled; existing positions remain for explicit operator management.
 - `final phase exact=True entry=0.005 full=0.005`: accepted final-phase settings;
   these require every weather observation and all three final reports.
 - `basket edge=0.01 participation=0.5 max_lot=10`: accepted basket settings;

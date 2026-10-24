@@ -243,15 +243,16 @@ def test_exact_final_setting_does_not_leak_to_other_models():
     assert baseline.fair() == expected
 
 
-@pytest.mark.parametrize("missing_age,ready", [(None, True), (4, False)])
-def test_final_confidence_requires_complete_observed_weather(missing_age, ready):
+@pytest.mark.parametrize("missing_ages,ready", [((), True), ((4,), True), ((4, 6, 8), True), ((4, 6, 8, 10), False)])
+def test_final_confidence_requires_complete_observed_weather(missing_ages, ready):
+    """Up to three consecutive lost observations (a feed reconnect) are interpolated; a longer hole is not trusted."""
     case = json.loads((ROOT / "data/case.json").read_text())
     model = SeasonModel(case, final_exact=True)
     reports = []
     for rnd in (1, 2, 3):
         model.on_message({"type": "storm_formed", "round": rnd})
         for age in range(0, case["timing"]["storm"] + 1, case["timing"]["obs_every"]):
-            if rnd == 1 and age == missing_age:
+            if rnd == 1 and age in missing_ages:
                 continue
             model.on_message({"type": "storm", "round": rnd, **observation(age)})
         model.on_message({"type": "storm_dissipated", "round": rnd})

@@ -38,12 +38,13 @@ def test_snapshot_fills_internal_gap_without_replacing_received_weather(model):
     def weather(age, x):
         return dict(type='storm', round=1, age=age, x=x, y=500,
                     radius=100, intensity=1, vx=5, vy=0)
-    first, actual, last = weather(0, 0), weather(2, 12), weather(6, 30)
+    # ages 4-10 are lost: too many for the model's own interpolation, so the snapshot track fills them
+    first, actual, last = weather(0, 0), weather(2, 12), weather(12, 60)
     for message in [first, actual, last]:
         model.on_message(message)
     model.on_snapshot({'round': 1, 'phase': 'storm', 'damage': [], 'obs': last,
-                       'track': [[0, 0, 500, 100], [6, 30, 500, 100]]})
-    assert [o['age'] for o in model.obs] == [0, 2, 4, 6]
+                       'track': [[0, 0, 500, 100], [12, 60, 500, 100]]})
+    assert [o['age'] for o in model.obs] == [0, 2, 4, 6, 8, 10, 12]
     assert model.obs[1] == actual
     assert model.obs[2]['x'] == 20
     assert not model.outage_history_complete
