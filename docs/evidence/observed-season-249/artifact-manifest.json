@@ -1,0 +1,51 @@
+{
+  "created_at": 1792841585.086832,
+  "capture": 249,
+  "competition_id": "7d19a254-8c3b-4c4a-b4f3-32c84a138b79",
+  "source_bindings": {
+    "worker": "49a690efec04f7dcaf6a616de81da2838afbf149",
+    "serialized": "505a5ad2d5a6f81e7c711cb550871ce7aa7f3734",
+    "runtime": "cd3eb239bd7bad97b34f10a8f2bb0b2e1c0f5026",
+    "driver": "c5c35a30e0c5f521f12324eec854f405b681b8c0",
+    "fitted_library_sha256": "22694387c3b612f5c20853feb9143e1bf8b8f5722a845da8ed584ab1b30bdf09"
+  },
+  "files": {
+    "independent-review.tar.gz": {
+      "source": "/Users/arjunhans/Documents/ctc2026/out/capture-249-independent-review-20261024.tar.gz",
+      "bytes": 1663470,
+      "sha256": "4ec47a0b7d8ecce8b6c38008a8b4bfd2258c2fed1ddce04221caece7c4670729",
+      "regular_files": 222
+    },
+    "audit.json": {
+      "source": "/Users/arjunhans/Documents/ctc2026/out/capture-249-independent-review-20261024/audit.json",
+      "bytes": 61323,
+      "sha256": "295b9f787dc47644e3998b78ad8ce29540283a4e2dd661f1dbfc71b1faf9205f"
+    },
+    "verification.json": {
+      "source": "/Users/arjunhans/Documents/ctc2026/out/capture-249-independent-review-20261024/verification.json",
+      "bytes": 4981,
+      "sha256": "1ff6ad67c1a300ee0917601a305c48f1509b905922aaf130a22a8921135b9d76"
+    },
+    "scan-005.observations.jsonl": {
+      "source": "/Users/arjunhans/Documents/ctc2026/recordings/consistency-20261024/supervised-forward/scans/scan-005.observations.jsonl",
+      "bytes": 302691,
+      "sha256": "7bc07715c40590111d460f54a2aca74108b7c2fa5673de91aa643fefed43338f"
+    },
+    "spec.json": {
+      "source": "/Users/arjunhans/Documents/ctc2026/recordings/consistency-20261024/supervised-forward/7d19a254-8c3b-4c4a-b4f3-32c84a138b79/attempt-01/spec.json",
+      "bytes": 1328,
+      "sha256": "095faaf54718ac8cadb77d888eccf4a27ef29b06e072a9f27b8da7873b888bda"
+    },
+    "serialized-ledger-through-249.jsonl": {
+      "source": "/Users/arjunhans/Documents/ctc2026/recordings/consistency-20261024/serialized-forward/attempts.jsonl",
+      "bytes": 31125,
+      "sha256": "ec8eaba920ec37d45fa3acb158d66e0a9d5b6b381f6f3abd5846fa98231418b2"
+    },
+    "supervised-ledger-through-249.jsonl": {
+      "source": "/Users/arjunhans/Documents/ctc2026/recordings/consistency-20261024/supervised-forward/attempts.jsonl",
+      "bytes": 47790,
+      "sha256": "8b851942638af0185d9a7773e9d64ab8c0468b169f16852b4d3d9a3e94746e0c"
+    }
+  },
+  "scope": "Closed capture only; 88 original rows, 112 journals, six exact representative reruns; known fitted weather, no live-profit claim."
+}

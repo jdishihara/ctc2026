@@ -1,5 +1,24 @@
 # Overnight practice — October 24, 2026
 
+## 11:34 UTC — capture 249 and unchanged retry confirmation verified
+
+The latest closed path is positive in all sixteen full-supervisor settings:
+mean $1,485.76, worst $1,014.34, primary $1,760.14. All complete and settle;
+the primary final receipt mark is $1,755.61 with nine settled holdings.
+Independent review verifies all 88 original engine rows, 112 journals and
+six representative reproductions. Three complete fitted-weather matches at
+rows 744–746 extend known overlap to 27 tracks in nine captures.
+
+The bounded retry changes none of the sixteen outcomes. All paired pre-cleanup
+and first-five-pass traces match, rolling mutations peak at 27, and no extra
+cleanup is needed. Independent primary/slow reproductions match all fields
+and files. A mistyped baseline argument failed before candidate output or
+performance execution; the corrected invocation uses a distinct attempt
+directory and a byte-verified copy of the successful baseline. Both attempts
+are retained. No owned live trading has resumed. Reports:
+[capture 249](observed-season-249.md) and
+[fixed retry follow-up](cleanup-retry-forward.md).
+
 ## 11:16 UTC — mock/live extension isolation corrected
 
 The final package review rejected the intermediate bundle's handoff: dev builds

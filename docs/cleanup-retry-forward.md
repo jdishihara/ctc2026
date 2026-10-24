@@ -15,6 +15,37 @@ match. Maximum actual mutations in any inclusive trailing 60-second window are
 retains seven officially settled holdings. A settled receipt does not require
 zero positions. No owned live account orders were sent.
 
+## Capture 249 result
+
+The next official close also produces identical results in all sixteen settings:
+all are positive, completed and settled, with mean $1,485.76, worst $1,014.34,
+best $1,795.95 and primary $1,760.14. The primary's final receipt mark is
+$1,755.61 and nine nonzero holdings are valued at settlement. No setting hits
+the loss trigger or needs extra cleanup passes. Maximum actual rolling
+mutations are 27 in both phases. All sixteen pre-cleanup request/fill traces
+and first-five-pass request comparisons match; no declared adverse-result rule
+is triggered. Independent verification is complete: all 32 rows, 288 produced
+files and 244 source/input hashes pass. The primary and slow reproductions
+match every field and all 18 files, with zero guard violations.
+
+The original baseline passed first. The initial candidate invocation supplied
+a results file to the directory-valued `--baseline` argument. It failed before
+creating candidate outputs or running any performance scenario. Its logs and
+failure event are retained. A distinct `attempt-02` directory contains a
+byte-identical 147-file baseline copy and the corrected candidate invocation;
+the baseline was not rerun and the source, specification and settings did not
+change. Each successful phase retains 144 journal/profile files.
+
+This capture's selected interval starts at 10:36:43.060 UTC, after the retry
+declaration and driver freeze, and closes at 11:23:46.284 UTC. All three weather
+tracks nevertheless match fitted rows 744–746 exactly. It confirms unchanged
+behavior on this known path, without demonstrating a new cleanup improvement
+or unfamiliar-weather profitability. Original evaluator details are in
+[capture 249](observed-season-249.md). The separate
+[evidence manifest](evidence/cleanup-retry-forward-249/artifact-manifest.json)
+retains both invocation attempts and the
+[375-file independent audit](evidence/cleanup-retry-forward-249/independent-review.tar.gz).
+
 ## Declaration and corrected preflight
 
 The [fixed follow-up plan](cleanup-retry-forward-plan.md) was committed as
@@ -22,7 +53,8 @@ The [fixed follow-up plan](cleanup-retry-forward-plan.md) was committed as
 receipt. It specifies captures 248 and 249, their complete sixteen-setting
 grids, the original source/input gates and unchanged risk rules. Unlike the
 initial 112-setting promotion experiment, a no-op confirmation does not require
-a new residual reduction. Capture 249 remains pending at this report snapshot.
+a new residual reduction. Both declared captures have now closed and completed
+their fixed comparisons and passed independent audits.
 
 The new evaluator at `4a10763` initially checked receipt type/time and input
 hashes too narrowly. Independent synthetic review demonstrated that consistent
@@ -51,7 +83,7 @@ The approved 359-file preflight archive preserves all prior harness failures.
 The separate analyzer passes 27 synthetic checks, including zero loss stops,
 unchanged outcomes, adverse pairs and mutation boundaries.
 
-## Complete paired evidence
+## Capture 248 paired evidence
 
 Original reference, baseline and full-supervisor phases passed before the retry
 comparison. Its baseline reproduces all sixteen original result rows and all

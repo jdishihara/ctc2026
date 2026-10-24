@@ -2,6 +2,8 @@
 
 Discovered and checked on 2026-10-24 at approximately 08:53 UTC, after captures
 241–245 had closed. This changes the interpretation of the practice evidence.
+Later closed-capture checks extend the overlap to all 27 complete tracks in
+captures 241–249; their separate evidence is linked below.
 
 ## Finding
 
@@ -91,3 +93,20 @@ The input copies remain under
   --library ctc/analog_library.npz \
   --out out/training-overlap-reproduction
 ```
+
+## Later closed-capture checks
+
+These checks use each capture's official closure and sealed recorded inputs.
+They do not inspect active seasons or rebuild the downloaded history. Every
+listed match covers all 241 observations in all four weather channels, with
+zero error. The original 15-track audit above remains unchanged.
+
+| Closed capture | Exact fitted rows, zero-based | Separate audit and evidence |
+| --- | --- | --- |
+| 246 | 735, 736, 737 | [Capture 246](observed-season-246.md) |
+| 247 | 738, 739, 740 | [Capture 247](observed-season-247.md) |
+| 248 | 741, 742, 743 | [Capture 248](observed-season-248.md) |
+| 249 | 744, 745, 746 | [Capture 249](observed-season-249.md) |
+
+These 27 complete matches support execution diagnostics on familiar weather;
+they do not establish consistent profit on unfamiliar competition storms.
