@@ -11,6 +11,12 @@ from test_execution import CASE
 from test_live_safety import complete_season, weather
 
 
+def owned_history(journal, cid):
+    return {'orders': [{'order_id': oid, 'symbol': 'PORT', 'side': 'buy',
+                       'quantity': 1, 'filled_quantity': 1, 'status': 'filled'}
+                      for oid in journal.owned.get(cid, set())]}
+
+
 @pytest.fixture
 def setup(tmp_path):
     journal = Journal(tmp_path, seasons=1)
@@ -18,11 +24,14 @@ def setup(tmp_path):
         '/cases/hurricane.json': copy.deepcopy(CASE),
         '/competitions/time': {'state': 'running', 'competition_id': 'test-1', 'fictional_time': '1788-05-26T10:00:00'},
         '/orders/open': {'orders': []}, '/positions?include_zero=true': {'positions': []}, '/trades': {'trades': []},
+        '/orders?limit=500': None,
         '/symbols': {'symbols': [{'symbol': s, 'settlement_active': True, 'settlement_price': 101} for s in CASE['limits']]},
     }
     with patch.object(live.LiveExchange, 'get', side_effect=lambda path, api=True:
                       {**responses['/competitions/time'], 'name': 'Hurricane Season'}
-                      if path == '/competitions/current' else responses[path]):
+                      if path == '/competitions/current' else
+                      owned_history(journal, responses['/competitions/time']['competition_id'])
+                      if path == '/orders?limit=500' and responses[path] is None else responses[path]):
         ex = PracticeExchange('http://example.invalid', 'test-only', False, journal=journal)
         ex.refresh()
         strat = FairValueTrader(warmup=20)
@@ -84,6 +93,189 @@ def test_foreign_open_order_is_never_cancelled(setup):
         assert not ex.cancel_all()
         send.assert_not_called()
     assert journal.stop_reason
+
+
+@pytest.mark.parametrize('quantity', [-200, 0])
+def test_filled_foreign_order_stops_even_when_account_is_flat(setup, quantity):
+    journal, ex, _, responses = setup
+    journal.start_trial(ex)
+    responses['/orders?limit=500'] = {'orders': [{'order_id': 'foreign-filled',
+        'symbol': 'PORT', 'side': 'sell', 'quantity': 200,
+        'filled_quantity': 200, 'status': 'filled'}]}
+    responses['/positions?include_zero=true'] = {'positions': [
+        {'symbol': 'PORT', 'quantity': quantity, 'realized_pnl': 0}]}
+    ex.refresh()
+    ex.submission_guard = None
+    with patch.object(live.LiveExchange, 'send') as send:
+        ex.place('PORT', 'buy', 180, 100)
+        send.assert_not_called()
+    assert journal.stop_reason
+    assert journal.trials['test-1'].get('invalid')
+
+
+def test_over_limit_account_stops_before_corrective_strategy_order(setup):
+    journal, ex, _, responses = setup
+    responses['/positions?include_zero=true'] = {'positions': [
+        {'symbol': 'PORT', 'quantity': -200, 'realized_pnl': 0}]}
+    ex.refresh()
+    ex.submission_guard = None
+    with patch.object(live.LiveExchange, 'send') as send:
+        ex.place('PORT', 'buy', 180, 100)
+        send.assert_not_called()
+    assert journal.stop_reason
+
+
+def test_final_receipt_flags_exposure_reopened_after_flat(setup):
+    journal, ex, _, responses = setup
+    journal.start_trial(ex)
+    journal.latest['cleanup'] = {'state': 'flat', 'competition_id': 'test-1'}
+    responses['/positions?include_zero=true'] = {'positions': [
+        {'symbol': 'PORT', 'quantity': -114, 'realized_pnl': 330.4, 'unrealized_pnl': 53.78}]}
+    responses['/orders/open'] = {'orders': [{'order_id': 'foreign', 'symbol': 'PORT',
+        'side': 'sell', 'quantity': 200, 'filled_quantity': 148}]}
+    final_receipt(journal, ex)
+    assert journal.latest['cleanup']['state'] == 'attention'
+    receipt = json.loads((journal.out / 'final-receipt.json').read_text())
+    assert not receipt['verified']
+    assert receipt['reopened_after_flat']
+
+
+def test_new_season_cannot_adopt_previous_owned_order_id(setup):
+    journal, ex, _, responses = setup
+    journal.owned['test-1'] = {'previous-order'}
+    responses['/orders?limit=500'] = owned_history(journal, 'test-1')
+    responses['/competitions/time']['competition_id'] = 'test-2'
+    ex.refresh()
+    assert 'test-2' in journal.ownership_blocks
+    assert not ex.state_ready
+
+
+def test_status_only_ack_is_registered_before_nested_history_audit(setup):
+    journal, ex, _, responses = setup
+    ex.submission_guard = None
+    responses['/positions?include_zero=true'] = {'positions': [
+        {'symbol': 'PORT', 'quantity': 1, 'realized_pnl': 0}]}
+    with patch.object(live.LiveExchange, 'send', return_value={'order_id': 'mine', 'status': 'filled'}):
+        assert ex.place('PORT', 'buy', 1, 100) == 'mine'
+    assert ex.state_ready
+    assert not journal.ownership_blocks
+    assert journal.history_seen['test-1'] == {'mine'}
+
+
+@pytest.mark.parametrize('payload', [None, [], {'orders': [], 'next_cursor': 'page2'},
+    {'orders': [{'order_id': ''}]}, {'orders': [{}] * 500}])
+def test_uncertain_history_prevents_practice_and_cleanup(setup, payload):
+    journal, ex, _, responses = setup
+    journal.start_trial(ex)
+    journal.activity['test-1'] = 1
+    original_get = ex.get
+    with patch.object(ex, 'get', side_effect=lambda path, api=True:
+                      payload if path == '/orders?limit=500' else original_get(path, api)):
+        ex.refresh()
+    assert journal.ownership_blocks
+    with patch.object(live.LiveExchange, 'send') as send:
+        reconcile_stop(journal, ex)
+        send.assert_not_called()
+    assert journal.latest['cleanup']['state'] == 'attention'
+
+
+def test_disappearing_acknowledged_history_is_not_treated_as_clean(setup):
+    journal, ex, _, responses = setup
+    journal.owned['test-1'] = {'mine'}
+    ex.refresh()
+    assert journal.history_seen['test-1'] == {'mine'}
+    responses['/orders?limit=500'] = {'orders': []}
+    ex.refresh()
+    assert 'missing from history' in journal.ownership_blocks['test-1']
+    assert not ex.state_ready
+
+
+def test_clock_change_during_history_read_cannot_authorize_order(setup):
+    journal, ex, _, responses = setup
+    original_get = ex.get
+    def changed(path, api=True):
+        result = original_get(path, api)
+        if path == '/orders?limit=500':
+            responses['/competitions/time']['competition_id'] = 'test-2'
+        return result
+    with patch.object(ex, 'get', side_effect=changed):
+        ex.refresh()
+    ex.submission_guard = None
+    with patch.object(live.LiveExchange, 'send') as send:
+        ex.place('PORT', 'buy', 1, 100)
+        send.assert_not_called()
+    assert not ex.state_ready
+
+
+def test_foreign_fill_during_cleanup_stays_blocked_after_other_stop(setup):
+    journal, ex, _, responses = setup
+    journal.start_trial(ex)
+    journal.activity['test-1'] = 1
+    journal.stop('operator interrupt')
+    responses['/orders?limit=500'] = {'orders': [{'order_id': 'foreign', 'symbol': 'PORT',
+        'side': 'sell', 'quantity': 10, 'filled_quantity': 10, 'status': 'filled'}]}
+    responses['/positions?include_zero=true'] = {'positions': [
+        {'symbol': 'PORT', 'quantity': -10, 'realized_pnl': 0}]}
+    with patch.object(live.LiveExchange, 'send') as send:
+        reconcile_stop(journal, ex)
+        send.assert_not_called()
+    assert journal.stop_reason == 'operator interrupt'
+    assert journal.ownership_blocks['test-1']
+    assert journal.trials['test-1']['attributable'] is False
+    responses['/orders?limit=500'] = {'orders': []}
+    with patch.object(live.LiveExchange, 'send') as send:
+        reconcile_stop(journal, ex)
+        send.assert_not_called()
+
+
+def test_new_trial_requires_flatness_even_below_practice_cap(setup):
+    journal, ex, session, _ = setup
+    session._news({'type': 'storm_formed', 'round': 1, 'seq': 0})
+    session._news(weather())
+    ex.position['PORT'] = 1
+    session.step([])
+    assert not journal.trials
+    assert journal.ownership_blocks
+
+
+@pytest.mark.parametrize('ack', [[], True, 'accepted'])
+def test_nonobject_order_acknowledgements_latch_unresolved_ownership(setup, ack):
+    journal, ex, _, _ = setup
+    with patch.object(live.LiveExchange, 'send', return_value=ack):
+        ex.send('POST', '/orders', {'symbol': 'PORT', 'quantity': 1})
+    ex.refresh()
+    assert not journal.allowed()
+    assert journal.ownership_blocks
+
+
+@pytest.mark.parametrize('positions,orders', [
+    ({'error': 'unavailable'}, {'error': 'unavailable'}),
+    ({'positions': [{'symbol': 'PORT', 'realized_pnl': 0}]}, {'orders': []}),
+    ({'positions': [{'symbol': 'PORT', 'quantity': float('nan'), 'realized_pnl': 0}]}, {'orders': []}),
+    ({'positions': [{'symbol': 'PORT', 'quantity': 0, 'realized_pnl': float('inf')}]}, {'orders': []}),
+    ({'positions': []}, {'orders': [{'order_id': 'missing-fields'}]}),
+])
+def test_malformed_final_account_receipt_is_never_verified(setup, positions, orders):
+    journal, ex, _, responses = setup
+    responses['/positions?include_zero=true'], responses['/orders/open'] = positions, orders
+    final_receipt(journal, ex)
+    receipt = json.loads((journal.out / 'final-receipt.json').read_text())
+    assert not receipt['verified']
+    assert receipt['flat'] is None
+    assert journal.latest['cleanup']['state'] == 'attention'
+
+
+def test_new_competition_position_is_not_called_reopened_cleanup(setup):
+    journal, ex, _, responses = setup
+    journal.latest['cleanup'] = {'state': 'flat', 'competition_id': 'test-1'}
+    responses['/competitions/time']['competition_id'] = 'test-2'
+    responses['/positions?include_zero=true'] = {'positions': [
+        {'symbol': 'PORT', 'quantity': 1, 'realized_pnl': 0, 'unrealized_pnl': 0}]}
+    final_receipt(journal, ex)
+    receipt = json.loads((journal.out / 'final-receipt.json').read_text())
+    assert not receipt['verified']
+    assert not receipt['reopened_after_flat']
+    assert 'test-2' not in journal.ownership_blocks
 
 
 def test_settlement_receipt_is_required_for_completed_trial(setup):
@@ -202,7 +394,11 @@ def test_cleanup_reconciles_conversion_and_lost_ack_exposure(setup, path, respon
     responses['/competitions/time']['state'] = 'ready'
     reconcile_stop(journal, ex)
     events = [json.loads(line) for line in (journal.out / 'actions.jsonl').read_text().splitlines()]
-    assert any(e['kind'] == 'cleanup_closed' for e in events)
+    if response is None:
+        assert not any(e['kind'] == 'cleanup_closed' for e in events)
+        assert journal.latest['cleanup']['state'] == 'attention'
+    else:
+        assert any(e['kind'] == 'cleanup_closed' for e in events)
 
 
 @pytest.mark.parametrize('scenario', ['cancel_failed', 'rollover', 'foreign_after_cancel'])
@@ -227,6 +423,7 @@ def test_cleanup_never_replaces_unconfirmed_cancel_or_trades_changed_account(set
          patch.object(live.LiveExchange, 'get', side_effect=lambda p, api=True:
                       copy.deepcopy(CASE) if p == '/cases/hurricane.json' else
                       {'competition_id': 'test-1', 'state': 'running'} if p == '/competitions/time' else
+                      owned_history(journal, 'test-1') if p == '/orders?limit=500' else
                       {'bids': [{'price': 100}], 'asks': [{'price': 101}]}), \
          patch('bot.practice.time.sleep'):
         reconcile_stop(journal, ex)
@@ -262,6 +459,7 @@ def test_cleanup_stops_after_fill_refresh_moves_to_new_season(setup):
          patch.object(live.LiveExchange, 'get', side_effect=lambda p, api=True:
                       copy.deepcopy(CASE) if p == '/cases/hurricane.json' else
                       {'competition_id': 'test-1', 'state': 'running'} if p == '/competitions/time' else
+                      owned_history(journal, 'test-1') if p == '/orders?limit=500' else
                       {'bids': [{'price': 100}], 'asks': [{'price': 101}]}), \
          patch('bot.practice.time.sleep'):
         reconcile_stop(journal, ex)
@@ -282,6 +480,8 @@ def test_failed_rollover_confirmation_cannot_forget_unsettled_trial(setup):
                 raise OSError('confirmation unavailable')
         if path == '/competitions/current':
             return {**responses['/competitions/time'], 'name': 'Hurricane Season'}
+        if path == '/orders?limit=500':
+            return owned_history(journal, responses['/competitions/time']['competition_id'])
         return responses[path]
     with patch.object(live.LiveExchange, 'get', side_effect=get):
         ex.refresh()

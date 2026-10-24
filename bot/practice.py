@@ -26,6 +26,59 @@ def finite(value):
     return isinstance(value, (int, float)) and not isinstance(value, bool) and math.isfinite(value)
 
 
+def valid_order_id(value):
+    return ((isinstance(value, str) and bool(value.strip()))
+            or (type(value) is int and value > 0))
+
+
+def check_order_history(journal, cid, payload, symbols):
+    """Detect observed foreign orders; the API offers no exclusive-account lock.
+
+    Require a fresh season with no pre-run orders. Never infer ownership from
+    matching prices or quantities, or absorb old IDs as a rollover baseline.
+    """
+    if cid in journal.ownership_blocks:
+        return False
+    try:
+        if not isinstance(payload, dict) or set(payload) != {'orders'}:
+            raise ValueError('unrecognized order-history envelope or pagination')
+        rows = payload['orders']
+        if not isinstance(rows, list) or len(rows) >= 500:
+            raise ValueError('order history is unavailable or saturated')
+        ids = set()
+        for row in rows:
+            if not isinstance(row, dict):
+                raise ValueError('invalid order-history row')
+            oid, qty, filled = order_id(row), row.get('quantity'), row.get('filled_quantity')
+            if (not valid_order_id(oid) or oid in ids or row.get('symbol') not in symbols
+                    or row.get('side') not in ('buy', 'sell') or not finite(qty)
+                    or int(qty) != qty or qty <= 0 or not finite(filled)
+                    or int(filled) != filled or not 0 <= filled <= qty):
+                raise ValueError('invalid or duplicate order-history entry')
+            ids.add(oid)
+        owned = journal.owned.get(cid, set())
+        foreign = ids - owned
+        if foreign:
+            journal.block_ownership(cid, 'unrecognized order history on shared account',
+                                    order_ids=sorted(foreign, key=str))
+            return False
+        if (owned | journal.history_seen.get(cid, set())) - ids:
+            raise ValueError('acknowledged or previously observed orders missing from history')
+        journal.history_seen[cid] = ids
+        return True
+    except (TypeError, ValueError) as exc:
+        journal.block_ownership(cid, str(exc))
+        return False
+
+
+def audit_order_history(ex, journal, cid):
+    payload = ex.get('/orders?limit=500')
+    clock = ex.get('/competitions/time')
+    if clock.get('competition_id') != cid:
+        raise ValueError('competition changed during order-history audit')
+    return check_order_history(journal, cid, payload, ex.symbols), clock
+
+
 def settlement_score(rows, prices, expected):
     """Do not invent cost basis or silently omit an account holding."""
     quantities, score = {}, 0.
@@ -62,6 +115,8 @@ class Journal:
         self.expires_at = time.time() + hours * 3600
         self.stop_reason = None
         self.owned = {}
+        self.history_seen = {}
+        self.ownership_blocks = {}
         self.activity = {}
         self.trials = {}
         self.latest = {}
@@ -76,6 +131,15 @@ class Journal:
         if time.monotonic() >= self.deadline:
             self.stop('maximum practice duration reached')
         return self.stop_reason is None
+
+    def block_ownership(self, cid, reason, **details):
+        if cid not in self.ownership_blocks:
+            self.ownership_blocks[cid] = reason
+            self.event('ownership_blocked', competition_id=cid, reason=reason, **details)
+        trial = self.trials.get(cid)
+        if trial and not trial['completed']:
+            trial.update(invalid=reason, attributable=False)
+        self.stop(reason)
 
     def event(self, kind, **data):
         with (self.out / 'actions.jsonl').open('a') as f:
@@ -118,6 +182,8 @@ class Journal:
                 'expires_at': self.expires_at,
                 'stop_reason': self.stop_reason, 'latest': self.latest,
                 'trials': self.trials, 'activity': self.activity,
+                'ownership_blocks': self.ownership_blocks,
+                'observed_history_counts': {cid: len(ids) for cid, ids in self.history_seen.items()},
                 'owned_order_count': sum(map(len, self.owned.values()))}
         temporary = self.out / 'status.tmp'
         temporary.write_text(json.dumps(data, indent=2) + '\n')
@@ -153,6 +219,11 @@ class PracticeExchange(live.LiveExchange):
                     if current.get('competition_id') != self.competition_id or current.get('name') != 'Hurricane Season':
                         self.journal.stop('practice requires the Hurricane Season competition')
                         raise ValueError('unexpected competition identity')
+                history_ok, clock = audit_order_history(self, self.journal, self.competition_id)
+                if not history_ok:
+                    self.journal.observe(self)
+                    self.state_ready = self.market_open = False
+                    return
                 self.market_open = clock.get('state') == 'running'
                 self.verified_competition_id = self.competition_id
             except Exception as exc:
@@ -166,7 +237,10 @@ class PracticeExchange(live.LiveExchange):
             self.journal.observe(self)
             owned = self.journal.owned.get(self.competition_id, set())
             if any(o.get('order_id', o.get('id')) not in owned for o in self.open_orders):
-                self.journal.stop('unrecognized open order on shared account')
+                self.journal.block_ownership(self.competition_id, 'unrecognized open order on shared account')
+                self.state_ready = False
+            if any(abs(q) > self.limits[s] for s, q in self.position.items()):
+                self.journal.stop('reconciled position exceeds practice limit')
 
     def send(self, method, path, body=None):
         if method == 'POST' and not self.journal.allowed():
@@ -178,13 +252,15 @@ class PracticeExchange(live.LiveExchange):
             self.journal.trials[cid]['attempt_count'] += 1
             self.journal.event('request_attempt', competition_id=cid, path=path, body=body)
         response = super().send(method, path, body)
-        if method == 'POST' and path == '/orders' and isinstance(response, dict):
-            oid = response.get('order_id', response.get('id'))
-            if oid is not None:
+        if method == 'POST' and path == '/orders':
+            oid = order_id(response) if isinstance(response, dict) else None
+            if valid_order_id(oid):
                 self.journal.owned.setdefault(cid, set()).add(oid)
                 self.journal.trials[cid]['order_count'] += 1
+            else:
+                self.journal.block_ownership(cid, 'order acknowledgement lacks a trustworthy ID')
         if method == 'POST' and response is None:
-            self.journal.stop('uncertain mutation response; reconcile before further trading')
+            self.journal.block_ownership(cid, 'uncertain mutation response; ownership unresolved')
         self.journal.event('request', competition_id=cid,
                            method=method, path=path, body=body, response=response)
         return response
@@ -194,7 +270,7 @@ class PracticeExchange(live.LiveExchange):
         owned = self.journal.owned.get(cid, set())
         if any(order_id(o) not in owned for o in self.open_orders
                if symbol is None or o.get('symbol') == symbol):
-            self.journal.stop('unrecognized order prevents cancellation')
+            self.journal.block_ownership(cid, 'unrecognized order prevents cancellation')
             return False
         targets = [order_id(o) for o in self.open_orders if symbol is None or o.get('symbol') == symbol]
         for oid in targets:
@@ -231,11 +307,14 @@ class PracticeSession(live.LiveSession):
         super().step(events)
         ex, journal = self.ex, self.journal
         trial = journal.trials.get(ex.competition_id)
-        if (trial is None and self.history_block_reason() is None
+        if (trial is None and ex.state_ready and journal.allowed() and self.history_block_reason() is None
                 and self.strat.model.round == 1 and self.strat.model.last_obs['age'] <= 40):
-            journal.start_trial(ex)
-            self.strat.last_trade_t = -1e9
-            trial = journal.trials[ex.competition_id]
+            if any(ex.position.values()) or ex.open_orders:
+                journal.block_ownership(ex.competition_id, 'new practice trial requires a flat unused account')
+            else:
+                journal.start_trial(ex)
+                self.strat.last_trade_t = -1e9
+                trial = journal.trials[ex.competition_id]
         if trial and not trial['completed']:
             if trial['attempt_count'] and (not self.news_complete or not self.strat.model.live_history_ready):
                 journal.stop('history became incomplete after trading began')
@@ -250,7 +329,8 @@ class PracticeSession(live.LiveSession):
     def record_settlement(self, trial):
         ex, journal, cid = self.ex, self.journal, self.ex.competition_id
         ex.refresh()
-        if not ex.state_ready or ex.competition_id != cid or ex.market_open or ex.open_orders:
+        if (not ex.state_ready or ex.competition_id != cid or ex.market_open or ex.open_orders
+                or trial.get('invalid') or cid in journal.ownership_blocks):
             return
         rows = ex.get('/symbols')['symbols']
         settlement = {s['symbol']: s.get('settlement_price') for s in rows if s.get('settlement_active')}
@@ -324,7 +404,7 @@ async def practice(args, journal):
 
 
 def cleanup_status(journal, state, **data):
-    journal.latest['cleanup'] = {'state': state, **data}
+    journal.latest['cleanup'] = {'state': state, 'observed_at': time.time(), **data}
     journal.event('cleanup_' + state, **data)
 
 
@@ -341,13 +421,19 @@ class CleanupExchange(live.LiveExchange):
             reason = 'account reconciliation failed'
         elif self.competition_id != self.expected_id:
             reason = 'competition changed; cleanup cannot trade the new account'
+        elif self.expected_id in self.journal.ownership_blocks:
+            reason = self.journal.ownership_blocks[self.expected_id]
         elif any(order_id(o) not in self.owned for o in self.open_orders):
             reason = 'unrecognized orders; shared account requires inspection'
+            self.journal.block_ownership(self.expected_id, reason)
         else:
-            clock = self.get('/competitions/time')
-            if clock.get('competition_id') != self.expected_id:
-                reason = 'competition changed during cleanup request'
-            self.market_open = clock.get('state') == 'running'
+            try:
+                history_ok, clock = audit_order_history(self, self.journal, self.expected_id)
+                if not history_ok:
+                    reason = self.journal.ownership_blocks[self.expected_id]
+                self.market_open = clock.get('state') == 'running'
+            except Exception as exc:
+                reason = f'cleanup ownership audit failed: {exc}'
         if reason:
             self.state_ready = False
             cleanup_status(self.journal, 'attention', reason=reason)
@@ -370,9 +456,12 @@ class CleanupExchange(live.LiveExchange):
         else:
             return None
         response = super().send(method, path, body)
-        if method == 'POST' and isinstance(response, dict) and order_id(response) is not None:
-            # Register before LiveExchange.place can refresh a status-only fill.
-            self.owned.add(order_id(response))
+        if method == 'POST':
+            if isinstance(response, dict) and valid_order_id(order_id(response)):
+                # Register before LiveExchange.place can refresh a status-only fill.
+                self.owned.add(order_id(response))
+            else:
+                self.journal.block_ownership(self.expected_id, 'cleanup acknowledgement leaves ownership unresolved')
         return response
 
 
@@ -402,7 +491,7 @@ def reconcile_stop(journal, original):
             time.sleep(1)
             continue
         if not any(ex.position.values()):
-            cleanup_status(journal, 'flat')
+            cleanup_status(journal, 'flat', competition_id=ex.competition_id)
             return
         if not ex.market_open:
             rows = ex.get('/symbols')['symbols']
@@ -439,9 +528,43 @@ def reconcile_stop(journal, original):
         time.sleep(1)
     ex.refresh()
     if ex.scope_ok() and not ex.open_orders and not any(ex.position.values()):
-        cleanup_status(journal, 'flat')
+        cleanup_status(journal, 'flat', competition_id=ex.competition_id)
     else:
         cleanup_status(journal, 'attention', reason='cleanup retry limit', positions=ex.position, open_orders=ex.open_orders)
+
+
+def validated_account_rows(positions, orders, symbols):
+    if (not isinstance(positions, dict) or set(positions) != {'positions'}
+            or not isinstance(positions['positions'], list)
+            or not isinstance(orders, dict) or set(orders) != {'orders'}
+            or not isinstance(orders['orders'], list)):
+        raise ValueError('invalid final account envelope')
+    rows, order_rows = positions['positions'], orders['orders']
+    seen = set()
+    for row in rows:
+        if not isinstance(row, dict):
+            raise ValueError('invalid final position row')
+        symbol, qty = row.get('symbol'), row.get('quantity')
+        unrealized = row.get('unrealized_pnl')
+        if (symbol not in symbols or symbol in seen or not finite(qty) or int(qty) != qty
+                or not finite(row.get('realized_pnl'))
+                or (not finite(unrealized) and not (qty == 0 and unrealized is None))):
+            raise ValueError('invalid final position quantity or P&L')
+        seen.add(symbol)
+    seen.clear()
+    for row in order_rows:
+        if not isinstance(row, dict):
+            raise ValueError('invalid final open-order row')
+        oid, qty, filled = order_id(row), row.get('quantity'), row.get('filled_quantity')
+        if (not valid_order_id(oid) or oid in seen or row.get('symbol') not in symbols
+                or row.get('side') not in ('buy', 'sell') or not finite(qty) or int(qty) != qty
+                or qty <= 0 or not finite(filled) or int(filled) != filled or not 0 <= filled <= qty):
+            raise ValueError('invalid final open-order quantity or identity')
+        seen.add(oid)
+    pnl = sum(p['realized_pnl'] + (p.get('unrealized_pnl') or 0) for p in rows)
+    if not finite(pnl):
+        raise ValueError('non-finite final account P&L')
+    return rows, order_rows, pnl
 
 
 def final_receipt(journal, original):
@@ -450,23 +573,56 @@ def final_receipt(journal, original):
     clock = original.get('/competitions/time')
     positions = original.get('/positions?include_zero=true')
     orders = original.get('/orders/open')
+    try:
+        history = original.get('/orders?limit=500')
+        history_error = None
+    except Exception as exc:
+        history, history_error = None, str(exc)
     end_clock = original.get('/competitions/time')
-    verified = bool(clock.get('competition_id')) and clock.get('competition_id') == end_clock.get('competition_id')
-    data = {'clock': clock, 'end_clock': end_clock, 'positions': positions, 'orders': orders, 'verified': verified}
+    cid = clock.get('competition_id')
+    identity_verified = bool(cid) and cid == end_clock.get('competition_id') == original.competition_id
+    history_clear = identity_verified and check_order_history(journal, cid, history, original.symbols)
+    account_error = None
+    try:
+        rows, order_rows, pnl = validated_account_rows(positions, orders, original.symbols)
+        flat = not order_rows and not any(p['quantity'] for p in rows)
+    except (TypeError, ValueError) as exc:
+        account_error = str(exc)
+        rows, order_rows, pnl, flat = [], [], None, None
+        if identity_verified:
+            journal.block_ownership(cid, account_error)
+        history_clear = False
+    if identity_verified and any(order_id(o) not in journal.owned.get(cid, set()) for o in order_rows):
+        journal.block_ownership(cid, 'unrecognized open order in final receipt')
+        history_clear = False
+    cleanup = journal.latest.get('cleanup', {})
+    reopened = (identity_verified and cleanup.get('competition_id') == cid
+                and cleanup.get('state') == 'flat' and flat is False)
+    if reopened:
+        journal.block_ownership(cid, 'account reopened after cleanup observed flat')
+        history_clear = False
+    if not history_clear or reopened:
+        cleanup_status(journal, 'attention', reason=journal.ownership_blocks.get(cid,
+                       history_error or 'final receipt identity or ownership not verified'))
+    verified = identity_verified and history_clear and account_error is None and not reopened
+    data = {'clock': clock, 'end_clock': end_clock, 'positions': positions, 'orders': orders,
+            'identity_verified': identity_verified, 'history_ownership_clear': history_clear,
+            'account_valid': account_error is None, 'account_error': account_error,
+            'flat': flat, 'reopened_after_flat': reopened, 'verified': verified}
     (journal.out / 'final-receipt.json').write_text(json.dumps(data, indent=2) + '\n')
-    if not verified:
-        journal.latest['final_receipt'] = {'verified': False, 'reason': 'competition changed during final receipt'}
+    if not identity_verified or account_error:
+        journal.latest['final_receipt'] = {'verified': False,
+            'reason': account_error or 'competition changed during final receipt'}
         return
-    rows = positions.get('positions', []) if isinstance(positions, dict) else positions
-    pnl = sum((p.get('realized_pnl') or 0) + (p.get('unrealized_pnl') or 0) for p in rows)
     trial = journal.trials.get(clock.get('competition_id'))
     if trial and not trial['completed']:
         trial['last_pnl'] = pnl
         trial['after_cleanup_pnl'] = pnl
         journal.check_loss()
-    journal.latest['final_receipt'] = {'competition_id': clock.get('competition_id'), 'pnl': pnl,
+    journal.latest['final_receipt'] = {'competition_id': cid, 'pnl': pnl, 'verified': verified,
+        'history_ownership_clear': history_clear, 'flat': flat, 'reopened_after_flat': reopened,
         'nonzero_positions': sum(bool(p.get('quantity')) for p in rows),
-        'open_orders': len(orders.get('orders', []))}
+        'open_orders': len(order_rows)}
 
 
 def finish(journal):
