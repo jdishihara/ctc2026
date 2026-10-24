@@ -7,6 +7,8 @@ the login cookie). Nobody fills forms or clicks Buy. Exactly ONE laptop is armed
 ## Before the case opens (one laptop, the "bot" laptop)
 1. `cd derivatives-overlay && git pull && npm ci && npm run build` (Node 18+).
 2. `chrome://extensions` → Developer mode → remove any older copy of this overlay → **Load unpacked** → `derivatives-overlay/dist`.
+   Already loaded from an earlier build? Press the **reload arrow** on the overlay's card after every `git pull && npm run build`; the
+   loaded copy does not update by itself (the 2026-10-24 afternoon builds fix the exchange-date and clock-rate handling).
 3. Log in to https://cornelltradingcompetition.org/trading in that Chrome, open the Derivatives page, **hard-reload** it.
 4. Header must say **DERIVATIVES**. Edge tab → **Ready n/m**: wait until every line is green or grey ("wait"):
    - `API` polling · `OIL chain` / `PLANE chain` show spot, T (trading days) and r from the exchange

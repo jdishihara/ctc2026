@@ -155,14 +155,15 @@ Three levels, all in Config under `auto` and toggled on the Config tab:
 | `auto.cancelOnSnap` / `cancelOnNews` | **on** | `DELETE /orders/all?symbol_type=option&underlying=U` once at each snap and each news, when anything is resting, so flatten sizes are right and no stale edge order is picked off. Counted against the order budget. |
 | `auto.backoffMs` | 5000 | pause after an HTTP 429 |
 | `eventOffsetsRealSec` | {move 60, snap 120} | packet: bots move the underlying 1 real min after the news, the options 2 min after. When the exchange's `clock_rate` is off the packet's (52/39), today's move/snap boundaries are recomputed from these; the schedule's dates are likewise rebased onto the exchange's fictional date (day index from `elapsed_active_seconds`) |
+| `auto.submitIntervalMs` / `auto.submitRateCap` | 5000 / 12 | **human pace** (2026-10-24, Jayden's choice so the team can follow every order): one order per 5 s, 12 per rolling minute, `flattenReserve` 4 and `flattenIntervalMs` 5000 to match. The bot pace that scored 23.5k in the real-speed drill was 1500 / 36 / 12 / 1500; set those in the Config tab for full speed |
 | `auto.haltedPauseMs` | 30000 | after `403 Trading halted` / `404` on a contract, leave that contract alone this long |
 | `auto.converterNamedTolPts` | 40 | Round 3: a quantity the analyst message names (variance, straddle, ...) is trusted up to this many vol points from the stale pre-snap market IV; unnamed numbers still need `converterTolPts` (8) |
 | `auto.submit` | **off** (arm in the header) | The overlay runs the queue itself: edge tickets during NEWS/UNDERLYING_MOVED (once targets are confirmed), flatten tickets after the snap. Each step picks the next ticket, prefills the form exactly as `Alt+N` does, re-reads the form, and clicks the submit button through `safeSubmit`, which refuses unless armed, the form matches (contract, qty, price, and the button's own "Buy 50 OIL_…" text), and observed order actions are below `submitRateCap` (36/min). It also clicks the OIL/PLANE product tab when the chain shows the other underlying (`auto.switchTabs`). Arm with **arm auto** in the header or the Config checkbox; **Alt+P** pauses/resumes; the header shows a red **AUTO ON** badge. Every submission and the exchange's HTTP answer are listed on the Capture tab and in the capture file (`auto:submit`, `auto:result`). The same contract/side is not re-sent for `resubmitAfterMs` (20 s) unless the position changed; submissions are spaced by `submitIntervalMs` (1.5 s). |
 
 Flatten behaviour (2026-10-24 drills): flatten tickets are priced up to `thresholds.flattenThroughPct` (2%) or
 `flattenThroughTicks` (5) through the touch, may be re-sent for the same contract after `auto.flattenResubmitMs` (6 s)
-net of resting orders (0.8 s apart, `auto.flattenIntervalMs`), run in the WAITING phase as well as after the snap, and edge tickets stop when the rolling minute
-reaches `submitRateCap - auto.flattenReserve` (36 - 12) so the 30 s after the snap always has order budget. During an
+net of resting orders (`auto.flattenIntervalMs` apart), run in the WAITING phase as well as after the snap, and edge tickets stop when the rolling minute
+reaches `submitRateCap - auto.flattenReserve` (12 - 4) so the 30 s after the snap always has order budget. During an
 event with a delta or vega cap breached (a book carried in), the auto-pilot works risk-reducing flatten tickets instead
 of idling.
 
