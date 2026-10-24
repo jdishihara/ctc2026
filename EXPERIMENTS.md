@@ -1,3 +1,36 @@
+# Overnight report 2026-10-24 (Mario + Derivatives; session from 02:05, Fable)
+
+Scope: only mario/, derivs/, derivatives-overlay/, docs/, tests/test_mario_*.py. Hurricane code is Arjun's agent's.
+Goal: on the day the humans type only what no program can see (Mario race results; a Derivatives number only when the
+overlay says "needs you") and the tool says exactly what to click. Testnet checked at 02:08: it serves only the Hurricane
+page, so the real Derivatives and Mario pages stay unseen until the morning; robustness to unknown formats ranks above tuning.
+Baseline at 99b530a: 17 Mario tests pass; overlay 131/132 (the autopilot integration test is a timing flake, passes alone).
+
+## Plan (checked off as done; results under each item, accepted AND rejected)
+
+- [ ] D2 Derivatives: full 10-event mock run with auto-pilot armed (Playwright headless, mock --fast 4); PnL per event,
+      orders, rejections, flat-between-events check. Baseline numbers before any change.
+- [ ] M2 Mario: 8-race auto-execute drill against the mock (HTTP tap; then one pass with the browser tap headless):
+      orders, fills, INCOMPLETE ARB lines, rate cap, PnL at settlements. Baseline.
+- [ ] D1 Derivatives: live-readiness self-check in the overlay (the NOTES "verify in the first live minutes" list made
+      automatic: symbols/strikes parsed, spot source, news parsed, positions shape, clock rate, T, order-form elements),
+      each line green/red with the Config field to patch when red.
+- [ ] M1 Mario: model-uncertainty margin: fair values under an ensemble of (noise sd, skill sd, CPU prior); the spread
+      widens the trading margin where the parameterisations disagree. Measure on the mock drill and on Brier under
+      mis-specified truths.
+- [ ] D3 Derivatives: headline/news parser battery (price and vol phrasings, structured fields, analyst phrasings,
+      Round 3 quantities); add tests; fix misses.
+- [ ] M3 Mario: symbol-mapping battery (plausible exchange naming schemes) for guess_role; `race` accepts racer names in
+      any order (e.g. `race peach 1 birdo 3 yoshi 5 daisy 7`).
+- [ ] D5 Derivatives: Round 3 converter auto-identification across every converter kind with mock analyst data.
+- [ ] D4 Derivatives: make the autopilot integration test deterministic.
+- [ ] B1 docs/gameday-sheets.md: per desk, the exact list of human inputs and what each self-check line means.
+- [ ] B2 06:45 final report here; everything pushed.
+
+## Results
+
+---
+
 # Basket continuation 2026-10-23 (Codex)
 
 Frozen at `2ec8d26`: 1% net quoted basket edge, maximum 10 ETF units, capped by
