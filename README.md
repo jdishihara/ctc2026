@@ -3,6 +3,13 @@
 Offline tooling for the Systematic Equities case of the 2026 Cornell Trading Competition. The plan lives in the
 shared Google Doc "CTC 2026 Team Plan".
 
+**Current readiness (October 24):** one completed live trial at 10% position
+limits earned $141.16. A later trial contains another trader's activity and is
+not attributable to this bot. Live practice is stopped while account ownership
+is unresolved; recording and offline evaluation continue. Historical averages
+and passing tests do not establish consistent live profitability. Read the
+[current evidence and limitations](docs/competition-readiness.md) before launch.
+
 ```
 data/            copy of hurricane-season-research (case.json, history/, starter_kit/). history/ is gitignored (214 MB).
 ctc/history.py   the organisers' loader (unchanged)
@@ -75,8 +82,10 @@ reserves action capacity, and restores starting positions after partial fills.
 6,412.88 thin**, versus 9,452.36 / 5,993.53 before the overlay. These are
 historical simulator results; delay substantially reduces the advantage.
 See [full results, stresses and rejected experiments](docs/research-continuation.md).
-All five final-review execution findings are fixed; 180 tests pass and 675
-post-fix season replays exactly reproduce the frozen results. The live feed
+At that earlier review, all five execution findings were fixed, 180 tests passed,
+and 675 replays reproduced its frozen results. Later corrections and their mixed
+performance effects are documented in [the readiness report](docs/competition-readiness.md).
+The live feed
 keeps receiving during HTTP work and preserves quote arrival times; timed-out
 basket orders are cancelled even when quotes stop arriving.
 
@@ -105,11 +114,16 @@ One-page sheets for all three desks: [docs/gameday-sheets.md](docs/gameday-sheet
 
 Before the market opens (allow 15 minutes):
 
+Designate one operator for the shared Hurricane account and verify that other
+teammates/bots have stopped using it. Unexpected orders or positions require
+ownership reconciliation before launch. The commands below do not establish
+exclusive account control.
+
 ```bash
 caffeinate -i -t 36000 &                       # keep the Mac awake for 10 h; it slept after the overnight caffeinate expired and the bot missed two seasons
 git pull && git status                         # clean tree on main
 echo COMPETITION_KEY > .botkey                 # git-ignored; never put the key in a tracked file or a commit
-python3 bot/preflight.py                       # must end with 0 failures; WARN on positions or open orders -> bot/stop.sh first
+python3 bot/preflight.py                       # must end with 0 failures; reconcile ownership of any positions/open orders before proceeding
 nohup python3 data/starter_kit/record_feed.py --url wss://cornelltradingcompetition.org --key $(cat .botkey) \
       --out recordings/competition.jsonl --symbols PORT,ISLE,AQUA,GRID,FERRY,RECON,MAT,GEN,HAVEN,REIN,ARCH,REBLD > /dev/null 2>&1 &
 nohup python3 scripts/record_books.py --key $(cat .botkey) --out recordings/competition_books.jsonl > /dev/null 2>&1 &
@@ -145,6 +159,10 @@ What to look for:
 - Order actions: the bot caps itself at 120 per minute; the team limit is 180, so nobody else trades on the bot's key.
 
 Stop or emergency:
+
+These cleanup commands affect the shared account. Use them when the orders and
+positions are confirmed to belong to this bot; unidentified activity requires
+coordination with the other operator first.
 
 ```bash
 bot/stop.sh              # kills wrapper and bot, cancels every resting order, prints positions
