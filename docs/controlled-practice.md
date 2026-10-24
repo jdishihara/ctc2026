@@ -87,3 +87,22 @@ still blocks trading, and actual market reopening still starts warm-up.
 This change was reproduced with order-level offline regressions and independently
 reviewed. The first live batch remains pinned to `59603dd`, before this change;
 its results cannot establish the profitability of the snapshot change.
+
+## Staggered basket hedge submissions
+
+The first ARCH basket in batch 01 created five shares at 00:39:28 EDT and
+finished replenishing its components at 00:40:31. Its market trades generated
+−$8.73 of cashflow before any separate fees; the final inventory change from the
+cycle was zero. The recorded fills are in
+[evidence/basket-01-fills.json](evidence/basket-01-fills.json).
+
+Each component hedge was roughly ten seconds behind the previous one. An
+offline reproduction confirmed that the shared retry timer delayed legs that
+had never been submitted when a slow acknowledgement or pending news interrupted
+the first batch of orders. Recovery now tracks each leg separately: unsubmitted
+legs can proceed as soon as readiness and fresh quotes return, while previously
+submitted legs retain their retry delay and cancellation/reconciliation checks.
+
+This removes an avoidable delay. The recorded loss does not establish what the
+same basket would have earned with faster execution. The initial live batch uses
+the older implementation; the fix requires a later live evaluation.
