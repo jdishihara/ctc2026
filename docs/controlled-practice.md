@@ -71,3 +71,19 @@ The incident that motivated these checks is in
 
 The earlier full-size midseason failure and its merged fixes are documented in
 [practice-loss-review.md](practice-loss-review.md).
+
+## Periodic snapshots and reconnects
+
+Routine snapshots arrive during a healthy live connection. When their round and
+sequence checkpoint agree with the complete model history, they preserve the
+existing warm-up clock. Treating each checkpoint as a round opening suppressed
+otherwise valid signals until another full warm-up interval elapsed.
+
+A disconnect sets a separate pending-warm-up flag. Restoring continuous news can
+make the history current before a snapshot arrives; either recovery order must
+start reconnect warm-up before new signals are allowed. Missing weather or news
+still blocks trading, and actual market reopening still starts warm-up.
+
+This change was reproduced with order-level offline regressions and independently
+reviewed. The first live batch remains pinned to `59603dd`, before this change;
+its results cannot establish the profitability of the snapshot change.
