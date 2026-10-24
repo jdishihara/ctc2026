@@ -10,7 +10,7 @@ zsh bot/stop.sh
 pkill -f "data/starter_kit/record_feed.py" 2>/dev/null; pkill -f "scripts/record_books.py" 2>/dev/null; sleep 1
 echo "== git pull"
 git pull --ff-only || { echo "git pull failed; fix the tree first"; exit 1; }
-pgrep -x caffeinate >/dev/null || (nohup caffeinate -i -t 36000 >/dev/null 2>&1 &)
+(nohup caffeinate -i -s -t 36000 >/dev/null 2>&1 &)   # a fresh one: an older caffeinate may expire mid-case
 echo "== preflight"
 python3 bot/preflight.py --no-sim | tee recordings/preflight_competition.log
 grep -q " 0 failures" recordings/preflight_competition.log || { echo "preflight failed: not starting"; exit 1; }

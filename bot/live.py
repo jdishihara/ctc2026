@@ -340,6 +340,7 @@ class LiveExchange:
         return response is not None
 
 
+MAX_MISSING_NEWS = 3   # a feed reconnect loses 1-2 messages; tolerate up to this many missing seqs per season, more blocks
 SEQ_RESET_GAP = 100  # a seq this far below the running maximum means a new season started (duplicates and retries never go back this far)
 
 
@@ -475,7 +476,8 @@ class LiveSession:
         self.stopped = threading.Event()
         self.pending_news = threading.Event()
         self.latest_seq = max(self.seen_seq, default=-1)
-        self.news_complete = len(self.seen_seq) == self.latest_seq + 1
+        self.missing_seq = set(range(self.latest_seq + 1)) - self.seen_seq
+        self.news_complete = len(self.missing_seq) <= MAX_MISSING_NEWS
         self.feed_current = False  # Require a live news checkpoint after replay.
         self.reconnect_warmup_pending = False
         self.awaiting_competition_id = None
@@ -515,6 +517,7 @@ class LiveSession:
 
     def _reset_news(self):
         self.seen_seq.clear()
+        self.missing_seq = set()
         self.latest_seq = -1
         self.news_complete = True
         self.feed_current = False
@@ -583,10 +586,14 @@ class LiveSession:
                 if seq == self.latest_seq:
                     self.feed_current = True
                 return
-            if seq != self.latest_seq + 1:
-                self.news_complete = False
+            if seq > self.latest_seq + 1:
+                self.missing_seq.update(range(self.latest_seq + 1, seq))
+            self.missing_seq.discard(seq)     # a late or re-sent message fills its hole
             self.seen_seq.add(seq)
             self.latest_seq = max(seq, self.latest_seq)
+            # A few lost messages (a reconnect) are tolerated: the weather gate still requires every observation
+            # or an interpolated short hole, and a lost final report keeps live_history_ready false.
+            self.news_complete = len(self.missing_seq) <= MAX_MISSING_NEWS
             self.feed_current = True
         if m.get('type') == 'storm_formed':
             if m['round'] < self.last_round or (m['round'] == 1 and (strat.model.reported_rounds or strat.model.round)):
@@ -595,7 +602,8 @@ class LiveSession:
                 if seq is not None:
                     self.seen_seq.add(seq)
                     self.latest_seq = seq
-                    self.news_complete = seq == 0
+                    self.missing_seq = set(range(seq))
+                    self.news_complete = len(self.missing_seq) <= MAX_MISSING_NEWS
                     self.feed_current = True
             self.last_round = ex.round = m['round']
         if m.get('type') == 'snapshot':
@@ -606,7 +614,8 @@ class LiveSession:
                           and self.history_block_reason() is None)
             if checkpoint is not None:
                 if checkpoint > self.latest_seq:
-                    self.news_complete = False
+                    self.missing_seq.update(range(self.latest_seq + 1, checkpoint + 1))
+                    self.news_complete = len(self.missing_seq) <= MAX_MISSING_NEWS
                 if checkpoint >= self.latest_seq:
                     self.feed_current = True
             strat.model.on_snapshot(m)

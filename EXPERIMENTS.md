@@ -44,6 +44,36 @@ Not verifiable before the open: the form's behaviour when live (prefill + click 
 shapes with real fills (the Hurricane bot's field names are assumed), and whether series 2 really reuses the names.
 Directions for the day: docs/mario-gameday-steps.md (emailed to the team).
 
+# Game day 2026-10-24, 11:40 onwards: Derivatives refinement loop (Fable, unattended; Jayden reachable by email for blockers)
+
+The testnet shows Hurricane until that case ends, so the Derivatives chain is first seen live at 4:15 pm. Until then: drills on
+the mock at real speed and against a hostile exchange (mock options --rate-limit, --halt, --ws-drop, --switch-after,
+--reject-every; drill --mock-args), each accepted change committed and pushed. Derivatives only.
+
+| time | run | result | decision |
+|---|---|---|---|
+| 12:03 | drill `--fast 1 --seed 1`, API path (real speed, 1608 s) | **23,029** mock marks, 459 orders, every event positive (846 to 4,267), 0 page errors, 0 extra WS frames; 25 sampled posts all HTTP 200 (22 filled, 3 partial) | API path is at the top of the form-click band (19.8k to 24.6k, same seed, 06:22 to 08:16 runs) with no DOM dependency: keep |
+| 12:20 | overlay log of that run: 36 samples with "needs you", 8 with FLATTEN NOW, one "converter not identified" | (a) event 2 asked for the vol by hand all event long: the DOM LATEST bar glued "IV 0.58" to "1 earlier", the tail strip left "IV 0." → 0% suggestion (the WS copy was right; the DOM copy was not de-duplicated); (b) R3: "OIL variance 0.5625" correctly named but 14 pts from the stale market IV → refused by the 8-pt rule; (c) "waiting for analysts" shown as "needs you" | fixed all three (commit after 54857d0): bar pieces joined with spaces + loose news de-dup; named quantity trusted within auto.converterNamedTolPts 40; waiting states shown as pending. FLATTEN NOW samples were transient (gross fell to 0-53 by the next news) |
+# Game day 2026-10-24, 10:30-11:25 (Derivatives; Fable, Jayden present)
+
+Organisers confirmed to Jayden (~11:00): a bot in our logged-in browser may place orders. Decision: keep the Chrome
+extension, replace its I/O. The live bundle (downloaded from the site, which still serves Hurricane) shows the Derivatives
+UI is REST + WebSocket on the login cookie: GET /api/v1/options/{U}/chain (strikes, 6 symbols, quotes, spot, risk_free_rate,
+trading_days_to_expiry), /symbols, /positions, /orders/open, /competitions/current, POST /api/v1/orders {symbol, side,
+order_type, quantity, price}, DELETE /orders/all?symbol_type=option&underlying=U, wss .../ws/v1/market-data with one
+subscribe frame. The exchange's Fair calculator uses T = trading days / 252 and r = the chain's risk_free_rate.
+
+| time | what | result |
+|---|---|---|
+| 11:05 | overlay reads the API itself (poller ~5 req/s, backoff x2 on 429), opens its own socket for all 14 symbols, prices with r, T from the chain | typecheck + 160 tests green (apiPath.test.ts checks fair/greeks against a copy of the page's Black-Scholes) |
+| 11:08 | API submit path: `auto.submitVia: api` POSTs the ticket the Buy button would send (guard: known contract, caps, tick, 36/min, 429 back-off); cancel-all at each snap and news; `send` button per ticket; `other orders` readiness line when open orders were not ours | integration test posts to the mock, form untouched |
+| 11:11 | drill `--fast 4 --seed 1`, API path, armed | 12,242 mock marks, 156 orders, 0 page errors, 0 extra WS frames. Form-click baseline at the same speed (06:12): 8,593. (fast 1 form runs 19.8-24.6k are not comparable: four times the orders per event.) |
+
+Default stays NOT armed: arming is one header click on ONE laptop (two armed copies double every order on the shared
+account, the overnight incident). Docs: derivatives-overlay/GAMEDAY.md, README, docs/gameday-sheets.md.
+Unverified until the page is live: field names of the real chain response (handled by `fields.quote` in Config if they
+differ), the exchange's 429 threshold, the underlying names (the `underlyings` readiness line goes red on a mismatch).
+
 # Overnight report 2026-10-24 (Mario + Derivatives; session from 02:05, Fable)
 
 Scope: only mario/, derivs/, derivatives-overlay/, docs/, tests/test_mario_*.py. Hurricane code is Arjun's agent's.
@@ -476,6 +506,7 @@ python3 scripts/eval_forecast.py 25 50       # forecast skill
 | 2026-10-24 11:45 | sd_mult 0.65/0.7/0.75 x carry 0.5/0.55/0.6 on tune: carry 0.6 / sd 0.7 tops the tune score (6300) but verifies 10245 / 7016 with thin p10 -1972 (-18%): fails; carry 0.55 verifies 10181 / 6917 (p10 708 / -1822, -9%, worst seasons 0.6k worse): passes by a hair; sd 0.65 fattens the tune tail (p10 -2538 vs -1259) | | | NO CHANGE: carry 0.5 kept (one live season, rank scoring; the mean gain is 0.5-1.4% for a fatter tail). Decision for Jayden if he prefers mean |
 | 2026-10-24 11:53 | rebalance cadence 10/12/15/20 s under the new defaults: 10 s tops the tune score (6468; tune p10 -1845 vs -1259) and verifies 10223 / 6871 (p10 109 / -1556, min -17.9k / -17.3k, losing 11% / 13%) vs 10134 / 6823 (p10 816 / -1671, 9% / 15%) | | | NO CHANGE: +89 / +48 of mean (noise) for a deep p10 that falls from 816 to 109 and two more losing seasons; 20 s verifies 9943 / 6749 |
 | 2026-10-24 11:53 | cone_w 1.0/1.5 x cone_s0 20/30 and k 100/150 x sigma 15/20 under the new defaults: the defaults keep the top tune score in both grids; (1.5, 30) verifies 10285 / 6858 (p10 1011 / -1672, worst thin season -17.8k) but scores 6014 on tune (thin p10 -3618) | | | NO CHANGE (selection is on the tune set). The parameter optimum is robust: every neighbour of the game-day defaults is equal or worse on the tune set |
+| 2026-10-24 12:15 | FEED-HOLE REPAIR (robustness, not a parameter). Overnight log: the bot's websocket dropped 223 times in two days; each in-season drop (3 while eligible) lost 1-2 news seqs in the 2-4 s reconnect, and 2 of the 3 blocked trading for the rest of that season (16-33 min) because any seq gap set news_complete False for good. Fix: the session tolerates up to MAX_MISSING_NEWS=3 missing seqs per season (a late message fills its hole; more blocks as before), and the model interpolates up to 3 consecutive missing observations between their neighbours (MAX_FILL_STEPS=4; a longer hole still blocks). A lost final report still blocks through reported_rounds. Mock rehearsal with `--drop-seqs 300,302,600`: no block, 39 fills, +8,843 | 10134 | 6823 | ADOPTED. Verify unchanged (research feeds have no holes). 748 tests |
 
 ## 2026-10-23 — Codex / Arjun: forecast efficiency and execution reconciliation
 

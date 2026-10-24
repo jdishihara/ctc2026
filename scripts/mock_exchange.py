@@ -130,6 +130,8 @@ async def stream(sim: Sim, speed: float, port: int, start_delay: float = 0.0):
                     STATE["mid"] = payload
                 frames = [json.dumps({"type": "quote", "symbol": s, "bid": p * (1 - STATE["half_spread"]), "ask": p * (1 + STATE["half_spread"])}) for s, p in payload.items()]
             else:
+                if payload.get("seq") in STATE.get("drop_seqs", ()):
+                    print(f"dropping news seq {payload['seq']} ({payload.get('type')})", flush=True); continue
                 frames = [json.dumps({"type": "news", "message": payload})]
             for ws in list(clients):
                 for f in frames:
@@ -148,7 +150,9 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--season", type=int, default=451); ap.add_argument("--speed", type=float, default=20.0); ap.add_argument("--port", type=int, default=8765)
     ap.add_argument("--start-delay", type=float, default=0.0, help="seconds to serve a closed market before the season starts (lets a bot connect first)")
+    ap.add_argument("--drop-seqs", default="", help="comma-separated news seqs never sent (rehearses a feed hole, e.g. 300,301)")
     a = ap.parse_args()
+    STATE["drop_seqs"] = {int(x) for x in a.drop_seqs.split(",") if x.strip()}
     case = json.loads((ROOT / "case.json").read_text()); man = json.loads((ROOT / "history" / "manifest.json").read_text())
     STATE["case"] = case
     sim = Sim(ROOT / "history" / man["seasons"][a.season - 1]["dir"], case)

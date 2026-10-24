@@ -43,7 +43,7 @@ for most symbols is normal; during a storm they diverge, that is the trade.
 | You see | It means | Do |
 |---|---|---|
 | `market (re)opened: warm-up` | round open, no orders for 20 s | nothing; watch the first minute |
-| `TRADING BLOCKED: missing news history` / `incomplete weather history` | new orders/conversions blocked; resting orders canceled | restart from a complete current-season recording, or wait for the next season from its beginning; manage existing holdings explicitly |
+| `TRADING BLOCKED: missing news history` / `incomplete weather history` (persisting; a few seconds at a round open is normal) | new orders/conversions blocked; resting orders canceled. A reconnect that loses up to 3 messages repairs itself and does not show this | restart from a complete current-season recording (`FEED_LOG=recordings/competition.jsonl zsh bot/run_live.sh`), or wait for the next season from its beginning; manage existing holdings explicitly |
 | `waiting for a live news checkpoint` / `new-season account refresh` | feed/account not synchronized | wait for synchronization; investigate if it persists |
 | one or two `HTTP 4xx` around a halt | normal | nothing |
 | a stream of `HTTP 4xx` | tick, limits or key | `bot/stop.sh`, read the error, fix, `run_live.sh` |
