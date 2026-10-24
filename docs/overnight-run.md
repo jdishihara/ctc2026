@@ -1,5 +1,18 @@
 # Overnight practice — October 24, 2026
 
+## 11:16 UTC — mock/live extension isolation corrected
+
+The final package review rejected the intermediate bundle's handoff: dev builds
+could also inject into Cornell, with saved mock auto-submit settings, and two
+descriptions incorrectly promised no submissions. The build now restricts dev
+to localhost and prod to Cornell. The four manifest checks first reproduced
+three failures, then all passed. The new package retains exactly the approved
+runtime and browser-test source. Install guidance requires disarming saved
+settings or clearing the old extension before opening live, and verifying
+auto-submit off before the manual dry run. The rejected review, original package,
+failing checks and replacement source/package bindings are retained. No live
+extension was installed or armed.
+
 ## 11:09 UTC — local case-tool checks and derivatives correction verified
 
 PR 29 is merged and the competition checkout passes all 713 Python tests.

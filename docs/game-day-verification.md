@@ -53,13 +53,25 @@ packaging check.
 
 Browser tests use an isolated Chromium profile and the local mock exchange on
 port 5317. Their simulated submissions do not touch the competition account.
-The production build targets the Cornell exchange; the development build's
-localhost permissions are separate. Follow
+The final package review caught a separate build issue: the development build
+also injected into Cornell, so saved mock auto-submit settings could carry into
+a live tab. That package was rejected. Build `4085ea7` restricts development
+injection to localhost and production injection to Cornell. Four checks exercise
+the actual built manifests; three fail before the correction and all four pass
+afterward. Submission descriptions now disclose optional armed automation.
+The runtime and browser-test sources are unchanged from reviewed `4cc4324`;
+this packaging correction does not add another browser or performance run.
+
+Before opening or reloading the live page, remove older dev builds and duplicate
+overlays, and disarm any saved production auto-submit setting. If its state
+cannot be established without opening live, remove that extension and install
+a fresh copy. Confirm Config's Auto-submit is unchecked and the header shows
+**arm auto**, with neither AUTO ON nor AUTO PAUSED, before the manual dry run. Follow
 [the derivatives game-day instructions](../derivatives-overlay/GAMEDAY.md).
 
 The three-file production package is
 [`derivatives-overlay.zip`](evidence/game-day-verification/derivatives-overlay.zip),
-SHA-256 `165f1cca044367f1576d58c3cfc4b23626706b3b7bd92d31dbb03b358a31d51c`.
+SHA-256 `7596d38b20ab3a6b708f74d18ce78a9db1385c24bd04e693a4747a2effa6f094`.
 Unzip it and load that folder as an unpacked extension. No extension was loaded
 or armed on the shared competition account during this verification.
 

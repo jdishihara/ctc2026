@@ -1,12 +1,12 @@
 {
-  "created_at": 1792840214.931437,
+  "created_at": 1792840551.482099,
   "runtime_revision": "4cc43247152264971b1d194647d91729113d38e7",
   "python_sources_unchanged_from": "f8fda59f196aa61d107b28f0c565cf46d07aea63",
   "files": {
     "derivatives-overlay.zip": {
-      "bytes": 58449,
-      "sha256": "165f1cca044367f1576d58c3cfc4b23626706b3b7bd92d31dbb03b358a31d51c",
-      "source": "/Users/arjunhans/Documents/ctc2026/out/game-day-verification-20261024/derivatives-overlay.zip"
+      "bytes": 58441,
+      "sha256": "7596d38b20ab3a6b708f74d18ce78a9db1385c24bd04e693a4747a2effa6f094",
+      "source": "/Users/arjunhans/Documents/ctc2026/out/game-day-verification-20261024/derivatives-overlay-isolated.zip"
     },
     "independent-review.tar.gz": {
       "bytes": 449925,
@@ -35,11 +35,36 @@
       "bytes": 1632,
       "sha256": "956ae8ac2c7fcfa154764798b0cd0f6248a25805b3a6b94d2fd9afb64c1abb61",
       "source": "/Users/arjunhans/Documents/ctc2026/out/game-day-verification-20261024/verification-summary.json"
+    },
+    "isolated-build-receipt.json": {
+      "source": "/Users/arjunhans/Documents/ctc2026/out/game-day-verification-20261024/isolated-build-receipt.json",
+      "bytes": 16876,
+      "sha256": "9818b2b99fa9fb2d3639cf7b6ebfed7a64220cca3fb24ce0b522c7b7c8d9eb64"
+    },
+    "isolated-build-checks.tar.gz": {
+      "source_directory": "/Users/arjunhans/Documents/ctc2026/out/game-day-verification-20261024",
+      "bytes": 66857,
+      "sha256": "afe429806803f04e9d0d5d0d2cdb9a8a7aabe2a289ec26e3df79db3afbaa6b33",
+      "regular_files": 5
+    },
+    "rejected-package-review.tar.gz": {
+      "source_directory": "/Users/arjunhans/Documents/ctc2026/out/game-day-integration-review-87ff281",
+      "bytes": 20547,
+      "sha256": "bb5569687b4e6dda4d71c2e115134f9e3c735c11bab7147b593aff215af259f2",
+      "regular_files": 12
+    },
+    "isolated-build-review.tar.gz": {
+      "source_directory": "/Users/arjunhans/Documents/ctc2026/out/game-day-build-review-4085ea7",
+      "bytes": 6381,
+      "sha256": "18f4681f2971f6d730c8b4366822e3cdfb1eb32369878b9c32f921c7cf62f38a",
+      "regular_files": 8
     }
   },
   "source_files_bound_by_receipt": 97,
-  "archive_members_compared_to_directories": 130,
+  "archive_members_compared_to_directories": 155,
   "relative_links_checked_before_manifest": 54,
-  "packaging_note": "Initial manifest validation used an incorrect archive-root assumption for the independent review. The corrected check respects its final-4cc4324 member prefix; no artifact changed.",
-  "scope": "Local case-tool verification; no live account activation or profitability claim."
+  "packaging_note": "Initial rejected package and its review remain archived. The isolated build receipt binds the replacement ZIP and confirms runtime/test bytes unchanged from approved 4cc4324. Earlier 97-file bindings and the new 96-file helper bindings have different scopes; see their explicit file lists.",
+  "scope": "Local case-tool verification; no live account activation or profitability claim.",
+  "build_revision": "4085ea73fca1200a9b9bfac0a32942fa392c7051",
+  "isolated_source_files_bound_by_receipt": 96
 }

@@ -1,0 +1,422 @@
+{
+  "created_at": 1792840519.2047129,
+  "build_revision": "4085ea73fca1200a9b9bfac0a32942fa392c7051",
+  "runtime_revision": "4cc43247152264971b1d194647d91729113d38e7",
+  "runtime_and_tests_unchanged_from_reviewed_revision": true,
+  "source_files": {
+    "derivatives-overlay/.gitignore": {
+      "bytes": 79,
+      "sha256": "89c736bb58a38785eb231827cb788473a8ef8e8c5feebf9d8d91536783d9d6d6"
+    },
+    "derivatives-overlay/.isolation-baseline.txt": {
+      "bytes": 24,
+      "sha256": "6ae03a5ee439a3c972187596059c4df36ae09f7f06bdb11b13cbbeb374d6c7b0"
+    },
+    "derivatives-overlay/.npmrc": {
+      "bytes": 40,
+      "sha256": "adb07d9d0acad9dfa41cc7a514485b03581273c7a5574dde831df289b2f9aeff"
+    },
+    "derivatives-overlay/GAMEDAY.md": {
+      "bytes": 6315,
+      "sha256": "33317a7b17371722ac98b029c8de0e959511fc43033db27306763dc68ee4d6d8"
+    },
+    "derivatives-overlay/NOTES.md": {
+      "bytes": 8637,
+      "sha256": "e2e8d7432975c6ce1411ba32af1920e7a93d0ec19dc48eb280f600cfc05e25fe"
+    },
+    "derivatives-overlay/README.md": {
+      "bytes": 13083,
+      "sha256": "0ebb09f5a5db5b25fddfd80758ab78d2a4979af2b055f6af4e92e8d0c9dba585"
+    },
+    "derivatives-overlay/manifest.base.json": {
+      "bytes": 604,
+      "sha256": "75e9e252f4eabf0b9042ab533c14f9cbf5dfd26a5224ab34d7bd4e6cf475f775"
+    },
+    "derivatives-overlay/mock-exchange/public/app.css": {
+      "bytes": 3557,
+      "sha256": "346c7f57f39f4acfa2c8eb42f2155f05ff9e1ab08b8231a1fca46b2919bcbf0c"
+    },
+    "derivatives-overlay/mock-exchange/public/app.js": {
+      "bytes": 15313,
+      "sha256": "85751d3b19d612b1e3d70e657ff4fc862c57eaf636979b236af978dbc15c4bb0"
+    },
+    "derivatives-overlay/mock-exchange/public/index.html": {
+      "bytes": 4823,
+      "sha256": "fb8e6554dca87999fffab0ecee89b80c734a5d5851ac343f1bb94b316cfd7f17"
+    },
+    "derivatives-overlay/mock-exchange/scenario.default.json": {
+      "bytes": 4802,
+      "sha256": "813cf1ece63b9386ff647bda13283ef1435085dbbb05165c4b74a578c967ebbd"
+    },
+    "derivatives-overlay/mock-exchange/server.mjs": {
+      "bytes": 23016,
+      "sha256": "5182c3d3abab70fff79b6cf191ab14dae932fa73f1679ae30760e2638dec86d4"
+    },
+    "derivatives-overlay/package-lock.json": {
+      "bytes": 92917,
+      "sha256": "2ec4ba7e1b78cfb6207743bcb15ea7d23a33a4e361fdb6fce516df22bf1f2978"
+    },
+    "derivatives-overlay/package.json": {
+      "bytes": 1334,
+      "sha256": "dfed93375a5eb2e23b901a4938a70231754dae91a6f58d046dfd3f8f4d11c04c"
+    },
+    "derivatives-overlay/playwright.config.ts": {
+      "bytes": 195,
+      "sha256": "e81288e14e2ed04d06e7efb1b23679e9c8409a1f519c1cda882baaf9de01a849"
+    },
+    "derivatives-overlay/scripts/build.mjs": {
+      "bytes": 1905,
+      "sha256": "f28e5604cf5f5349e5bdbb9e2229c193f22dae713ddd587d565387f15429285e"
+    },
+    "derivatives-overlay/scripts/drill-autopilot.mjs": {
+      "bytes": 8732,
+      "sha256": "2fcdee4580b66a95400d623320ceddd304b3460e07fd65431b1ec5174af7f59a"
+    },
+    "derivatives-overlay/scripts/package.mjs": {
+      "bytes": 620,
+      "sha256": "a56e2b0d41a12874f4dbbc484d6f01a1b6b73c0b382a6332a3c73c689ed32561"
+    },
+    "derivatives-overlay/scripts/test-manifests.mjs": {
+      "bytes": 1537,
+      "sha256": "682c8e3fc17a67054d7fe1cc21b30aaaea7d21faaf2dd057fd615764525e7122"
+    },
+    "derivatives-overlay/scripts/verify-isolation.mjs": {
+      "bytes": 1295,
+      "sha256": "b134a7a395ee08dd05801e2b7b14b86b69ae3cb84bc8808efd96bbab9a20c5b4"
+    },
+    "derivatives-overlay/src/content/index.ts": {
+      "bytes": 12134,
+      "sha256": "00fe24d989b9cc9d9fdfcecd4ad358111c43d26e9926bcd302efcff5b87c3a40"
+    },
+    "derivatives-overlay/src/core/bus.ts": {
+      "bytes": 1909,
+      "sha256": "580dab0bc0d272f5bb90aaffdfc13433ddd0325688688e56b981629a124250a6"
+    },
+    "derivatives-overlay/src/core/capture.ts": {
+      "bytes": 3343,
+      "sha256": "287f440c617f808e977745f001e0222c357493e7d8480499d59adb367b8d4dae"
+    },
+    "derivatives-overlay/src/core/classify.ts": {
+      "bytes": 4355,
+      "sha256": "7f3af8e64fb8353f8657ac91731591f31dda5c29460e4f5a012f6335abda4bf2"
+    },
+    "derivatives-overlay/src/core/config.ts": {
+      "bytes": 12203,
+      "sha256": "8e0e20b14c9f10e0fc046a5dd3d68e292b688d6e2c28429130b80744d11a18d2"
+    },
+    "derivatives-overlay/src/core/dom-readers.ts": {
+      "bytes": 8897,
+      "sha256": "383b46afab90abfab77cc36513eb0d73e59fb2cffaaa0204188a83b293d9a463"
+    },
+    "derivatives-overlay/src/core/hotkeys.ts": {
+      "bytes": 2003,
+      "sha256": "da45b55fe90bd35b55d41a965bcae465dd499971d1ad7b76ae4319bec51058e6"
+    },
+    "derivatives-overlay/src/core/storage.ts": {
+      "bytes": 1463,
+      "sha256": "2a66b34201ed8a762b38da45a9d0270d4d95337e8f91d76e04dd2ea0c44658f7"
+    },
+    "derivatives-overlay/src/engine/analysts.ts": {
+      "bytes": 5494,
+      "sha256": "5836be8f9046c0107d7afd23201e375dc3ccadeb0f78f00978348124ef835eef"
+    },
+    "derivatives-overlay/src/engine/arbitrage.ts": {
+      "bytes": 8313,
+      "sha256": "9042f57e8efb61ee12fb9fea5ff3664e6173eca052cb04d482f5890633964d2e"
+    },
+    "derivatives-overlay/src/engine/autoConverter.ts": {
+      "bytes": 5914,
+      "sha256": "7956fceb39946380c1f80ff563c99c267396d5105fa69a3e1fbae716682a1362"
+    },
+    "derivatives-overlay/src/engine/blackScholes.ts": {
+      "bytes": 2823,
+      "sha256": "92ce5ced680b128d3579cfaa125d4c87a4b85d0ea153d8edecdfe84cbb698704"
+    },
+    "derivatives-overlay/src/engine/chain.ts": {
+      "bytes": 6710,
+      "sha256": "f2782f797ddcbbcb7dd7a131d52889f80d8c23ed971f1eeec9f0ab840c036be7"
+    },
+    "derivatives-overlay/src/engine/converters.ts": {
+      "bytes": 6771,
+      "sha256": "936ad07b1f242e0b0211be7b92ab61073be83c850dfa21be22cbb18cae424a3b"
+    },
+    "derivatives-overlay/src/engine/fairValue.ts": {
+      "bytes": 4832,
+      "sha256": "bba208c32937d10b475e952208832edf0b37adcee42d1230e7b089f821e4b8d6"
+    },
+    "derivatives-overlay/src/engine/headline.ts": {
+      "bytes": 9377,
+      "sha256": "880c4ee2130501a1c25bf0ee3ffe53cb68dfd5508b34325fc2f1d1988b3c782e"
+    },
+    "derivatives-overlay/src/engine/impliedVol.ts": {
+      "bytes": 1317,
+      "sha256": "2ffaf0eb624545d7f5e458bde72342072a61b634b695f83bc4733c1050dc885b"
+    },
+    "derivatives-overlay/src/engine/normal.ts": {
+      "bytes": 2801,
+      "sha256": "0ca4318ece455563b8a9f50e8a8fb01b167cc4266f43fd1dae6f901f3bd1ca8f"
+    },
+    "derivatives-overlay/src/engine/rateLimit.ts": {
+      "bytes": 1592,
+      "sha256": "1bd88c5165823100d3eec9e0faac2c1bb70dadb6d8df636fd95d5c96881c753b"
+    },
+    "derivatives-overlay/src/engine/risk.ts": {
+      "bytes": 7343,
+      "sha256": "edacc130606d7fa382ee3b9cf3dcbfcd295b62e3b8c7a8ab92e59b1574cdf7a8"
+    },
+    "derivatives-overlay/src/engine/safeExpr.ts": {
+      "bytes": 5533,
+      "sha256": "c5dfef6b119873b82e94570487b28934136c352717f08fe1ad1c9bb8471df5bc"
+    },
+    "derivatives-overlay/src/engine/schedule.ts": {
+      "bytes": 5685,
+      "sha256": "1eb1e14f7d8e10a4a71c2e3788b4d7f71cb1eac85e5219f360894036967b7fd8"
+    },
+    "derivatives-overlay/src/engine/structures.ts": {
+      "bytes": 5665,
+      "sha256": "073c08727648043e1f8381fedc99f135ad188521bd0a69f63ac34604c00fcff7"
+    },
+    "derivatives-overlay/src/engine/tickets.ts": {
+      "bytes": 9047,
+      "sha256": "a70d988277b595864c149bf73440a000d4072620f3db5b3f34f543eaa8426929"
+    },
+    "derivatives-overlay/src/engine/tradingTime.ts": {
+      "bytes": 3411,
+      "sha256": "c6a47c82aeb097720a9d724a94fb642986144da0a0a4c0e8ea67d6bd86867922"
+    },
+    "derivatives-overlay/src/env.d.ts": {
+      "bytes": 102,
+      "sha256": "ae124b941b1e44235e9b73eec63d534d79907a53010500fa881f207fadec8e9b"
+    },
+    "derivatives-overlay/src/main-world/hooks.ts": {
+      "bytes": 8684,
+      "sha256": "a85c15348f8018c552265f1df05d89efdac5ca26d0fd8503d3c7ef0c8f37de41"
+    },
+    "derivatives-overlay/src/state/readiness.ts": {
+      "bytes": 8828,
+      "sha256": "9ec7fa4c8cfd67eb90acc91cb2695e7b06064ef0d89320fcfbef1573c7243035"
+    },
+    "derivatives-overlay/src/state/store.ts": {
+      "bytes": 62269,
+      "sha256": "5b194376dc8ddf47d81c5bd2a406e308ce12ea606ff28bdf20c9e04069ca5552"
+    },
+    "derivatives-overlay/src/ticket/autopilot.ts": {
+      "bytes": 8271,
+      "sha256": "d995b284bc3ce6896aa9e0f4f1dbd44f0321b4d62f2d4f5079a263320622f7d6"
+    },
+    "derivatives-overlay/src/ticket/guard.ts": {
+      "bytes": 8053,
+      "sha256": "5575db168e629640a0ff23d40aa2595e938930cc48525ddf47c414bad45cc77b"
+    },
+    "derivatives-overlay/src/ticket/prefill.ts": {
+      "bytes": 6064,
+      "sha256": "c4c3c05cd5133f579208bfacde80f5d8a52d8f7c4d8519984c6e487b49202403"
+    },
+    "derivatives-overlay/src/ticket/selectors.ts": {
+      "bytes": 3725,
+      "sha256": "05860d05365da266902d1d75f04016c2c60f51099ce006ba3224321f2a9cd516"
+    },
+    "derivatives-overlay/src/ui/App.tsx": {
+      "bytes": 5283,
+      "sha256": "5358125815afe8eb664a4bf6ad454979fdd66e1fe635d841f53e4fcb326c6559"
+    },
+    "derivatives-overlay/src/ui/DraftInput.tsx": {
+      "bytes": 1405,
+      "sha256": "a2b4a7e70fe792d41683820102fc26a13a630c7e09fc062e1a4c490a81d8b6f7"
+    },
+    "derivatives-overlay/src/ui/Header.tsx": {
+      "bytes": 3710,
+      "sha256": "1f75fb09dfdfb56ce71d512b49d36ef3762cdaf81ba2f45906039d7428a11f70"
+    },
+    "derivatives-overlay/src/ui/controller.ts": {
+      "bytes": 720,
+      "sha256": "76e4e39f3be564944f7ffbd2d9b6198562e10d0a6297012c3f75d54ff90a4d1a"
+    },
+    "derivatives-overlay/src/ui/fmt.ts": {
+      "bytes": 872,
+      "sha256": "7966480da44dc8b0a13d89c69d5d510f05c5595fb0be5a4b6b9cb65064947f18"
+    },
+    "derivatives-overlay/src/ui/styles.css": {
+      "bytes": 5078,
+      "sha256": "e334b45ed14cce7a3eae163ac95dc0ea3e9eb259afbb057971341af8105c4cb0"
+    },
+    "derivatives-overlay/src/ui/tabs/Arb.tsx": {
+      "bytes": 1345,
+      "sha256": "ea7e45f5ff5f8e26238ca52ba03b1e21b2919c31c86588d97d0a90d04c06a00e"
+    },
+    "derivatives-overlay/src/ui/tabs/Capture.tsx": {
+      "bytes": 3225,
+      "sha256": "bf3c30824e43d2d34f14988bdbc78b9a9ac8871deb0b7d9c6a19f7928824cf82"
+    },
+    "derivatives-overlay/src/ui/tabs/Config.tsx": {
+      "bytes": 4073,
+      "sha256": "4aa0665b3c7f219f77bbd839f1dbd94337102358d8a6aeb10daa0ca8a8fc164a"
+    },
+    "derivatives-overlay/src/ui/tabs/Edge.tsx": {
+      "bytes": 11045,
+      "sha256": "8f25135ddfc2d67bdf244bb6624ba863991fdbbd3860b9b3633cac068fd6ef9a"
+    },
+    "derivatives-overlay/src/ui/tabs/Risk.tsx": {
+      "bytes": 4234,
+      "sha256": "6a55d169f7df8bc0c49f329f5a679d4f0bb47c6285b645d788d436004ba158f3"
+    },
+    "derivatives-overlay/src/ui/tabs/Timeline.tsx": {
+      "bytes": 1879,
+      "sha256": "c55274e75144697200cfcd9ea17a46252f365613b10905f31bfd8cfe3a383535"
+    },
+    "derivatives-overlay/src/ui/tabs/Vol.tsx": {
+      "bytes": 9617,
+      "sha256": "b0ae7d53253b6368195bee92ffb24e7078cb70de42bac6503e666932b867c7c4"
+    },
+    "derivatives-overlay/tests/e2e/autopilot.spec.ts": {
+      "bytes": 5159,
+      "sha256": "c1288c6c7dc3ad86a33c9908cc7df65b636fc6e933e9920b2d4c6a9fb9d8e0bf"
+    },
+    "derivatives-overlay/tests/e2e/overlay.spec.ts": {
+      "bytes": 6443,
+      "sha256": "aa399c35c66b1c5524ec353551d63f1141befce37abd6203ef132ef364a0deb7"
+    },
+    "derivatives-overlay/tests/e2e/rounds.spec.ts": {
+      "bytes": 5435,
+      "sha256": "8ea41d8b0e36ccb7d399ebc3917309aeb4d56130b4c2dcb07801fc32961c8af3"
+    },
+    "derivatives-overlay/tests/helpers/chain.ts": {
+      "bytes": 1329,
+      "sha256": "a2d317cd3d525414501f9aa9a35ac5018957cd81ea87f0a9b10fd534e2831c4c"
+    },
+    "derivatives-overlay/tests/helpers/mock-app.d.ts": {
+      "bytes": 102,
+      "sha256": "ef8b0d77a17503fc528de1391a8c98148db6d32d29f15a4a99bee96dd24471a8"
+    },
+    "derivatives-overlay/tests/helpers/mockPage.ts": {
+      "bytes": 1567,
+      "sha256": "39819e709e15bb85a34f8b6cd639029403695c406e816d35ed7c06f6b5d90dbf"
+    },
+    "derivatives-overlay/tests/integration/overlay.test.ts": {
+      "bytes": 14053,
+      "sha256": "0f79fa38bbd490ff5719c65db92f38780f5acb68c2d1d1ca777b40fb33cc0ca2"
+    },
+    "derivatives-overlay/tests/unit/analysts.test.ts": {
+      "bytes": 1952,
+      "sha256": "853bf1b0efd1062b2bc9a4dd92230d9d436a95889e7959cf1f54f0ea311b4dee"
+    },
+    "derivatives-overlay/tests/unit/arbitrage.test.ts": {
+      "bytes": 3997,
+      "sha256": "496b226bd5d82a460f2d19cae42f3c2659e0107f3de8789397cfde62b26e2678"
+    },
+    "derivatives-overlay/tests/unit/autoConfirm.test.ts": {
+      "bytes": 15894,
+      "sha256": "e7ff8a704e321a37595c700e590cc88e85243aef6ee9123b5e10b446595d6998"
+    },
+    "derivatives-overlay/tests/unit/autoConverter.test.ts": {
+      "bytes": 4553,
+      "sha256": "bfe3896af5c20de0393750dda206a0e92a5f599dea9a990c60d7eef1bf0deff9"
+    },
+    "derivatives-overlay/tests/unit/autoSubmitGuard.test.ts": {
+      "bytes": 5050,
+      "sha256": "91dc6422135c27028216281dd3937130e88d42b762dc79dfb34cbd72d817f406"
+    },
+    "derivatives-overlay/tests/unit/blackScholes.test.ts": {
+      "bytes": 3613,
+      "sha256": "e0c84d451544448dc629c198b3fe1b766a4b613435d6afcab4717ab53c39e7e1"
+    },
+    "derivatives-overlay/tests/unit/classify.test.ts": {
+      "bytes": 3745,
+      "sha256": "f085b89c33ebc005b9ddd897d54523965a693f000fed9fe3ffbd1644c42e7d33"
+    },
+    "derivatives-overlay/tests/unit/clock.test.ts": {
+      "bytes": 2018,
+      "sha256": "01f72048ef6210d8901431671c7ae59935e56fb333d667bf8a3fba838615a3de"
+    },
+    "derivatives-overlay/tests/unit/config.test.ts": {
+      "bytes": 1998,
+      "sha256": "c03068c6508ec3da1a7ac510b26121b251ad135b32e758dc4a28838e1a87d2ac"
+    },
+    "derivatives-overlay/tests/unit/converters.test.ts": {
+      "bytes": 3626,
+      "sha256": "bb0ad961327a9a68fdf834a0fc6c2c1ee0f0e0a5eebe6608a8688483cd9665cd"
+    },
+    "derivatives-overlay/tests/unit/domReaders.test.ts": {
+      "bytes": 3126,
+      "sha256": "2d9abe2aa91536945342fe4ced482d0905fbd99dbc8f58e267d84f37d6c8b59d"
+    },
+    "derivatives-overlay/tests/unit/edge.test.ts": {
+      "bytes": 3514,
+      "sha256": "2bfe303bba302cba4342f201ece167f2f48c1284240309dd56ee386d1e7d70b1"
+    },
+    "derivatives-overlay/tests/unit/flatten.test.ts": {
+      "bytes": 2806,
+      "sha256": "7262eb04be7cec1e694e1358d3906d9cdef955cf02a571f0c1be6b1ed8ebf444"
+    },
+    "derivatives-overlay/tests/unit/guard.test.ts": {
+      "bytes": 4791,
+      "sha256": "16441cecd4bb208f6a34107db29219ca437399564414fc8f43e4c4d6808f8687"
+    },
+    "derivatives-overlay/tests/unit/headline.test.ts": {
+      "bytes": 6378,
+      "sha256": "7f2b62b4c15754a172462f2c16edb87f71a02b37eff2bf02bbaeae358bc9d719"
+    },
+    "derivatives-overlay/tests/unit/hooks.test.ts": {
+      "bytes": 4432,
+      "sha256": "0ee443661ea4f4369b1c1725454cf26da17da20099732cd6c3e87f4347116823"
+    },
+    "derivatives-overlay/tests/unit/readiness.test.ts": {
+      "bytes": 4093,
+      "sha256": "1c283b5148c8007c141e58ec30e3d07ddac47e14b8a1f7c9fe2e75b8bf567af9"
+    },
+    "derivatives-overlay/tests/unit/schedule.test.ts": {
+      "bytes": 2365,
+      "sha256": "987403298e53feb58345cece75563b21a8651d79aa7c027426357938b32bbdc8"
+    },
+    "derivatives-overlay/tests/unit/store.test.ts": {
+      "bytes": 6505,
+      "sha256": "bda206206aeb3496802de31cbd2b7d8ea4841d712b24c5524fe6042b01f9096b"
+    },
+    "derivatives-overlay/tests/unit/tickets.test.ts": {
+      "bytes": 5748,
+      "sha256": "280e16c8c4b4dae5dcd118bfb6517406339687ed4fa335c3423d43aace32ca3c"
+    },
+    "derivatives-overlay/tests/unit/tradingTime.test.ts": {
+      "bytes": 1622,
+      "sha256": "310fe780ad4c521c1a4a07a7360af168a940d6e09c293585832d66abff6277f5"
+    },
+    "derivatives-overlay/tsconfig.json": {
+      "bytes": 569,
+      "sha256": "361269087739604c5faaab09ca25f34fb8fdbb2345eb1ccf0999da2a9a235a48"
+    },
+    "derivatives-overlay/vitest.config.ts": {
+      "bytes": 454,
+      "sha256": "01894f86d7a61f0ebbf1861ec7683728c167412d0a272ab57f9454967c55ae3c"
+    }
+  },
+  "package": {
+    "path": "/Users/arjunhans/Documents/ctc2026/out/game-day-verification-20261024/derivatives-overlay-isolated.zip",
+    "bytes": 58441,
+    "sha256": "7596d38b20ab3a6b708f74d18ce78a9db1385c24bd04e693a4747a2effa6f094",
+    "members": {
+      "overlay.js": {
+        "bytes": 163644,
+        "sha256": "22275c18876b77800c63c008701bf264bd09b74c1e1883f47a3eeedb43dd798f"
+      },
+      "main.js": {
+        "bytes": 3634,
+        "sha256": "fbcbeca8053dfc9e0a004e10568894024c92dba216b71aa740395d9c3dac26ab"
+      },
+      "manifest.json": {
+        "bytes": 675,
+        "sha256": "ef0517d79a45cdf13f92f4cc2d0a047d43325a4670718ba9d763c811a2427591"
+      }
+    }
+  },
+  "manifest_regression": {
+    "before": {
+      "passed": 1,
+      "failed": 3
+    },
+    "after": {
+      "passed": 4,
+      "failed": 0
+    }
+  },
+  "scope": "Build-origin isolation and accurate submission guidance; no live activation, new browser run or performance replay."
+}
