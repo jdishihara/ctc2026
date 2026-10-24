@@ -44,6 +44,26 @@ Not verifiable before the open: the form's behaviour when live (prefill + click 
 shapes with real fills (the Hurricane bot's field names are assumed), and whether series 2 really reuses the names.
 Directions for the day: docs/mario-gameday-steps.md (emailed to the team).
 
+# Game day 2026-10-24, 10:30-11:25 (Derivatives; Fable, Jayden present)
+
+Organisers confirmed to Jayden (~11:00): a bot in our logged-in browser may place orders. Decision: keep the Chrome
+extension, replace its I/O. The live bundle (downloaded from the site, which still serves Hurricane) shows the Derivatives
+UI is REST + WebSocket on the login cookie: GET /api/v1/options/{U}/chain (strikes, 6 symbols, quotes, spot, risk_free_rate,
+trading_days_to_expiry), /symbols, /positions, /orders/open, /competitions/current, POST /api/v1/orders {symbol, side,
+order_type, quantity, price}, DELETE /orders/all?symbol_type=option&underlying=U, wss .../ws/v1/market-data with one
+subscribe frame. The exchange's Fair calculator uses T = trading days / 252 and r = the chain's risk_free_rate.
+
+| time | what | result |
+|---|---|---|
+| 11:05 | overlay reads the API itself (poller ~5 req/s, backoff x2 on 429), opens its own socket for all 14 symbols, prices with r, T from the chain | typecheck + 160 tests green (apiPath.test.ts checks fair/greeks against a copy of the page's Black-Scholes) |
+| 11:08 | API submit path: `auto.submitVia: api` POSTs the ticket the Buy button would send (guard: known contract, caps, tick, 36/min, 429 back-off); cancel-all at each snap and news; `send` button per ticket; `other orders` readiness line when open orders were not ours | integration test posts to the mock, form untouched |
+| 11:11 | drill `--fast 4 --seed 1`, API path, armed | 12,242 mock marks, 156 orders, 0 page errors, 0 extra WS frames. Form-click baseline at the same speed (06:12): 8,593. (fast 1 form runs 19.8-24.6k are not comparable: four times the orders per event.) |
+
+Default stays NOT armed: arming is one header click on ONE laptop (two armed copies double every order on the shared
+account, the overnight incident). Docs: derivatives-overlay/GAMEDAY.md, README, docs/gameday-sheets.md.
+Unverified until the page is live: field names of the real chain response (handled by `fields.quote` in Config if they
+differ), the exchange's 429 threshold, the underlying names (the `underlyings` readiness line goes red on a mismatch).
+
 # Overnight report 2026-10-24 (Mario + Derivatives; session from 02:05, Fable)
 
 Scope: only mario/, derivs/, derivatives-overlay/, docs/, tests/test_mario_*.py. Hurricane code is Arjun's agent's.

@@ -24,10 +24,17 @@ describe('readiness checks', () => {
     const d = st.compute();
     const cs = readiness(st.s, d, st.cfg, 1000, null);
     const m = byId(cs);
-    for (const id of ['case', 'feed', 'chain:OIL', 'chain:PLANE', 'quotes', 'spot:OIL', 'spot:PLANE', 'clock', 'form']) {
+    for (const id of ['case', 'feed', 'chain:OIL', 'chain:PLANE', 'quotes', 'spot:OIL', 'spot:PLANE', 'clock']) {
       expect(m[id].status, id).toBe('bad');
       expect(m[id].fix, id).toBeTruthy();
     }
+    // the API submit path does not need the page's form: it waits instead of failing; the form path still fails red
+    expect(m.form.status).toBe('wait');
+    expect(m.api.status).toBe('wait');
+    expect(m.submit.status).toBe('warn');
+    expect(m.submit.fix).toContain('ONE laptop');
+    const cfgForm = { ...cloneDefaults(), auto: { ...cloneDefaults().auto, submitVia: 'form' as const } };
+    expect(byId(readiness(st.s, d, cfgForm, 1000, null)).form.status).toBe('bad');
     expect(m.news.status).toBe('wait');
     expect(summarize(cs).worst).toBe('bad');
   });
@@ -42,6 +49,13 @@ describe('readiness checks', () => {
     quoteAll(st, { OIL: 100, PLANE: 40 }, { OIL: 0.5, PLANE: 0.7 }, 20 / 252, now);
     st.s.ws.lastMsgAt = now;
     st.handleWsJson({ type: 'news', message: { seq: 1, type: 'headline', headline: 'OIL jumps to 108.50; implied vol now 65%. PLANE slides to 36.20, IV 85%.' } }, now);
+    // the API poller, the chain endpoint for both underlyings, our own feed and an armed auto-pilot
+    st.s.api = { polls: 12, errors: 0, lastOkAt: now, backoff: 1, note: '' };
+    for (const [u, sp] of [['OIL', 100], ['PLANE', 40]] as const) {
+      st.handleHttp('GET', `/api/v1/options/${u}/chain`, { underlying_symbol: u, current_underlying_price: sp, risk_free_rate: 0, expiries: [{ expiry_fictional_time: '2026-06-26T16:00:00', trading_days_to_expiry: 20, rows: strikes[u].map((K) => ({ strike: K, call: { symbol: `${u}_0626_C${K}`, bid: 1, ask: 1.1 }, put: { symbol: `${u}_0626_P${K}`, bid: 1, ask: 1.1 } })) }] }, now);
+    }
+    st.s.feed = { open: true, frames: 40, lastAt: now, reconnects: 0, symbols: 14, url: 'wss://x/ws/v1/market-data' };
+    st.cfg.auto.submit = true;
     const d = st.compute();
     const panel = { found: true, symbol: 'OIL_0626_C100', qty: true, price: true, buy: true, sell: true, limit: true, submit: 'Buy 20 OIL_0626_C100', t: now };
     const cs = readiness(st.s, d, st.cfg, now, panel);
@@ -56,6 +70,13 @@ describe('readiness checks', () => {
     expect(m.form.status).toBe('ok');
     expect(m.news.status).toBe('ok');
     expect(m.news.detail).toContain('OIL spot 108.5 iv 65%');
+    expect(m.api.status).toBe('ok');
+    expect(m['rest:OIL'].status).toBe('ok');
+    expect(m['rest:OIL'].detail).toContain('T 20.00 d');
+    expect(m.ownfeed.status).toBe('ok');
+    expect(m.submit.status).toBe('ok');
+    expect(m.submit.detail).toContain('ARMED');
+    expect(m.T.detail).toContain('REST chain');
     expect(summarize(cs).ok).toBeGreaterThanOrEqual(cs.length - 1);
 
     // a Round 3 clock rate that looks like Rounds 1-2 is flagged, and a missing QTY input names the field

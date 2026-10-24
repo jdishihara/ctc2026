@@ -32,7 +32,7 @@ FEED_LOG=recordings/competition.jsonl nohup zsh bot/run_live.sh > /dev/null 2>&1
 tail -f recordings/bot_live.log
 ```
 
-Healthy start lines, in order: `strategy analog min_edge 0.025 ...`, `final phase exact=True ...`,
+Healthy start lines, in order: `strategy analog min_edge 0.03 ...`, `final phase exact=True ...`,
 `basket edge=0.01 ...`, `announcements: pause named symbols, re-anchor ... 60 s`, `replayed N feed messages`,
 `connected`, followed by `history complete: trading eligible` once complete history is verified.
 Start the recorder and bot before the first storm. A snapshot or a nonzero replay count alone does not authorize trading.
@@ -78,57 +78,32 @@ storm unless it is broken: a restart during round 1 on the testnet missed half t
 
 ---
 
-## Derivatives (35%): reader confirms, clicker clicks, 2.5 minutes per event
+## Derivatives (35%): the overlay trades, one laptop armed, humans watch
 
-Setup: `cd derivatives-overlay && npm run build`, load `derivatives-overlay/dist` in `chrome://extensions` (Developer
-mode, Load unpacked), hard-reload the exchange tab. Header must say **DERIVATIVES**. Then the Edge tab's **Ready n/m**
-box: every line green before the first event. A red or amber line says what is wrong and what fixes it (the Config field
-to patch, or the key to type), e.g. `OIL contracts: none parsed -> Config symbolRegex`, `order form: not found -> Config
-dom.qtyLabel / buyText / sellText`, `clock: rate 52, expected ~39 in R3`. `news` stays grey until the first headline, then
-shows what was parsed from it. Press `Alt+1` on the OIL laptop and `Alt+2` on the PLANE laptop if you split underlyings.
-Dry run `Alt+A`, `Alt+N`, look at the form, do not submit.
+Organisers confirmed (Jayden, ~11:00 on 2026-10-24): **a bot running in our logged-in browser may place orders.** The
+overlay reads the exchange's own API through the login cookie (chain with spot, rate and T; positions; orders) and posts
+orders with the same call the Buy button makes. Full steps: `derivatives-overlay/GAMEDAY.md`.
 
-**The only human inputs on this desk:** (1) press **arm auto** on ONE laptop if the organisers allow a bot to click (else
-the clicker clicks `Alt+N` tickets); (2) type a spot or vol (`Alt+S` / `Alt+V`, Enter, then `Alt+A`) only when a target
-shows **needs you: ...**; (3) Round 3: pick the converter only when the Vol tab says **not identified** (P(ITM) and
-vega also need the strike); (4) `Alt+P` the moment anything looks wrong. Everything else is automatic.
+Setup on the bot laptop: `cd derivatives-overlay && npm ci && npm run build`, load `derivatives-overlay/dist` in
+`chrome://extensions` (Developer mode, Load unpacked; remove older copies first), log in, open the Derivatives page,
+hard-reload. Header **DERIVATIVES**. Edge tab **Ready n/m**: `API` polling, `OIL chain` / `PLANE chain` with spot, T and
+r, contracts 6 + 6, quotes, spot (REST), clock, T (REST chain), positions. A red `underlyings` line means the exchange
+names them differently: Config `underlyings` + `headline.aliases`, Validate & save. Then header → **arm auto** (red
+**AUTO ON**). Other laptops: same build, open the page, do NOT arm (the bot laptop's `other orders` line turns red if two
+copies trade).
 
-Scoring is the sum over rounds of rank^1.5: one bad round costs more than a great one earns. Be flat between events.
+**The only human inputs on this desk:** (1) **arm auto** once, on ONE laptop; (2) type a spot or vol (`Alt+S` / `Alt+V`,
+Enter, `Alt+A`) only when a target shows **needs you: ...**; (3) Round 3: pick the converter only when the Vol tab says
+**not identified**; (4) `Alt+P` the moment anything looks wrong, **disarm** if it stays wrong. Everything else is
+automatic: headline → targets → edge orders (both underlyings, 1.5 s apart, 36/min with 12 kept for the flatten) →
+cancel-all at the snap → flatten through the touch → analysts scored → cancel-all at the next news.
 
-Each event, by the clock. Times are from the news (`NEWS IN m:ss` in the header):
+Scoring is the sum over rounds of rank^1.5: one bad round costs more than a great one earns. Be flat between events;
+red **FLATTEN NOW** with auto on means press `Alt+F` and **send** the closing tickets yourself.
 
-| When | Reader | Clicker |
-|---|---|---|
-| news +0 s | targets appear amber. Compare spot and vol with the headline. Round 1: both numbers are in the news. Fix a wrong one: `Alt+S` / `Alt+V`, type, Enter. Then `Alt+A`. | wait |
-| +5 s to +110 s | watch the queue; if the live spot warning appears at +60 s, re-check and `Alt+A` again | `Alt+N` (form fills: contract, BUY/SELL, Limit, qty, price) -> glance -> click the Buy/Sell button -> `Alt+N`. Switch the OIL/PLANE tab yourself when the ticket says so |
-| +120 s snap | overlay switches to Risk | `Alt+F` loads closing tickets; click them until delta and vega are near zero |
-| last 30 s | red **FLATTEN NOW** = still carrying risk | keep flattening; accept the spread |
-
-Order budget: header `orders n/40` per minute, amber at 30, red at 36. The hourglass in the queue means over budget.
-
-**Auto-pilot (built 2026-10-23).** Auto-confirm is on by default: when the news parses completely (spot plus the
-announced IV in Round 1, spot plus all three analysts in Rounds 2 and 3) and the numbers pass the sanity bounds, the
-targets are accepted without `Alt+A`. The reader only acts on a line that says "needs you: ..." under a target. In
-Round 3 the converter is identified from the first analyst message by matching the market IV; the Vol tab says
-"auto-identified" or asks you to pick. **Auto-submit is off by default.** If the organisers confirm a bot may submit,
-press **arm auto** in the header (or Config -> Auto-submit): the overlay then loads, verifies and clicks each ticket
-itself, edge tickets during the event, flatten tickets after the snap and in the open minutes before a day's first news,
-at most 36 orders a minute. Flatten orders are priced up to 2% (at least 5 ticks) through the touch so one order clears
-several levels: the snap-to-next-news window is only 30 s, and 12 of the 36 orders a minute are kept for it. The header shows a red AUTO ON badge; `Alt+P` pauses and
-resumes; the Capture tab lists every auto submission with the exchange's answer. With it armed the clicker only watches
-the queue and the Risk tab. Overnight drills (2026-10-24, mock, all ten events armed, real speed): EXPERIMENTS.md.
-
-Round 2 (analysts, no IV): the three estimates arrive in the news and fill the Vol tab grid; type any the parser
-missed (Tab between cells, Enter). Event 4: blend = median. From event 5: switch blend to **weighted (learned)**.
-
-Round 3 (a quantity "linked to IV"): read the first analyst message. Vol tab -> Round 3 converter -> pick what it is
-(variance, daily move, move to expiry, ATM straddle, option price at K, P(ITM), vega, or a custom formula in `x S T K`).
-Use "try x =" and check the resulting vol is near the market IV shown at the bottom of the Vol tab. If it is far off, the
-pick is wrong; try the next one. Decide within the first event; later events reuse it.
-
-If it breaks: no quotes -> Capture tab, patch `fields.quote` in Config. Prefill fails -> the ticket card's **copy**
-button, type the order by hand. Overlay in the way -> `Alt+O`. Fallbacks: `derivs/desk.xlsx` and the exchange's own
-Black-Scholes calculator.
+Fallbacks: `API` red = logged out (reload, log in); HTTP 429 in the Capture tab = rate limited (Config `api.chainMs:
+2000`); `disarm` + `Alt+N` prefills the page form; `auto.submitVia: "form"` makes the auto-pilot click instead of POST;
+`Alt+O` hides the overlay; `derivs/desk.xlsx` and the exchange's own Black-Scholes calculator as last resort.
 
 ---
 

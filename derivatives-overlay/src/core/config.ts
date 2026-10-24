@@ -79,6 +79,31 @@ export interface AutoConfig {
   volMax: number;
   /** also click the OIL/PLANE product tab when the chain shows the other underlying */
   switchTabs: boolean;
+  /** 'api': POST /api/v1/orders through the session cookie (what the Buy button does); 'form': prefill the page's form and click */
+  submitVia: 'api' | 'form';
+  /** cancel every resting option order (per underlying) when the makers snap and when the next news arrives */
+  cancelOnSnap: boolean;
+  cancelOnNews: boolean;
+  /** pause submissions this long after an HTTP 429 */
+  backoffMs: number;
+}
+
+/** REST polling through the session cookie (Config.api); 0 disables one endpoint */
+export interface ApiConfig {
+  enabled: boolean;
+  clockMs: number;
+  symbolsMs: number;
+  chainMs: number;
+  positionsMs: number;
+  ordersMs: number;
+  tradesMs: number;
+}
+
+/** the overlay's own market-data socket (Config.feed) */
+export interface FeedConfig {
+  enabled: boolean;
+  channels: string[];
+  path: string;
 }
 
 export interface Config {
@@ -104,6 +129,8 @@ export interface Config {
   prefillEnabled: boolean;
   focus: string | null;
   auto: AutoConfig;
+  api: ApiConfig;
+  feed: FeedConfig;
 }
 
 export const DEFAULT_CONFIG: Config = {
@@ -168,7 +195,10 @@ export const DEFAULT_CONFIG: Config = {
     confirm: true, converter: true, converterTolPts: 8, converterTieMarginPts: 2,
     submit: false, submitRateCap: 36, submitIntervalMs: 1500, resubmitAfterMs: 20_000, flattenResubmitMs: 6_000, flattenReserve: 12, flattenIntervalMs: 1500,
     spotBoundPct: 40, volMin: 0.05, volMax: 3.0, switchTabs: true,
+    submitVia: 'api', cancelOnSnap: true, cancelOnNews: true, backoffMs: 5000,
   },
+  api: { enabled: true, clockMs: 1000, symbolsMs: 15_000, chainMs: 1000, positionsMs: 1000, ordersMs: 1500, tradesMs: 3000 },
+  feed: { enabled: true, channels: ['quotes', 'trades', 'news'], path: '/ws/v1/market-data' },
 };
 
 const isObj = (x: unknown): x is Record<string, unknown> => !!x && typeof x === 'object' && !Array.isArray(x);
@@ -246,7 +276,25 @@ export function validateConfig(input: unknown): Validation {
       if (typeof a[k] !== 'number' || !Number.isFinite(a[k] as number) || (a[k] as number) < 0) errors.push(`auto.${k} must be a number >= 0`);
     }
     if (typeof a.submitRateCap === 'number' && a.submitRateCap > 40) errors.push('auto.submitRateCap must not exceed the browser limit of 40');
+    if (!['api', 'form'].includes(String(a.submitVia))) errors.push('auto.submitVia must be api | form');
+    for (const k of ['cancelOnSnap', 'cancelOnNews']) if (typeof a[k] !== 'boolean') errors.push(`auto.${k} must be true or false`);
+    if (typeof a.backoffMs !== 'number' || !(a.backoffMs >= 0)) errors.push('auto.backoffMs must be a number >= 0');
     if (typeof a.volMin === 'number' && typeof a.volMax === 'number' && a.volMin >= a.volMax) errors.push('auto.volMin must be below auto.volMax');
+  }
+  const api = c.api as unknown as Record<string, unknown>;
+  if (!isObj(api)) errors.push('api must be an object');
+  else {
+    if (typeof api.enabled !== 'boolean') errors.push('api.enabled must be true or false');
+    for (const k of ['clockMs', 'symbolsMs', 'chainMs', 'positionsMs', 'ordersMs', 'tradesMs']) {
+      if (typeof api[k] !== 'number' || !Number.isFinite(api[k] as number) || (api[k] as number) < 250) errors.push(`api.${k} must be a number >= 250 (ms)`);
+    }
+  }
+  const feed = c.feed as unknown as Record<string, unknown>;
+  if (!isObj(feed)) errors.push('feed must be an object');
+  else {
+    if (typeof feed.enabled !== 'boolean') errors.push('feed.enabled must be true or false');
+    if (!Array.isArray(feed.channels) || !feed.channels.every((x) => typeof x === 'string')) errors.push('feed.channels must be a string array');
+    if (typeof feed.path !== 'string' || !feed.path.startsWith('/')) errors.push('feed.path must start with /');
   }
   return { ok: errors.length === 0, config: c, errors };
 }

@@ -1,5 +1,5 @@
 // Multi-leg structures: synthetic forwards (vega-neutral spot trades) and straddles (vol trades).
-import { price, vegaPerPoint, delta as bsDelta } from './blackScholes';
+import { price, vegaPerPoint, delta as bsDelta, getRate } from './blackScholes';
 import { Chain, Side } from './chain';
 import { Resting, roomFor, sizeAtTouch } from './fairValue';
 
@@ -48,7 +48,7 @@ export function syntheticForwards(
     const p = r.put;
     if (!c || !p) continue;
     const K = r.strike;
-    const fwd = targetSpot - K;
+    const fwd = targetSpot - K * Math.exp(-getRate() * T); // forward of (long C, short P): S - K e^{-rT}
     const vC = vegaPerPoint(targetSpot, K, vol, T);
     const vP = vegaPerPoint(targetSpot, K, vol, T);
     const dC = bsDelta('C', targetSpot, K, vol, T);

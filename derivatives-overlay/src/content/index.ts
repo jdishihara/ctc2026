@@ -1,5 +1,8 @@
 // Isolated-world entry: listens to the MAIN-world hooks, reads DOM fallbacks, runs the store and mounts the UI.
+import { ExchangeApi, OrderBody, PATHS } from '../core/api';
 import { BRIDGE_TAG, isBridgeMessage } from '../core/bus';
+import { OwnFeed } from '../core/feed';
+import { ApiPoller } from '../core/poller';
 import { cloneDefaults, Config, deepMerge, validateConfig } from '../core/config';
 import { findChain, readFairT, readHeaderClock, readLatest, readPositions, readSpot } from '../core/dom-readers';
 import { installHotkeys, HotkeyAction } from '../core/hotkeys';
@@ -8,6 +11,7 @@ import { compileSymbolRegex } from '../engine/chain';
 import { Ticket } from '../engine/tickets';
 import { defaultUi, Store, UiState } from '../state/store';
 import { Autopilot } from '../ticket/autopilot';
+import { apiSubmitRefusal } from '../ticket/guard';
 import { prefillTicket, PrefillResult } from '../ticket/prefill';
 import { findOrderPanel } from '../ticket/selectors';
 import { findByExactText, isVisible, textOf } from '../core/dom-readers';
@@ -22,6 +26,9 @@ export interface OverlayHandle {
   controller: Controller;
   readDom: () => void;
   autopilot: Autopilot;
+  api: ExchangeApi;
+  poller: ApiPoller;
+  feed: OwnFeed;
   stop: () => void;
 }
 
@@ -31,6 +38,10 @@ export interface StartOpts {
   tickMs?: number;
   /** auto-pilot step period */
   autoMs?: number;
+  /** REST poller scheduling period (tests) */
+  pollMs?: number;
+  /** disable the REST poller / own feed (tests of the DOM-only path) */
+  noApi?: boolean;
 }
 
 export async function startOverlay(win: Window & typeof globalThis = window, opts: StartOpts = {}): Promise<OverlayHandle> {
@@ -71,6 +82,35 @@ export async function startOverlay(win: Window & typeof globalThis = window, opt
   };
   win.addEventListener('message', onMessage);
   win.postMessage({ [BRIDGE_TAG]: 1, kind: 'overlay-ready', payload: {} }, '*');
+
+  // ---- the exchange's own API through the session cookie ----
+  const api = new ExchangeApi('', (input, init) => win.fetch(input, init));
+  const poller = new ApiPoller({
+    api, cfg: () => store.cfg.api, isDerivatives: () => store.d.mode === 'derivatives', underlyings: () => store.cfg.underlyings,
+    sink: (kind, p) => {
+      store.handleBridge(kind, p);
+      const st = poller.status;
+      const worst = Math.max(1, ...Object.values(st.endpoints).map((e) => e.backoff));
+      const bad = Object.entries(st.endpoints).filter(([, e]) => e.status && (e.status >= 400 || e.status === 0)).map(([k, e]) => `${k} ${e.status}`);
+      store.s.api = { polls: st.polls, errors: st.errors, lastOkAt: st.lastOkAt, backoff: worst, note: bad.join(', ') };
+    },
+  });
+  const feed = new OwnFeed({
+    url: () => `${win.location.protocol === 'https:' ? 'wss:' : 'ws:'}//${win.location.host}${store.cfg.feed.path}`,
+    symbols: () => [...store.cfg.underlyings, ...Object.keys(store.s.metas)],
+    cfg: () => store.cfg.feed,
+    enabled: () => store.d.mode === 'derivatives',
+    WS: win.WebSocket,
+    sink: (kind, p) => {
+      store.handleBridge(kind, p);
+      const st = feed.status;
+      store.s.feed = { open: st.open, frames: st.frames, lastAt: st.lastAt, reconnects: st.reconnects, symbols: st.symbols.length, url: st.url };
+    },
+  });
+  if (!opts.noApi) {
+    poller.start(opts.pollMs ?? 100);
+    feed.start(1000);
+  }
 
   // ---- UI ----
   const host = doc.createElement('div');
@@ -121,6 +161,31 @@ export async function startOverlay(win: Window & typeof globalThis = window, opt
     toggleAutoPause() {
       store.setAutoPaused(!store.s.auto.paused);
       store.toast(store.s.auto.paused ? 'Auto-submit PAUSED (Alt+P resumes)' : 'Auto-submit resumed', store.s.auto.paused ? 'warn' : 'info');
+    },
+    sendTicket(t: Ticket) {
+      const now = Date.now();
+      const th = store.cfg.thresholds;
+      const pos = (store.s.manualPositions ?? store.s.positions)[t.symbol] ?? 0;
+      const resting = store.s.resting[t.symbol];
+      const sameSide = t.side === 'BUY' ? resting?.buy ?? 0 : resting?.sell ?? 0;
+      const after = t.side === 'BUY' ? pos + sameSide + t.qty : pos - sameSide - t.qty;
+      const refusal = apiSubmitRefusal({
+        armed: store.d.mode === 'derivatives', ticket: { symbol: t.symbol, side: t.side, qty: t.qty, price: t.price }, known: !!store.d.contracts[t.symbol],
+        tick: store.d.tick, perTicketCap: th.perTicketCap, positionLimit: th.positionLimit, positionAfter: after,
+        rateUsed: store.rate.count(now), rateCap: store.cfg.rate.limit, backoffLeftMs: Math.max(0, autopilot.backoffUntil - now),
+      });
+      if (refusal) {
+        store.markLoaded(t, false, `send refused: ${refusal}`);
+        return;
+      }
+      const body: OrderBody = { symbol: t.symbol, side: t.side === 'BUY' ? 'buy' : 'sell', order_type: 'limit', quantity: t.qty, price: t.price };
+      store.handleBridge('http-req', { method: 'POST', url: PATHS.orders, body: JSON.stringify(body), json: body, t: now });
+      store.logAutoSubmit({ ...t, source: t.source }, 'posted');
+      store.markLoaded(t, true, `sent ${t.side} ${t.qty} ${t.symbol} @ ${t.price}`);
+      void api.post(PATHS.orders, body).then((res) => {
+        store.handleBridge('http', { method: 'POST', url: PATHS.orders, status: res.status, json: res.json, body: res.text, t: res.t });
+        if (!res.ok) store.toast(`exchange rejected ${t.side} ${t.qty} ${t.symbol}: HTTP ${res.status} ${res.text.slice(0, 100)}`, 'error');
+      });
     },
     downloadCapture() {
       const name = store.capture.download(store.s.caseName ?? 'unknown', doc);
@@ -222,7 +287,7 @@ export async function startOverlay(win: Window & typeof globalThis = window, opt
     }
     return null;
   };
-  const autopilot = new Autopilot({ store, doc, prefill, symbolRe: () => compileSymbolRegex(store.cfg.symbolRegex), skip, findTab });
+  const autopilot = new Autopilot({ store, doc, prefill, symbolRe: () => compileSymbolRegex(store.cfg.symbolRegex), skip, findTab, api });
   const autoInterval = setInterval(() => {
     if (!store.cfg.prefillEnabled || !store.d.autoArmed || busy) return;
     busy = true;
@@ -285,9 +350,11 @@ export async function startOverlay(win: Window & typeof globalThis = window, opt
   readDom();
 
   return {
-    store, host, shadow, controller, readDom, autopilot,
+    store, host, shadow, controller, readDom, autopilot, api, poller, feed,
     stop() {
       win.removeEventListener('message', onMessage);
+      poller.stop();
+      feed.stop();
       clearInterval(domInterval);
       clearInterval(tickInterval);
       clearInterval(autoInterval);

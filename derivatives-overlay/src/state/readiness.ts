@@ -38,13 +38,61 @@ export function readiness(s: Raw, d: Derived, cfg: Config, now: number, panel: P
     ? { id: 'case', label: 'case', status: 'ok', detail: d.modeReason }
     : { id: 'case', label: 'case', status: 'bad', detail: `capture only (${d.modeReason})`, fix: 'Config caseNameRegex or underlyings' });
 
-  // 2. feed
+  // 1b. REST API through the session cookie (chain, positions, orders)
+  const apiAge = s.api.lastOkAt ? (now - s.api.lastOkAt) / 1000 : null;
+  if (cfg.api.enabled) {
+    out.push(!s.api.polls
+      ? { id: 'api', label: 'API', status: 'wait', detail: 'first poll pending' }
+      : apiAge == null
+        ? { id: 'api', label: 'API', status: 'bad', detail: `no successful poll (${s.api.note || 'network'})`, fix: 'log in on this tab (the API uses the session cookie); Capture tab shows the responses' }
+        : apiAge > 10 || s.api.backoff > 1
+          ? { id: 'api', label: 'API', status: 'warn', detail: `last ok ${apiAge.toFixed(0)} s ago · backoff x${s.api.backoff}${s.api.note ? ` · ${s.api.note}` : ''}`, fix: 'HTTP 429 = rate limited: raise Config api.*Ms' }
+          : { id: 'api', label: 'API', status: 'ok', detail: `polling (${s.api.polls} calls, ${s.api.errors} errors)${s.api.note ? ` · ${s.api.note}` : ''}` });
+  }
+  for (const u of cfg.underlyings) {
+    const rc = s.restChain[u];
+    if (!cfg.api.enabled) break;
+    const age = rc ? (now - rc.t) / 1000 : null;
+    out.push(!rc
+      ? { id: `rest:${u}`, label: `${u} chain`, status: d.mode === 'derivatives' ? 'warn' : 'wait', detail: 'GET /options/' + u + '/chain not answered yet', fix: 'Config underlyings must match the exchange\'s underlying symbols' }
+      : age != null && age > 10
+        ? { id: `rest:${u}`, label: `${u} chain`, status: 'warn', detail: `stale ${age.toFixed(0)} s`, fix: 'see the API line' }
+        : { id: `rest:${u}`, label: `${u} chain`, status: 'ok', detail: `spot ${rc.spot?.toFixed(2) ?? '—'} · T ${rc.tDays?.toFixed(2) ?? '—'} d · r ${(rc.r * 100).toFixed(2)}%${rc.r ? ' (priced in)' : ''}` });
+  }
+
+  // 1c. what the exchange itself lists (GET /symbols): underlyings, tick, position limit
+  const ex = s.exchange;
+  if (ex.t) {
+    const want = [...cfg.underlyings].sort();
+    const got = ex.underlyings.filter((u) => !/_/.test(u));
+    const mismatch = got.length && (got.length !== want.length || got.some((u) => !want.includes(u)));
+    if (mismatch) out.push({ id: 'exch-und', label: 'underlyings', status: 'bad', detail: `exchange lists ${got.join(', ')}; Config has ${want.join(', ')}`, fix: 'Config underlyings (and headline.aliases) must use the exchange\'s names' });
+    if (ex.maxPosition != null && ex.maxPosition > 0 && ex.maxPosition !== th.positionLimit) {
+      out.push({ id: 'exch-limit', label: 'position limit', status: 'warn', detail: `exchange max_position ${ex.maxPosition}, Config ${th.positionLimit}`, fix: 'Config thresholds.positionLimit / perTicketCap' });
+    }
+    if (ex.tick != null && cfg.tick != null && ex.tick !== cfg.tick) {
+      out.push({ id: 'exch-tick', label: 'tick', status: 'warn', detail: `exchange tick_size ${ex.tick}, Config ${cfg.tick}`, fix: 'Config tick: null uses the exchange\'s' });
+    }
+  }
+
+  // 2. feed (the page's socket and ours)
   const wsAge = s.ws.lastMsgAt ? (now - s.ws.lastMsgAt) / 1000 : null;
   out.push(!s.ws.lastMsgAt
     ? { id: 'feed', label: 'feed', status: 'bad', detail: 'no WebSocket frames seen', fix: 'hard-reload the exchange tab (hooks inject at document_start); Capture tab' }
     : wsAge != null && wsAge > 15
       ? { id: 'feed', label: 'feed', status: 'warn', detail: `last frame ${wsAge.toFixed(0)} s ago${s.ws.open ? '' : ' · socket closed'}`, fix: 'the page reconnects on its own; otherwise reload' }
       : { id: 'feed', label: 'feed', status: 'ok', detail: `frames flowing (${wsAge?.toFixed(1)} s)` });
+  if (cfg.feed.enabled && d.mode === 'derivatives') {
+    const f = s.feed;
+    const fAge = f.lastAt ? (now - f.lastAt) / 1000 : null;
+    out.push(!f.url
+      ? { id: 'ownfeed', label: 'own feed', status: 'wait', detail: 'not opened yet (needs the chain symbols)' }
+      : !f.open
+        ? { id: 'ownfeed', label: 'own feed', status: 'warn', detail: `socket closed (${f.reconnects} reconnects)`, fix: 'the page socket + chain polling still work; Config feed.enabled=false silences this' }
+        : fAge == null || fAge > 15
+          ? { id: 'ownfeed', label: 'own feed', status: 'warn', detail: `open, ${f.symbols} symbols, no frame for ${fAge?.toFixed(0) ?? '?'} s` }
+          : { id: 'ownfeed', label: 'own feed', status: 'ok', detail: `${f.symbols} symbols · ${f.frames} frames · ${fAge.toFixed(1)} s` });
+  }
 
   // 3. contracts per underlying
   for (const u of cfg.underlyings) {
@@ -72,7 +120,7 @@ export function readiness(s: Raw, d: Derived, cfg: Config, now: number, panel: P
     const src = sp?.src ?? 'none';
     out.push(sp?.value == null
       ? { id: `spot:${u}`, label: `${u} spot`, status: 'bad', detail: 'none', fix: `type it: Alt+S (Config dom.spotText if the chain header shows it)` }
-      : src === 'WS' || src === 'DOM'
+      : src === 'WS' || src === 'DOM' || src === 'REST'
         ? { id: `spot:${u}`, label: `${u} spot`, status: 'ok', detail: `${sp.value.toFixed(2)} (${src})` }
         : { id: `spot:${u}`, label: `${u} spot`, status: 'warn', detail: `${sp.value.toFixed(2)} (${src})`, fix: 'parity/stale: check against the chain header, Alt+S to override' });
   }
@@ -104,9 +152,20 @@ export function readiness(s: Raw, d: Derived, cfg: Config, now: number, panel: P
         ? { id: 'pos', label: 'positions', status: 'warn', detail: 'read from the page, not the API', fix: 'Config fields.positions (Capture → http:GET /positions example)' }
         : { id: 'pos', label: 'positions', status: 'warn', detail: 'not seen yet (normal before the first poll)', fix: 'if it stays: Config fields.positions, or Risk tab → manual positions' });
 
-  // 9. order form
+  // 9. submission path + order form
+  const viaApi = cfg.auto.submitVia === 'api';
+  out.push({
+    id: 'submit', label: 'submit', status: cfg.auto.submit ? (s.auto.paused ? 'warn' : 'ok') : 'warn',
+    detail: `${viaApi ? 'API (POST /orders through the session cookie)' : 'page form + click'} · ${cfg.auto.submit ? (s.auto.paused ? 'ARMED but PAUSED (Alt+P)' : 'ARMED') : 'not armed'}`,
+    fix: cfg.auto.submit ? (s.auto.paused ? 'Alt+P resumes' : undefined) : 'press arm auto in the header on ONE laptop',
+  });
+  if (cfg.auto.submit && s.foreignOpenOrders > 0) {
+    out.push({ id: 'foreign', label: 'other orders', status: 'bad', detail: `${s.foreignOpenOrders} open order(s) on this account were not sent by this overlay`, fix: 'another laptop is armed or someone is clicking: disarm all but one' });
+  }
   if (!panel || !panel.found) {
-    out.push({ id: 'form', label: 'order form', status: 'bad', detail: 'not found on the page', fix: 'Config dom.qtyLabel / buyText / sellText (prefill and auto-submit need it)' });
+    out.push(viaApi
+      ? { id: 'form', label: 'order form', status: 'wait', detail: 'not found on the page (not needed for API submit)', fix: 'pick any contract in the chain to show it; only the form fallback needs it' }
+      : { id: 'form', label: 'order form', status: 'bad', detail: 'not found on the page', fix: 'Config dom.qtyLabel / buyText / sellText (prefill and auto-submit need it)' });
   } else {
     const missing = [!panel.qty && 'QTY input', !panel.price && 'PRICE input', !panel.buy && 'BUY', !panel.sell && 'SELL', !panel.limit && 'Limit', !panel.submit && 'submit button'].filter(Boolean) as string[];
     out.push(missing.length

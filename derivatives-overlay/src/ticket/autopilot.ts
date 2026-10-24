@@ -1,11 +1,12 @@
 // Auto-pilot: runs the ticket queue without a human. Each step picks the next ticket (edge tickets during an event,
 // flatten tickets after the snap), prefills the form through the same path as Alt+N, re-reads the form, and clicks the
 // submit button through safeSubmit(), which refuses unless armed, verified and inside the rate budget.
+import { ExchangeApi, OrderBody, PATHS } from '../core/api';
 import { Config } from '../core/config';
 import { textOf } from '../core/dom-readers';
 import { Ticket, ticketStillValid } from '../engine/tickets';
 import { Store } from '../state/store';
-import { safeSubmit, safeTabClick } from './guard';
+import { apiSubmitRefusal, safeSubmit, safeTabClick } from './guard';
 import { PrefillResult } from './prefill';
 import { findOrderPanel, OrderPanel } from './selectors';
 
@@ -17,11 +18,13 @@ export interface AutopilotDeps {
   skip: (el: Element) => boolean;
   /** find the product tab button for an underlying (null = none visible) */
   findTab?: (underlying: string) => Element | null;
+  /** cookie-authenticated REST client; with auto.submitVia = 'api' tickets are POSTed instead of typed and clicked */
+  api?: ExchangeApi;
   now?: () => number;
 }
 
 export interface StepResult {
-  action: 'idle' | 'skipped' | 'prefill-failed' | 'tab-switched' | 'refused' | 'submitted';
+  action: 'idle' | 'skipped' | 'prefill-failed' | 'tab-switched' | 'refused' | 'submitted' | 'cancelled';
   detail: string;
   ticket?: Ticket;
 }
@@ -31,6 +34,10 @@ export class Autopilot {
   /** contract:side -> { t, pos } of the last submission, to avoid re-sending while positions catch up */
   private sent = new Map<string, { t: number; pos: number }>();
   private tabSwitchAt = 0;
+  /** phase key (event:phase) at which resting orders were last cancelled, so cancel-all runs once per boundary */
+  private cancelledAt: string | null = null;
+  /** HTTP 429 back-off */
+  backoffUntil = 0;
   last: StepResult = { action: 'idle', detail: 'not started' };
 
   constructor(private deps: AutopilotDeps) {}
@@ -91,6 +98,8 @@ export class Autopilot {
     const mode = this.mode();
     if (!mode) return { action: 'idle', detail: store.d.autoArmed ? `phase ${store.d.phase?.phase ?? '—'}: nothing to do` : 'auto-submit off or paused' };
     const now = this.now();
+    const cancelled = await this.cancelAtBoundary(now);
+    if (cancelled) return cancelled;
     const interval = mode === 'flatten' ? Math.min(this.cfg.auto.submitIntervalMs, this.cfg.auto.flattenIntervalMs ?? this.cfg.auto.submitIntervalMs) : this.cfg.auto.submitIntervalMs;
     if (now - store.s.auto.lastSubmitAt < interval) return { action: 'idle', detail: 'spacing submissions' };
     const rate = store.rate.count(now);
@@ -116,6 +125,8 @@ export class Autopilot {
       this.sent.set(`${t.symbol}:${t.side}`, { t: now, pos: this.positionOf(t.symbol) }); // skip it this cycle
       return { action: 'skipped', detail: `${t.side} ${t.qty} ${t.symbol}: the touch moved`, ticket: t };
     }
+
+    if (this.cfg.auto.submitVia === 'api' && this.deps.api) return this.submitViaApi(t, now);
 
     const r = await this.deps.prefill(t);
     if (!r.ok) {
@@ -153,5 +164,73 @@ export class Autopilot {
     store.logAutoSubmit(t, 'clicked');
     store.markLoaded(t, true, `AUTO: submitted ${t.side} ${t.qty} ${t.symbol} @ ${t.price}`);
     return { action: 'submitted', detail: `${t.side} ${t.qty} ${t.symbol} @ ${t.price}`, ticket: t };
+  }
+
+  /** POST the ticket as the Buy/Sell button would. The guard decides; the request and the exchange's answer go through the
+   *  store's bridge so the rate meter, the Capture tab and the auto log see them exactly like the page's own orders. */
+  private async submitViaApi(t: Ticket, now: number): Promise<StepResult> {
+    const store = this.deps.store;
+    const api = this.deps.api as ExchangeApi;
+    const th = this.cfg.thresholds;
+    const pos = this.positionOf(t.symbol);
+    const resting = store.s.resting[t.symbol];
+    const sameSide = t.side === 'BUY' ? resting?.buy ?? 0 : resting?.sell ?? 0;
+    const after = t.side === 'BUY' ? pos + sameSide + t.qty : pos - sameSide - t.qty;
+    const refusal = apiSubmitRefusal({
+      armed: store.d.autoArmed, ticket: { symbol: t.symbol, side: t.side, qty: t.qty, price: t.price }, known: !!store.d.contracts[t.symbol],
+      tick: store.d.tick, perTicketCap: th.perTicketCap, positionLimit: th.positionLimit, positionAfter: after,
+      rateUsed: store.rate.count(now), rateCap: this.cfg.auto.submitRateCap, backoffLeftMs: Math.max(0, this.backoffUntil - now),
+    });
+    if (refusal) {
+      store.markLoaded(t, false, `auto-submit refused: ${refusal}`);
+      return { action: 'refused', detail: refusal, ticket: t };
+    }
+    const body: OrderBody = { symbol: t.symbol, side: t.side === 'BUY' ? 'buy' : 'sell', order_type: 'limit', quantity: t.qty, price: t.price };
+    const url = (api.base || '') + PATHS.orders;
+    this.sent.set(`${t.symbol}:${t.side}`, { t: now, pos });
+    store.handleBridge('http-req', { method: 'POST', url, body: JSON.stringify(body), json: body, t: now });
+    store.logAutoSubmit(t, 'posted');
+    store.markLoaded(t, true, `AUTO: posted ${t.side} ${t.qty} ${t.symbol} @ ${t.price}`);
+    const res = await api.post(PATHS.orders, body);
+    store.handleBridge('http', { method: 'POST', url, status: res.status, json: res.json, body: res.text, t: res.t });
+    if (res.status === 429) this.backoffUntil = this.now() + this.cfg.auto.backoffMs;
+    if (!res.ok) {
+      const detail = (res.json && typeof res.json === 'object' && typeof (res.json as { detail?: unknown }).detail === 'string' ? (res.json as { detail: string }).detail : res.text.slice(0, 120)) || `HTTP ${res.status}`;
+      store.markLoaded(t, false, `exchange rejected ${t.side} ${t.qty} ${t.symbol}: ${detail}`);
+      return { action: 'submitted', detail: `${t.side} ${t.qty} ${t.symbol} @ ${t.price} -> HTTP ${res.status} ${detail}`, ticket: t };
+    }
+    return { action: 'submitted', detail: `${t.side} ${t.qty} ${t.symbol} @ ${t.price} -> HTTP ${res.status}`, ticket: t };
+  }
+
+  /** At the snap (and at the next news) cancel every resting option order per underlying, once per boundary, so the
+   *  flatten tickets are sized from the true position and no stale edge order is picked off after the makers move. */
+  private async cancelAtBoundary(now: number): Promise<StepResult | null> {
+    const store = this.deps.store;
+    const api = this.deps.api;
+    if (!api || this.cfg.auto.submitVia !== 'api') return null;
+    const ph = store.d.phase;
+    if (!ph?.event) return null;
+    const want = (ph.phase === 'SNAPPED' && this.cfg.auto.cancelOnSnap) || (ph.phase === 'NEWS' && this.cfg.auto.cancelOnNews);
+    if (!want) return null;
+    const key = `${ph.event.n}:${ph.phase}`;
+    if (this.cancelledAt === key) return null;
+    // only when something is resting: a cancel-all is an order action against the 40/min budget
+    const resting = Object.values(store.s.resting).reduce((a, r) => a + r.buy + r.sell, 0);
+    this.cancelledAt = key;
+    if (resting <= 0) return null;
+    const unds = this.cfg.underlyings.filter((u) => !this.cfg.focus || this.cfg.focus === u);
+    const results: string[] = [];
+    for (const u of unds) {
+      const path = PATHS.cancelAll(u);
+      const url = (api.base || '') + path;
+      store.handleBridge('http-req', { method: 'DELETE', url, body: null, t: now });
+      const res = await api.del(path);
+      store.handleBridge('http', { method: 'DELETE', url, status: res.status, json: res.json, body: res.text, t: res.t });
+      const n = res.json && typeof res.json === 'object' ? (res.json as { cancelled?: unknown }).cancelled : undefined;
+      results.push(`${u}: HTTP ${res.status}${typeof n === 'number' ? ` (${n} cancelled)` : ''}`);
+    }
+    store.capture.add({ t: now, key: 'auto:cancel-all', dir: 'meta', raw: `${key} ${results.join(', ')}`, highlights: [] });
+    store.toast(`cancelled resting orders at ${ph.phase}: ${results.join(', ')}`, 'info');
+    return { action: 'cancelled', detail: `${key}: ${results.join(', ')}` };
   }
 }

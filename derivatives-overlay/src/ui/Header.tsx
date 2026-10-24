@@ -20,7 +20,7 @@ export function Header({ c, onDragStart }: { c: Controller; onDragStart: (e: Poi
         <span class="tag">{d.mode === 'derivatives' ? 'DERIVATIVES' : 'CAPTURE ONLY'}</span>
         {d.replay && <span class="tag warn">REPLAY</span>}
         {autoOn && d.mode === 'derivatives' && (
-          <span class={cls('autobadge', paused ? 'paused' : 'live')} title="auto-submit: the overlay clicks the submit button itself. Alt+P pauses.">
+          <span class={cls('autobadge', paused ? 'paused' : 'live')} title={cfg.auto.submitVia === 'api' ? 'auto-submit: the overlay posts orders to the exchange API itself. Alt+P pauses.' : 'auto-submit: the overlay clicks the submit button itself. Alt+P pauses.'}>
             {paused ? 'AUTO PAUSED' : 'AUTO ON'}
           </span>
         )}
@@ -37,7 +37,7 @@ export function Header({ c, onDragStart }: { c: Controller; onDragStart: (e: Poi
         <span class={cls('tag', d.clockStale && 'bad')} title="clock source">clk {d.clockSrc}{d.clockStale ? ' stale' : ''}</span>
       </div>
       <div class="hrow small">
-        <span class="tag" title="time to expiry and its source">T {f(d.T.days, 2)}d · {d.T.src}</span>
+        <span class="tag" title="time to expiry and its source">T {f(d.T.days, 2)}d · {d.T.src}{d.r ? ` · r ${(d.r * 100).toFixed(2)}%` : ''}</span>
         <span class={cls('tag', rate.level === 'amber' && 'warn', rate.level === 'red' && 'bad')} title="observed order actions in the last 60 s">orders {rate.used}/{rate.limit}</span>
         <span class={cls('tag', (qa == null || qa > cfg.thresholds.staleQuoteSec) && 'bad')}>quotes {qa == null ? '—' : `${f(qa, 1)}s`}</span>
         <span class={cls('tag', cfg.auto.confirm ? 'good' : 'warn')} title="auto-confirm: parsed targets are accepted without Alt+A when complete and sane">confirm {cfg.auto.confirm ? 'auto' : 'manual'}</span>

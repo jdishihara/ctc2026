@@ -2,7 +2,7 @@
 // DOM readings are pushed in by the content script.
 import { AnalystId, AnalystRecord, ANALYSTS, analystStats, blendAnalysts, BlendResult } from '../engine/analysts';
 import { ArbFlag, findArbs } from '../engine/arbitrage';
-import { price as bsPrice } from '../engine/blackScholes';
+import { price as bsPrice, getRate, setRate } from '../engine/blackScholes';
 import {
   buildChains, Chain, compileSymbolRegex, Contract, inferTick, marketIV, metaFromSymbolEntry, mid, OptionMeta,
   parityImpliedSpot, parseOptionSymbol, Quote,
@@ -161,6 +161,17 @@ export interface Raw {
   undQuotes: Record<string, { bid: number | null; ask: number | null; last: number | null; t: number }>;
   metas: Record<string, OptionMeta>;
   symbolsSeen: string[];
+  /** GET /options/{u}/chain: the exchange's own spot, rate and time to expiry (polled through the session cookie) */
+  restChain: Record<string, { spot: number | null; r: number; tDays: number | null; expiry: string | null; t: number }>;
+  /** REST poller and own-feed health, refreshed by the content script */
+  api: { polls: number; errors: number; lastOkAt: number; backoff: number; note: string };
+  feed: { open: boolean; frames: number; lastAt: number; reconnects: number; symbols: number; url: string | null };
+  /** what GET /symbols says about the instruments: the scheduled underlyings, the option tick and the position limit */
+  exchange: { underlyings: string[]; tick: number | null; maxPosition: number | null; t: number };
+  /** order_ids of orders this overlay posted itself (API submit path) */
+  sentOrderIds: string[];
+  /** open orders not posted by this overlay while it was armed (another bot or a human on the same account) */
+  foreignOpenOrders: number;
   positions: Record<string, number>;
   positionsSrc: 'REST' | 'DOM' | 'manual' | null;
   positionsAt: number;
@@ -204,6 +215,8 @@ export interface Derived {
   realToNext: number | null;
   round: 1 | 2 | 3 | null;
   T: { years: number; days: number; src: string };
+  /** risk-free rate used by every pricing call (the chain's risk_free_rate; 0 until seen) */
+  r: number;
   chains: Record<string, Chain>;
   contracts: Record<string, Contract>;
   spot: Record<string, { value: number | null; src: string; age: number | null }>;
@@ -262,6 +275,7 @@ export class Store {
       clock: { fictionalSec: null, receivedAt: 0, rate: null, state: null }, lastClockPollAt: 0,
       domClock: null, domSpot: null, domT: null, domChain: null,
       quotes: {}, undQuotes: {}, metas: {}, symbolsSeen: [],
+      restChain: {}, exchange: { underlyings: [], tick: null, maxPosition: null, t: 0 }, api: { polls: 0, errors: 0, lastOkAt: 0, backoff: 1, note: '' }, feed: { open: false, frames: 0, lastAt: 0, reconnects: 0, symbols: 0, url: null }, sentOrderIds: [], foreignOpenOrders: 0,
       positions: {}, positionsSrc: null, positionsAt: 0, restPositionsAt: 0, manualPositions: null, resting: {},
       news: [], lastLatestText: null,
       targets: Object.fromEntries(cfg.underlyings.map((u) => [u, emptyTarget()])),
@@ -368,7 +382,14 @@ export class Store {
       } else if (kind === 'http') {
         const c = this.classifier.classifyHttp(p.method ?? 'GET', p.url ?? '', p.json, p.body ?? '');
         this.capture.add({ t: now, key: c.key, dir: 'http', url: p.url, raw: p.body ?? '', highlights: c.highlights });
-        if ((p.method ?? 'GET').toUpperCase() === 'POST' && /\/orders(\?|$)/.test(p.url ?? '')) this.noteOrderResponse(p.status ?? 200, p.json, now);
+        if ((p.method ?? 'GET').toUpperCase() === 'POST' && /\/orders(\?|$)/.test(p.url ?? '')) {
+          this.noteOrderResponse(p.status ?? 200, p.json, now);
+          const oid = pick(p.json, ['order_id', 'id']);
+          if (typeof oid === 'string' && !this.s.sentOrderIds.includes(oid)) {
+            this.s.sentOrderIds.push(oid);
+            if (this.s.sentOrderIds.length > 2000) this.s.sentOrderIds.shift();
+          }
+        }
         if ((p.status ?? 200) < 400 && p.json !== undefined) this.handleHttp(p.method ?? 'GET', p.url ?? '', p.json, now);
       } else if (kind === 'http-req') {
         const c = this.classifier.classifyHttp(p.method ?? 'POST', p.url ?? '', p.json, p.body ?? '', true);
@@ -463,15 +484,34 @@ export class Store {
       this.s.lastClockPollAt = now;
       return;
     }
+    const chainM = /\/options\/([^/]+)\/chain$/.exec(path);
+    if (chainM) {
+      this.ingestChain(decodeURIComponent(chainM[1]).toUpperCase(), j, now);
+      return;
+    }
     if (/\/symbols$/.test(path)) {
       const list = Array.isArray(j) ? j : (pick(j, ['symbols', 'data', 'items', 'instruments']) as unknown[]);
       if (Array.isArray(list)) {
+        const unds = new Set<string>();
+        let tick: number | null = null;
+        let maxPos: number | null = null;
         for (const e of list) {
           const m = metaFromSymbolEntry(e, this.symbolRe);
           const sym = typeof e === 'string' ? e : String((e as Record<string, unknown>)?.symbol ?? '');
           if (sym && !this.s.symbolsSeen.includes(sym)) this.s.symbolsSeen.push(sym);
           if (m) this.s.metas[m.symbol] = m;
+          if (e && typeof e === 'object') {
+            const o = e as Record<string, unknown>;
+            const type = String(o.symbol_type ?? o.type ?? '').toLowerCase();
+            if (m || type === 'option') {
+              const u = String(o.underlying_symbol ?? o.underlying ?? m?.underlying ?? '').toUpperCase();
+              if (u) unds.add(u);
+              tick = pickNum(o, ['tick_size', 'tick', 'tickSize']) ?? tick;
+              maxPos = pickNum(o, ['max_position', 'position_limit', 'maxPosition']) ?? maxPos;
+            } else if (type === 'scheduled' || type === 'underlying') unds.add(sym.toUpperCase());
+          }
         }
+        if (unds.size || tick != null || maxPos != null) this.s.exchange = { underlyings: [...unds].sort(), tick, maxPosition: maxPos, t: now };
       }
       return;
     }
@@ -505,6 +545,7 @@ export class Store {
       const list = Array.isArray(j) ? j : (pick(j, O.list) as unknown);
       if (!Array.isArray(list)) return;
       const symParam = params.get('symbol');
+      const seenIds: string[] = [];
       const fresh: Record<string, Resting> = {};
       if (symParam) fresh[symParam] = { buy: 0, sell: 0 };
       for (const it of list) {
@@ -513,13 +554,24 @@ export class Store {
         const status = String(pick(it, O.status) ?? 'open').toLowerCase();
         if (/fill|cancel|reject|done|closed/.test(status) && !/partial/.test(status)) continue;
         const side = String(pick(it, O.side) ?? '').toLowerCase();
-        const rem = pickNum(it, O.remaining) ?? 0;
+        // the live API gives quantity + filled_quantity (no remaining field): remaining = quantity - filled
+        let rem = pickNum(it, O.remaining.filter((k) => !/^(quantity|qty)$/.test(k)));
+        if (rem == null) {
+          const q = pickNum(it, ['quantity', 'qty']) ?? 0;
+          rem = q - (pickNum(it, ['filled_quantity', 'filled', 'executed_quantity']) ?? 0);
+        }
+        const oid = pick(it, ['order_id', 'id']);
+        if (typeof oid === 'string') seenIds.push(oid);
         const r = (fresh[sym] ??= { buy: 0, sell: 0 });
         if (side.startsWith('b')) r.buy += rem;
         else if (side.startsWith('s')) r.sell += rem;
       }
       if (symParam) Object.assign(this.s.resting, fresh);
-      else this.s.resting = fresh;
+      else {
+        this.s.resting = fresh;
+        // another bot or a human on the same account? open orders we never posted while armed (the API path records its ids)
+        this.s.foreignOpenOrders = this.d?.autoArmed && this.cfg.auto.submitVia === 'api' ? seenIds.filter((id) => !this.s.sentOrderIds.includes(id)).length : 0;
+      }
       return;
     }
     if (/\/trades$/.test(path)) {
@@ -547,6 +599,43 @@ export class Store {
   }
 
   onCompetition?: (id: string) => void;
+
+  /** GET /api/v1/options/{u}/chain (live shape, 2026-10-24): strikes, symbols, quotes, spot, rate and trading days in one call. */
+  ingestChain(u: string, j: unknown, now = this.nowFn()) {
+    if (!j || typeof j !== 'object') return;
+    const o = j as Record<string, unknown>;
+    const und = String(pick(o, ['underlying_symbol', 'underlying', 'symbol']) ?? u).toUpperCase() || u;
+    const spot = pickNum(o, ['current_underlying_price', 'underlying_price', 'spot']);
+    const r = pickNum(o, ['risk_free_rate', 'rate', 'r']) ?? 0;
+    const expiries = (Array.isArray(o.expiries) ? o.expiries : []) as Record<string, unknown>[];
+    // the packet has one expiry; if several, take the nearest one still in the future (the exchange sorts them)
+    const exp = expiries.find((e) => (pickNum(e, ['trading_days_to_expiry']) ?? 1) > 0) ?? expiries[0];
+    const tDays = exp ? pickNum(exp, ['trading_days_to_expiry', 'tradingDays', 'days']) : null;
+    const expiry = exp ? String(pick(exp, ['expiry_fictional_time', 'expiry']) ?? '') : null;
+    this.s.restChain[und] = { spot, r, tDays, expiry, t: now };
+    if (!this.s.symbolsSeen.includes(und)) this.s.symbolsSeen.push(und);
+    const rows = exp && Array.isArray(exp.rows) ? (exp.rows as Record<string, unknown>[]) : [];
+    for (const row of rows) {
+      const K = pickNum(row, ['strike', 'strike_price']);
+      if (K == null) continue;
+      for (const kind of ['C', 'P'] as const) {
+        const q = row[kind === 'C' ? 'call' : 'put'];
+        if (!q || typeof q !== 'object') continue;
+        const sym = String(pick(q, ['symbol']) ?? '');
+        if (!sym) continue;
+        this.s.metas[sym] = { symbol: sym, underlying: und, expiry: expiry ?? '', kind, strike: K };
+        if (!this.s.symbolsSeen.includes(sym)) this.s.symbolsSeen.push(sym);
+        const F = this.cfg.fields.quote;
+        const bid = pickNum(q, F.bid);
+        const ask = pickNum(q, F.ask);
+        const prev = this.s.quotes[sym];
+        // the page's socket (or ours) is fresher when it is flowing; the chain fills gaps and the other product tab
+        if (!prev || prev.src === 'REST' || prev.src === 'DOM' || now - prev.t > 1500) {
+          if (bid != null || ask != null) this.s.quotes[sym] = { symbol: sym, bid, ask, bidSize: pickNum(q, F.bidSize), askSize: pickNum(q, F.askSize), last: pickNum(q, F.last), t: now, src: 'REST' };
+        }
+      }
+    }
+  }
 
   /** DOM fallbacks pushed by the content script. */
   handleDom(r: {
@@ -844,7 +933,7 @@ export class Store {
 
   /** The page's POST /orders response that follows an auto click: attach the exchange's answer to the log line. */
   private noteOrderResponse(status: number, json: unknown, now: number) {
-    const pending = [...this.s.auto.log].reverse().find((l) => l.result === 'clicked' && now - l.t < 8000);
+    const pending = [...this.s.auto.log].reverse().find((l) => (l.result === 'clicked' || l.result === 'posted') && now - l.t < 8000);
     if (!pending) return;
     const j = (json && typeof json === 'object' ? json : {}) as Record<string, unknown>;
     const detail = [j.status, j.filled_quantity != null && j.quantity != null ? `${j.filled_quantity}/${j.quantity} filled` : null, j.detail].filter(Boolean).join(', ');
@@ -1251,6 +1340,18 @@ export class Store {
     const realToNext = phase ? realSecondsToNext(phase, clockRate) : null;
     const round = phase?.event?.round ?? null;
 
+    // risk-free rate: the chain's risk_free_rate (every pricing call reads it); 0 until the exchange says otherwise
+    const restFresh = (u: string) => {
+      const rc = s.restChain[u];
+      return rc && now - rc.t < 5000 ? rc : null;
+    };
+    let r = 0;
+    for (const u of cfg.underlyings) {
+      const rc = s.restChain[u];
+      if (rc && Number.isFinite(rc.r)) r = rc.r;
+    }
+    if (r !== getRate()) setRate(r);
+
     // time to expiry
     let T: Derived['T'];
     const computed = () => {
@@ -1262,8 +1363,10 @@ export class Store {
       }
       return { days: tradingDaysRemaining(t, cfg.session), src: phase?.replay ? 'computed (replay)' : 'computed' };
     };
+    const restT = cfg.underlyings.map((u) => restFresh(u)?.tDays ?? null).find((x) => x != null && x > 0) ?? null;
     if (cfg.T_mode === 'manual' && cfg.manualTDays != null) T = { days: cfg.manualTDays, years: cfg.manualTDays / 252, src: 'manual' };
     else if (cfg.T_mode === 'fixed20') T = { days: 20, years: 20 / 252, src: 'fixed 20d' };
+    else if (restT != null) T = { days: restT, years: Math.round(restT * 1000) / 1000 / 252, src: 'REST chain' };
     else if (cfg.T_mode === 'dom' && s.domT && now - s.domT.t < 5000 && s.domT.days > 0) T = { days: s.domT.days, years: s.domT.days / 252, src: 'DOM Fair tab' };
     else {
       const x = computed();
@@ -1280,8 +1383,11 @@ export class Store {
       const q = s.undQuotes[u];
       const qMid = q ? (q.bid != null && q.ask != null ? (q.bid + q.ask) / 2 : q.last ?? q.bid ?? q.ask) : null;
       const ch = chains[u];
-      const par = ch ? parityImpliedSpot(ch) : null;
-      if (q && qMid != null && now - q.t < 30_000) spot[u] = { value: qMid, src: 'WS', age: (now - q.t) / 1000 };
+      const par = ch ? parityImpliedSpot(ch, T.years) : null;
+      const rc = restFresh(u);
+      if (rc && rc.spot != null && rc.spot > 0 && (!q || now - q.t > 1500 || now - rc.t <= now - q.t)) spot[u] = { value: rc.spot, src: 'REST', age: (now - rc.t) / 1000 };
+      else if (q && qMid != null && now - q.t < 30_000) spot[u] = { value: qMid, src: 'WS', age: (now - q.t) / 1000 };
+      else if (rc && rc.spot != null && rc.spot > 0) spot[u] = { value: rc.spot, src: 'REST', age: (now - rc.t) / 1000 };
       else if (domUnd === u && s.domSpot) spot[u] = { value: s.domSpot.value, src: 'DOM', age: (now - s.domSpot.t) / 1000 };
       else if (par != null) spot[u] = { value: par, src: 'parity', age: null };
       else if (qMid != null) spot[u] = { value: qMid, src: 'WS (stale)', age: q ? (now - q.t) / 1000 : null };
@@ -1296,7 +1402,7 @@ export class Store {
       if (q.bid != null) prices.push(q.bid);
       if (q.ask != null) prices.push(q.ask);
     }
-    const tick = cfg.tick ?? inferTick(prices.slice(0, 200), 0.01);
+    const tick = cfg.tick ?? s.exchange.tick ?? inferTick(prices.slice(0, 200), 0.01);
 
     // effective targets (fall back to live values so the tables always render)
     const effTargets: Derived['effTargets'] = {};
@@ -1375,6 +1481,7 @@ export class Store {
     }
 
     return {
+      r,
       now, mode, modeReason, simNow, clockSrc, clockStale, clockRate, replay: !!phase?.replay, phase, realToNext, round, T,
       chains, contracts, spot, marketIV: mIV, effTargets, blends, edges, synths, straddles: strads, arbs,
       portfolio: pf, breaches, flattenNow, plan, flatten, flattenCost: fl.totalSpreadCost, rate, quoteAge, tick, targetsConfirmed,

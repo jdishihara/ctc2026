@@ -1,5 +1,5 @@
 // Live no-arbitrage and consistency checks on executable (bid/ask) prices.
-import { price } from './blackScholes';
+import { price, getRate } from './blackScholes';
 import { Chain, Contract, contractIV, median, Side } from './chain';
 import { Leg } from './structures';
 
@@ -58,7 +58,7 @@ export function findArbs(ch: Chain, spot: number | null, T: number, opts: ArbOpt
       const c = r.call;
       const p = r.put;
       if (!c || !p) continue;
-      const fwd = spot - r.strike;
+      const fwd = spot - r.strike * Math.exp(-getRate() * T);
       if (has(c.ask) && has(p.bid) && c.ask - p.bid < fwd - eps) {
         const legs = [leg(c, 'BUY'), leg(p, 'SELL')];
         out.push(flag('parity', ch, `Buy synthetic K=${r.strike}: costs ${(c.ask - p.bid).toFixed(2)} vs S−K ${fwd.toFixed(2)}`, legs, [c, p], fwd - (c.ask - p.bid), cap, true, false));

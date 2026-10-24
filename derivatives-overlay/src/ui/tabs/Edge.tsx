@@ -122,7 +122,7 @@ function Queue({ c }: { c: Controller }) {
         <button class="primary" onClick={() => c.loadNext('edge')} title="Alt+N">Load next (Alt+N)</button>
       </div>
       {!d.targetsConfirmed && !s.manualQueue.length && <div class="amber small">Targets are suggestions until you accept them (Alt+A){c.store.cfg.auto.confirm ? '; auto-confirm is waiting (reasons above)' : ''}.</div>}
-      {d.autoArmed && <div class="small pos">AUTO ON: tickets are loaded and submitted by the overlay. Alt+P pauses.</div>}
+      {d.autoArmed && <div class="small pos">AUTO ON: tickets are {c.store.cfg.auto.submitVia === 'api' ? 'posted straight to the exchange API' : 'loaded into the form and clicked'} by the overlay. Alt+P pauses.</div>}
       <table>
         <tbody>
           {list.slice(0, 5).map((t) => {
@@ -137,7 +137,10 @@ function Queue({ c }: { c: Controller }) {
                 <td>@{t.price}</td>
                 <td>{money(t.expectedPnL)}</td>
                 <td>{t.groupId ? '⛓' : ''}{!t.withinRateBudget ? '⏳' : ''}</td>
-                <td><button onClick={() => c.loadTicket(t)}>load</button></td>
+                <td>
+                  <button class="primary" onClick={() => c.sendTicket(t)} title="send this order now through the exchange API (one click, no form)">send</button>
+                  <button onClick={() => c.loadTicket(t)} title="prefill the page's order form instead">load</button>
+                </td>
               </tr>
             );
           })}

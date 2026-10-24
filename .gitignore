@@ -6,3 +6,4 @@ out/
 .venv/
 .botkey
 .worktrees/
+node_modules/

@@ -1,5 +1,5 @@
 // Option chain model: discover contracts from symbols, attach quotes, derive market IV and parity spot.
-import { Kind, vegaPerPoint } from './blackScholes';
+import { Kind, getRate, vegaPerPoint } from './blackScholes';
 import { impliedVol } from './impliedVol';
 
 export type Side = 'BUY' | 'SELL';
@@ -74,12 +74,13 @@ export function metaFromSymbolEntry(entry: unknown, re: RegExp): OptionMeta | nu
   const o = entry as Record<string, unknown>;
   const symbol = String(o.symbol ?? o.ticker ?? o.name ?? o.id ?? '');
   const fromName = symbol ? parseOptionSymbol(symbol, re) : null;
-  const kindRaw = String(o.option_type ?? o.optionType ?? o.right ?? o.put_call ?? o.kind ?? o.type ?? '').toUpperCase();
+  // the live exchange (2026-10-24): symbol_type 'option', option_kind 'call'|'put', strike_price, underlying_symbol, expiry_fictional_time
+  const kindRaw = String(o.option_kind ?? o.option_type ?? o.optionType ?? o.right ?? o.put_call ?? o.kind ?? o.type ?? '').toUpperCase();
   const kind: Kind | null = /^(C|CALL)/.test(kindRaw) ? 'C' : /^(P|PUT)/.test(kindRaw) ? 'P' : null;
   const strike = Number(o.strike ?? o.strike_price ?? o.strikePrice);
   const underlying = String(o.underlying ?? o.underlying_symbol ?? o.underlyingSymbol ?? o.root ?? '').toUpperCase();
   if (symbol && kind && Number.isFinite(strike) && strike > 0 && underlying) {
-    return { symbol, underlying, kind, strike, expiry: String(o.expiry ?? o.expiration ?? fromName?.expiry ?? '') };
+    return { symbol, underlying, kind, strike, expiry: String(o.expiry ?? o.expiration ?? o.expiry_fictional_time ?? fromName?.expiry ?? '') };
   }
   return fromName;
 }
@@ -149,14 +150,15 @@ export function marketIV(chain: Chain, S: number, T: number, minVega = 0.02): nu
   return median(ivs);
 }
 
-/** Put-call parity spot (r = 0): S = K + C - P, median across strikes with both mids. */
-export function parityImpliedSpot(chain: Chain): number | null {
+/** Put-call parity spot: S = K e^{-rT} + C - P, median across strikes with both mids (r from the chain, 0 by default). */
+export function parityImpliedSpot(chain: Chain, T = 0, r = getRate()): number | null {
   const xs: number[] = [];
-  for (const r of chain.rows) {
-    if (!r.call || !r.put) continue;
-    const mc = mid(r.call);
-    const mp = mid(r.put);
-    if (mc != null && mp != null) xs.push(r.strike + mc - mp);
+  const disc = T > 0 ? Math.exp(-r * T) : 1;
+  for (const row of chain.rows) {
+    if (!row.call || !row.put) continue;
+    const mc = mid(row.call);
+    const mp = mid(row.put);
+    if (mc != null && mp != null) xs.push(row.strike * disc + mc - mp);
   }
   return median(xs);
 }

@@ -1,16 +1,40 @@
 # Derivatives Overlay (CTC 2026, Newtonia vs Euleria)
 
-A Chrome extension (Manifest V3) that helps a human trader in the Derivatives case. It watches the exchange page,
-prices all 12 options with Black-Scholes at the spot and vol you confirm, ranks the mispricings, and can prefill the
-exchange's order form. **Order submission is manual by default; optional auto-submit can click the order form when armed.**
+A Chrome extension (Manifest V3) that trades the Derivatives case from inside the logged-in exchange tab. It reads the
+exchange's own API through the session cookie (option chain with spot, rate and time to expiry; positions; open orders),
+listens to the market-data socket, prices all 12 options with Black-Scholes at the spot and vol it parses from the news
+(or that you confirm), ranks the mispricings, and, when armed, **posts the orders itself** with the same
+`POST /api/v1/orders` call the page's Buy button makes. Organisers confirmed on 2026-10-24 that a bot in our logged-in
+browser may place orders. Arm it on ONE laptop. See [GAMEDAY.md](GAMEDAY.md) for the day's steps.
+
+## Data and execution paths (2026-10-24, from the live site's bundle)
+
+The exchange is one Next.js app for every case; the Derivatives UI calls:
+
+| Call | Used for |
+|---|---|
+| `GET /api/v1/options/{OIL\|PLANE}/chain` | strikes, the 6 contract symbols, bid/ask/sizes, `current_underlying_price`, `risk_free_rate`, `trading_days_to_expiry` |
+| `GET /api/v1/symbols` | `symbol_type` (scheduled = underlying, option), `option_kind`, `strike_price`, `underlying_symbol`, `tick_size`, `max_position` |
+| `GET /api/v1/positions?include_zero=true`, `GET /api/v1/orders/open` | positions, resting orders (`quantity - filled_quantity`) |
+| `GET /api/v1/competitions/current` | fictional clock and `clock_rate` |
+| `POST /api/v1/orders` `{symbol, side, order_type, quantity, price}` | an order (the Buy button) |
+| `DELETE /api/v1/orders/all?symbol_type=option&underlying=OIL` | cancel every resting option order of one underlying |
+| `wss://host/ws/v1/market-data` + `{action:"subscribe", symbols, channels}` | `quote`, `trade`, `news` (`message.headline`), `orderbook` frames |
+
+The overlay polls the first four (Config `api`, about 5 requests/s, backing off on HTTP 429), opens its own socket for all
+12 contracts plus both underlyings (Config `feed`; the page only subscribes to the product tab it shows), and keeps the
+old DOM readers as fallbacks. T = trading days / 252 and r = the chain's `risk_free_rate`, exactly as the exchange's Fair
+calculator computes them (`tests/unit/apiPath.test.ts` checks our prices against a copy of its code).
 
 ## Safety model
 
 - **Read-only observer.** In the page's own JavaScript world it wraps `fetch`, `XMLHttpRequest` and `WebSocket`,
   copies responses and frames, and passes everything through unchanged. Every hook is wrapped in try/catch.
-- **No network traffic of its own.** It makes no requests, opens no socket, and never calls `send()` on the page's
-  socket. The exchange only honors the first subscription frame, so a stray frame from us could break the feed.
-- **No submissions by default.** Every synthetic click goes through `safeClick`
+- **Its own traffic is read-only unless armed.** GETs to the exchange API and one market-data socket of its own (one
+  subscribe frame per socket; it never touches the page's socket). Orders go out only through `auto.submit` (armed) or
+  the **send** button a human presses on a ticket, and both pass `apiSubmitRefusal` (known contract, whole quantity,
+  within the per-ticket cap and the position limit, price on the tick, rate budget, no 429 back-off).
+- **Not armed by default.** Arming is one click in the header (persisted). The form path's synthetic clicks go through `safeClick`
   ([src/ticket/guard.ts](src/ticket/guard.ts)). It allows only buttons whose text is exactly `BUY`, `SELL`, `Limit`
   or `Market` (not `type=submit`), plus chain price cells found by the chain reader. It refuses anything else,
   including `Buy 50 OIL_0626_P100`, `Confirm` and any submit button. It never dispatches Enter and never calls
@@ -39,9 +63,9 @@ Then in Chrome:
 3. Click **Load unpacked** and choose `derivatives-overlay/dist`.
 4. **Hard-reload the exchange tab.** The hooks are injected at `document_start`, so a tab opened before the install
    won't have them.
-5. Before the manual dry run, verify Config → **Auto-submit** is unchecked and the header shows **arm auto**,
-   with neither **AUTO ON** nor **AUTO PAUSED**. Pausing with `Alt+P` is temporary; disarm with the Config checkbox
-   to save the off state.
+5. Only the bot laptop presses **arm auto** (header). Every other laptop keeps **arm auto** showing, with neither
+   **AUTO ON** nor **AUTO PAUSED**: two armed copies double every order on the shared account. Pausing with `Alt+P` is
+   temporary; **disarm** saves the off state.
 
 `npm run package` also writes `derivatives-overlay.zip` (a zip of `dist/`) if a teammate needs a copy.
 
@@ -113,7 +137,10 @@ Three levels, all in Config under `auto` and toggled on the Config tab:
 |---|---|---|
 | `auto.confirm` | **on** | Accepts the parsed targets without `Alt+A` when the parse is complete and sane: spot present; Round 1 the announced IV present; Rounds 2 and 3 all three analysts present (Round 3 also needs an identified converter). Bounds: spot within `spotBoundPct` (40%) of the live or pre-news spot, vol inside `volMin`–`volMax` (5%–300%). Otherwise the target stays amber and the Edge tab says why ("needs you: waiting for analyst A3 (2/3)", "spot 8.00 is 92% from live 100.00"). The live spot after the +60 s move is accepted the same way. |
 | `auto.converter` | **on** | Round 3: on each analyst message, every converter is tried on the raw numbers; the one whose σ lands nearest the market IV wins if it is within `converterTolPts` (12) and beats the runner-up by `converterTieMarginPts` (3), or if the message names it (variance, straddle, daily move, …) and it is within tolerance. Otherwise the Vol tab says "not identified" with the ranked candidates and you pick by hand. A hand pick switches auto off until **re-run**. `$` or `%` in the quotes narrows the candidates to price-like or percent-like converters. |
-| `auto.submit` | **off** | The overlay runs the queue itself: edge tickets during NEWS/UNDERLYING_MOVED (once targets are confirmed), flatten tickets after the snap. Each step picks the next ticket, prefills the form exactly as `Alt+N` does, re-reads the form, and clicks the submit button through `safeSubmit`, which refuses unless armed, the form matches (contract, qty, price, and the button's own "Buy 50 OIL_…" text), and observed order actions are below `submitRateCap` (36/min). It also clicks the OIL/PLANE product tab when the chain shows the other underlying (`auto.switchTabs`). Arm with **arm auto** in the header or the Config checkbox; **Alt+P** pauses/resumes; the header shows a red **AUTO ON** badge. Every submission and the exchange's HTTP answer are listed on the Capture tab and in the capture file (`auto:submit`, `auto:result`). The same contract/side is not re-sent for `resubmitAfterMs` (20 s) unless the position changed; submissions are spaced by `submitIntervalMs` (1.5 s). |
+| `auto.submitVia` | **api** | `api`: each ticket is POSTed to `/api/v1/orders` (the Buy button's own call; no form, no clicks, no product-tab switching, both underlyings at once). `form`: the 2026-10-23 behaviour below. |
+| `auto.cancelOnSnap` / `cancelOnNews` | **on** | `DELETE /orders/all?symbol_type=option&underlying=U` once at each snap and each news, when anything is resting, so flatten sizes are right and no stale edge order is picked off. Counted against the order budget. |
+| `auto.backoffMs` | 5000 | pause after an HTTP 429 |
+| `auto.submit` | **off** (arm in the header) | The overlay runs the queue itself: edge tickets during NEWS/UNDERLYING_MOVED (once targets are confirmed), flatten tickets after the snap. Each step picks the next ticket, prefills the form exactly as `Alt+N` does, re-reads the form, and clicks the submit button through `safeSubmit`, which refuses unless armed, the form matches (contract, qty, price, and the button's own "Buy 50 OIL_…" text), and observed order actions are below `submitRateCap` (36/min). It also clicks the OIL/PLANE product tab when the chain shows the other underlying (`auto.switchTabs`). Arm with **arm auto** in the header or the Config checkbox; **Alt+P** pauses/resumes; the header shows a red **AUTO ON** badge. Every submission and the exchange's HTTP answer are listed on the Capture tab and in the capture file (`auto:submit`, `auto:result`). The same contract/side is not re-sent for `resubmitAfterMs` (20 s) unless the position changed; submissions are spaced by `submitIntervalMs` (1.5 s). |
 
 Flatten behaviour (2026-10-24 drills): flatten tickets are priced up to `thresholds.flattenThroughPct` (2%) or
 `flattenThroughTicks` (5) through the touch, may be re-sent for the same contract after `auto.flattenResubmitMs` (6 s)
@@ -122,7 +149,7 @@ reaches `submitRateCap - auto.flattenReserve` (36 - 12) so the 30 s after the sn
 event with a delta or vega cap breached (a book carried in), the auto-pilot works risk-reducing flatten tickets instead
 of idling.
 
-Turn `auto.submit` on only if the organisers confirm that a bot may click submit; the packet says trading is manual.
+Organisers confirmed on 2026-10-24 that a bot in our logged-in browser may place orders: arm on ONE laptop.
 The flow with everything on: news arrives → targets auto-confirm (or tell you why not) → tickets are submitted →
 the underlying moves and the live spot is accepted → the snap flips the queue to flatten tickets → flat before the
 next event. The human watches the Edge and Risk tabs and types only when a line says "needs you".
@@ -138,6 +165,7 @@ can change:
 - `dom.*`: the visible texts and patterns used to find the order form, chain, LATEST bar, Spot and Fair-tab T
 - `schedule`, `session` (expiry, open/close, holidays), `T_mode` (`dom` / `computed` / `fixed20` / `manual`) and
   `manualTDays`
+- `api` (polling cadences in ms, `enabled`), `feed` (`enabled`, `channels`, `path`)
 - `thresholds` (min edge, IV outlier points, arb ε, position limit, per-ticket cap, delta/vega caps, staleness,
   `flattenThroughPct` / `flattenThroughTicks`: how far through the touch flatten tickets are priced, default 2% / 5 ticks)
 - `blend` (analyst blend mode, λ, band k), `headline.aliases`, `priceMode`, `prefillEnabled`, `focus`, `multiplier`,
@@ -181,7 +209,7 @@ Layout:
 |---|---|
 | `src/main-world/` | Hooks |
 | `src/content/` | Isolated-world entry |
-| `src/core/` | Bridge, capture, config, storage, DOM readers, hotkeys |
+| `src/core/` | Bridge, capture, config, storage, DOM readers, hotkeys, `api.ts` (REST client), `poller.ts`, `feed.ts` (own socket) |
 | `src/engine/` | Pure pricing and planning code; no DOM, fully unit-tested |
 | `src/state/` | The store |
 | `src/ticket/` | Selectors, guard, prefill |

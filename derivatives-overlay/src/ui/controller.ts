@@ -16,6 +16,8 @@ export interface Controller {
   setAutoSubmit(on: boolean): void;
   /** Alt+P */
   toggleAutoPause(): void;
+  /** a human sends this ticket through the API (same guard as the auto-pilot, armed by the click itself) */
+  sendTicket(t: Ticket): void;
 }
 
 export function ticketText(t: Ticket): string {

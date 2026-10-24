@@ -1,12 +1,12 @@
 // Implied vol by safeguarded Newton with a bisection fallback on [1e-4, 10].
-import { Kind, intrinsic, price, vegaPerPoint } from './blackScholes';
+import { Kind, discountedIntrinsic, price, vegaPerPoint } from './blackScholes';
 
 export const IV_LO = 1e-4;
 export const IV_HI = 10;
 
 export function impliedVol(kind: Kind, px: number, S: number, K: number, T: number, tol = 1e-8): number | null {
   if (!Number.isFinite(px) || !(S > 0) || !(K > 0) || !(T > 0)) return null;
-  const intr = intrinsic(kind, S, K);
+  const intr = discountedIntrinsic(kind, S, K, T);
   const upper = kind === 'C' ? S : K;
   if (px < intr - 1e-9 || px > upper + 1e-9) return null;
   let lo = IV_LO;

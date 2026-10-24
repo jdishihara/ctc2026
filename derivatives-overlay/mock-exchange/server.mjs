@@ -127,6 +127,10 @@ for (const [name, u] of Object.entries(und)) {
   for (const K of u.strikes) for (const kind of ['C', 'P']) options.push({ symbol: `${name}_${mmdd}_${kind}${K}`, und: name, kind, K });
 }
 const optBySym = Object.fromEntries(options.map((o) => [o.symbol, o]));
+// the underlyings are "scheduled" symbols on the live exchange: their price path is served by /symbols/{u}/scheduled-prices
+const spotHistory = Object.fromEntries(Object.keys(und).map((u) => [u, []]));
+const RISK_FREE_RATE = Number(scenario.risk_free_rate ?? 0);
+for (const u of Object.keys(und)) spotHistory[u].push({ fictional_time: fmtNaive(clock.fictional), price: und[u].spot });
 const allSymbols = [...Object.keys(und), ...options.map((o) => o.symbol)];
 
 const tradingDaysLeft = (sec) => {
@@ -182,7 +186,7 @@ const orders = new Map(); // id -> order
 const userTrades = [];
 const marketTrades = {}; // sym -> []
 let orderSeq = 0;
-const stats = { orderPosts: 0, orderDeletes: 0, wsSubscribeFrames: 0, wsExtraFrames: 0 };
+const stats = { orderPosts: 0, orderDeletes: 0, chainGets: 0, wsSubscribeFrames: 0, wsExtraFrames: 0 };
 const posOf = (s) => (positions[s] ??= { qty: 0, cost: 0, realized: 0 });
 const LIMIT = 300;
 
@@ -251,7 +255,33 @@ function placeOrder(body) {
   matchOrder(o);
   return [200, view(o)];
 }
-const view = (o) => ({ ...o, remaining_quantity: o.quantity - o.filled_quantity });
+// the live API's order shape (2026-10-24): order_type, filled_quantity, status pending | partial | filled | cancelled
+const view = (o) => ({
+  order_id: o.order_id, symbol: o.symbol, side: o.side, order_type: o.type, quantity: o.quantity, filled_quantity: o.filled_quantity, price: o.price,
+  status: o.status === 'open' ? (o.filled_quantity > 0 ? 'partial' : 'pending') : o.status, created_at: o.created_at,
+  remaining_quantity: o.quantity - o.filled_quantity,
+});
+function symbolsView() {
+  return [
+    ...Object.keys(und).map((s) => ({ symbol: s, name: s, symbol_type: 'scheduled', trading_halted: false, settlement_active: false, max_position: 0, competition_id: scenario.competition_id })),
+    ...options.map((o) => ({
+      symbol: o.symbol, name: `${o.und} ${o.K} ${o.kind === 'C' ? 'Call' : 'Put'}`, symbol_type: 'option', underlying_symbol: o.und, option_kind: o.kind === 'C' ? 'call' : 'put',
+      strike_price: o.K, expiry_fictional_time: scenario.expiry, trading_halted: false, settlement_active: false, settlement_price: null, max_position: LIMIT, tick_size: 0.01,
+      competition_id: scenario.competition_id,
+    })),
+  ];
+}
+function quoteView(o) {
+  const b = books[o.symbol];
+  return { symbol: o.symbol, bid: b.bids[0]?.[0] ?? null, ask: b.asks[0]?.[0] ?? null, bid_size: b.bids[0]?.[1] ?? null, ask_size: b.asks[0]?.[1] ?? null, last: marketTrades[o.symbol]?.at(-1)?.price ?? null, settled: false };
+}
+function chainView(u) {
+  const rows = und[u].strikes.map((K) => ({ strike: K, call: quoteView(optBySym[`${u}_${mmdd}_C${K}`]), put: quoteView(optBySym[`${u}_${mmdd}_P${K}`]) }));
+  return {
+    underlying_symbol: u, current_underlying_price: round2(und[u].spot), risk_free_rate: RISK_FREE_RATE,
+    expiries: [{ expiry_fictional_time: scenario.expiry, trading_days_to_expiry: Math.round(tradingDaysLeft(clock.fictional) * 1000) / 1000, rows }],
+  };
+}
 
 function markOf(sym) {
   const b = books[sym];
@@ -295,7 +325,7 @@ function publishQuote(sym) {
   if (und[sym] && !UNDERLYING_QUOTES) return;
   broadcast(quoteFrame(sym), 'quotes', sym);
   for (const c of clients) {
-    if (c.subscribed && c.channels.has('orderbook') && c.symbols.has(sym)) send(c, { type: 'orderbook', symbol: sym, bids: books[sym].bids, asks: books[sym].asks, timestamp: wallNaive() });
+    if (c.subscribed && c.channels.has('orderbook') && c.symbols.has(sym)) send(c, { type: 'orderbook', symbol: sym, bids: books[sym].bids.map(([price, quantity]) => ({ price, quantity })), asks: books[sym].asks.map(([price, quantity]) => ({ price, quantity })), timestamp: wallNaive() });
   }
 }
 const newsLog = [];
@@ -326,7 +356,7 @@ function onBoundary(e, which) {
       }
     }
   } else if (which === 'move') {
-    for (const [n, v] of Object.entries(e.new)) und[n].spot = v.spot;
+    for (const [n, v] of Object.entries(e.new)) { und[n].spot = v.spot; spotHistory[n].push({ fictional_time: fmtNaive(clock.fictional), price: v.spot }); }
     log(`event ${e.n}: underlyings move`);
     Object.keys(und).forEach((s) => { requote(s); publishQuote(s); });
   } else if (which === 'snap') {
@@ -440,26 +470,42 @@ const server = http.createServer(async (req, res) => {
     }
     if (p === '/api/v1/auth/login') return json(res, 401, { detail: 'Not authenticated' });
     if (p.startsWith('/api/v1/admin/')) return json(res, 403, { detail: 'Forbidden' });
-    if (p === '/api/v1/symbols') {
-      return json(res, 200, [
-        ...Object.keys(und).map((s) => ({ symbol: s, type: 'underlying', tradable: false })),
-        ...options.map((o) => ({ symbol: o.symbol, type: 'option', option_type: o.kind === 'C' ? 'call' : 'put', strike: o.K, underlying: o.und, expiry: scenario.expiry, tradable: true })),
-      ]);
+    if (p === '/api/v1/symbols') return json(res, 200, { symbols: symbolsView(), groups: [] });
+    const chainM = /^\/api\/v1\/options\/([^/]+)\/chain$/.exec(p);
+    if (chainM) {
+      const u = decodeURIComponent(chainM[1]);
+      if (!und[u]) return json(res, 404, { detail: `unknown underlying ${u}` });
+      stats.chainGets++;
+      return json(res, 200, chainView(u));
     }
-    if (p === '/api/v1/positions') return json(res, 200, positionsView(url.searchParams.get('include_zero') === 'true'));
+    const schedM = /^\/api\/v1\/symbols\/([^/]+)\/scheduled-prices$/.exec(p);
+    if (schedM) {
+      const u = decodeURIComponent(schedM[1]);
+      if (!und[u]) return json(res, 404, { detail: `unknown symbol ${u}` });
+      const since = url.searchParams.get('since');
+      return json(res, 200, { symbol: u, fictional_time: fmtNaive(clock.fictional), points: spotHistory[u].filter((pt) => !since || pt.fictional_time > since) });
+    }
+    if (p === '/api/v1/positions') return json(res, 200, { positions: positionsView(url.searchParams.get('include_zero') === 'true') });
     if (p === '/api/v1/orders/open') {
       const sym = url.searchParams.get('symbol');
-      return json(res, 200, [...orders.values()].filter((o) => o.status === 'open' && (!sym || o.symbol === sym)).map(view));
+      return json(res, 200, { orders: [...orders.values()].filter((o) => o.status === 'open' && (!sym || o.symbol === sym)).map(view) });
+    }
+    if (p === '/api/v1/orders' && req.method === 'GET') {
+      const sym = url.searchParams.get('symbol');
+      const lim = Number(url.searchParams.get('limit') ?? 200);
+      return json(res, 200, { orders: [...orders.values()].filter((o) => !sym || o.symbol === sym).slice(-lim).map(view) });
     }
     if (p === '/api/v1/trades/market') {
       const sym = url.searchParams.get('symbol');
       const lim = Number(url.searchParams.get('limit') ?? 300);
-      return json(res, 200, (marketTrades[sym] ?? []).slice(-lim).reverse());
+      return json(res, 200, { trades: (marketTrades[sym] ?? []).slice(-lim).reverse() });
     }
     if (p === '/api/v1/trades') {
       const sym = url.searchParams.get('symbol');
       const since = Number(url.searchParams.get('since') ?? 0);
-      return json(res, 200, userTrades.filter((t) => (!sym || t.symbol === sym) && t.t_us > since).slice(-500));
+      const lim = Number(url.searchParams.get('limit') ?? 500);
+      const list = userTrades.filter((t) => (!sym || t.symbol === sym) && t.t_us > since).slice(-lim);
+      return json(res, 200, { trades: list.map((t, i) => ({ ...t, seq: i + 1 })), cursor: list.length });
     }
     if (p === '/api/v1/pnl') return json(res, 200, { total_pnl: round2(totalPnl()) });
     if (p === '/api/v1/orders' && req.method === 'POST') {
@@ -467,13 +513,21 @@ const server = http.createServer(async (req, res) => {
       let body = {};
       try { body = JSON.parse(await readBody(req)); } catch { return json(res, 400, { detail: 'bad json' }); }
       const [code, out] = placeOrder(body);
-      log(`ORDER ${code} ${JSON.stringify(body)}`);
-      return json(res, code, out);
+      log(`ORDER ${code} ${JSON.stringify(body)}${code === 200 ? ` -> ${out.status} ${out.filled_quantity}/${out.quantity}` : ` ${out.detail}`}`);
+      return json(res, code, code === 200 ? { ...out, message: `Order ${out.status}`, message_type: 'success' } : out);
     }
     if (p === '/api/v1/orders/all' && req.method === 'DELETE') {
       stats.orderDeletes++;
+      const sym = url.searchParams.get('symbol');
+      const undq = url.searchParams.get('underlying');
       let n = 0;
-      for (const o of orders.values()) if (o.status === 'open') { o.status = 'cancelled'; n++; }
+      for (const o of orders.values()) {
+        if (o.status !== 'open') continue;
+        if (sym && o.symbol !== sym) continue;
+        if (undq && optBySym[o.symbol]?.und !== undq) continue;
+        o.status = 'cancelled'; n++;
+      }
+      log(`CANCEL ALL${sym ? ` ${sym}` : ''}${undq ? ` ${undq}` : ''}: ${n}`);
       return json(res, 200, { cancelled: n });
     }
     if (p.startsWith('/api/v1/orders/') && req.method === 'DELETE') {

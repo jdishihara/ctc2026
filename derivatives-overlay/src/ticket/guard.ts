@@ -101,6 +101,43 @@ export function submitRefusal(ctx: SubmitContext): string | null {
   return null;
 }
 
+export interface ApiSubmitContext {
+  /** Config auto.submit && !paused, or a human pressed "send" on the ticket card */
+  armed: boolean;
+  ticket: { symbol: string; side: 'BUY' | 'SELL'; qty: number; price: number };
+  /** the symbol is a contract we know from the chain */
+  known: boolean;
+  tick: number;
+  perTicketCap: number;
+  positionLimit: number;
+  /** position after the ticket, counting same-side resting orders (|.| must stay within the limit) */
+  positionAfter: number;
+  rateUsed: number;
+  rateCap: number;
+  /** ms left of a 429 back-off (0 = none) */
+  backoffLeftMs: number;
+}
+
+/** Why an API order would be refused, or null. Pure. The form checks do not apply: the body is built from the ticket. */
+export function apiSubmitRefusal(ctx: ApiSubmitContext): string | null {
+  if (!ctx.armed) return 'auto-submit is off or paused';
+  if (ctx.backoffLeftMs > 0) return `backing off after HTTP 429 (${Math.ceil(ctx.backoffLeftMs / 1000)} s)`;
+  if (!(ctx.rateUsed < ctx.rateCap)) return `rate budget: ${ctx.rateUsed}/${ctx.rateCap} order actions in the last minute`;
+  const t = ctx.ticket;
+  if (!t || !(t.qty > 0) || !(t.price > 0)) return 'ticket has no positive qty/price';
+  if (t.side !== 'BUY' && t.side !== 'SELL') return `bad side ${String(t.side)}`;
+  if (!ctx.known) return `${t.symbol} is not a contract in the chain`;
+  if (Math.round(t.qty) !== t.qty) return `qty ${t.qty} is not a whole number`;
+  if (t.qty > ctx.perTicketCap) return `qty ${t.qty} exceeds the per-ticket cap ${ctx.perTicketCap}`;
+  if (Math.abs(ctx.positionAfter) > ctx.positionLimit + 1e-9) return `would hold ${ctx.positionAfter} ${t.symbol}: beyond the position limit ${ctx.positionLimit}`;
+  if (ctx.tick > 0) {
+    const n = t.price / ctx.tick;
+    if (Math.abs(n - Math.round(n)) > 1e-6) return `price ${t.price} is off the tick ${ctx.tick}`;
+  }
+  if (t.price > 10_000) return `price ${t.price} above the exchange maximum`;
+  return null;
+}
+
 /** The only path that clicks a submit button. Refuses unless submitRefusal() is null; logs every attempt. */
 export function safeSubmit(el: Element | null, ctx: SubmitContext): { ok: boolean; reason: string } {
   const text = (el?.textContent ?? '').replace(/\s+/g, ' ').trim().slice(0, 60);

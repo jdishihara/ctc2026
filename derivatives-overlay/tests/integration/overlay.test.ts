@@ -204,7 +204,8 @@ describe('overlay against the mock page', () => {
     expect(h.store.d.flatten[0]).toMatchObject({ symbol: 'OIL_0626_C100', side: 'SELL', qty: 40 });
   });
 
-  it('armed auto-pilot loads, verifies and submits the next ticket itself; paused or disarmed it does nothing', async () => {
+  it('armed auto-pilot (form path) loads, verifies and clicks the next ticket itself; paused or disarmed it does nothing', async () => {
+    h.controller.patchConfig({ auto: { submitVia: 'form' } });
     const posts0 = exchange.orderPosts;
     const submits0 = (window as unknown as { __mockSubmitCount: number }).__mockSubmitCount;
     // not armed: a step is a no-op
@@ -255,5 +256,40 @@ describe('overlay against the mock page', () => {
     h.controller.setAutoSubmit(true);
     expect(h.store.s.auto.paused).toBe(false);
     h.controller.setAutoSubmit(false);
+  });
+
+  it('armed auto-pilot (API path, the default) posts the next ticket to /api/v1/orders without touching the form', async () => {
+    h.controller.patchConfig({ auto: { submitVia: 'api' } });
+    const posts0 = exchange.orderPosts;
+    const submits0 = (window as unknown as { __mockSubmitCount: number }).__mockSubmitCount;
+    const logs0 = h.store.s.auto.log.length;
+    h.controller.setAutoSubmit(true);
+    h.store.s.auto.lastSubmitAt = 0;
+    h.store.s.recentLoads = []; // the earlier tests loaded every passing ticket; the queue skips recent loads
+    h.autopilot['sent'].clear();
+    let r = await h.autopilot.step();
+    for (let i = 0; i < 10 && r.action !== 'submitted' && r.action !== 'refused'; i++) {
+      await sleep(300);
+      h.store.s.auto.lastSubmitAt = 0;
+      r = await h.autopilot.step();
+    }
+    const d = h.store.d;
+    const dbg = `${r.action}:${r.detail} | phase ${d.phase?.phase} ev ${d.phase?.event?.n} confirmed ${d.targetsConfirmed} plan ${d.plan.length} edges ${(d.edges.OIL ?? []).filter((e) => e.passes).length}/${(d.edges.OIL ?? []).length} spot ${JSON.stringify(d.spot.OIL)} T ${JSON.stringify(d.T)} quoteAge ${d.quoteAge} rate ${d.rate.used} positions ${JSON.stringify(h.store.s.positions)} recent ${h.store.s.recentLoads.length} targets ${JSON.stringify(h.store.s.targets.OIL)}`;
+    expect(r.action, dbg).toBe('submitted');
+    expect(r.detail).toContain('HTTP 200');
+    expect(exchange.orderPosts).toBe(posts0 + 1);
+    expect((window as unknown as { __mockSubmitCount: number }).__mockSubmitCount).toBe(submits0);
+    const log = h.store.s.auto.log;
+    expect(log).toHaveLength(logs0 + 1);
+    expect(log[log.length - 1].result).toMatch(/^sent · HTTP 200/);
+    expect(h.store.capture.kinds.has('req:POST /api/v1/orders')).toBe(true);
+    expect(h.store.d.rate.used).toBeGreaterThanOrEqual(1);
+    // the human "send" button goes through the same path, armed or not
+    h.controller.setAutoSubmit(false);
+    const t = h.store.d.plan.find((x) => x.symbol !== r.ticket?.symbol) ?? h.store.d.plan[0];
+    h.controller.sendTicket(t);
+    await sleep(100);
+    expect(exchange.orderPosts).toBe(posts0 + 2);
+    expect(h.store.s.loaded?.message).toMatch(/^sent /);
   });
 });

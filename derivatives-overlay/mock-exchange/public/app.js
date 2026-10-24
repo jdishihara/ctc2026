@@ -70,10 +70,11 @@
   }
 
   async function loadSymbols() {
-    const s = await getJson('/api/v1/symbols');
-    if (!Array.isArray(s)) return;
+    const raw = await getJson('/api/v1/symbols');
+    const s = Array.isArray(raw) ? raw : raw && Array.isArray(raw.symbols) ? raw.symbols : null;
+    if (!s) return;
     state.symbols = s.map((x) => x.symbol);
-    state.options = s.filter((x) => x.type === 'option').map((x) => ({ symbol: x.symbol, underlying: x.underlying, kind: x.option_type === 'call' ? 'C' : 'P', strike: x.strike }));
+    state.options = s.filter((x) => x.symbol_type === 'option' || x.type === 'option').map((x) => ({ symbol: x.symbol, underlying: x.underlying_symbol ?? x.underlying, kind: (x.option_kind ?? x.option_type) === 'call' ? 'C' : 'P', strike: x.strike_price ?? x.strike }));
     if (!state.selected) state.selected = state.options.find((o) => o.underlying === state.product && o.kind === 'C')?.symbol ?? null;
     connectWs();
     render();
@@ -120,10 +121,12 @@
     const c = await getJson('/api/v1/competitions/current');
     if (c) state.clock = c;
     const p = await getJson('/api/v1/positions?include_zero=true');
-    if (Array.isArray(p)) state.positions = p;
+    const pl = Array.isArray(p) ? p : p && Array.isArray(p.positions) ? p.positions : null;
+    if (pl) state.positions = pl;
     if (state.selected) {
       const o = await getJson(`/api/v1/orders/open?symbol=${encodeURIComponent(state.selected)}`);
-      if (Array.isArray(o)) state.openOrders = o;
+      const ol = Array.isArray(o) ? o : o && Array.isArray(o.orders) ? o.orders : null;
+      if (ol) state.openOrders = ol;
     }
     scheduleRender();
   }
