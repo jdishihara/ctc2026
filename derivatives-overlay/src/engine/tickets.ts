@@ -45,6 +45,7 @@ export interface PlanInput {
   tick: number;
   focus: string | null; // underlying filter, null = all
   multiplier?: number;
+  edgeThroughFrac?: number;
 }
 
 let seq = 0;
@@ -58,9 +59,10 @@ function legGreeks(inp: PlanInput, symbol: string, side: Side, qty: number) {
   return { d: sgn * qty * bsDelta(c.kind, t.spot, c.strike, t.vol, inp.T), v: sgn * qty * vegaPerPoint(t.spot, c.strike, t.vol, inp.T) };
 }
 
-function priceFor(inp: PlanInput, c: Contract, side: Side, fair: number | null): number | null {
+function priceFor(inp: PlanInput, c: Contract, side: Side, fair: number | null, through = 0): number | null {
   const touch = side === 'BUY' ? c.ask : c.bid;
   if (touch == null) return null;
+  if (through > 0) return roundToTick(side === 'BUY' ? touch + through : Math.max(inp.tick, touch - through), inp.tick, side === 'BUY' ? 'up' : 'down');
   if (inp.priceMode === 'passive' && fair != null) {
     // rest inside the spread, never closer to fair than minEdge
     if (side === 'BUY') {
@@ -116,7 +118,8 @@ export function planTickets(inp: PlanInput): Ticket[] {
   const ok: Ticket[] = [];
   const red: Ticket[] = [];
   for (const cand of cands) {
-    let size = Math.min(cand.size, inp.perTicketCap, ...cand.legs.map((l) => Math.floor(room(l.symbol, l.side) / l.ratio)));
+    const thrFrac = inp.edgeThroughFrac ?? 0;
+    let size = Math.min(thrFrac > 0 ? inp.perTicketCap : cand.size, inp.perTicketCap, ...cand.legs.map((l) => Math.floor(room(l.symbol, l.side) / l.ratio)));
     if (!(size > 0)) continue;
     const gid = cand.legs.length > 1 ? nextId('grp') : undefined;
     const g = greeksNow[cand.underlying] ?? { delta: 0, vega: 0 };
@@ -134,7 +137,7 @@ export function planTickets(inp: PlanInput): Ticket[] {
     for (const l of cand.legs) {
       const c = inp.contracts[l.symbol];
       if (!c) continue;
-      const px = priceFor(inp, c, l.side, l.fair);
+      const px = priceFor(inp, c, l.side, l.fair, thrFrac > 0 ? Math.max(inp.tick, thrFrac * Math.abs(l.edge)) : 0);
       if (px == null) continue;
       tickets.push({
         id: nextId('t'), symbol: l.symbol, underlying: cand.underlying, side: l.side, type: 'limit', qty: size * l.ratio, price: px,
