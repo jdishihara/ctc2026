@@ -84,7 +84,7 @@ def test_snapshot_after_interruption_still_requires_warmup(interruption):
         if interruption == 'disconnect':
             session.feed_current = False
         snapshot = dict(type='snapshot', round=1,
-                        last_seq=6 if interruption == 'missing_news' else 1,
+                        last_seq=10 if interruption == 'missing_news' else 1,
                         time='1788-05-26T10:00:00', phase='storm',
                         obs={'age': 0}, track=[], damage=[])
         session._news(snapshot)
@@ -147,7 +147,7 @@ def test_complete_history_allows_orders_and_missing_news_blocks_them():
     with patch.object(ex, 'send', return_value={'order_id': 'ok', 'filled_quantity': 1}) as send:
         assert ex.place('PORT', 'buy', 1, 100) == 'ok'
         # Weather is continuous, but more than MAX_MISSING_NEWS lost advisories/announcements block too.
-        session._news(weather(age=2, seq=6))
+        session._news(weather(age=2, seq=10))
         assert ex.place('PORT', 'buy', 1, 100) is None
         assert send.call_count == 1
 
@@ -400,14 +400,14 @@ def test_a_reconnect_losing_two_messages_keeps_trading_eligible():
     assert session.history_block_reason() is None
 
 
-def test_more_than_three_lost_messages_block_until_a_new_season():
+def test_more_than_six_lost_messages_block_until_a_new_season():
     ex, session = prepared()
     session._news(weather(age=2, seq=2))
-    session._news({'type': 'advisory', 'round': 1, 'seq': 8, 'age': 2, 'source': 'wire', 'outlook': 'direct'})
-    assert session.missing_seq == {3, 4, 5, 6, 7}
+    session._news({'type': 'advisory', 'round': 1, 'seq': 11, 'age': 2, 'source': 'wire', 'outlook': 'direct'})
+    assert session.missing_seq == {3, 4, 5, 6, 7, 8, 9, 10}
     assert 'missing news history' in session.history_block_reason()
     session._news(weather(age=4, seq=3))          # a late message fills one hole: still too many
-    assert session.missing_seq == {4, 5, 6, 7}
+    assert session.missing_seq == {4, 5, 6, 7, 8, 9, 10}
     assert 'missing news history' in session.history_block_reason()
     session._news_season_changed('1789')          # only a new season clears the holes
     assert session.missing_seq == set() and session.news_complete
@@ -474,3 +474,55 @@ def test_feed_replay_keeps_only_the_latest_same_year_season(tmp_path):
     assert strat.paused == set()          # the stale season's announcement pause is not restored
     # only the current season's observations (ages 0 and 4, plus the interpolated age 2): no stale x=480 point
     assert [o['age'] for o in strat.model.obs] == [0, 2, 4] and all(o['x'] != 480.0 for o in strat.model.obs)
+
+
+def _feed_log_with(tmp_path, messages, year='1788'):
+    path = tmp_path / 'competition.jsonl'
+    path.write_text(''.join(json.dumps({'type': 'news', 'message': {**m, 'time': f'{year}-05-26T10:00:00'}}) + '\n'
+                            for m in messages))
+    return path
+
+
+def test_long_hole_restarts_only_when_the_recorder_has_every_lost_message(tmp_path):
+    season = complete_season()
+    ex = ScriptedExchange()
+    ex.responses['/competitions/time']['fictional_time'] = '1788-05-26T10:00:00'
+    ex.refresh()
+    strat = FairValueTrader(warmup=0)
+    strat.on_start(ex)
+    restarts = []
+    session = LiveSession(ex, strat, sync=9999, feed_log=str(_feed_log_with(tmp_path, season[:6])))
+    session.restart = lambda: restarts.append(ex.t)
+    ex.t0 = 0.
+    for m in season[:3]:
+        session._news(m)
+    session._news(season[12])                     # seqs 3-11 lost: beyond the in-line repair
+    assert 'missing news history' in session.history_block_reason()
+    with patch('bot.live.time.monotonic', return_value=5.):
+        session.step([])
+    assert restarts == []                          # ten seconds of grace for late messages
+    with patch('bot.live.time.monotonic', return_value=16.):
+        session.step([])
+    assert restarts == []                          # the recorder's file lacks seqs 6-11: a restart cannot help
+    _feed_log_with(tmp_path, season[:13])
+    with patch('bot.live.time.monotonic', return_value=40.), patch.object(ex, 'send', return_value={}):
+        session.step([])
+    assert restarts == [40.] and session.stopped.is_set()
+
+
+def test_short_hole_or_no_feed_log_never_restarts(tmp_path):
+    ex, session = prepared()
+    session.restart = lambda: pytest.fail('restart without a feed log')
+    session._news(weather(age=18, seq=10))        # seqs 2-9 lost, no feed log configured
+    session.step([])
+    session.feed_log = _feed_log_with(tmp_path, complete_season()[:12])
+    session.restart = lambda: pytest.fail('restart within the grace period')
+    session.step([])
+    ex2, session2 = prepared()
+    session2.feed_log = session.feed_log
+    session2.restart = lambda: pytest.fail('restart for a repairable hole')
+    session2._news(weather(age=8, seq=5))         # three lost observations: repaired in line
+    ex2.t0 = 0.
+    with patch('bot.live.time.monotonic', return_value=100.):
+        session2.step([])
+    assert session2.history_block_reason() is None
