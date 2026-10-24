@@ -1,6 +1,6 @@
 # Competition readiness — 2026-10-24
 
-Status updated after the 07:46 UTC supervisor comparison (03:46 EDT). One complete small-size live season
+Status updated after the 08:03 UTC corrected supervisor comparison (04:03 EDT). One complete small-size live season
 has a verified settlement receipt. The next trial contains mixed activity.
 Live practice remains stopped pending shared-account ownership clarification.
 Market recording and offline evaluations continue.
@@ -13,15 +13,17 @@ defects have been fixed and regression-tested. One completed live season was
 positive; consistent live profitability has not been established. Neither the historical average nor the test count
 establishes a probability of winning the competition.
 
-The full production-supervisor replay is materially weaker than the core-client
-replay: 24 of 64 fixed settings lose money, and only 16 complete all three
-storms. In the primary setting, capture 244 changes from +$628.14 without the
-supervisor to −$261.00 after the actual loss stop and cleanup. Forty settings
-stop on a reproducible inter-round history-guard issue; a separate correction
-is still required. Full results, cleanup attention cases and limitations are in
+The full production-supervisor replay exposed a false history stop between
+storms. A reviewed correction eliminates all 40 such stops in the fixed
+comparison: 53 of 64 settings now complete, 11 hit the loss trigger, and
+12 finish negative. The worst terminal outcome is −$420.64; two cleanup cases
+retain residual positions. The primary capture-244 result remains −$261.00,
+versus +$628.14 without the supervisor. All 64 baseline outputs and request/fill
+traces match exactly. Independent corrected result audit is complete; full evidence and
+limitations are in [practice-round-transition.md](practice-round-transition.md).
+The independently reviewed original comparison remains in
 [supervised-client-replay.md](supervised-client-replay.md). These offline
-findings passed independent final result review and do not change the
-actual +$141.16 completed practice record.
+findings do not change the actual +$141.16 completed practice record.
 
 ## Historical data and evaluation
 
