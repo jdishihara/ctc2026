@@ -1,0 +1,991 @@
+{
+  "evaluation": "fixed_observed_market_grid",
+  "competition_id": "a7e77935-0ddd-4c77-8ce9-5494a9941962",
+  "year": "1782",
+  "fraction": 0.1,
+  "official_receipt": {
+    "at": 1792829250.818968,
+    "kind": "settlement",
+    "source": "read_only_market_observer",
+    "competition_id": "a7e77935-0ddd-4c77-8ce9-5494a9941962",
+    "year": "1782",
+    "clock": {
+      "competition_id": "a7e77935-0ddd-4c77-8ce9-5494a9941962",
+      "state": "ready",
+      "fictional_time": "1782-06-05T16:00:00",
+      "elapsed_active_seconds": 2460
+    },
+    "end_clock": {
+      "competition_id": "a7e77935-0ddd-4c77-8ce9-5494a9941962",
+      "state": "ready",
+      "fictional_time": "1782-06-05T16:00:00",
+      "elapsed_active_seconds": 2460
+    },
+    "prices": {
+      "PORT": 74.92,
+      "ISLE": 59.94,
+      "AQUA": 34.23,
+      "GRID": 40.72,
+      "FERRY": 23.52,
+      "RECON": 50.91,
+      "MAT": 33.62,
+      "GEN": 37.71,
+      "HAVEN": 62.01,
+      "REIN": 90.0,
+      "ARCH": 353.09,
+      "REBLD": 206.77
+    },
+    "coverage": {
+      "first_at": 1792826424.950635,
+      "last_at": 1792829250.2338,
+      "seq_count": 863,
+      "last_seq": 862,
+      "advertised_last_seq": 862,
+      "contiguous": true,
+      "final_rounds": [
+        1,
+        2,
+        3
+      ],
+      "conflicting_sequences": false
+    }
+  },
+  "coverage": {
+    "news_count": 863,
+    "advertised_last_seq": 862,
+    "quote_count": 18933,
+    "quote_count_by_round": {
+      "1": {
+        "PORT": 930,
+        "ISLE": 455,
+        "AQUA": 707,
+        "GRID": 641,
+        "FERRY": 624,
+        "RECON": 581,
+        "MAT": 403,
+        "GEN": 476,
+        "HAVEN": 951,
+        "REIN": 316,
+        "ARCH": 610,
+        "REBLD": 467
+      },
+      "2": {
+        "PORT": 607,
+        "ISLE": 313,
+        "AQUA": 510,
+        "GRID": 499,
+        "FERRY": 359,
+        "RECON": 617,
+        "MAT": 471,
+        "GEN": 529,
+        "HAVEN": 567,
+        "REIN": 184,
+        "ARCH": 456,
+        "REBLD": 421
+      },
+      "3": {
+        "PORT": 743,
+        "ISLE": 457,
+        "AQUA": 458,
+        "GRID": 478,
+        "FERRY": 523,
+        "RECON": 513,
+        "MAT": 464,
+        "GEN": 559,
+        "HAVEN": 821,
+        "REIN": 189,
+        "ARCH": 563,
+        "REBLD": 434
+      }
+    },
+    "observed_quote_gaps": {
+      "1": {
+        "PORT": {
+          "max_seconds": 121.44059181213379,
+          "over_five_seconds": 22
+        },
+        "ISLE": {
+          "max_seconds": 121.44059705734253,
+          "over_five_seconds": 36
+        },
+        "AQUA": {
+          "max_seconds": 121.44054985046387,
+          "over_five_seconds": 30
+        },
+        "GRID": {
+          "max_seconds": 121.44056916236877,
+          "over_five_seconds": 28
+        },
+        "FERRY": {
+          "max_seconds": 121.44057512283325,
+          "over_five_seconds": 24
+        },
+        "RECON": {
+          "max_seconds": 121.44049215316772,
+          "over_five_seconds": 27
+        },
+        "MAT": {
+          "max_seconds": 121.44055700302124,
+          "over_five_seconds": 40
+        },
+        "GEN": {
+          "max_seconds": 121.44054198265076,
+          "over_five_seconds": 39
+        },
+        "HAVEN": {
+          "max_seconds": 121.44053196907043,
+          "over_five_seconds": 17
+        },
+        "REIN": {
+          "max_seconds": 121.44058609008789,
+          "over_five_seconds": 50
+        },
+        "ARCH": {
+          "max_seconds": 121.44058108329773,
+          "over_five_seconds": 24
+        },
+        "REBLD": {
+          "max_seconds": 121.44056296348572,
+          "over_five_seconds": 33
+        }
+      },
+      "2": {
+        "PORT": {
+          "max_seconds": 29.39706802368164,
+          "over_five_seconds": 31
+        },
+        "ISLE": {
+          "max_seconds": 37.4018759727478,
+          "over_five_seconds": 45
+        },
+        "AQUA": {
+          "max_seconds": 28.58507513999939,
+          "over_five_seconds": 31
+        },
+        "GRID": {
+          "max_seconds": 25.531009674072266,
+          "over_five_seconds": 30
+        },
+        "FERRY": {
+          "max_seconds": 22.72059392929077,
+          "over_five_seconds": 42
+        },
+        "RECON": {
+          "max_seconds": 22.876809120178223,
+          "over_five_seconds": 29
+        },
+        "MAT": {
+          "max_seconds": 34.66298699378967,
+          "over_five_seconds": 37
+        },
+        "GEN": {
+          "max_seconds": 31.617276906967163,
+          "over_five_seconds": 30
+        },
+        "HAVEN": {
+          "max_seconds": 51.81662392616272,
+          "over_five_seconds": 27
+        },
+        "REIN": {
+          "max_seconds": 54.33540892601013,
+          "over_five_seconds": 46
+        },
+        "ARCH": {
+          "max_seconds": 20.856456995010376,
+          "over_five_seconds": 41
+        },
+        "REBLD": {
+          "max_seconds": 23.559678077697754,
+          "over_five_seconds": 36
+        }
+      },
+      "3": {
+        "PORT": {
+          "max_seconds": 31.502312898635864,
+          "over_five_seconds": 27
+        },
+        "ISLE": {
+          "max_seconds": 36.24235701560974,
+          "over_five_seconds": 36
+        },
+        "AQUA": {
+          "max_seconds": 21.31564426422119,
+          "over_five_seconds": 38
+        },
+        "GRID": {
+          "max_seconds": 24.627464771270752,
+          "over_five_seconds": 32
+        },
+        "FERRY": {
+          "max_seconds": 26.102252960205078,
+          "over_five_seconds": 34
+        },
+        "RECON": {
+          "max_seconds": 18.41113519668579,
+          "over_five_seconds": 32
+        },
+        "MAT": {
+          "max_seconds": 31.887194871902466,
+          "over_five_seconds": 34
+        },
+        "GEN": {
+          "max_seconds": 25.668580055236816,
+          "over_five_seconds": 35
+        },
+        "HAVEN": {
+          "max_seconds": 25.375770807266235,
+          "over_five_seconds": 22
+        },
+        "REIN": {
+          "max_seconds": 56.4142861366272,
+          "over_five_seconds": 46
+        },
+        "ARCH": {
+          "max_seconds": 26.12050724029541,
+          "over_five_seconds": 30
+        },
+        "REBLD": {
+          "max_seconds": 28.146209955215454,
+          "over_five_seconds": 37
+        }
+      }
+    },
+    "round_windows": {
+      "1": {
+        "first_at": 1792826424.950635,
+        "closed_at": 1792827328.6742148,
+        "close_source": "news_snapshot"
+      },
+      "2": {
+        "first_at": 1792827506.580456,
+        "closed_at": 1792828289.146255,
+        "close_source": "news_snapshot"
+      },
+      "3": {
+        "first_at": 1792828467.258375,
+        "closed_at": 1792829250.2338,
+        "close_source": "news_snapshot"
+      }
+    },
+    "unusable_quotes": 37,
+    "recorded_disconnect_frames": 0,
+    "disconnect_count_known": false,
+    "subscription_acknowledgements": [],
+    "disconnect_note": "The recorder may log disconnects only to its text log. Subscription acknowledgements may indicate reconnections but do not determine disconnect onset or reconstruct missed frames. Only explicit disconnect frames are applied to the replay.",
+    "quote_path_completeness_proven": false,
+    "gap_note": "Receive-time gaps include delays in observing round opens/closes; they do not prove missing server events."
+  },
+  "results": [
+    {
+      "latency_seconds": 0.25,
+      "displayed_depth_fraction": 1.0,
+      "basket_enabled": false,
+      "reset_warmup_each_snapshot": true,
+      "simulated_settlement_pnl": 272.599999999999,
+      "fills": 22,
+      "orders": 38,
+      "conversions": 0,
+      "basket_cycles": 0,
+      "lowest_marked_pnl": -102.69999999999982,
+      "rate_rejections": 0,
+      "unusable_quotes": 37,
+      "final_positions": {
+        "PORT": 20,
+        "ISLE": 0,
+        "AQUA": 0,
+        "GRID": -40,
+        "FERRY": 13,
+        "RECON": 0,
+        "MAT": 0,
+        "GEN": 22,
+        "HAVEN": -25,
+        "REIN": 0,
+        "ARCH": 5,
+        "REBLD": 0
+      }
+    },
+    {
+      "latency_seconds": 0.25,
+      "displayed_depth_fraction": 1.0,
+      "basket_enabled": false,
+      "reset_warmup_each_snapshot": false,
+      "simulated_settlement_pnl": 308.4200000000004,
+      "fills": 34,
+      "orders": 44,
+      "conversions": 0,
+      "basket_cycles": 0,
+      "lowest_marked_pnl": -77.8599999999999,
+      "rate_rejections": 0,
+      "unusable_quotes": 37,
+      "final_positions": {
+        "PORT": 0,
+        "ISLE": 0,
+        "AQUA": 11,
+        "GRID": -40,
+        "FERRY": 40,
+        "RECON": 0,
+        "MAT": 0,
+        "GEN": 22,
+        "HAVEN": -25,
+        "REIN": 0,
+        "ARCH": 5,
+        "REBLD": 0
+      }
+    },
+    {
+      "latency_seconds": 0.25,
+      "displayed_depth_fraction": 1.0,
+      "basket_enabled": true,
+      "reset_warmup_each_snapshot": true,
+      "simulated_settlement_pnl": 81.33999999999878,
+      "fills": 44,
+      "orders": 61,
+      "conversions": 4,
+      "basket_cycles": 4,
+      "lowest_marked_pnl": -257.2449999999999,
+      "rate_rejections": 0,
+      "unusable_quotes": 37,
+      "final_positions": {
+        "PORT": 20,
+        "ISLE": 0,
+        "AQUA": 0,
+        "GRID": -40,
+        "FERRY": 13,
+        "RECON": 0,
+        "MAT": 0,
+        "GEN": 0,
+        "HAVEN": -25,
+        "REIN": 0,
+        "ARCH": 5,
+        "REBLD": 0
+      }
+    },
+    {
+      "latency_seconds": 0.25,
+      "displayed_depth_fraction": 1.0,
+      "basket_enabled": true,
+      "reset_warmup_each_snapshot": false,
+      "simulated_settlement_pnl": 370.3899999999996,
+      "fills": 63,
+      "orders": 76,
+      "conversions": 5,
+      "basket_cycles": 5,
+      "lowest_marked_pnl": -67.54999999999973,
+      "rate_rejections": 0,
+      "unusable_quotes": 37,
+      "final_positions": {
+        "PORT": 0,
+        "ISLE": 0,
+        "AQUA": 11,
+        "GRID": -40,
+        "FERRY": 40,
+        "RECON": 0,
+        "MAT": 0,
+        "GEN": 1,
+        "HAVEN": -25,
+        "REIN": 0,
+        "ARCH": 5,
+        "REBLD": 0
+      }
+    },
+    {
+      "latency_seconds": 0.25,
+      "displayed_depth_fraction": 0.5,
+      "basket_enabled": false,
+      "reset_warmup_each_snapshot": true,
+      "simulated_settlement_pnl": 250.97999999999865,
+      "fills": 24,
+      "orders": 38,
+      "conversions": 0,
+      "basket_cycles": 0,
+      "lowest_marked_pnl": -105.40500000000065,
+      "rate_rejections": 0,
+      "unusable_quotes": 37,
+      "final_positions": {
+        "PORT": 20,
+        "ISLE": 0,
+        "AQUA": 0,
+        "GRID": -40,
+        "FERRY": 13,
+        "RECON": 0,
+        "MAT": 0,
+        "GEN": 11,
+        "HAVEN": -25,
+        "REIN": 0,
+        "ARCH": 5,
+        "REBLD": 0
+      }
+    },
+    {
+      "latency_seconds": 0.25,
+      "displayed_depth_fraction": 0.5,
+      "basket_enabled": false,
+      "reset_warmup_each_snapshot": false,
+      "simulated_settlement_pnl": 261.26999999999936,
+      "fills": 43,
+      "orders": 46,
+      "conversions": 0,
+      "basket_cycles": 0,
+      "lowest_marked_pnl": -77.8599999999999,
+      "rate_rejections": 0,
+      "unusable_quotes": 37,
+      "final_positions": {
+        "PORT": 0,
+        "ISLE": 0,
+        "AQUA": 11,
+        "GRID": -40,
+        "FERRY": 40,
+        "RECON": 0,
+        "MAT": 0,
+        "GEN": 11,
+        "HAVEN": -25,
+        "REIN": 0,
+        "ARCH": 5,
+        "REBLD": 0
+      }
+    },
+    {
+      "latency_seconds": 0.25,
+      "displayed_depth_fraction": 0.5,
+      "basket_enabled": true,
+      "reset_warmup_each_snapshot": true,
+      "simulated_settlement_pnl": 52.439999999999145,
+      "fills": 39,
+      "orders": 54,
+      "conversions": 3,
+      "basket_cycles": 3,
+      "lowest_marked_pnl": -286.1449999999995,
+      "rate_rejections": 0,
+      "unusable_quotes": 37,
+      "final_positions": {
+        "PORT": 20,
+        "ISLE": 0,
+        "AQUA": 0,
+        "GRID": -40,
+        "FERRY": 13,
+        "RECON": 0,
+        "MAT": 0,
+        "GEN": 0,
+        "HAVEN": -25,
+        "REIN": 0,
+        "ARCH": 5,
+        "REBLD": 0
+      }
+    },
+    {
+      "latency_seconds": 0.25,
+      "displayed_depth_fraction": 0.5,
+      "basket_enabled": true,
+      "reset_warmup_each_snapshot": false,
+      "simulated_settlement_pnl": 298.3800000000003,
+      "fills": 61,
+      "orders": 70,
+      "conversions": 4,
+      "basket_cycles": 4,
+      "lowest_marked_pnl": -75.65999999999985,
+      "rate_rejections": 0,
+      "unusable_quotes": 37,
+      "final_positions": {
+        "PORT": 0,
+        "ISLE": 0,
+        "AQUA": 11,
+        "GRID": -40,
+        "FERRY": 40,
+        "RECON": 0,
+        "MAT": 0,
+        "GEN": 1,
+        "HAVEN": -25,
+        "REIN": 0,
+        "ARCH": 5,
+        "REBLD": 0
+      }
+    },
+    {
+      "latency_seconds": 1.0,
+      "displayed_depth_fraction": 1.0,
+      "basket_enabled": false,
+      "reset_warmup_each_snapshot": true,
+      "simulated_settlement_pnl": 159.05999999999995,
+      "fills": 17,
+      "orders": 37,
+      "conversions": 0,
+      "basket_cycles": 0,
+      "lowest_marked_pnl": -112.38499999999931,
+      "rate_rejections": 0,
+      "unusable_quotes": 37,
+      "final_positions": {
+        "PORT": 0,
+        "ISLE": 0,
+        "AQUA": 0,
+        "GRID": -40,
+        "FERRY": 13,
+        "RECON": 0,
+        "MAT": 0,
+        "GEN": 0,
+        "HAVEN": -25,
+        "REIN": 0,
+        "ARCH": 5,
+        "REBLD": 0
+      }
+    },
+    {
+      "latency_seconds": 1.0,
+      "displayed_depth_fraction": 1.0,
+      "basket_enabled": false,
+      "reset_warmup_each_snapshot": false,
+      "simulated_settlement_pnl": 276.41999999999985,
+      "fills": 31,
+      "orders": 45,
+      "conversions": 0,
+      "basket_cycles": 0,
+      "lowest_marked_pnl": -77.8599999999999,
+      "rate_rejections": 0,
+      "unusable_quotes": 37,
+      "final_positions": {
+        "PORT": 0,
+        "ISLE": 0,
+        "AQUA": 11,
+        "GRID": -40,
+        "FERRY": 40,
+        "RECON": 0,
+        "MAT": 0,
+        "GEN": 0,
+        "HAVEN": -25,
+        "REIN": 0,
+        "ARCH": 5,
+        "REBLD": 0
+      }
+    },
+    {
+      "latency_seconds": 1.0,
+      "displayed_depth_fraction": 1.0,
+      "basket_enabled": true,
+      "reset_warmup_each_snapshot": true,
+      "simulated_settlement_pnl": -24.1700000000003,
+      "fills": 41,
+      "orders": 62,
+      "conversions": 4,
+      "basket_cycles": 4,
+      "lowest_marked_pnl": -294.7699999999995,
+      "rate_rejections": 0,
+      "unusable_quotes": 37,
+      "final_positions": {
+        "PORT": 0,
+        "ISLE": 0,
+        "AQUA": 0,
+        "GRID": -40,
+        "FERRY": 0,
+        "RECON": 0,
+        "MAT": 0,
+        "GEN": 0,
+        "HAVEN": -25,
+        "REIN": 0,
+        "ARCH": 5,
+        "REBLD": 0
+      }
+    },
+    {
+      "latency_seconds": 1.0,
+      "displayed_depth_fraction": 1.0,
+      "basket_enabled": true,
+      "reset_warmup_each_snapshot": false,
+      "simulated_settlement_pnl": 405.2100000000007,
+      "fills": 65,
+      "orders": 81,
+      "conversions": 6,
+      "basket_cycles": 6,
+      "lowest_marked_pnl": -66.63499999999976,
+      "rate_rejections": 0,
+      "unusable_quotes": 37,
+      "final_positions": {
+        "PORT": 0,
+        "ISLE": 0,
+        "AQUA": 11,
+        "GRID": -40,
+        "FERRY": 40,
+        "RECON": 0,
+        "MAT": 0,
+        "GEN": 0,
+        "HAVEN": -25,
+        "REIN": 0,
+        "ARCH": 5,
+        "REBLD": 0
+      }
+    },
+    {
+      "latency_seconds": 1.0,
+      "displayed_depth_fraction": 0.5,
+      "basket_enabled": false,
+      "reset_warmup_each_snapshot": true,
+      "simulated_settlement_pnl": 94.71000000000004,
+      "fills": 24,
+      "orders": 39,
+      "conversions": 0,
+      "basket_cycles": 0,
+      "lowest_marked_pnl": -164.64499999999953,
+      "rate_rejections": 0,
+      "unusable_quotes": 37,
+      "final_positions": {
+        "PORT": 0,
+        "ISLE": 0,
+        "AQUA": 0,
+        "GRID": -40,
+        "FERRY": 13,
+        "RECON": 0,
+        "MAT": 0,
+        "GEN": 0,
+        "HAVEN": -25,
+        "REIN": 0,
+        "ARCH": 5,
+        "REBLD": 0
+      }
+    },
+    {
+      "latency_seconds": 1.0,
+      "displayed_depth_fraction": 0.5,
+      "basket_enabled": false,
+      "reset_warmup_each_snapshot": false,
+      "simulated_settlement_pnl": 191.99999999999932,
+      "fills": 44,
+      "orders": 47,
+      "conversions": 0,
+      "basket_cycles": 0,
+      "lowest_marked_pnl": -95.88500000000022,
+      "rate_rejections": 0,
+      "unusable_quotes": 37,
+      "final_positions": {
+        "PORT": 0,
+        "ISLE": 0,
+        "AQUA": 11,
+        "GRID": -40,
+        "FERRY": 40,
+        "RECON": 0,
+        "MAT": 0,
+        "GEN": 0,
+        "HAVEN": -25,
+        "REIN": 0,
+        "ARCH": 5,
+        "REBLD": 0
+      }
+    },
+    {
+      "latency_seconds": 1.0,
+      "displayed_depth_fraction": 0.5,
+      "basket_enabled": true,
+      "reset_warmup_each_snapshot": true,
+      "simulated_settlement_pnl": -10.419999999999163,
+      "fills": 40,
+      "orders": 55,
+      "conversions": 3,
+      "basket_cycles": 3,
+      "lowest_marked_pnl": -269.7749999999987,
+      "rate_rejections": 0,
+      "unusable_quotes": 37,
+      "final_positions": {
+        "PORT": 0,
+        "ISLE": 0,
+        "AQUA": 0,
+        "GRID": -40,
+        "FERRY": 13,
+        "RECON": 0,
+        "MAT": 0,
+        "GEN": 0,
+        "HAVEN": -25,
+        "REIN": 0,
+        "ARCH": 5,
+        "REBLD": 0
+      }
+    },
+    {
+      "latency_seconds": 1.0,
+      "displayed_depth_fraction": 0.5,
+      "basket_enabled": true,
+      "reset_warmup_each_snapshot": false,
+      "simulated_settlement_pnl": 304.9200000000003,
+      "fills": 70,
+      "orders": 74,
+      "conversions": 5,
+      "basket_cycles": 5,
+      "lowest_marked_pnl": -73.52500000000009,
+      "rate_rejections": 0,
+      "unusable_quotes": 37,
+      "final_positions": {
+        "PORT": 0,
+        "ISLE": 0,
+        "AQUA": 11,
+        "GRID": -40,
+        "FERRY": 40,
+        "RECON": 0,
+        "MAT": 0,
+        "GEN": 0,
+        "HAVEN": -25,
+        "REIN": 0,
+        "ARCH": 5,
+        "REBLD": 0
+      }
+    },
+    {
+      "latency_seconds": 3.0,
+      "displayed_depth_fraction": 1.0,
+      "basket_enabled": false,
+      "reset_warmup_each_snapshot": true,
+      "simulated_settlement_pnl": 85.51999999999953,
+      "fills": 18,
+      "orders": 39,
+      "conversions": 0,
+      "basket_cycles": 0,
+      "lowest_marked_pnl": -177.72499999999945,
+      "rate_rejections": 0,
+      "unusable_quotes": 37,
+      "final_positions": {
+        "PORT": 0,
+        "ISLE": 0,
+        "AQUA": 0,
+        "GRID": -40,
+        "FERRY": 13,
+        "RECON": 0,
+        "MAT": 0,
+        "GEN": 0,
+        "HAVEN": -25,
+        "REIN": 0,
+        "ARCH": 5,
+        "REBLD": 0
+      }
+    },
+    {
+      "latency_seconds": 3.0,
+      "displayed_depth_fraction": 1.0,
+      "basket_enabled": false,
+      "reset_warmup_each_snapshot": false,
+      "simulated_settlement_pnl": 184.11000000000024,
+      "fills": 30,
+      "orders": 46,
+      "conversions": 0,
+      "basket_cycles": 0,
+      "lowest_marked_pnl": -107.0649999999996,
+      "rate_rejections": 0,
+      "unusable_quotes": 37,
+      "final_positions": {
+        "PORT": 0,
+        "ISLE": 0,
+        "AQUA": 11,
+        "GRID": -40,
+        "FERRY": 40,
+        "RECON": 0,
+        "MAT": 0,
+        "GEN": 0,
+        "HAVEN": -25,
+        "REIN": 0,
+        "ARCH": 5,
+        "REBLD": 0
+      }
+    },
+    {
+      "latency_seconds": 3.0,
+      "displayed_depth_fraction": 1.0,
+      "basket_enabled": true,
+      "reset_warmup_each_snapshot": true,
+      "simulated_settlement_pnl": -44.039999999999736,
+      "fills": 41,
+      "orders": 63,
+      "conversions": 4,
+      "basket_cycles": 4,
+      "lowest_marked_pnl": -306.4399999999987,
+      "rate_rejections": 0,
+      "unusable_quotes": 37,
+      "final_positions": {
+        "PORT": 0,
+        "ISLE": 0,
+        "AQUA": 0,
+        "GRID": -40,
+        "FERRY": 0,
+        "RECON": 0,
+        "MAT": 0,
+        "GEN": 0,
+        "HAVEN": -25,
+        "REIN": 0,
+        "ARCH": 5,
+        "REBLD": 0
+      }
+    },
+    {
+      "latency_seconds": 3.0,
+      "displayed_depth_fraction": 1.0,
+      "basket_enabled": true,
+      "reset_warmup_each_snapshot": false,
+      "simulated_settlement_pnl": 503.0099999999999,
+      "fills": 66,
+      "orders": 85,
+      "conversions": 6,
+      "basket_cycles": 6,
+      "lowest_marked_pnl": -76.46500000000083,
+      "rate_rejections": 0,
+      "unusable_quotes": 37,
+      "final_positions": {
+        "PORT": 0,
+        "ISLE": 0,
+        "AQUA": 11,
+        "GRID": -40,
+        "FERRY": 40,
+        "RECON": 0,
+        "MAT": 0,
+        "GEN": 0,
+        "HAVEN": -25,
+        "REIN": 0,
+        "ARCH": 5,
+        "REBLD": 0
+      }
+    },
+    {
+      "latency_seconds": 3.0,
+      "displayed_depth_fraction": 0.5,
+      "basket_enabled": false,
+      "reset_warmup_each_snapshot": true,
+      "simulated_settlement_pnl": 44.0,
+      "fills": 21,
+      "orders": 39,
+      "conversions": 0,
+      "basket_cycles": 0,
+      "lowest_marked_pnl": -217.17499999999836,
+      "rate_rejections": 0,
+      "unusable_quotes": 37,
+      "final_positions": {
+        "PORT": 0,
+        "ISLE": 0,
+        "AQUA": 0,
+        "GRID": -40,
+        "FERRY": 13,
+        "RECON": 0,
+        "MAT": 0,
+        "GEN": 0,
+        "HAVEN": -25,
+        "REIN": 0,
+        "ARCH": 5,
+        "REBLD": 0
+      }
+    },
+    {
+      "latency_seconds": 3.0,
+      "displayed_depth_fraction": 0.5,
+      "basket_enabled": false,
+      "reset_warmup_each_snapshot": false,
+      "simulated_settlement_pnl": 138.8899999999992,
+      "fills": 41,
+      "orders": 47,
+      "conversions": 0,
+      "basket_cycles": 0,
+      "lowest_marked_pnl": -146.2550000000001,
+      "rate_rejections": 0,
+      "unusable_quotes": 37,
+      "final_positions": {
+        "PORT": 0,
+        "ISLE": 0,
+        "AQUA": 11,
+        "GRID": -40,
+        "FERRY": 40,
+        "RECON": 0,
+        "MAT": 0,
+        "GEN": 0,
+        "HAVEN": -25,
+        "REIN": 0,
+        "ARCH": 5,
+        "REBLD": 0
+      }
+    },
+    {
+      "latency_seconds": 3.0,
+      "displayed_depth_fraction": 0.5,
+      "basket_enabled": true,
+      "reset_warmup_each_snapshot": true,
+      "simulated_settlement_pnl": -3.5200000000004366,
+      "fills": 38,
+      "orders": 55,
+      "conversions": 3,
+      "basket_cycles": 3,
+      "lowest_marked_pnl": -264.6949999999988,
+      "rate_rejections": 0,
+      "unusable_quotes": 37,
+      "final_positions": {
+        "PORT": 0,
+        "ISLE": 0,
+        "AQUA": 0,
+        "GRID": -40,
+        "FERRY": 13,
+        "RECON": 0,
+        "MAT": 0,
+        "GEN": 0,
+        "HAVEN": -25,
+        "REIN": 0,
+        "ARCH": 5,
+        "REBLD": 0
+      }
+    },
+    {
+      "latency_seconds": 3.0,
+      "displayed_depth_fraction": 0.5,
+      "basket_enabled": true,
+      "reset_warmup_each_snapshot": false,
+      "simulated_settlement_pnl": 489.7000000000005,
+      "fills": 69,
+      "orders": 78,
+      "conversions": 5,
+      "basket_cycles": 5,
+      "lowest_marked_pnl": -73.39499999999998,
+      "rate_rejections": 0,
+      "unusable_quotes": 37,
+      "final_positions": {
+        "PORT": 0,
+        "ISLE": 0,
+        "AQUA": 11,
+        "GRID": -40,
+        "FERRY": 40,
+        "RECON": 0,
+        "MAT": 0,
+        "GEN": 0,
+        "HAVEN": -25,
+        "REIN": 0,
+        "ARCH": 5,
+        "REBLD": 0
+      }
+    }
+  ],
+  "limitations": [
+    "Simulated fills are not actual account profits or guaranteed counterfactual profits.",
+    "Every frozen scenario is reported; these outcomes are not used to select new parameters.",
+    "Published historical seasons are not an untouched model holdout.",
+    "Displayed liquidity replenishes on each quote; market impact and queue priority are omitted.",
+    "HTTP serialization, cancellation races, conversion delays, and fees outside quotes are omitted.",
+    "Receive-time gaps and disconnections limit conclusions about quote-path completeness.",
+    "The snapshot ablation changes warm-up resets, not the entire earlier runtime."
+  ],
+  "worker": {
+    "receipt_sha256": "e2e47d411f0530d943185c64b210cb3fcf534fc0b9ed243f4da51f37ac8ee7c1",
+    "sources": {
+      "/Users/arjunhans/Documents/ctc2026/.worktrees/closed-season-evaluation/ctc/analog.py": "c606eefeab7cd0b5015b7b46cd831496d995f4b50030784ff2dd8171636938b2",
+      "/Users/arjunhans/Documents/ctc2026/.worktrees/closed-season-evaluation/ctc/sim.py": "91da5850c313b94835364dabd7622fb8282382a710cf324c99471d9c29021273",
+      "/Users/arjunhans/Documents/ctc2026/.worktrees/closed-season-evaluation/ctc/accounting.py": "b9cddb93959b277fe9ab7c6089e84dee2c092a2d049c466212878a5531ff0f99",
+      "/Users/arjunhans/Documents/ctc2026/.worktrees/closed-season-evaluation/ctc/strategies.py": "4c667bebeb84dfe11883205656702bb3f66545661f01a0685c1e4c24f6b2680c",
+      "/Users/arjunhans/Documents/ctc2026/.worktrees/closed-season-evaluation/ctc/wind.py": "2e91425031bae6c2d60bb92a2e529cfc1222778820f126a29be836a4ec026f84",
+      "/Users/arjunhans/Documents/ctc2026/.worktrees/closed-season-evaluation/ctc/__init__.py": "e178e73a3b0452a098d1cfa7f909ad65a3463457389018ab626ac281e1b634fe",
+      "/Users/arjunhans/Documents/ctc2026/.worktrees/closed-season-evaluation/ctc/price_signal.py": "aeb4b06e402231ac82e3b34ea7d1244346ee9b029036c4ffeb926112513b1fa4",
+      "/Users/arjunhans/Documents/ctc2026/.worktrees/closed-season-evaluation/ctc/valuation.py": "e19ceef5dc38154d1889065c4a85aae0d99b159267a0503a4c4fc3c7054292cd",
+      "/Users/arjunhans/Documents/ctc2026/.worktrees/closed-season-evaluation/ctc/basket.py": "ad08208095eb32a51fe19625b0e0929060a35bc4846ff4f8843e316f87d9a522",
+      "/Users/arjunhans/Documents/ctc2026/.worktrees/closed-season-evaluation/ctc/history.py": "c9a93c117e4df869a4e8a34b03f0b656ada231bdf41864778d536ce129b91521",
+      "/Users/arjunhans/Documents/ctc2026/.worktrees/closed-season-evaluation/ctc/ladder.py": "da0c82abb297719dc1ea6d244558703072c881d3bd3b3fa43dc0885ae07f1f25",
+      "/Users/arjunhans/Documents/ctc2026/.worktrees/closed-season-evaluation/ctc/price_signal.json": "3d421c258d939b6a0adc5db9f764b416c15be47cc684accc2187e074f11750f8",
+      "/Users/arjunhans/Documents/ctc2026/.worktrees/closed-season-evaluation/ctc/valuation_params.json": "06439094fc54318a8bfd1854fc2765d6ef542d1acad23de1836a4db47bf3b80b",
+      "/Users/arjunhans/Documents/ctc2026/.worktrees/closed-season-evaluation/ctc/ladder.json": "b70e7a8c5672dc6e4955c39fac62a70709ba29b39f00eead9add3cb4feeba5a4",
+      "/Users/arjunhans/Documents/ctc2026/.worktrees/closed-season-evaluation/ctc/damage_params.json": "c274463749d70b6ae85b6981fb029423c76e6fe5db0224e0d1aec83a70d22415",
+      "/Users/arjunhans/Documents/ctc2026/.worktrees/closed-season-evaluation/ctc/storm_sample.npz": "76da0f456aaadb8baee99920619db79c6f16e928dfab82ad33aade297a4b7c0f",
+      "/Users/arjunhans/Documents/ctc2026/.worktrees/closed-season-evaluation/ctc/analog_library.npz": "22694387c3b612f5c20853feb9143e1bf8b8f5722a845da8ed584ab1b30bdf09",
+      "/Users/arjunhans/Documents/ctc2026/.worktrees/closed-season-evaluation/bot/live.py": "ae8de45ad40896e72a6d1cd1097eab0e5235d4213429871b52029e76830cd828",
+      "/Users/arjunhans/Documents/ctc2026/.worktrees/closed-season-evaluation/data/case.json": "bcd0eb79c5a89b6625c17f2c233a686a04fafc75093e8a57d3c90f3b09972839",
+      "/Users/arjunhans/Documents/ctc2026/.worktrees/closed-season-evaluation/scripts/evaluate_closed_seasons.py": "caff9791c554c13915b48a7bd0060e40760493733b7e2a269f81c1a7d2361b91",
+      "/Users/arjunhans/Documents/ctc2026/.worktrees/closed-season-evaluation/scripts/replay_captured_market.py": "10741686ba5ebbff2758bc488fb2a34ef61183b2d57ec3d91d895b1981784ef9",
+      "/Users/arjunhans/Documents/ctc2026/.worktrees/closed-season-evaluation/scripts/evaluate_observed_season.py": "f7f9113f5dba6e81bba35e5aed50f72b0df4d2853c4cae4d9565407846861576",
+      "/Users/arjunhans/Documents/ctc2026/.worktrees/closed-season-evaluation/scripts/observe_market_seasons.py": "7290d9fa0fb902a1904f49a7927779517e6edcc77aa4f0ded9b57858d9627e96"
+    },
+    "start_at": 1792821960.0,
+    "until": 1792843200.0
+  }
+}
