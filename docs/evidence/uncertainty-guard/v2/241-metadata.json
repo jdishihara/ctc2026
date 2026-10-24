@@ -1,0 +1,173 @@
+{
+  "mode": "completed",
+  "source_competition_id": "6650d983-93c3-45d2-96dd-15209dcd8320",
+  "year": "1786",
+  "official_receipt": {
+    "at": 1792817469.3986921,
+    "kind": "settlement",
+    "competition_id": "6650d983-93c3-45d2-96dd-15209dcd8320",
+    "pnl": 141.16000000000048,
+    "prices": {
+      "PORT": 76.11,
+      "ISLE": 50.51,
+      "AQUA": 25.51,
+      "GRID": 38.83,
+      "FERRY": 21.36,
+      "RECON": 51.69,
+      "MAT": 35.58,
+      "GEN": 37.84,
+      "HAVEN": 42.81,
+      "REIN": 90.0,
+      "ARCH": 302.0,
+      "REBLD": 212.38
+    },
+    "positions": [
+      {
+        "symbol": "GRID",
+        "quantity": -11,
+        "average_price": 38.901250000000005,
+        "current_price": 38.83,
+        "unrealized_pnl": 0.7837500000000688,
+        "realized_pnl": 39.91625000000009
+      },
+      {
+        "symbol": "ARCH",
+        "quantity": 0,
+        "average_price": null,
+        "current_price": 302.0,
+        "unrealized_pnl": null,
+        "realized_pnl": 42.87000000000006
+      },
+      {
+        "symbol": "HAVEN",
+        "quantity": -12,
+        "average_price": 38.86705882352941,
+        "current_price": 42.81,
+        "unrealized_pnl": -47.315294117647085,
+        "realized_pnl": -36.544705882352886
+      },
+      {
+        "symbol": "PORT",
+        "quantity": -7,
+        "average_price": 70.32083333333334,
+        "current_price": 76.11,
+        "unrealized_pnl": -40.524166666666616,
+        "realized_pnl": 24.36416666666669
+      },
+      {
+        "symbol": "AQUA",
+        "quantity": -50,
+        "average_price": 27.785245454545453,
+        "current_price": 25.51,
+        "unrealized_pnl": 113.7622727272726,
+        "realized_pnl": 26.167727272727262
+      },
+      {
+        "symbol": "ISLE",
+        "quantity": -30,
+        "average_price": 50.94500000000001,
+        "current_price": 50.51,
+        "unrealized_pnl": 13.050000000000281,
+        "realized_pnl": 3.829999999999991
+      },
+      {
+        "symbol": "FERRY",
+        "quantity": 0,
+        "average_price": null,
+        "current_price": 21.36,
+        "unrealized_pnl": null,
+        "realized_pnl": 0.8000000000000185
+      }
+    ],
+    "clock": {
+      "competition_id": "6650d983-93c3-45d2-96dd-15209dcd8320",
+      "state": "ready",
+      "fictional_time": "1786-05-31T16:00:00",
+      "elapsed_active_seconds": 2460
+    }
+  },
+  "coverage": {
+    "news_count": 865,
+    "quote_path_completeness_proven": false
+  },
+  "parameters": {
+    "analog": true,
+    "min_edge": 0.025,
+    "edge_full": 0.03,
+    "sd_mult": 0.7,
+    "sigma": 15,
+    "k": 100,
+    "passive": 0.75,
+    "warmup": 20,
+    "max_cross": 0.02,
+    "carry": 0.5,
+    "ent_cut": 1.2,
+    "cone_w": 1,
+    "cone_s0": 20,
+    "cone_nu": 0,
+    "isl_w": 0,
+    "final_exact": true,
+    "final_edge": 0.005,
+    "final_edge_full": 0.005,
+    "basket_edge": 0.01,
+    "basket_participation": 0.5,
+    "announce_wait": 60
+  },
+  "fraction": 0.1,
+  "latencies": [
+    0.25,
+    1.0,
+    3.0
+  ],
+  "frame_count": 17949,
+  "first_at": 1792814705.939921,
+  "last_at": 1792817467.460374,
+  "frames_sha256": "b1964d1a3c40244be2906a5a53d402d9020050eaca0b8b0fb23bc9b09ad942db",
+  "baseline_sha256": "9b5099291968f39b7a5594a16f596c4ddc1e09c329287ded6346144bbae04015",
+  "source_sha256": {
+    "ctc/analog.py": "c606eefeab7cd0b5015b7b46cd831496d995f4b50030784ff2dd8171636938b2",
+    "ctc/sim.py": "91da5850c313b94835364dabd7622fb8282382a710cf324c99471d9c29021273",
+    "ctc/accounting.py": "b9cddb93959b277fe9ab7c6089e84dee2c092a2d049c466212878a5531ff0f99",
+    "ctc/strategies.py": "4c667bebeb84dfe11883205656702bb3f66545661f01a0685c1e4c24f6b2680c",
+    "ctc/wind.py": "2e91425031bae6c2d60bb92a2e529cfc1222778820f126a29be836a4ec026f84",
+    "ctc/__init__.py": "e178e73a3b0452a098d1cfa7f909ad65a3463457389018ab626ac281e1b634fe",
+    "ctc/price_signal.py": "aeb4b06e402231ac82e3b34ea7d1244346ee9b029036c4ffeb926112513b1fa4",
+    "ctc/valuation.py": "e19ceef5dc38154d1889065c4a85aae0d99b159267a0503a4c4fc3c7054292cd",
+    "ctc/basket.py": "ad08208095eb32a51fe19625b0e0929060a35bc4846ff4f8843e316f87d9a522",
+    "ctc/history.py": "c9a93c117e4df869a4e8a34b03f0b656ada231bdf41864778d536ce129b91521",
+    "ctc/ladder.py": "da0c82abb297719dc1ea6d244558703072c881d3bd3b3fa43dc0885ae07f1f25",
+    "ctc/price_signal.json": "3d421c258d939b6a0adc5db9f764b416c15be47cc684accc2187e074f11750f8",
+    "ctc/valuation_params.json": "06439094fc54318a8bfd1854fc2765d6ef542d1acad23de1836a4db47bf3b80b",
+    "ctc/ladder.json": "b70e7a8c5672dc6e4955c39fac62a70709ba29b39f00eead9add3cb4feeba5a4",
+    "ctc/damage_params.json": "c274463749d70b6ae85b6981fb029423c76e6fe5db0224e0d1aec83a70d22415",
+    "ctc/storm_sample.npz": "76da0f456aaadb8baee99920619db79c6f16e928dfab82ad33aade297a4b7c0f",
+    "ctc/analog_library.npz": "22694387c3b612f5c20853feb9143e1bf8b8f5722a845da8ed584ab1b30bdf09",
+    "data/case.json": "bcd0eb79c5a89b6625c17f2c233a686a04fafc75093e8a57d3c90f3b09972839",
+    "bot/live.py": "885e22c3d4f311081058ea1ea7bae3a4d50b156d8ec456b7534e69229de352e8",
+    "bot/http_transport.py": "5cc2dd41e418b794eac9dde2548fd40abcef605af303057ff633bd11d8b92162",
+    "scripts/experiment_uncertainty_guard.py": "9a31df11de3b4d2d3e7be2139fd3b2d2753c0477224ec7d379443305e1b7dd80",
+    "scripts/experiment_final_reports.py": "0f8ac851ef99c539aa3a6834b9a259658f4545448e4962720cb3fd4f032a5ad6",
+    "scripts/experiment_execution_costs.py": "f947346da806425aa4c5a810ffa9f775f3c13a4bd33fe5fdbe4cf97d45b009d1",
+    "scripts/replay_captured_market.py": "10741686ba5ebbff2758bc488fb2a34ef61183b2d57ec3d91d895b1981784ef9",
+    "scripts/evaluate_observed_season.py": "f7f9113f5dba6e81bba35e5aed50f72b0df4d2853c4cae4d9565407846861576",
+    "scripts/observe_market_seasons.py": "7290d9fa0fb902a1904f49a7927779517e6edcc77aa4f0ded9b57858d9627e96",
+    "docs/uncertainty-guard-plan.md": "2b6cc14054ddb8d28bfdb3b21eaab5abdd1bf0bb9bde3cc08b321d9141c00579"
+  },
+  "limitations": [
+    "Offline virtual fills do not establish actual account profit.",
+    "Development and previously viewed captures are reused data, not untouched holdouts.",
+    "The audit counts accepted passive risk additions, not every forecast error or later fill.",
+    "The candidate also caps fundamental reversals and cancels risk-increasing working orders.",
+    "Basket execution and its model-free hedges are outside this uncertainty gate.",
+    "No parameter selection or live activation occurs in this script."
+  ],
+  "depth_fractions": [
+    1.0,
+    0.5
+  ],
+  "basket_enabled": [
+    false,
+    true
+  ],
+  "reset_warmup_each_snapshot": false
+}
