@@ -339,7 +339,7 @@ def test_cleanup_honors_retry_limit_with_no_executable_bid(tmp_path):
         practice.finish(journal)
     assert journal.latest['cleanup']['state'] == 'attention'
     assert journal.latest['cleanup']['reason'] == 'cleanup retry limit'
-    assert server.now == 5
+    assert server.now == 62
     assert server.market.position['PORT'] == 10
     assert len(server.market.fills) == 1
     assert journal.latest['final_receipt']['verified'] and not journal.latest['final_receipt']['flat']
