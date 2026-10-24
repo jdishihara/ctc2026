@@ -49,8 +49,6 @@ export interface Thresholds {
   /** edge/synthetic tickets: 0 = price at the touch, sized to the displayed touch size; >0 = size to perTicketCap and price this
    *  fraction of the per-unit edge through the touch so one order sweeps several levels (live makers show ~30 lots at the touch) */
   edgeThroughFrac: number;
-  /** live: trade only the vega-neutral synthetics (pure spot bets); single-leg tickets need a per-strike vol we do not have */
-  synthOnly: boolean;
 }
 
 /** Auto-pilot: what the overlay does on its own per event. autoSubmit stays OFF until the organisers allow a bot to click. */
@@ -73,6 +71,8 @@ export interface AutoConfig {
   /** live exchange: the market makers reprice the spot instantly at the move and only the vol snaps later, so unwind the
    *  directional position as soon as the move prints (UNDERLYING_MOVED works the book flat) instead of after the snap */
   flattenAfterMove: boolean;
+  /** live: trade only the vega-neutral synthetics (pure spot bets); single-leg tickets need a per-strike vol we do not have */
+  synthOnly: boolean;
   submitRateCap: number;
   /** minimum real ms between two auto submissions */
   submitIntervalMs: number;
@@ -199,7 +199,6 @@ export const DEFAULT_CONFIG: Config = {
     flattenThroughPct: 2,
     flattenThroughTicks: 5,
     edgeThroughFrac: 0,
-    synthOnly: false,
     learnDelayRealSec: 5,
   },
   blend: { mode: 'median', lambda: 0.0025, k: 1, bandMode: 'auto' },
@@ -213,7 +212,7 @@ export const DEFAULT_CONFIG: Config = {
   focus: null,
   auto: {
     confirm: true, converter: true, converterTolPts: 8, converterTieMarginPts: 2, converterNamedTolPts: 40,
-    submit: false, confirmEach: true, flattenAfterMove: true, submitRateCap: 12, submitIntervalMs: 5000, resubmitAfterMs: 20_000, flattenResubmitMs: 6_000, flattenReserve: 4, flattenIntervalMs: 5000,
+    submit: false, confirmEach: true, flattenAfterMove: true, synthOnly: false, submitRateCap: 12, submitIntervalMs: 5000, resubmitAfterMs: 20_000, flattenResubmitMs: 6_000, flattenReserve: 4, flattenIntervalMs: 5000,
     spotBoundPct: 40, volMin: 0.05, volMax: 3.0, switchTabs: true,
     submitVia: 'api', cancelOnSnap: true, cancelOnNews: true, backoffMs: 5000, haltedPauseMs: 30_000,
   },
