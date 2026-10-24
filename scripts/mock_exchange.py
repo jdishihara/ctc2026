@@ -42,7 +42,10 @@ class H(BaseHTTPRequestHandler):
                     'bids': [{'price': mid * (1 - STATE['half_spread']), 'quantity': size}],
                     'asks': [{'price': mid * (1 + STATE['half_spread']), 'quantity': size}]})
         if self.path.startswith("/api/v1/competitions/time"):
-            return self._json({"state": "running" if STATE["open"] else "paused"})
+            # The bot refuses to start without a competition identity and a fictional clock (startup identity check).
+            return self._json({"competition_id": STATE.get("competition_id", "mock-season"),
+                               "fictional_time": STATE.get("fictional_time", "1576-08-01T09:30:00"),
+                               "state": "running" if STATE["open"] else "paused"})
         if self.path.startswith("/api/v1/positions"):
             with STATE["lock"]:
                 return self._json({"positions": [{"symbol": s, "quantity": q} for s, q in STATE["position"].items()]})
@@ -98,7 +101,7 @@ class H(BaseHTTPRequestHandler):
         self._json({"status": "ok"})
 
 
-async def stream(sim: Sim, speed: float, port: int):
+async def stream(sim: Sim, speed: float, port: int, start_delay: float = 0.0):
     clients = set()
 
     async def handler(ws):
@@ -111,6 +114,11 @@ async def stream(sim: Sim, speed: float, port: int):
 
     async with websockets.serve(handler, "localhost", port + 1):
         print(f"ws on ws://localhost:{port + 1}/ws/v1/market-data  (http on {port})", flush=True)
+        if start_delay > 0:
+            STATE["open"] = False          # like the live exchange before the open: a bot can connect and wait
+            await asyncio.sleep(start_delay)
+            STATE["open"] = True
+            print("season starting", flush=True)
         t0 = time.time(); last_t = 0.0
         for t, _, kind, payload in sim.events:
             wait = (t - last_t) / speed - (time.time() - t0)
@@ -139,13 +147,18 @@ async def stream(sim: Sim, speed: float, port: int):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--season", type=int, default=451); ap.add_argument("--speed", type=float, default=20.0); ap.add_argument("--port", type=int, default=8765)
+    ap.add_argument("--start-delay", type=float, default=0.0, help="seconds to serve a closed market before the season starts (lets a bot connect first)")
     a = ap.parse_args()
     case = json.loads((ROOT / "case.json").read_text()); man = json.loads((ROOT / "history" / "manifest.json").read_text())
     STATE["case"] = case
     sim = Sim(ROOT / "history" / man["seasons"][a.season - 1]["dir"], case)
+    # The clock endpoint must agree with the feed's fictional year, as on the real exchange: the bot refuses to trade
+    # while the account clock and the news disagree on the season.
+    STATE["competition_id"] = f"mock-season-{a.season}"
+    STATE["fictional_time"] = next((pl["time"] for _, _, kind, pl in sim.events if kind != "price" and isinstance(pl, dict) and pl.get("time")), "2026-08-03T09:30:00")
     srv = ThreadingHTTPServer(("localhost", a.port), H)
     threading.Thread(target=srv.serve_forever, daemon=True).start()
-    asyncio.run(stream(sim, a.speed, a.port))
+    asyncio.run(stream(sim, a.speed, a.port, a.start_delay))
     srv.shutdown()
 
 
