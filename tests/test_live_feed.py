@@ -9,14 +9,16 @@ from bot import live
 def session_fixture():
     ex = SimpleNamespace(t=100., competition_id='season-1', symbols=['A', 'B'],
         quotes={}, mid={}, quote_times={}, quotes_valid_after=-float('inf'),
-        position={'A': 0, 'B': 0}, reopened=False, state_ready=True,
+        position={'A': 0, 'B': 0}, open_orders=[], reopened=False, state_ready=True,
         market_open=True, round=1, pnl_now=0, refresh=lambda: None)
     calls, resets = [], []
     strat = SimpleNamespace(basket=None, paused=set(), fair={},
-        model=SimpleNamespace(round=1, reported_rounds=set()),
+        model=SimpleNamespace(round=1, reported_rounds=set(), live_history_ready=True),
         on_quotes=lambda ex: calls.append(ex.quote_times.copy()),
         on_start=lambda ex: resets.append(ex.competition_id), on_round=lambda ex: None)
-    return live.LiveSession(ex, strat, sync=3), calls, resets
+    session = live.LiveSession(ex, strat, sync=3)
+    session.feed_current = True
+    return session, calls, resets
 
 
 def quote(symbol='A', price=10):

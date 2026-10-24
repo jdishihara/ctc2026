@@ -1,5 +1,7 @@
 # Authenticated practice rehearsal — October 23, 2026
 
+Follow-up: [practice loss review and fixes](practice-loss-review.md). The original receipts and loss figures below are retained.
+
 ## Environment and checks
 
 Used the team's supplied bot key against `https://cornelltradingcompetition.org`.
@@ -66,8 +68,8 @@ receipts, WebSocket feed, order books, and execution logs were recorded locally.
 
 The runner stopped the strategy, canceled only its remaining orders, verified that
 no other trader had added orders, closed its test exposure, and stopped both recorders.
-The loss is a material negative result. Its causes have not been isolated, and this
-rehearsal does not establish that the strategy is competition-ready.
+The loss is a material negative result. The follow-up isolated incomplete startup history and stale execution batches;
+this rehearsal does not establish that the strategy is competition-ready.
 
 ### Live advisories differ from the published replay
 

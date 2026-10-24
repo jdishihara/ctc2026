@@ -175,6 +175,13 @@ class SeasonModel:
         self.future_sd: dict[str, float] = {}
 
     @property
+    def live_history_ready(self) -> bool:
+        """Interpolated snapshots can inform displays, but cannot authorize risk."""
+        return (self.round > 0 and self.outage_history_complete
+                and set(range(1, self.round)) <= self.reported_rounds
+                and (self.last_obs is not None or self.storm_reported))
+
+    @property
     def final_exact_ready(self) -> bool:
         return (self.final_exact and self.round == 3 and self.storm_reported
                 and {1, 2, 3} <= self.reported_rounds and self.outage_history_complete)
@@ -236,17 +243,28 @@ class SeasonModel:
     def on_snapshot(self, snap: dict[str, Any]) -> None:
         """After a late connection, rebuild from the snapshot: final reports of earlier rounds we missed, then the
         current storm's track (sparse, so each point carries its age gap) and preliminary report if any."""
+        rnd = snap.get("round") or self.round + 1
+        if rnd < self.round:
+            return  # A delayed snapshot must not rewind/relabel the current storm.
         reports = [{**r, "type": "damage_report"} for r in (snap.get("damage") or [])]   # snapshot entries carry no type
         finals = [r for r in reports if r.get("stage") == "final"]
         phase = snap.get("phase")
+        obs = snap.get("obs")
+        same_storm = rnd == self.round
+        cur_obs = list(self.obs) if same_storm else []
+        cur_official, cur_wire = (list(self.official), list(self.wire)) if same_storm else ([], [])
+        cur_adv = self.adv if same_storm else None
+        step = self.timing["obs_every"]
+        ages_seen = {o["age"] for o in cur_obs}
+        last_age = max(ages_seen | {obs.get("age", 0) if obs else 0})
+        missing_weather = any(a not in ages_seen for a in np.arange(0, last_age + 1e-9, step))
         need_rounds = not ({r["round"] for r in finals} <= self.reported_rounds)
-        need_storm = phase in ("storm", "aftermath") and not self.obs
+        need_storm = phase in ("storm", "aftermath") and missing_weather
         if not (need_rounds or need_storm):
             return
         # Reconstructed tracks and outage/damage ratios do not support the low
         # final-phase uncertainty floor, even once all damage reports are known.
         self.outage_history_complete = False
-        cur_obs, cur_official, cur_wire, cur_adv = list(self.obs), list(self.official), list(self.wire), self.adv
         self.states = {k: SiteState(self.case, k) for k in PHYS}
         self.loss_final, self.reported_rounds, self.round = 0.0, set(), 0
         for rep in sorted(finals, key=lambda r: r["round"]):
@@ -256,35 +274,32 @@ class SeasonModel:
             # too high for the rest of the season (measured 2026-10-23). Book the historical ratio of outage to damage.
             for k in PHYS:
                 self.states[k].add_outage_estimate(OUTAGE_PER_DMG[k] * rep["damage_pct"][k])
-        obs = snap.get("obs")
-        rnd = snap.get("round") or self.round + 1
         if obs and phase in ("storm", "aftermath") and rnd not in self.reported_rounds:
             self.on_message({"type": "storm_formed", "round": rnd})
-            if cur_obs:
-                for o in cur_obs:
-                    self.on_message({**o, "type": "storm", "round": rnd})
-            else:
-                pts = snap.get("track") or []
-                # the snapshot track is subsampled (about 40 points): interpolate it to the 2 s observation grid and use the
-                # storm's own intensity (not 1.0) so the exposure integral matches a model that saw every observation
-                T, D = self.timing["storm"], self.case["storm"]["dissipate"]
-                def fade(a):
-                    return 1.0 if a < T - D else max(0.0, (T - a) / D)
-                a_obs = obs.get("age", 0)
-                i0 = min(1.5, max(0.5, obs.get("intensity", 1.0) / max(0.1, fade(a_obs))))
-                ages = np.arange(0, a_obs + 1e-9, 2.0)
-                prev_age = -2.0
-                if len(pts) >= 2:
-                    arr = np.array(pts, dtype=float)
-                    xs, ys, rs = (np.interp(ages, arr[:, 0], arr[:, c]) for c in (1, 2, 3))
-                    for a, x, y, r in zip(ages, xs, ys, rs):
-                        if a >= a_obs:
-                            break
-                        self.on_message({"type": "storm", "round": rnd, "age": float(a), "x": float(x), "y": float(y), "radius": float(r),
-                                         "intensity": i0 * fade(a), "vx": obs.get("vx", 0), "vy": obs.get("vy", 0), "_dt": 2.0})
-                        prev_age = a
-                self.on_message({"type": "storm", "round": rnd, **{k: v for k, v in obs.items() if k != "type"}, "_dt": max(2.0, a_obs - prev_age)})
+            # A few recently received points do not replace the missing prefix.
+            # Fill supported gaps from the snapshot, then prefer every actual
+            # observation, including ones newer than this snapshot.
+            weather = {}
+            pts = snap.get("track") or []
+            T, D = self.timing["storm"], self.case["storm"]["dissipate"]
+            def fade(a):
+                return 1.0 if a < T - D else max(0.0, (T - a) / D)
+            a_obs = obs.get("age", 0)
+            i0 = min(1.5, max(0.5, obs.get("intensity", 1.0) / max(0.1, fade(a_obs))))
+            if len(pts) >= 2:
+                arr = np.array(pts, dtype=float)
+                ages = np.arange(0, a_obs + 1e-9, step)
+                ages = ages[(ages >= arr[0, 0]) & (ages <= arr[-1, 0])]
+                xs, ys, rs = (np.interp(ages, arr[:, 0], arr[:, c]) for c in (1, 2, 3))
+                for a, x, y, r in zip(ages, xs, ys, rs):
+                    weather[a] = {"type": "storm", "round": rnd, "age": float(a), "x": float(x), "y": float(y), "radius": float(r),
+                                  "intensity": i0 * fade(a), "vx": obs.get("vx", 0), "vy": obs.get("vy", 0), "_dt": step}
+            weather[a_obs] = {"type": "storm", "round": rnd, **{k: v for k, v in obs.items() if k != "type"}}
+            weather.update({o["age"]: o for o in cur_obs})
+            for age in sorted(weather):
+                self.on_message(weather[age])
             self.official, self.wire, self.adv = cur_official, cur_wire, cur_adv
+            self.adv_prev = cur_adv
             adv = snap.get("advisory")
             if adv and not cur_official:
                 # the snapshot's advisory record carries no "type" field; the live bot crashed on it at each reconnect
