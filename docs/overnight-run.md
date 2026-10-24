@@ -13,6 +13,10 @@ goal. Preserve every trial, loss, and cleanup cost.
   trigger, deadline 06:44:57 UTC. The trigger is not a guaranteed maximum loss.
 - Existing recorder and trader are already running. Read their process metadata
   and current status before starting anything; never duplicate the trading loop.
+- A local-only status archiver records changed batch status and final receipts to
+  `recordings/consistency-20261024/account-observations.jsonl`. It began at
+  04:36:29 UTC and exits at 12:00 UTC. Earlier P&L marks are only sampled in the
+  trader log; do not describe this archive as covering the entire first trial.
 - Reviewed snapshot/reconnect fix: `c583144` on `arjun/snapshot-checkpoint`,
   isolated in `.worktrees/snapshot-checkpoint`; 269 tests passed.
 
