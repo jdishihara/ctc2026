@@ -16,6 +16,7 @@ import websockets
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from ctc import strategies as S
 from ctc.valuation import SYMS
+from bot.control import ControlFile
 
 HEADERS = {"User-Agent": "ctc2026-bot/1.0"}
 TICK = 0.01   # exchange rejects prices that are not a multiple of 0.01
@@ -392,12 +393,13 @@ async def drive_market_data(session, inbox, receiver, interval=.25):
 
 
 class LiveSession:
-    def __init__(self, ex, strat, sync, season_year='', last_round=0, seen_seq=None):
+    def __init__(self, ex, strat, sync, season_year='', last_round=0, seen_seq=None, control=None):
         self.ex, self.strat, self.sync = ex, strat, sync
         self.season_year, self.last_round = season_year, last_round
         self.seen_seq = seen_seq if seen_seq is not None else set()
         self.competition_id = ex.competition_id
         self.last_sync = self.last_log = 0.
+        self.control = control      # ControlFile or None: human commands (announcement adjustments) polled with each sync
 
     def _competition_changed(self):
         ex, strat = self.ex, self.strat
@@ -443,8 +445,12 @@ class LiveSession:
             strat.on_round(ex)
             return
         if m.get('type') == 'announcement':
-            print(f"ANNOUNCEMENT {m.get('symbols')}: {m.get('headline')}  -> pausing those symbols", flush=True)
-            strat.pause(m.get('symbols', []))
+            syms = [s for s in (m.get('symbols') or []) if s in ex.symbols]
+            wait = strat.announce_wait
+            how = (f"re-anchor to the house mid in {wait:.0f} s unless a command arrives first" if wait > 0
+                   else "waiting for a command (recordings/control.txt)")
+            print(f"ANNOUNCEMENT {syms}: {m.get('headline')}  -> pausing those symbols; {how}", flush=True)
+            strat.announce(syms, ex.t)
         strat.on_news(ex, m)
 
     def step(self, events):
@@ -452,6 +458,9 @@ class LiveSession:
         if ex.t - self.last_sync > self.sync:
             ex.refresh()
             self.last_sync = ex.t
+            if self.control is not None:
+                for line in self.control.poll(strat, ex):
+                    print(line, flush=True)
         self._competition_changed()
         if ex.reopened:
             print('market (re)opened: warm-up', flush=True)
@@ -503,11 +512,13 @@ async def run(args: argparse.Namespace) -> None:
                                   basket_edge=args.basket_edge, basket_participation=args.basket_participation,
                                   final_exact=args.final_exact, final_edge=args.final_edge, final_edge_full=args.final_edge_full,
                                   sigma=args.sigma, k=args.k, passive=args.passive, warmup=args.warmup, max_cross=args.max_cross,
-                                  carry=args.carry, ent_cut=args.ent_cut, cone_w=args.cone_w, cone_s0=args.cone_s0, cone_nu=args.cone_nu, isl_w=args.isl_w)
+                                  carry=args.carry, ent_cut=args.ent_cut, cone_w=args.cone_w, cone_s0=args.cone_s0, cone_nu=args.cone_nu, isl_w=args.isl_w,
+                                  announce_wait=args.announce_wait)
     print(f"strategy {'nowcast' if args.nowcast else 'analog'} min_edge {args.min_edge} edge_full {args.edge_full} sd_mult {args.sd_mult} sigma {args.sigma} k {args.k} passive {args.passive} warmup {args.warmup} max_cross {args.max_cross} carry {args.carry} ent_cut {args.ent_cut} cone_w {args.cone_w} cone_s0 {args.cone_s0} cone_nu {args.cone_nu} isl_w {args.isl_w}", flush=True)
     strat.on_start(ex)
     print(f"final phase exact={strat.final_exact} entry={strat.final_edge} full={strat.final_edge_full}", flush=True)
     print(f"basket edge={strat.basket_edge} participation={strat.basket_participation} max_lot=10", flush=True)
+    print(f"announcements: pause named symbols, re-anchor to the house mid after {args.announce_wait:.0f} s; commands from {args.control}", flush=True)
     ex.refresh()
     season_year = ""
     last_round = 0
@@ -523,7 +534,7 @@ async def run(args: argparse.Namespace) -> None:
     ws_url = (args.ws or ex.url.replace("https://", "wss://", 1).replace("http://", "ws://", 1)) + "/ws/v1/market-data"
     subscribe = {"action": "subscribe", "symbols": ex.symbols, "channels": ["news", "quotes"]}
     inbox = MarketInbox()
-    session = LiveSession(ex, strat, args.sync, season_year, last_round, seen_seq)
+    session = LiveSession(ex, strat, args.sync, season_year, last_round, seen_seq, control=ControlFile(args.control))
 
     async def receive_forever():
         while True:
@@ -575,6 +586,8 @@ def main() -> None:
     ap.add_argument("--cone-nu", type=float, default=0.0, help="Student-t degrees of freedom for the cone likelihood (0 = Gaussian)")
     ap.add_argument("--isl-w", type=float, default=0.0, help="analog likelihood power for the advisory island probabilities (0 = off; rejected, fattens the tail)")
     ap.add_argument("--ent-cut", type=float, default=1.2, help="do not add while the pattern posterior entropy exceeds this, nats (0 = off)")
+    ap.add_argument("--announce-wait", type=float, default=60.0, help="seconds after a live announcement before a paused symbol's fair is re-anchored to the house mid and trading resumes (0 = wait for a human command)")
+    ap.add_argument("--control", default="recordings/control.txt", help="command file polled every --sync seconds: 'HAVEN -6%%', 'PORT =61.5', 'resume GEN', 'pause MAT', 'status' (see bot/control.py)")
     asyncio.run(run(ap.parse_args()))
 
 

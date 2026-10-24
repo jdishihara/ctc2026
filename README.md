@@ -108,8 +108,14 @@ What to look for:
 - Round opens: the house re-prices by about 7% from the previous close, stays quiet for 30 s, then moves about 3% over the
   next five minutes. That move is where the season's PnL is made or lost; the bot trades it after the warm-up.
 - `HTTP 4xx …` lines: rejections. One or two around a halt are normal; a stream of them means the tick, the limits or the key.
-- `ANNOUNCEMENT <symbols>: <headline> -> pausing those symbols`: the bot stops trading them because the model has not seen
-  the announcement. A human reads the headline and decides; to resume, restart the bot (`bot/stop.sh` then `run_live.sh`).
+- `ANNOUNCEMENT <symbols>: <headline> -> pausing those symbols; re-anchor to the house mid in 60 s ...`: the model has not
+  seen the announcement, so the bot cancels its orders in those symbols and waits. After `--announce-wait` (60 s; the house
+  consensus adjusts within about 45 s) it shifts each symbol's fair to the house mid, keeps the model's storm dynamics on top,
+  and resumes: `announcement wait over: HAVEN fair anchored to house mid 31.20 (offset -6.35); trading resumes`. No action is
+  required. To act sooner, or differently, append a command to `recordings/control.txt` (polled every 3 s, no restart):
+  `echo "HAVEN -6%" >> recordings/control.txt` (fair = model x 0.94), `GEN +3` (points), `PORT =61.5` (fair is 61.5 now),
+  `resume HAVEN` (announcement judged irrelevant), `clear HAVEN` (drop the adjustment), `pause MAT`, `status`.
+  `docs/announcements.md` has the decision sheet; `--announce-wait 0` makes the bot wait for a command instead.
 - `disconnected … reconnecting`: fine once; repeated every few seconds means the network or the host.
 - Order actions: the bot caps itself at 120 per minute; the team limit is 180, so nobody else trades on the bot's key.
 
@@ -252,4 +258,6 @@ using them fattens the PnL tail (rejected). With the cone the ensemble prefers s
    (deep regime); the bot now logs every fill once (FILL lines) and rebuilds the season from the recording on each start.
 3. Exact rebuilder settlement rules with a 3% floor for RECON and MAT (needs its own tune run).
 4. ETF create/redeem arbitrage (measured: ARCH quote more than 0.9% from its basket 5% of the time; small, riskless).
-5. Live announcements: the bot pauses named symbols; a human must read the headline and decide.
+5. Live announcements: the bot pauses named symbols, re-anchors to the house mid after 60 s, and takes human adjustments
+   from `recordings/control.txt` (bot/control.py, docs/announcements.md). Untested against a real announcement: the
+   research seasons have none.

@@ -34,7 +34,7 @@ class FairValueTrader(Strategy):
                  edge_ramp: float = 0.0, final_exact: bool = False, final_edge: float = 0.0,
                  final_edge_full: float = 0.0, price_gate: float = 0.0,
                  price_drift: float = 0.0, basket_edge: float = 0.0,
-                 basket_participation: float = 0.0, **analog_kw):
+                 basket_participation: float = 0.0, announce_wait: float = 60.0, **analog_kw):
         for name, value in (("price_gate", price_gate), ("price_drift", price_drift), ("basket_edge", basket_edge)):
             if not math.isfinite(value) or value < 0:
                 raise ValueError(f"{name} must be finite and nonnegative")
@@ -73,6 +73,11 @@ class FairValueTrader(Strategy):
         self.project, self.analog, self.sd_mult, self.analog_kw = project, analog, sd_mult, analog_kw
         self.exit_slip = 0.01                               # how far through the book we go to exit a wrong position
         self.paused: set[str] = set()
+        self.announce_wait = announce_wait  # >0: a symbol paused by a live announcement resumes after this many seconds with its
+                                            # fair re-anchored to the house mid (the house reprices in ~45 s); 0 = wait for a human
+        self.adjust: dict[str, tuple[float, float]] = {}    # symbol -> (mult, add) applied to the model's fair (announcements)
+        self.announce_t: dict[str, float] = {}
+        self.log = print
 
     def on_start(self, sim) -> None:
         self.competition_id = getattr(sim, 'competition_id', None)
@@ -101,6 +106,8 @@ class FairValueTrader(Strategy):
         self.round_open_t = -1e9
         self.pause_cancel_t: dict[str, float] = {}
         self.pause_pending: set[str] = set()
+        self.adjust = {}
+        self.announce_t = {}
 
     def on_round(self, sim) -> None:
         self.round_open_t = sim.t
@@ -112,12 +119,62 @@ class FairValueTrader(Strategy):
             self.price_signal.reset()
 
     def pause(self, symbols: list[str]) -> None:
-        """Stop trading symbols named in a live announcement until a human clears them (model has not seen announcements)."""
+        """Stop trading symbols until resume(): cancel their orders, place none (the model has not seen announcements)."""
         self.paused |= set(symbols)
         self.pause_pending.update(symbols)
 
+    def announce(self, symbols: list[str], t: float) -> None:
+        """A live announcement named these symbols: pause them; after announce_wait seconds on_quotes re-anchors each one's
+        fair to the house mid and resumes (the house consensus adjusts within ~45 s). A human can act sooner via set_adjust."""
+        self.pause(symbols)
+        for s in symbols:
+            self.announce_t[s] = t
+
+    def resume(self, symbols: list[str]) -> None:
+        for s in symbols:
+            self.paused.discard(s)
+            self.pause_pending.discard(s)
+            self.announce_t.pop(s, None)
+        self.last_trade_t = -1e9
+
+    def set_adjust(self, symbol: str, mult: float = 1.0, add: float = 0.0) -> None:
+        """fair[symbol] = model fair * mult + add from now on (ETF fairs follow their baskets); resumes the symbol."""
+        if not (math.isfinite(mult) and math.isfinite(add)):
+            raise ValueError("adjustment must be finite")
+        if mult == 1.0 and add == 0.0:
+            self.adjust.pop(symbol, None)
+        else:
+            self.adjust[symbol] = (mult, add)
+        if self.fair:
+            self.fair = self.compute_fair()
+        self.resume([symbol])
+
+    def anchor(self, symbol: str, price: float) -> float | None:
+        """Shift fair[symbol] so that it equals price now; the model keeps moving it from there. Returns the offset."""
+        self.adjust.pop(symbol, None)
+        base = self.compute_fair().get(symbol)
+        if base is None or not math.isfinite(price):
+            return None
+        self.set_adjust(symbol, 1.0, price - base)
+        return price - base
+
     def compute_fair(self) -> dict[str, float]:
-        return self.model.fair_analog() if self.analog else self.model.fair(self.project)
+        f = self.model.fair_analog() if self.analog else self.model.fair(self.project)
+        return self.apply_adjust(f) if self.adjust else f
+
+    def apply_adjust(self, f: dict[str, float]) -> dict[str, float]:
+        f = dict(f)
+        etfs = self.model.case.get("etfs", {})
+        for s, (mult, add) in self.adjust.items():
+            if s in f and s not in etfs:
+                f[s] = f[s] * mult + add
+        for etf, spec in etfs.items():
+            if all(s in f for s in spec["basket"]):
+                f[etf] = sum(n * f[s] for s, n in spec["basket"].items())
+            if etf in self.adjust:
+                mult, add = self.adjust[etf]
+                f[etf] = f.get(etf, 0.0) * mult + add
+        return f
 
     def on_news(self, sim, m: dict[str, Any]) -> None:
         if self.basket is not None:
@@ -197,9 +254,15 @@ class FairValueTrader(Strategy):
                           if symbol in quote_times and 0 <= now - quote_times[symbol] <= 10
                           and quote_times[symbol] > self.price_signal.symbol_received_at.get(symbol, -math.inf)}
             self.price_signal.observe(now, prices)
+        if self.announce_wait > 0 and self.announce_t:
+            for s in [s for s in self.paused if s in self.announce_t and sim.t - self.announce_t[s] >= self.announce_wait]:
+                if s in sim.mid and s not in self.pause_pending:
+                    off = self.anchor(s, sim.mid[s])
+                    if off is not None:
+                        self.log(f"announcement wait over: {s} fair anchored to house mid {sim.mid[s]:.2f} (offset {off:+.2f}); trading resumes", flush=True)
         # Pausing additions alone leaves old quotes executable at obsolete fair
         # values. Cancel immediately, even during warm-up; retry at most once/s.
-        for s in self.paused:
+        for s in list(self.paused):
             if (s in self.pause_pending or sim.resting(s, "buy") or sim.resting(s, "sell")) and sim.t - self.pause_cancel_t.get(s, -1e9) >= 1:
                 self.pause_cancel_t[s] = sim.t
                 if sim.cancel_all(s):
