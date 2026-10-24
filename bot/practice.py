@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import argparse
 import asyncio
+from collections import deque
 import json
 import math
 import sys
@@ -121,6 +122,9 @@ class Journal:
         self.trials = {}
         self.latest = {}
         self.last_write = 0.
+        self._mutation_times = deque()
+        self._mutation_clock_valid = True
+        self._last_mutation_clock = None
 
     def stop(self, reason):
         if self.stop_reason is None:
@@ -142,8 +146,35 @@ class Journal:
         self.stop(reason)
 
     def event(self, kind, **data):
+        if (kind in ('cleanup_order', 'cleanup_cancel')
+                or kind == 'request' and data.get('method') in ('POST', 'DELETE')):
+            # Completion timestamps conservatively retain slow/failed attempts.
+            # The persisted event stream and the first five cleanup passes are
+            # unchanged; only additional passes consult this shared counter.
+            now = time.monotonic()
+            if (not finite(now) or self._last_mutation_clock is not None
+                    and now < self._last_mutation_clock):
+                self._mutation_clock_valid = False
+            else:
+                self._last_mutation_clock = now
+                while self._mutation_times and self._mutation_times[0] < now - 60:
+                    self._mutation_times.popleft()
+                self._mutation_times.append(now)
         with (self.out / 'actions.jsonl').open('a') as f:
             f.write(json.dumps({'at': time.time(), 'kind': kind, **data}) + '\n')
+
+    def extra_cleanup_mutation_allowed(self):
+        """Shared conservative budget for extra passes, including direct DELETEs."""
+        if not getattr(self, '_mutation_clock_valid', False):
+            return False
+        now = time.monotonic()
+        if (not finite(now) or self._last_mutation_clock is not None
+                and now < self._last_mutation_clock):
+            self._mutation_clock_valid = False
+            return False
+        while self._mutation_times and self._mutation_times[0] < now - 60:
+            self._mutation_times.popleft()
+        return len(self._mutation_times) < 90
 
     def observe(self, ex):
         rows = ex.raw_positions.get('positions', []) if isinstance(ex.raw_positions, dict) else ex.raw_positions
@@ -544,12 +575,19 @@ def reconcile_stop(journal, original):
     if not journal.activity.get(original.competition_id):
         cleanup_status(journal, 'skipped', reason='no exposure-changing attempts in this competition')
         return
+    started = time.monotonic()
     ex = CleanupExchange(original, journal)
-    for attempt in range(5):
+    for attempt in range(62):
+        if attempt >= 5:
+            now = time.monotonic()
+            if not (finite(started) and finite(now) and 0 <= now - started <= 61):
+                break
         ex.refresh()
         if not ex.scope_ok():
             return
         for order in list(ex.open_orders):
+            if attempt >= 5 and not journal.extra_cleanup_mutation_allowed():
+                break
             oid = order_id(order)
             result = ex.send('DELETE', f'/orders/{oid}')
             journal.event('cleanup_cancel', order_id=oid, response=result)
@@ -592,6 +630,8 @@ def reconcile_stop(journal, original):
             if not levels or not finite(levels[0].get('price')) or levels[0]['price'] <= 0:
                 continue
             price = max(.01, levels[0]['price'] * (.99 if quantity > 0 else 1.01))
+            if attempt >= 5 and not journal.extra_cleanup_mutation_allowed():
+                break
             oid = ex.place(symbol, side, abs(quantity), price)
             journal.event('cleanup_order', symbol=symbol, side=side, quantity=abs(quantity), order_id=oid)
             ex.refresh()
