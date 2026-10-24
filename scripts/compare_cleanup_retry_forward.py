@@ -11,6 +11,7 @@ import copy
 from collections.abc import Mapping
 from dataclasses import asdict
 import hashlib
+import importlib.util
 import itertools
 import json
 import math
@@ -23,6 +24,7 @@ from unittest.mock import patch
 
 ROOT = Path(__file__).resolve().parents[1]
 FROZEN = 'cd3eb239bd7bad97b34f10a8f2bb0b2e1c0f5026'
+FORWARD_DRIVER = 'c5c35a30e0c5f521f12324eec854f405b681b8c0'
 JOURNALS = ['observations.json', 'actions.jsonl', 'status.json', 'final-receipt.json',
             'startup-feed.jsonl', 'result.json', 'run.lock']
 
@@ -33,14 +35,116 @@ def forward_grid(capture):
     return list(itertools.product([capture], [0., .05, .25, 1.], [1., .5], [False, True]))
 
 
-def validate_forward_receipt(receipt, *, now=None):
+def validate_forward_receipt(receipt, *, capture, symbols, now=None):
+    from scripts.observe_market_seasons import official_receipt
+    forward_grid(capture)
     if not isinstance(receipt, dict) or receipt.get('kind') != 'settlement':
         raise ValueError('an official settlement receipt is required')
     at = receipt.get('at')
     if (type(at) not in (int, float) or not math.isfinite(at)
-            or not 1792837680. <= at < 1792843200.
+            or not 1792837693. <= at < 1792843200.
             or at > (time.time() if now is None else now)):
         raise ValueError('receipt is outside the declared closed-capture window')
+    prices, info = receipt.get('prices'), receipt.get('coverage')
+    if (receipt.get('source') != 'read_only_market_observer'
+            or receipt.get('year') != str(2027 - capture)
+            or not isinstance(prices, dict) or not isinstance(info, dict)
+            or not isinstance(receipt.get('clock'), dict)
+            or not isinstance(receipt.get('end_clock'), dict)):
+        raise ValueError('invalid official receipt identity or structure')
+    count, last, advertised = (info.get(k) for k in ('seq_count', 'last_seq', 'advertised_last_seq'))
+    first_at, last_at = info.get('first_at'), info.get('last_at')
+    if (info.get('contiguous') is not True or info.get('conflicting_sequences') is not False
+            or any(type(n) is not int for n in (count, last, advertised))
+            or count <= 0 or last != advertised or count != last + 1
+            or any(type(n) not in (int, float) or not math.isfinite(n) for n in (first_at, last_at))
+            or not 0 < first_at <= last_at <= at):
+        raise ValueError('incomplete or invalid official receipt coverage')
+    rows = [dict(symbol=s, settlement_price=p, settlement_active=True) for s, p in prices.items()]
+    try:
+        validated = official_receipt(receipt['clock'], rows, receipt['end_clock'], info, symbols)
+    except (KeyError, TypeError, AttributeError):
+        validated = None
+    if (validated is None or validated['year'] != receipt['year']
+            or validated['competition_id'] != receipt.get('competition_id')):
+        raise ValueError('matching complete ready clocks and settlement prices required')
+
+
+def validate_upstream_metadata(metadata, summary, rows, capture, expected):
+    grid = forward_grid(capture)
+    if any(metadata.get(k) != v for k, v in expected.items()):
+        raise ValueError('upstream full-supervisor provenance differs from frozen source')
+    started, finished = metadata.get('started_at'), summary.get('finished_at')
+    if (summary.get('runs') != 16 or summary.get('errors') != 0
+            or summary.get('mismatches') != 0 or summary.get('changed_sources') != []
+            or summary.get('forbidden_attempts', []) != []
+            or any(type(x) not in (int, float) or not math.isfinite(x) for x in (started, finished))
+            or not 0 < started <= finished <= time.time()
+            or len(rows) != 16 or len({row_key(r) for r in rows}) != 16
+            or {row_key(r) for r in rows} != set(grid)
+            or any(r.get('status') != 'ok' or r.get('errors') != []
+                   or r.get('comparison_status') != 'supervised_after_verified_baseline' for r in rows)):
+        raise ValueError('upstream completed full-supervisor phase is required')
+
+
+def verify_upstream(spec, item, data, metadata, summary, rows, case, sources):
+    root = Path(spec['forward_root'])
+    driver = root / 'scripts/compare_practice_supervisor.py'
+    assert subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=root, text=True).strip() == FORWARD_DRIVER
+    assert driver.read_bytes() == subprocess.check_output(
+        ['git', 'show', f'{FORWARD_DRIVER}:scripts/compare_practice_supervisor.py'], cwd=root)
+    loader = importlib.util.spec_from_file_location('_frozen_forward_provenance', driver)
+    module = importlib.util.module_from_spec(loader)
+    loader.loader.exec_module(module)
+    runtime = module.verify_forward_runtime(root)
+    upstream_spec_path = Path(item['forward_spec'])
+    upstream_spec = json.loads(upstream_spec_path.read_text())
+    assert metadata['spec'] == upstream_spec
+    assert upstream_spec['reference_revision'] == module.FORWARD_REFERENCE_REVISION
+    assert module.capture_numbers(upstream_spec, True) == [item['capture']]
+    original = upstream_spec['captures'][0]
+    assert original['competition_id'] == data['receipt']['competition_id']
+    inputs = module.sealed_forward_inputs(original)
+    from scripts.evaluate_observed_season import observed_capture
+    from scripts.replay_serialized_client import PARAMETERS
+    receipt, frames, coverage = observed_capture(*inputs, original['competition_id'], case['limits'])
+    assert data['receipt'] == receipt and data['frames'] == frames
+    reference = Path(upstream_spec['reference_root'])
+    assert subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=reference, text=True).strip() == module.FORWARD_REFERENCE_REVISION
+    reference_sources = {}
+    for p in module.source_files(reference):
+        relative = p.relative_to(reference).as_posix()
+        assert p.read_bytes() == subprocess.check_output(
+            ['git', 'show', f'{module.FORWARD_REFERENCE_REVISION}:{relative}'], cwd=reference)
+        reference_sources[relative] = digest(p)
+        sources.append(p)
+    module.verify_forward_archive(original, receipt, frames, reference_sources, PARAMETERS,
+                                  reference_revision=module.FORWARD_REFERENCE_REVISION)
+    upstream_archive = Path(original['archive_results'])
+    dependencies = module.source_files(root) + [root / 'bot/practice.py',
+        root / 'scripts/replay_practice_supervisor.py', driver,
+        root / 'docs/supervised-replay-plan.md', root / 'docs/practice-round-transition-plan.md',
+        upstream_spec_path, root / 'docs/supervised-forward-plan.md', *inputs,
+        upstream_archive, upstream_archive.parent / 'metadata.json', upstream_archive.parent / 'summary.json',
+        *(Path(p) for p in runtime)]
+    for p in dependencies:
+        if p.is_relative_to(root):
+            relative = p.relative_to(root).as_posix()
+            assert p.read_bytes() == subprocess.check_output(
+                ['git', 'show', f'{FORWARD_DRIVER}:{relative}'], cwd=root)
+    expected = dict(phase='supervised', source_revision=FORWARD_DRIVER,
+        source_sha256={str(p): digest(p) for p in dependencies}, spec=upstream_spec,
+        grid=[list(x) for x in module.GRID], fraction=.1, loss_trigger=250., prior_pnl=0.,
+        forward=True, driver_revision=FORWARD_DRIVER, driver_sha256=digest(driver),
+        runtime_revision=FROZEN, runtime_sha256=runtime,
+        forward_plan_sha256=digest(root / 'docs/supervised-forward-plan.md'),
+        forward_plan_revision=FORWARD_DRIVER,
+        captures=[dict(capture=item['capture'], competition_id=receipt['competition_id'], year=receipt['year'],
+            coverage=coverage, receipt_sha256=value_hash(receipt), frames_sha256=value_hash(frames),
+            archive_sha256=digest(upstream_archive), receipt_at=receipt['at'],
+            first_at=frames[0]['received_at'], last_at=frames[-1]['received_at'], frame_count=len(frames))])
+    validate_upstream_metadata(metadata, summary, rows, item['capture'], expected)
+    sources.extend(dependencies)
 
 
 def digest(path):
@@ -123,6 +227,7 @@ def main():
     pass_lines = loop.lineno, loop.end_lineno
 
     inputs, archives, archive_directories = {}, {}, {}
+    case_definition = json.loads((runtime_root / 'data/case.json').read_text())
     for item in spec['captures']:
         capture = item['capture']
         cached, archive = Path(item['input']), Path(item['archive'])
@@ -132,7 +237,7 @@ def main():
             sources.append(archive / name)
         sources.append(cached)
         data = json.loads(cached.read_text())
-        validate_forward_receipt(data['receipt'])
+        validate_forward_receipt(data['receipt'], capture=capture, symbols=case_definition['limits'])
         metadata = json.loads((archive / 'metadata.json').read_text())
         summary = json.loads((archive / 'summary.json').read_text())
         assert summary['errors'] == summary['mismatches'] == 0 and summary['changed_sources'] == []
@@ -144,6 +249,7 @@ def main():
         inputs[capture] = data
         archive_directories[capture] = archive
         rows = [json.loads(line) for line in (archive / 'results.jsonl').read_text().splitlines()]
+        verify_upstream(spec, item, data, metadata, summary, rows, case_definition, sources)
         for row in rows:
             if row['capture'] == capture:
                 assert row_key(row) not in archives
