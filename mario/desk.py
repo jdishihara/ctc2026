@@ -37,7 +37,7 @@ class Desk:
         self.lock = threading.Lock()
         self.pricer = Pricer(cpu_skill=a.cpu_skill, cpu_sd=a.cpu_sd, noise_sd=a.noise, skill_sd=a.skill_sd)
         self.engine: Engine | None = None
-        self.params = Params(clip=a.clip, risk_pts=a.risk, min_profit=a.min_profit, model_sd_k=a.model_sd_k)
+        self.params = Params(clip=a.clip, risk_pts=a.risk, min_profit=a.min_profit, model_sd_k=a.model_sd_k, edge_pos_frac=a.edge_pos_frac)
         self.fairs = None; self.snap = None; self.result = None; self.roles = {}; self.unmapped = []
         self.status = "starting"; self.log: list[str] = []; self.last_ok = 0.0
         self.tap = None; self.stop = False
@@ -315,6 +315,7 @@ def main():
     ap.add_argument("--noise", type=float, default=1.0); ap.add_argument("--skill-sd", type=float, default=1.0)
     ap.add_argument("--clip", type=int, default=50); ap.add_argument("--risk", type=float, default=1500.0); ap.add_argument("--min-profit", type=float, default=5.0)
     ap.add_argument("--model-sd-k", type=float, default=1.0, help="edge margin >= k x sd of the fair across the parameter ensemble (mario/robustness.py); 0 = off")
+    ap.add_argument("--edge-pos-frac", type=float, default=0.5, help="model-edge positions use at most this fraction of the exchange limit (arbs use all of it)")
     ap.add_argument("--no-repl", action="store_true", help="no terminal prompt (commands only from the dashboard)")
     ap.add_argument("--auto-execute", action="store_true", help="SEND the ranked actions yourself (browser tap: prefill + click the UI's submit button; "
                     "HTTP tap: POST). Off by default: use only if the organisers approve bot submission. `stop`/`go` at the prompt.")

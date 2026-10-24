@@ -25,6 +25,7 @@ class Params:
     clip: int = 50                             # never recommend more than this many contracts per action
     min_profit: float = 5.0                    # do not list actions worth less than this (contract points)
     model_sd_k: float = 1.0                    # margin >= k x sd of the fair across the parameter ensemble (mario/robustness.py); 0 disables
+    edge_pos_frac: float = 0.5                 # model-edge positions use at most this fraction of the exchange limit; riskless arbs use all of it
 
 
 @dataclass
@@ -88,8 +89,8 @@ class Engine:
                 out[sym] = (pts[0] + pts[1], pts[0] + pts[1] + 27 * rem)
         return out
 
-    def _room(self, sym: str, side: str, positions: dict) -> int:
-        lim = LIMITS[self.roles[sym][0]]; pos = int(positions.get(sym, {}).get("qty", 0) or 0)
+    def _room(self, sym: str, side: str, positions: dict, frac: float = 1.0) -> int:
+        lim = int(LIMITS[self.roles[sym][0]] * frac); pos = int(positions.get(sym, {}).get("qty", 0) or 0)
         return max(0, lim - pos) if side == "buy" else max(0, lim + pos)
 
     # ---- the evaluation ----
@@ -141,7 +142,7 @@ class Engine:
             margin = self.p.model_sd_k * msd            # the parameterisations disagree by more than the margin: demand that much edge
             note_sd = f", model sd {msd:.1f}"
         for side, levels, limit_px in (("buy", asks, fv - margin), ("sell", bids, fv + margin)):
-            qty, worst = _walk(levels, limit_px, side, min(max_qty, self._room(sym, side, positions)))
+            qty, worst = _walk(levels, limit_px, side, min(max_qty, self._room(sym, side, positions, self.p.edge_pos_frac)))
             if qty > 0:
                 exp = sum((fv - px if side == "buy" else px - fv) * q for px, q in self._taken(levels, qty))
                 out.append(Action("edge", [(sym, side, qty, worst)], round(exp, 1), f"{role_label(role)}: fair {fv:.1f} (sd {sd:.1f}), margin {margin:.1f}{note_sd}"))
