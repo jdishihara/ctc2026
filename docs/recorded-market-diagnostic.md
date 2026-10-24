@@ -55,6 +55,14 @@ seasons. Use the same 0.25/1/3-second delays and full/half displayed-depth scena
 do not choose parameters from the next season's outcomes while it is active.
 Live practice still requires resolving the shared-account conflict.
 
+The completed season's 33 order requests had journal attempt-to-response times
+of **0.291 seconds median, 1.030 seconds at the nearest-rank 90th percentile,
+and 1.472 seconds maximum**. All attempts paired with recorded responses. These
+are not exchange fill latencies and exclude earlier decision/queue/reconciliation
+time and later basket-hedge delays. New ownership checks may add reconciliation
+time. Keep the three-second stress scenario; this small sample does not justify
+dropping it. [Timing evidence](evidence/season-241-request-timing.json).
+
 ```bash
 .venv/bin/python scripts/replay_captured_market.py \
   --batch recordings/consistency-20261024/batch-01 \
@@ -63,3 +71,33 @@ Live practice still requires resolving the shared-account conflict.
 ```
 
 Full output: [season-241-recorded-market-replay.json](evidence/season-241-recorded-market-replay.json).
+
+## Subsequent observed seasons
+
+The read-only observer writes official closed-market receipts to
+`recordings/consistency-20261024/market-observations.jsonl`. It has no order or
+position endpoints. Its receipt proves the observed news prefix and official
+settlement identity; it does not prove uninterrupted quote coverage.
+
+Once a completed receipt exists, replace `CLOSED_COMPETITION_ID` below with that
+receipt's ID:
+
+```bash
+.venv/bin/python scripts/evaluate_observed_season.py \
+  --observations recordings/consistency-20261024/market-observations.jsonl \
+  --feed recordings/consistency-20261024/feed.jsonl \
+  --competition-id CLOSED_COMPETITION_ID
+```
+
+This adapter validates the receipt before reading the capture, independently
+checks contiguous and nonconflicting news, requires all three pre-storm phases
+and final reports, and requires quotes for every symbol in every round. It
+reports disconnections and receive-time quote gaps, including uncertainty in
+when round closes were observed. It does not claim complete quote-path coverage.
+
+The output retains all 24 predeclared combinations: 0.25/1/3-second latency,
+full/half displayed liquidity, baskets on/off, and periodic snapshot warm-up
+reset on/off. Limits remain 10% and strategy parameters are unchanged. Source
+file hashes identify the implementation. No account P&L is read or reported;
+all returns are virtual. Do not use these outcomes to choose new parameters or
+describe published historical seasons as an untouched model holdout.

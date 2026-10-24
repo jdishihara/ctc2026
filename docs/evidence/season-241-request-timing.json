@@ -1,0 +1,26 @@
+{
+  "competition_id": "6650d983-93c3-45d2-96dd-15209dcd8320",
+  "year": "1786",
+  "runtime_commit": "59603dd",
+  "source": "recordings/consistency-20261024/batch-01/actions.jsonl",
+  "method": "Pair each request_attempt with the next POST request record having the same path and canonical JSON body, restricted to the completed competition ID. Subtract the recorded epoch timestamps.",
+  "unmatched_post_responses": 0,
+  "unmatched_attempts": 0,
+  "orders": {
+    "count": 33,
+    "minimum_seconds": 0.07175683975219727,
+    "median_seconds": 0.2909102439880371,
+    "p90_nearest_rank_seconds": 1.0297422409057617,
+    "maximum_seconds": 1.4718477725982666
+  },
+  "etf_creation": {
+    "count": 1,
+    "seconds": 0.09385395050048828
+  },
+  "limitations": [
+    "This measures journal attempt-to-recorded-response time, not exchange fill latency.",
+    "It excludes earlier decision, queue, guard, reconciliation, and later hedge delays.",
+    "The updated ownership checks were not part of this runtime and may add reconciliation time.",
+    "One completed season does not establish a stable latency distribution."
+  ]
+}

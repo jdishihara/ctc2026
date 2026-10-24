@@ -57,7 +57,7 @@ coverage must be reported before interpreting results. Full assumptions are in
 1. Resolve the shared-account conflict before resuming live practice. Detection
    of unknown orders that fill between polls has been strengthened. Preserve the interrupted trial and its raw
    receipts. Open-position marks are not completed results.
-2. Finish PR 4 integration between batches. Keep model and
+2. PR 4 merged at 05:21 UTC as `c9bdd50`. Keep model and
    strategy parameters fixed for its initial live evaluation.
 3. Start each later batch in a new output directory after checking account state,
    version, size, loss trigger, available time, and complete-history readiness.
