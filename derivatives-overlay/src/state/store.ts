@@ -7,7 +7,8 @@ import {
   buildChains, Chain, compileSymbolRegex, Contract, inferTick, marketIV, metaFromSymbolEntry, mid, OptionMeta,
   parityImpliedSpot, parseOptionSymbol, Quote,
 } from '../engine/chain';
-import { convertToSigma, ConverterId, normalizeVol } from '../engine/converters';
+import { ConverterCandidate, ConverterSample, identifyConverter } from '../engine/autoConverter';
+import { CONVERTERS, convertToSigma, ConverterId, normalizeVol } from '../engine/converters';
 import { Baseline, computeEdges, EdgeRow, Resting } from '../engine/fairValue';
 import { extractStructured, HeadlineParse, parseHeadline } from '../engine/headline';
 import { Breach, capBreaches, contractsBySymbol, flattenOrders, needsFlatten, Portfolio, portfolio } from '../engine/risk';
@@ -110,6 +111,42 @@ export interface LoadedTicket {
   message: string;
 }
 
+export interface AutoTargetState {
+  status: 'idle' | 'confirmed' | 'manual';
+  reason: string;
+  event: number | null;
+  t: number;
+}
+
+export interface AutoConverterState {
+  /** idle = not identified yet (retried on each analyst message); chosen = auto; manual = the trader picked, auto stays off */
+  status: 'idle' | 'chosen' | 'manual';
+  id: ConverterId | null;
+  reason: string;
+  event: number | null;
+  ranked: ConverterCandidate[];
+}
+
+export interface AutoSubmitLog {
+  t: number;
+  symbol: string;
+  side: string;
+  qty: number;
+  price: number;
+  source: string;
+  event: number | null;
+  result: string;
+}
+
+export interface AutoState {
+  targets: Record<string, AutoTargetState>;
+  converter: AutoConverterState;
+  /** Alt+P: auto-submit paused by the trader */
+  paused: boolean;
+  log: AutoSubmitLog[];
+  lastSubmitAt: number;
+}
+
 export interface Raw {
   caseName: string | null;
   competitionId: string | null;
@@ -148,6 +185,7 @@ export interface Raw {
   toast: { text: string; t: number; level: 'info' | 'warn' | 'error' } | null;
   phaseKey: string | null;
   learnAt: { event: number; at: number } | null;
+  auto: AutoState;
 }
 
 export interface Derived {
@@ -183,6 +221,8 @@ export interface Derived {
   quoteAge: number | null;
   tick: number;
   targetsConfirmed: boolean;
+  /** auto-submit is on in Config, not paused, and this is the derivatives page */
+  autoArmed: boolean;
 }
 
 const emptyTarget = (): UndTargets => ({
@@ -226,6 +266,7 @@ export class Store {
       history: [], timeline: {}, manualQueue: [], loaded: null, recentLoads: [], fills: [], seenTradeIds: [],
       ws: { open: false, url: null, lastMsgAt: 0, subscribeSeen: null },
       ui: defaultUi(), toast: null, phaseKey: null, learnAt: null,
+      auto: { targets: {}, converter: { status: 'idle', id: null, reason: '', event: null, ranked: [] }, paused: false, log: [], lastSubmitAt: 0 },
     };
     this.d = this.compute();
   }
@@ -322,6 +363,7 @@ export class Store {
       } else if (kind === 'http') {
         const c = this.classifier.classifyHttp(p.method ?? 'GET', p.url ?? '', p.json, p.body ?? '');
         this.capture.add({ t: now, key: c.key, dir: 'http', url: p.url, raw: p.body ?? '', highlights: c.highlights });
+        if ((p.method ?? 'GET').toUpperCase() === 'POST' && /\/orders(\?|$)/.test(p.url ?? '')) this.noteOrderResponse(p.status ?? 200, p.json, now);
         if ((p.status ?? 200) < 400 && p.json !== undefined) this.handleHttp(p.method ?? 'GET', p.url ?? '', p.json, now);
       } else if (kind === 'http-req') {
         const c = this.classifier.classifyHttp(p.method ?? 'POST', p.url ?? '', p.json, p.body ?? '', true);
@@ -625,7 +667,168 @@ export class Store {
       const raw = round === 3 ? a.rawValue : a.value;
       this.setAnalyst(event, a.underlying, a.analyst, raw, 'parsed', false);
     }
-    if (parse.analysts.length) this.refreshBlend(event);
+    if (parse.analysts.length) {
+      if (round === 3) this.tryAutoConverter(event, clean, parse);
+      this.refreshBlend(event);
+    }
+    this.autoConfirm(event);
+  }
+
+  // ---------------- auto-pilot: targets ----------------
+  /** Why a target cannot be auto-confirmed yet, or ok with a description of what will be accepted. */
+  autoCheck(u: string, event: number): { ok: boolean; reason: string; done?: boolean } {
+    const t = this.s.targets[u];
+    if (!t) return { ok: false, reason: 'unknown underlying' };
+    const a = this.cfg.auto;
+    const round = this.roundOf(event);
+    const cand = (f: TargetField): { value: number; src: string } | null =>
+      f.suggestion ? f.suggestion : f.event === event && f.value != null && f.src !== 'pre-news' ? { value: f.value, src: f.src } : null;
+    const spot = cand(t.spot);
+    const vol = cand(t.vol);
+    if (!t.spot.suggestion && !t.vol.suggestion && t.spot.confirmed && t.vol.confirmed && t.spot.event === event && t.vol.event === event) {
+      return { ok: false, reason: 'confirmed', done: true };
+    }
+    if (!spot) return { ok: false, reason: 'waiting for the spot in the news' };
+    if (round === 1) {
+      if (!vol || !vol.src.startsWith('announced')) return { ok: false, reason: 'waiting for the announced IV' };
+    } else {
+      const row = this.s.analystInputs[event]?.[u];
+      const have = ANALYSTS.filter((x) => row?.[x]?.sigma != null);
+      if (round === 3 && a.converter && this.s.auto.converter.status === 'idle') {
+        return { ok: false, reason: `Round 3 quantity not identified yet (${this.s.auto.converter.reason || 'waiting for an analyst message'})` };
+      }
+      if (have.length < ANALYSTS.length) {
+        const missing = ANALYSTS.filter((x) => !have.includes(x)).map((x) => `A${x}`).join(', ');
+        return { ok: false, reason: `waiting for analyst${have.length === 2 ? '' : 's'} ${missing} (${have.length}/3)` };
+      }
+      if (!vol) return { ok: false, reason: 'no blended vol yet' };
+    }
+    const ref = this.d?.spot[u]?.value ?? this.s.baselines[event]?.[u]?.oldSpot ?? null;
+    if (ref != null && ref > 0) {
+      const dev = (Math.abs(spot.value - ref) / ref) * 100;
+      if (dev > a.spotBoundPct) return { ok: false, reason: `spot ${spot.value.toFixed(2)} is ${dev.toFixed(0)}% from live ${ref.toFixed(2)} (bound ${a.spotBoundPct}%): confirm by hand` };
+    }
+    if (!(spot.value > 0)) return { ok: false, reason: `spot ${spot.value} is not positive: confirm by hand` };
+    if (vol.value < a.volMin || vol.value > a.volMax) {
+      return { ok: false, reason: `vol ${(vol.value * 100).toFixed(1)}% outside ${(a.volMin * 100).toFixed(0)}–${(a.volMax * 100).toFixed(0)}%: confirm by hand` };
+    }
+    return { ok: true, reason: `spot ${spot.value.toFixed(2)} (${spot.src}) · vol ${(vol.value * 100).toFixed(1)}% (${vol.src})` };
+  }
+
+  /** Accept complete, sane targets for this event without Alt+A. Records why when it cannot. */
+  autoConfirm(event: number | null | undefined) {
+    if (!this.cfg.auto.confirm || event == null) return;
+    const ph = this.d?.phase;
+    if (!ph?.event || ph.event.n !== event || !(ph.phase === 'NEWS' || ph.phase === 'UNDERLYING_MOVED')) return;
+    const now = this.nowFn();
+    let accepted = false;
+    for (const u of this.cfg.underlyings) {
+      if (!this.s.targets[u]) continue;
+      const chk = this.autoCheck(u, event);
+      if (chk.done) continue;
+      if (chk.ok) {
+        this.confirmTargets(u);
+        this.s.auto.targets[u] = { status: 'confirmed', reason: chk.reason, event, t: now };
+        accepted = true;
+      } else {
+        const prev = this.s.auto.targets[u];
+        if (prev?.status === 'confirmed' && prev.event === event && !this.s.targets[u].spot.suggestion && !this.s.targets[u].vol.suggestion) continue;
+        this.s.auto.targets[u] = { status: 'manual', reason: chk.reason, event, t: now };
+      }
+    }
+    if (accepted) {
+      this.recordTargets(event);
+      this.changed(true);
+    }
+  }
+
+  private confirmTargets(u: string) {
+    const t = this.s.targets[u];
+    if (!t) return;
+    for (const field of ['spot', 'vol'] as const) {
+      const f = t[field];
+      if (f.suggestion) {
+        f.value = f.suggestion.value;
+        f.src = f.suggestion.src;
+        f.suggestion = null;
+      }
+      if (f.value != null) f.confirmed = true;
+    }
+  }
+
+  private recordTargets(ev: number) {
+    const tl = this.timelineFor(ev);
+    tl.targets = Object.fromEntries(this.cfg.underlyings.map((u) => [u, { spot: this.s.targets[u]?.spot.value ?? null, vol: this.s.targets[u]?.vol.value ?? null, src: `${this.s.targets[u]?.spot.src} / ${this.s.targets[u]?.vol.src}` }]));
+  }
+
+  // ---------------- auto-pilot: Round 3 converter ----------------
+  tryAutoConverter(event: number, text: string, parse: HeadlineParse) {
+    const ac = this.s.auto.converter;
+    if (!this.cfg.auto.converter || ac.status !== 'idle') return;
+    const samples: ConverterSample[] = parse.analysts.filter((a) => this.s.targets[a.underlying]).map((a) => ({ underlying: a.underlying, raw: a.rawValue, rawStr: a.raw }));
+    for (const [u, row] of Object.entries(this.s.analystInputs[event] ?? {})) {
+      for (const a of ANALYSTS) {
+        const raw = row[a]?.raw;
+        if (raw != null && !samples.some((x) => x.underlying === u && x.raw === raw)) samples.push({ underlying: u, raw });
+      }
+    }
+    if (!samples.length) return;
+    const spot: Record<string, number | null> = {};
+    const strikes: Record<string, number[] | undefined> = {};
+    for (const u of this.cfg.underlyings) {
+      spot[u] = this.d?.spot[u]?.value ?? this.s.baselines[event]?.[u]?.oldSpot ?? null;
+      strikes[u] = this.d?.chains[u]?.strikes;
+    }
+    const res = identifyConverter({ samples, text, marketIV: this.d?.marketIV ?? {}, spot, T: this.d?.T.years ?? 20 / 252, strikes, tolPts: this.cfg.auto.converterTolPts, tieMarginPts: this.cfg.auto.converterTieMarginPts });
+    ac.ranked = res.ranked;
+    ac.event = event;
+    ac.reason = res.reason;
+    if (res.id) {
+      ac.status = 'chosen';
+      ac.id = res.id;
+      this.setConverter({ id: res.id, K: null }, 'auto');
+      this.toast(`Round 3 quantity identified: ${CONVERTERS.find((c) => c.id === res.id)?.label ?? res.id} (${res.reason})`, 'info');
+    } else {
+      ac.id = null;
+      this.toast(`Round 3 converter not identified: ${res.reason}`, 'warn');
+    }
+  }
+
+  /** Forget an automatic or manual pick so the next analyst message re-runs the identification. */
+  resetAutoConverter() {
+    this.s.auto.converter = { status: 'idle', id: null, reason: '', event: null, ranked: [] };
+    const ev = this.d.phase?.event?.n;
+    if (ev != null && this.roundOf(ev) === 3) {
+      const text = this.s.news.filter((n) => n.event === ev && n.parse.analysts.length).map((n) => n.text).join(' ');
+      const parse: HeadlineParse = { underlyings: {}, analysts: this.s.news.filter((n) => n.event === ev).flatMap((n) => n.parse.analysts), mentions: [] };
+      if (parse.analysts.length) this.tryAutoConverter(ev, text, parse);
+    }
+    this.changed(true);
+  }
+
+  // ---------------- auto-pilot: submissions ----------------
+  setAutoPaused(paused: boolean) {
+    this.s.auto.paused = paused;
+    this.changed(true);
+  }
+
+  logAutoSubmit(t: Ticket, result: string) {
+    const now = this.nowFn();
+    this.s.auto.log.push({ t: now, symbol: t.symbol, side: t.side, qty: t.qty, price: t.price, source: t.source, event: this.d.phase?.event?.n ?? null, result });
+    if (this.s.auto.log.length > 300) this.s.auto.log.shift();
+    this.s.auto.lastSubmitAt = now;
+    this.capture.add({ t: now, key: 'auto:submit', dir: 'meta', raw: JSON.stringify({ symbol: t.symbol, side: t.side, qty: t.qty, price: t.price, result }), highlights: [] });
+    this.changed(true);
+  }
+
+  /** The page's POST /orders response that follows an auto click: attach the exchange's answer to the log line. */
+  private noteOrderResponse(status: number, json: unknown, now: number) {
+    const pending = [...this.s.auto.log].reverse().find((l) => l.result === 'clicked' && now - l.t < 8000);
+    if (!pending) return;
+    const j = (json && typeof json === 'object' ? json : {}) as Record<string, unknown>;
+    const detail = [j.status, j.filled_quantity != null && j.quantity != null ? `${j.filled_quantity}/${j.quantity} filled` : null, j.detail].filter(Boolean).join(', ');
+    pending.result = status < 400 ? `sent · HTTP ${status}${detail ? ` ${detail}` : ''}` : `REJECTED · HTTP ${status}${detail ? ` ${detail}` : ''}`;
+    this.capture.add({ t: now, key: 'auto:result', dir: 'meta', raw: JSON.stringify({ symbol: pending.symbol, side: pending.side, qty: pending.qty, price: pending.price, result: pending.result }), highlights: status >= 400 ? ['rejected'] : [] });
   }
 
   suggest(u: string, field: 'spot' | 'vol', value: number, src: string, event: number | null = this.d?.phase?.event?.n ?? null) {
@@ -681,8 +884,8 @@ export class Store {
     }
     const ev = this.d.phase?.event?.n;
     if (ev != null) {
-      const tl = this.timelineFor(ev);
-      tl.targets = Object.fromEntries(this.cfg.underlyings.map((u) => [u, { spot: this.s.targets[u]?.spot.value ?? null, vol: this.s.targets[u]?.vol.value ?? null, src: `${this.s.targets[u]?.spot.src} / ${this.s.targets[u]?.vol.src}` }]));
+      this.recordTargets(ev);
+      for (const u of this.cfg.underlyings) this.s.auto.targets[u] = { status: 'confirmed', reason: 'accepted by hand (Alt+A)', event: ev, t: this.nowFn() };
     }
     this.changed(true);
   }
@@ -697,6 +900,7 @@ export class Store {
     row[a] = { raw, sigma: conv.sigma, src, note: conv.note };
     if (recompute) {
       this.refreshBlend(event);
+      this.autoConfirm(event);
       this.changed(true);
     }
   }
@@ -714,8 +918,14 @@ export class Store {
     return { sigma: r.sigma, note: r.note };
   }
 
-  setConverter(c: Partial<Raw['converter']>) {
+  setConverter(c: Partial<Raw['converter']>, by: 'auto' | 'manual' = 'manual') {
     Object.assign(this.s.converter, c);
+    if (by === 'manual') {
+      const ac = this.s.auto.converter;
+      ac.status = 'manual';
+      ac.id = this.s.converter.id;
+      ac.reason = 'picked by hand; automatic identification is off until "re-run"';
+    }
     // re-convert every round-3 cell
     for (const [evS, byU] of Object.entries(this.s.analystInputs)) {
       const ev = Number(evS);
@@ -732,6 +942,8 @@ export class Store {
       }
       this.refreshBlend(ev);
     }
+    const cur = this.d?.phase?.event?.n;
+    if (cur != null && this.roundOf(cur) === 3) this.autoConfirm(cur);
     this.changed(true);
   }
 
@@ -824,6 +1036,7 @@ export class Store {
       }
       this.s.manualQueue = [];
       this.timelineFor(ev.n);
+      for (const u of this.cfg.underlyings) this.s.auto.targets[u] = { status: 'idle', reason: 'waiting for the news', event: ev.n, t: this.nowFn() };
       if (!this.s.ui.pinned) this.s.ui.tab = 'Edge';
     } else if (ph.phase === 'UNDERLYING_MOVED') {
       for (const u of this.cfg.underlyings) {
@@ -836,6 +1049,7 @@ export class Store {
           t.spot.suggestion = { value: live, src: 'live after move' };
         }
       }
+      this.autoConfirm(ev.n);
     } else if (ph.phase === 'SNAPPED') {
       this.s.learnAt = { event: ev.n, at: this.nowFn() + this.cfg.thresholds.learnDelayRealSec * 1000 };
       this.s.manualQueue = [];
@@ -902,20 +1116,29 @@ export class Store {
 
   // ---------------- tickets ----------------
   /** Next ticket from the manual (arb) queue, else the live plan; skips what was just loaded. */
-  pickNext(kind: 'edge' | 'flatten'): Ticket | null {
+  pickNext(kind: 'edge' | 'flatten', opts: { quiet?: boolean; exclude?: (t: Ticket) => boolean } = {}): Ticket | null {
+    const say = (text: string, level: 'info' | 'warn') => {
+      if (!opts.quiet) this.toast(text, level);
+    };
     if (kind === 'edge' && !this.d.targetsConfirmed && !this.s.manualQueue.length) {
-      this.toast('Targets not confirmed: press Alt+A (or Accept) first', 'warn');
+      say('Targets not confirmed: press Alt+A (or Accept) first', 'warn');
       return null;
     }
-    if (kind === 'edge' && this.s.manualQueue.length) return this.s.manualQueue.shift() ?? null;
-    const list = kind === 'edge' ? this.d.plan.filter((t) => !t.breach.length) : this.d.flatten;
+    if (kind === 'edge' && this.s.manualQueue.length) {
+      if (!opts.exclude) return this.s.manualQueue.shift() ?? null;
+      const i = this.s.manualQueue.findIndex((t) => !opts.exclude?.(t));
+      if (i >= 0) return this.s.manualQueue.splice(i, 1)[0];
+      return null;
+    }
+    let list = kind === 'edge' ? this.d.plan.filter((t) => !t.breach.length) : this.d.flatten;
+    if (opts.exclude) list = list.filter((t) => !opts.exclude?.(t));
     if (!list.length) {
-      this.toast(kind === 'edge' ? 'No tickets clear the robust edge threshold' : 'Nothing to flatten', 'info');
+      say(kind === 'edge' ? 'No tickets clear the robust edge threshold' : 'Nothing to flatten', 'info');
       return null;
     }
     const recent = new Set(this.s.recentLoads.map((r) => r.sig));
-    const t = list.find((x) => !recent.has(`${x.symbol}:${x.side}`)) ?? list[0];
-    if (!t.withinRateBudget) this.toast('Order-rate budget is exhausted for this minute', 'warn');
+    const t = list.find((x) => !recent.has(`${x.symbol}:${x.side}`)) ?? (opts.exclude ? null : list[0]);
+    if (t && !t.withinRateBudget) say('Order-rate budget is exhausted for this minute', 'warn');
     return t;
   }
 
@@ -1125,6 +1348,7 @@ export class Store {
       now, mode, modeReason, simNow, clockSrc, clockStale, clockRate, replay: !!phase?.replay, phase, realToNext, round, T,
       chains, contracts, spot, marketIV: mIV, effTargets, blends, edges, synths, straddles: strads, arbs,
       portfolio: pf, breaches, flattenNow, plan, flatten, flattenCost: fl.totalSpreadCost, rate, quoteAge, tick, targetsConfirmed,
+      autoArmed: cfg.auto.submit && !s.auto.paused && mode === 'derivatives',
     };
   }
 

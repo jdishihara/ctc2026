@@ -10,11 +10,13 @@ exchange's order form. **You always click Buy/Sell yourself.**
   copies responses and frames, and passes everything through unchanged. Every hook is wrapped in try/catch.
 - **No network traffic of its own.** It makes no requests, opens no socket, and never calls `send()` on the page's
   socket. The exchange only honors the first subscription frame, so a stray frame from us could break the feed.
-- **No submissions.** Every synthetic click goes through `safeClick`
+- **No submissions by default.** Every synthetic click goes through `safeClick`
   ([src/ticket/guard.ts](src/ticket/guard.ts)). It allows only buttons whose text is exactly `BUY`, `SELL`, `Limit`
   or `Market` (not `type=submit`), plus chain price cells found by the chain reader. It refuses anything else,
   including `Buy 50 OIL_0626_P100`, `Confirm` and any submit button. It never dispatches Enter and never calls
-  `form.submit()` or `requestSubmit()`.
+  `form.submit()` or `requestSubmit()`. The one exception is the opt-in auto-pilot below: with `auto.submit` on,
+  `safeSubmit` may click the order form's own submit button, and only after the form was re-read and found to hold
+  exactly the loaded ticket, inside the order-rate budget. It still never clicks confirm dialogs.
 - Never touches `/auth/` or `/admin/` URLs, cookies or tokens. No remote code, no CDN, no analytics, no `eval`; the
   build fails if `eval`/`new Function` shows up in a bundle.
 - Captures stay in memory. A file is written only when you click **Download capture**.
@@ -80,10 +82,26 @@ position and tab are remembered.
 | `Alt+S` / `Alt+V` | Jump to the spot / vol input |
 | `Alt+O` | Show/hide the overlay |
 | `Alt+C` | Capture tab |
+| `Alt+P` | Pause / resume auto-submit (when armed) |
 | `Esc` | Leave the overlay input |
 
 Hotkeys match `event.code`, so macOS Option works. They're ignored while you're typing in an exchange input (except
 Esc). See [GAMEDAY.md](GAMEDAY.md) for the per-event routine.
+
+## Auto-pilot (added 2026-10-23)
+
+Three levels, all in Config under `auto` and toggled on the Config tab:
+
+| Setting | Default | What it does |
+|---|---|---|
+| `auto.confirm` | **on** | Accepts the parsed targets without `Alt+A` when the parse is complete and sane: spot present; Round 1 the announced IV present; Rounds 2 and 3 all three analysts present (Round 3 also needs an identified converter). Bounds: spot within `spotBoundPct` (40%) of the live or pre-news spot, vol inside `volMin`–`volMax` (5%–300%). Otherwise the target stays amber and the Edge tab says why ("needs you: waiting for analyst A3 (2/3)", "spot 8.00 is 92% from live 100.00"). The live spot after the +60 s move is accepted the same way. |
+| `auto.converter` | **on** | Round 3: on each analyst message, every converter is tried on the raw numbers; the one whose σ lands nearest the market IV wins if it is within `converterTolPts` (12) and beats the runner-up by `converterTieMarginPts` (3), or if the message names it (variance, straddle, daily move, …) and it is within tolerance. Otherwise the Vol tab says "not identified" with the ranked candidates and you pick by hand. A hand pick switches auto off until **re-run**. `$` or `%` in the quotes narrows the candidates to price-like or percent-like converters. |
+| `auto.submit` | **off** | The overlay runs the queue itself: edge tickets during NEWS/UNDERLYING_MOVED (once targets are confirmed), flatten tickets after the snap. Each step picks the next ticket, prefills the form exactly as `Alt+N` does, re-reads the form, and clicks the submit button through `safeSubmit`, which refuses unless armed, the form matches (contract, qty, price, and the button's own "Buy 50 OIL_…" text), and observed order actions are below `submitRateCap` (36/min). It also clicks the OIL/PLANE product tab when the chain shows the other underlying (`auto.switchTabs`). Arm with **arm auto** in the header or the Config checkbox; **Alt+P** pauses/resumes; the header shows a red **AUTO ON** badge. Every submission and the exchange's HTTP answer are listed on the Capture tab and in the capture file (`auto:submit`, `auto:result`). The same contract/side is not re-sent for `resubmitAfterMs` (20 s) unless the position changed; submissions are spaced by `submitIntervalMs` (1.5 s). |
+
+Turn `auto.submit` on only if the organisers confirm that a bot may click submit; the packet says trading is manual.
+The flow with everything on: news arrives → targets auto-confirm (or tell you why not) → tickets are submitted →
+the underlying moves and the live spot is accepted → the snap flips the queue to flatten tickets → flat before the
+next event. The human watches the Edge and Risk tabs and types only when a line says "needs you".
 
 ## Editing the config
 

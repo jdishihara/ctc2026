@@ -21,6 +21,16 @@ describe('runtime config', () => {
     expect(v.errors.join('\n')).toMatch(/schedule\[0\]\.date/);
     expect(v.errors.join('\n')).toMatch(/T_mode/);
   });
+  it('auto-pilot defaults: confirm on, submit off; the submit cap cannot exceed the browser limit', () => {
+    expect(DEFAULT_CONFIG.auto).toMatchObject({ confirm: true, converter: true, submit: false });
+    expect(DEFAULT_CONFIG.auto.submitRateCap).toBeLessThan(40);
+    expect(validateConfig({ auto: { submit: true } }).ok).toBe(true);
+    const v = validateConfig({ auto: { submitRateCap: 50, volMin: 2, volMax: 1, confirm: 'yes' } });
+    expect(v.ok).toBe(false);
+    expect(v.errors.join('\n')).toMatch(/submitRateCap must not exceed/);
+    expect(v.errors.join('\n')).toMatch(/volMin must be below/);
+    expect(v.errors.join('\n')).toMatch(/auto\.confirm must be true or false/);
+  });
   it('cloneDefaults is a deep copy', () => {
     const a = cloneDefaults();
     a.thresholds.minEdge = 9;

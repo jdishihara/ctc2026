@@ -45,6 +45,33 @@ export interface Thresholds {
   learnDelayRealSec: number;
 }
 
+/** Auto-pilot: what the overlay does on its own per event. autoSubmit stays OFF until the organisers allow a bot to click. */
+export interface AutoConfig {
+  /** accept parsed targets without Alt+A when the parse is complete and passes the sanity bounds */
+  confirm: boolean;
+  /** Round 3: identify the analysts' IV-linked quantity from the first message by matching the market IV */
+  converter: boolean;
+  /** a converter candidate must land within this many vol points of the market IV */
+  converterTolPts: number;
+  /** the best candidate must beat the runner-up by this many vol points, unless a keyword names it */
+  converterTieMarginPts: number;
+  /** load, verify and click the exchange's submit button for each ticket (Alt+P pauses) */
+  submit: boolean;
+  /** our own cap on observed order actions per minute while auto-submitting (packet: 40 from the browser) */
+  submitRateCap: number;
+  /** minimum real ms between two auto submissions */
+  submitIntervalMs: number;
+  /** do not resubmit the same contract/side within this many ms unless the position changed */
+  resubmitAfterMs: number;
+  /** a parsed spot must be within this % of the live (or pre-news) spot to auto-confirm */
+  spotBoundPct: number;
+  /** a parsed/blended vol must be inside [volMin, volMax] (decimals) to auto-confirm */
+  volMin: number;
+  volMax: number;
+  /** also click the OIL/PLANE product tab when the chain shows the other underlying */
+  switchTabs: boolean;
+}
+
 export interface Config {
   mode: 'auto' | 'derivatives' | 'capture-only';
   underlyings: string[];
@@ -67,6 +94,7 @@ export interface Config {
   preferSynthForSpot: boolean;
   prefillEnabled: boolean;
   focus: string | null;
+  auto: AutoConfig;
 }
 
 export const DEFAULT_CONFIG: Config = {
@@ -125,6 +153,11 @@ export const DEFAULT_CONFIG: Config = {
   preferSynthForSpot: true,
   prefillEnabled: true,
   focus: null,
+  auto: {
+    confirm: true, converter: true, converterTolPts: 8, converterTieMarginPts: 2,
+    submit: false, submitRateCap: 36, submitIntervalMs: 1500, resubmitAfterMs: 20_000,
+    spotBoundPct: 40, volMin: 0.05, volMax: 3.0, switchTabs: true,
+  },
 };
 
 const isObj = (x: unknown): x is Record<string, unknown> => !!x && typeof x === 'object' && !Array.isArray(x);
@@ -194,6 +227,16 @@ export function validateConfig(input: unknown): Validation {
   if (c.manualTDays != null && !(typeof c.manualTDays === 'number' && c.manualTDays >= 0)) errors.push('manualTDays must be null or a number >= 0');
   if (c.tick != null && !(typeof c.tick === 'number' && c.tick > 0)) errors.push('tick must be null (auto) or a positive number');
   if (!(typeof c.multiplier === 'number' && c.multiplier > 0)) errors.push('multiplier must be > 0');
+  const a = c.auto as unknown as Record<string, unknown>;
+  if (!isObj(a)) errors.push('auto must be an object');
+  else {
+    for (const k of ['confirm', 'converter', 'submit', 'switchTabs']) if (typeof a[k] !== 'boolean') errors.push(`auto.${k} must be true or false`);
+    for (const k of ['converterTolPts', 'converterTieMarginPts', 'submitRateCap', 'submitIntervalMs', 'resubmitAfterMs', 'spotBoundPct', 'volMin', 'volMax']) {
+      if (typeof a[k] !== 'number' || !Number.isFinite(a[k] as number) || (a[k] as number) < 0) errors.push(`auto.${k} must be a number >= 0`);
+    }
+    if (typeof a.submitRateCap === 'number' && a.submitRateCap > 40) errors.push('auto.submitRateCap must not exceed the browser limit of 40');
+    if (typeof a.volMin === 'number' && typeof a.volMax === 'number' && a.volMin >= a.volMax) errors.push('auto.volMin must be below auto.volMax');
+  }
   return { ok: errors.length === 0, config: c, errors };
 }
 

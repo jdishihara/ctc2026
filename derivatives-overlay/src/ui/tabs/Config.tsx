@@ -25,7 +25,10 @@ export function ConfigTab({ c }: { c: Controller }) {
             <option value="touch">touch</option><option value="passive">passive</option>
           </select>
         </div>
-        <div class="small muted">The overlay never submits orders, never clicks Buy/Sell/confirm buttons and never sends network requests of its own.</div>
+        <label class="row"><input type="checkbox" checked={cfg.auto.confirm} onChange={(e) => c.patchConfig({ auto: { confirm: (e.currentTarget as HTMLInputElement).checked } })} /> Auto-confirm parsed targets (complete parse within the sanity bounds; otherwise amber as before)</label>
+        <label class="row"><input type="checkbox" checked={cfg.auto.converter} onChange={(e) => c.patchConfig({ auto: { converter: (e.currentTarget as HTMLInputElement).checked } })} /> Round 3: identify the IV-linked quantity automatically</label>
+        <label class="row"><input type="checkbox" checked={cfg.auto.submit} onChange={(e) => c.setAutoSubmit((e.currentTarget as HTMLInputElement).checked)} /> <b>Auto-submit</b>: load, verify and click the submit button for each ticket (Alt+P pauses). Off by default; turn on only if the organisers allow a bot to submit.</label>
+        <div class="small muted">With auto-submit off the overlay never submits orders, never clicks Buy/Sell/confirm buttons and never sends network requests of its own. With it on, the only extra clicks are the order form's own submit button, after the form was verified to hold the loaded ticket, and the OIL/PLANE product tab.</div>
       </div>
       <div class="row">
         <button onClick={() => { setText(JSON.stringify(c.store.cfg, null, 2)); setMsg(null); }}>Reload current</button>

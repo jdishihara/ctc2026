@@ -15,6 +15,15 @@ let ctx: BrowserContext | null = null;
 let skipReason: string | null = null;
 
 test.beforeAll(async () => {
+  // wait for a previous spec's mock exchange to release the port
+  for (let i = 0; i < 50; i++) {
+    try {
+      await fetch(`${BASE}/__mock/stats`);
+      await new Promise((r) => setTimeout(r, 200));
+    } catch {
+      break;
+    }
+  }
   server = spawn(process.execPath, [join(ROOT, 'mock-exchange/server.mjs'), '--port', '5317', '--fast', '6', '--preroll', '4', '--start-event', '4', '--glitch', '--quiet'], { stdio: 'inherit' });
   for (let i = 0; i < 50; i++) {
     try {
@@ -34,7 +43,11 @@ test.beforeAll(async () => {
 });
 test.afterAll(async () => {
   await ctx?.close();
-  server?.kill();
+  if (server) {
+    const gone = new Promise<void>((r) => server.once('exit', () => r()));
+    server.kill();
+    await Promise.race([gone, new Promise((r) => setTimeout(r, 3000))]);
+  }
 });
 
 test('arb flags, Round 2 analyst learning, Round 3 variance converter', async () => {

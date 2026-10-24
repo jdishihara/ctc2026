@@ -40,6 +40,8 @@ function Targets({ c }: { c: Controller }) {
         const live = d.spot[u];
         const ev = d.phase?.event?.n;
         const base = ev != null ? s.baselines[ev]?.[u] : undefined;
+        const auto = s.auto.targets[u];
+        const showAuto = cfg.auto.confirm && auto && auto.event === ev && (auto.status !== 'idle' || (d.phase?.phase === 'NEWS' || d.phase?.phase === 'UNDERLYING_MOVED'));
         return (
           <div class="box">
             <div class="row">
@@ -63,6 +65,11 @@ function Targets({ c }: { c: Controller }) {
               band {pct(d.effTargets[u]?.volLow)}–{pct(d.effTargets[u]?.volHigh)} {t?.bandNote ? `· ${t.bandNote}` : ''}
               {base && ` · old ${f(base.oldSpot)} / ${pct(base.oldVol)}`}
             </div>
+            {showAuto && (
+              <div class={cls('autoreason', auto.status === 'confirmed' ? 'ok' : 'manual')} title="auto-confirm">
+                {auto.status === 'confirmed' ? `auto-confirmed: ${auto.reason}` : auto.status === 'manual' ? `needs you: ${auto.reason}` : `auto: ${auto.reason}`}
+              </div>
+            )}
           </div>
         );
       })}
@@ -83,7 +90,8 @@ function Queue({ c }: { c: Controller }) {
           onClick={() => c.patchConfig({ priceMode: c.store.cfg.priceMode === 'passive' ? 'touch' : 'passive' })}>{c.store.cfg.priceMode}</button>
         <button class="primary" onClick={() => c.loadNext('edge')} title="Alt+N">Load next (Alt+N)</button>
       </div>
-      {!d.targetsConfirmed && !s.manualQueue.length && <div class="amber small">Targets are suggestions until you accept them (Alt+A).</div>}
+      {!d.targetsConfirmed && !s.manualQueue.length && <div class="amber small">Targets are suggestions until you accept them (Alt+A){c.store.cfg.auto.confirm ? '; auto-confirm is waiting (reasons above)' : ''}.</div>}
+      {d.autoArmed && <div class="small pos">AUTO ON: tickets are loaded and submitted by the overlay. Alt+P pauses.</div>}
       <table>
         <tbody>
           {list.slice(0, 5).map((t) => {

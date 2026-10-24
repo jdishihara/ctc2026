@@ -1,5 +1,5 @@
 import { useState } from 'preact/hooks';
-import { guardLog } from '../../ticket/guard';
+import { guardLog, submitLog } from '../../ticket/guard';
 import { Controller } from '../controller';
 import { f } from '../fmt';
 
@@ -47,6 +47,27 @@ export function CaptureTab({ c }: { c: Controller }) {
           ))}
         </tbody>
       </table>
+      {c.store.s.auto.log.length > 0 && (
+        <div class="box small">
+          <div class="sec">Auto submissions <span class="muted">({c.store.s.auto.log.length})</span></div>
+          <table>
+            <thead><tr><th>time</th><th>side</th><th>qty</th><th>contract</th><th>price</th><th>src</th><th>result</th></tr></thead>
+            <tbody>
+              {c.store.s.auto.log.slice(-25).reverse().map((l) => (
+                <tr class={/REJECT/.test(l.result) ? 'red' : ''}>
+                  <td>{new Date(l.t).toLocaleTimeString()}</td><td class={l.side === 'BUY' ? 'bid' : 'ask'}>{l.side}</td><td>{l.qty}</td><td>{l.symbol}</td><td>{l.price}</td><td>{l.source}</td><td>{l.result}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+      {submitLog.some((x) => !x.ok) && (
+        <div class="box small">
+          <div class="sec">Auto-submit refusals</div>
+          {submitLog.filter((x) => !x.ok).slice(-10).map((g) => <div>{new Date(g.t).toLocaleTimeString()} "{g.text}" ({g.reason})</div>)}
+        </div>
+      )}
       {guardLog.length > 0 && (
         <div class="box small">
           <div class="sec">Guard refusals</div>

@@ -1,7 +1,8 @@
 # Game day sheets: one page per desk (Saturday 2026-10-24)
 
-Three desks, two roles at each: the **reader** puts information into the tool, the **clicker** executes what it
-outputs. Nothing on these pages needs market knowledge beyond noticing that a number is nonsense (a spot of 8 when the
+The cases do not overlap (confirmed 2026-10-24), so all four teammates and laptops work one case at a time. Each desk
+has two roles: the **reader** puts information into the tool, the **clicker** executes what it outputs. The other two
+watch for mistakes and keep the time. Nothing on these pages needs market knowledge beyond noticing that a number is nonsense (a spot of 8 when the
 chain shows 80, a fair of 300 for a stock at 60).
 
 Overall rank = 0.45 x Hurricane rank + 0.35 x Derivatives rank + 0.20 x Mario rank. Lower is better.
@@ -13,7 +14,7 @@ Overall rank = 0.45 x Hurricane rank + 0.35 x Derivatives rank + 0.20 x Mario ra
 Before the open (15 min). Paste in order, in `~/projects/ctc2026`:
 
 ```bash
-caffeinate -i -t 36000 &
+caffeinate -i -t 36000 &                     # idle sleep only; keep the lid OPEN, or: sudo pmset -a disablesleep 1 (undo with 0)
 git pull && git status                       # clean, on main
 echo COMPETITION_KEY > .botkey               # from the captain's Team page; never commit it
 python3 bot/preflight.py                     # must end with 0 failures. WARN on positions/orders -> bot/stop.sh, rerun
@@ -51,6 +52,20 @@ Commands while running (no restart): `echo "HAVEN -6%" >> recordings/control.txt
 
 Emergency: `bot/stop.sh` (cancels every order, prints positions). `bot/stop.sh --flatten` also closes positions.
 
+Backup recorder (second laptop, no bot): the recording is what lets a restarted bot rebuild the season exactly, so run a
+second copy of the feed recorder on another laptop from the first minute. It only reads the feed (one of the team's 25
+market-data connections, no order actions), so it may use the same key, typed into that laptop's git-ignored `.botkey`:
+
+```bash
+echo COMPETITION_KEY > .botkey
+nohup python3 data/starter_kit/record_feed.py --url wss://cornelltradingcompetition.org --key $(cat .botkey) \
+      --out recordings/competition_backup.jsonl --symbols PORT,ISLE,AQUA,GRID,FERRY,RECON,MAT,GEN,HAVEN,REIN,ARCH,REBLD > /dev/null 2>&1 &
+wc -l recordings/competition_backup.jsonl        # must grow every few seconds
+```
+
+If the bot Mac loses its recording, AirDrop or `scp` that file to it and restart with
+`FEED_LOG=recordings/competition_backup.jsonl zsh bot/run_live.sh`.
+
 Rules: nobody trades on the bot key (it uses 120 of the team's 180 actions a minute). Do not restart the bot during a
 storm unless it is broken: a restart during round 1 on the testnet missed half the storm's PnL.
 
@@ -75,6 +90,16 @@ Each event, by the clock. Times are from the news (`NEWS IN m:ss` in the header)
 | last 30 s | red **FLATTEN NOW** = still carrying risk | keep flattening; accept the spread |
 
 Order budget: header `orders n/40` per minute, amber at 30, red at 36. The hourglass in the queue means over budget.
+
+**Auto-pilot (built 2026-10-23).** Auto-confirm is on by default: when the news parses completely (spot plus the
+announced IV in Round 1, spot plus all three analysts in Rounds 2 and 3) and the numbers pass the sanity bounds, the
+targets are accepted without `Alt+A`. The reader only acts on a line that says "needs you: ..." under a target. In
+Round 3 the converter is identified from the first analyst message by matching the market IV; the Vol tab says
+"auto-identified" or asks you to pick. **Auto-submit is off by default.** If the organisers confirm a bot may submit,
+press **arm auto** in the header (or Config -> Auto-submit): the overlay then loads, verifies and clicks each ticket
+itself, edge tickets during the event and flatten tickets after the snap, at most 36 orders a minute. The header shows a
+red AUTO ON badge; `Alt+P` pauses and resumes; the Capture tab lists every auto submission with the exchange's answer.
+With it armed the clicker only watches the queue and the Risk tab.
 
 Round 2 (analysts, no IV): the three estimates arrive in the news and fill the Vol tab grid; type any the parser
 missed (Tab between cells, Enter). Event 4: blend = median. From event 5: switch blend to **weighted (learned)**.
@@ -130,7 +155,9 @@ type `race ...` and `fair` in the terminal and trade from that.
 
 ## Before you leave tonight
 
-- [ ] Schedule from Slack: do the cases overlap? Assign readers and clickers per desk.
+- [x] Schedule: no overlap. Per case: Hurricane = one laptop runs the bot, one watches the log, two watch the exchange UI and the
+      clock. Derivatives = OIL laptop (the only one that may arm auto), PLANE laptop, one reader on the news, one on Risk.
+      Mario = one desk laptop, one typist watching the stream, one clicker, one on the dashboard checking fills and limits.
 - [ ] Hurricane: a supervised testnet season on current main (nothing has run since 06:29 today; the basket overlay and
       the merged efficiency branch have never traded live). Compare the `SEASON END` PnL with `scripts/backtest.py
       --seasons N`.

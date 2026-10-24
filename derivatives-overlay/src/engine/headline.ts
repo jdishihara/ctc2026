@@ -106,12 +106,16 @@ export function parseHeadline(text: string, cfg: HeadlineConfig = DEFAULT_HEADLI
     // a sentence boundary between the context and the number resets the analyst context
     const gap = text.slice(lastIdx, m.i);
     if (/[.;!?]\s|\n/.test(gap) && !/\banalyst/i.test(gap)) curAnalyst = null;
-    const before = text.slice(Math.max(0, m.i - 28), m.i);
+    let before = text.slice(Math.max(0, m.i - 28), m.i);
+    // a vol cue does not carry across a sentence boundary ("... implied vol now 65%. PLANE holds at 40.00" -> 40 is a spot)
+    const boundary = /^[\s\S]*[.;!?]\s+/.exec(before);
+    if (boundary) before = before.slice(boundary[0].length);
     const after = text.slice(m.end, m.end + 16);
     lastIdx = m.end;
     if (!curUnd) continue;
     if (/\btariff|\bpercent of\b|\bday|\bweek|\bmonth|\byear|\bround|\bevent|\bdeaths?|\bkilled|\bpassengers?|\bflights?/i.test(before.slice(-16) + ' ' + after)) {
-      if (!VOL_RE.test(before)) continue;
+      // "one-day move 4.4%" is a quantity, not a date
+      if (!VOL_RE.test(before) && !/\b(move|range|straddle|varian|premium|probab|chance)/i.test(before)) continue;
     }
     const volCue = VOL_RE.test(before) || /^\s*%?\s*(?:implied\s+)?vol/i.test(after);
     const value = m.value as number;

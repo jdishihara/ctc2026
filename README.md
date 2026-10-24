@@ -32,6 +32,20 @@ derivs/drill.py                    Timed event rehearsal for the derivatives des
 EXPERIMENTS.md holds the evaluation protocol and the ledger of every accepted and rejected change; OVERNIGHT.md the
 unattended-session manual.
 
+## Per-laptop setup (four laptops, 2026-10-24)
+
+Every laptop clones the repo and installs the same things; only one laptop runs each bot (one Hurricane bot, one armed
+Derivatives overlay, one Mario desk with `--auto-execute`). The macOS system Python is 3.9 and has no numpy: use a
+Homebrew or miniconda Python 3.10+. The Mario desk needs Google Chrome in /Applications (macOS only).
+
+```bash
+git clone git@github.com:jdishihara/ctc2026.git && cd ctc2026
+python3 --version                                   # 3.10 or newer
+python3 -m pip install -r requirements.txt          # numpy, websockets, playwright (Mario)
+cd derivatives-overlay && npm ci && npm run build && cd ..    # Node 18+; then chrome://extensions -> Load unpacked -> derivatives-overlay/dist
+python3 bot/preflight.py --no-sim                   # the smoke run needs data/history (214 MB, not in git); only the Hurricane laptop has it
+```
+
 ## Run
 
 Install the runtime dependencies with `python3 -m pip install -r requirements.txt`.

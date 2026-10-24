@@ -106,9 +106,24 @@ function Converter({ c }: { c: Controller }) {
   const u = cfg.focus ?? cfg.underlyings[0];
   const x = Number(probe);
   const out = probe && Number.isFinite(x) ? c.store.convert(3, u, x) : null;
+  const ac = s.auto.converter;
   return (
     <div class="box">
-      <div class="sec">Round 3 converter</div>
+      <div class="sec">Round 3 converter
+        <span class="sp" />
+        {cfg.auto.converter && (
+          <span class={cls('tag', ac.status === 'chosen' && 'good', ac.status === 'manual' && 'warn')} title={ac.reason}>
+            {ac.status === 'chosen' ? 'auto-identified' : ac.status === 'manual' ? 'manual pick' : 'auto: not identified yet'}
+          </span>
+        )}
+        {cfg.auto.converter && <button title="forget the pick and identify again from this event's analyst messages" onClick={() => c.store.resetAutoConverter()}>re-run</button>}
+      </div>
+      {cfg.auto.converter && ac.reason && <div class={cls('small', ac.status === 'chosen' ? 'pos' : 'amber')}>{ac.reason}</div>}
+      {cfg.auto.converter && ac.ranked.length > 0 && (
+        <div class="small muted">
+          {ac.ranked.slice(0, 4).map((r) => `${r.id} σ ${(r.sigma * 100).toFixed(1)}% (off ${r.errPts.toFixed(1)})${r.keyword ? ' ✓word' : ''}`).join(' · ')}
+        </div>
+      )}
       <div class="row">
         <select value={conv.id} onChange={(e) => c.store.setConverter({ id: (e.target as HTMLSelectElement).value as ConverterId })}>
           {CONVERTERS.map((k) => <option value={k.id}>{k.label}</option>)}

@@ -1,2 +1,3 @@
 numpy>=1.26
 websockets>=14
+playwright>=1.40   # Mario desk browser tap (mario/tap.py)
