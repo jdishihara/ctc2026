@@ -32,12 +32,12 @@ from scripts.replay_captured_market import ReplayExchange, completed_capture
 class ReplayServer:
     """Single-threaded server clock; advancing time never runs client strategy."""
     def __init__(self, case, frames, year, competition_id, *, fraction=.1,
-                 depth_scale=1, rtt=.25, end_at=None):
+                 depth_scale=1, rtt=.25, end_at=None, market_factory=ReplayExchange):
         if not math.isfinite(rtt) or rtt < 0 or not frames:
             raise ValueError('finite nonnegative RTT and nonempty frames required')
         if end_at is not None and (not math.isfinite(end_at) or end_at < 0):
             raise ValueError('finite nonnegative terminal time required')
-        self.market = ReplayExchange(case, fraction, latency=0, depth_scale=depth_scale)
+        self.market = market_factory(case, fraction, latency=0, depth_scale=depth_scale)
         self.frames = copy.deepcopy(frames)
         self.start = frames[0]['received_at']
         self.times = [f['received_at'] - self.start for f in frames]

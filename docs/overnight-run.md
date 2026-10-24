@@ -5,6 +5,19 @@ around **08:00 EDT / 12:00 UTC on October 24**. Continue evaluating and fixing
 problems between bounded batches; a batch stop does not finish the overnight
 goal. Preserve every trial, loss, and cleanup cost.
 
+## 07:46 UTC: production-supervisor replay completed
+
+The new fixed comparison retains all 64 supervised settings after exact
+64-setting baseline and request/fill-trace checks. It produces 24 losses,
+40 history stops, 8 loss stops and only 16 completed trials. Primary capture
+244 finishes flat at −$261.00, versus +$628.14 in the core-client replay.
+The inter-round history guard requires a separate fix; practice limits and
+the loss trigger remain unchanged. Independent final result review is complete;
+all 40 history stops were reproduced at valid round-2 or round-3 formations.
+See [supervised-client-replay.md](supervised-client-replay.md) for all results
+and the six cleanup-attention outcomes. Recording and both frozen evaluations
+continue; no new owned live batch has run.
+
 ## Batch 01 stopped; shared-account conflict under investigation
 
 - Version: `59603dd`; strategy parameters frozen.

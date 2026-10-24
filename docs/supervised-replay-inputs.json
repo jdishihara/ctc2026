@@ -1,0 +1,38 @@
+{
+  "reference_root": "/Users/arjunhans/Documents/ctc2026/.worktrees/serialized-forward",
+  "reference_revision": "505a5ad2d5a6f81e7c711cb550871ce7aa7f3734",
+  "captures": [
+    {
+      "capture": 241,
+      "mode": "completed",
+      "competition_id": "6650d983-93c3-45d2-96dd-15209dcd8320",
+      "batch": "/Users/arjunhans/Documents/ctc2026/recordings/consistency-20261024/batch-01",
+      "feed": "/Users/arjunhans/Documents/ctc2026/recordings/consistency-20261024/feed.jsonl",
+      "archive_results": "/Users/arjunhans/Documents/ctc2026/out/serialized-client-v2-20261024-241/results.jsonl"
+    },
+    {
+      "capture": 242,
+      "mode": "observed",
+      "competition_id": "0d7afac2-6acd-4223-aa8a-8c1a067091f0",
+      "observations": "/Users/arjunhans/Documents/ctc2026/recordings/consistency-20261024/market-observations.jsonl",
+      "feed": "/Users/arjunhans/Documents/ctc2026/recordings/consistency-20261024/feed.jsonl",
+      "archive_results": "/Users/arjunhans/Documents/ctc2026/out/serialized-client-v2-20261024-242/results.jsonl"
+    },
+    {
+      "capture": 243,
+      "mode": "observed",
+      "competition_id": "5edc122c-e97d-4d59-ada5-658c02c3c0da",
+      "observations": "/Users/arjunhans/Documents/ctc2026/recordings/consistency-20261024/market-observations.jsonl",
+      "feed": "/Users/arjunhans/Documents/ctc2026/recordings/consistency-20261024/feed.jsonl",
+      "archive_results": "/Users/arjunhans/Documents/ctc2026/out/serialized-client-v2-20261024-243/results.jsonl"
+    },
+    {
+      "capture": 244,
+      "mode": "observed",
+      "competition_id": "2cf67e88-9081-4258-aa6a-3648c41925de",
+      "observations": "/Users/arjunhans/Documents/ctc2026/recordings/consistency-20261024/market-observations.jsonl",
+      "feed": "/Users/arjunhans/Documents/ctc2026/recordings/consistency-20261024/feed.jsonl",
+      "archive_results": "/Users/arjunhans/Documents/ctc2026/recordings/consistency-20261024/serialized-forward/2cf67e88-9081-4258-aa6a-3648c41925de/results.jsonl"
+    }
+  ]
+}
