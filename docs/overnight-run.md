@@ -26,17 +26,38 @@ goal. Preserve every trial, loss, and cleanup cost.
   `recordings/consistency-20261024/account-observations.jsonl`. It began at
   04:36:29 UTC and exits at 12:00 UTC. Earlier P&L marks are only sampled in the
   trader log; do not describe this archive as covering the entire first trial.
-- Reviewed execution fixes: snapshot/reconnect handling `c583144` and per-leg
-  basket retry clocks `b6d1111`, on `arjun/snapshot-checkpoint`, isolated in
-  `.worktrees/snapshot-checkpoint`; all 271 tests passed and both were independently
-  reviewed. Neither change was in batch 01.
+- Reviewed execution fixes are integrated into the PR 4 branch as `b3eb368`
+  (snapshot/reconnect handling) and `afe2880` (per-leg basket retry clocks).
+  Neither change was in batch 01. The combined branch, including main `bb3a8ff`,
+  passed all 312 Python tests.
+- Unknown-order and malformed-account guards are implemented in `9584423`.
+  These stop further owned trading but cannot provide a server-side account lock.
+- Read-only market observer PID 34251 (runtime `4ec85d2`) records clocks and
+  official settlement prices into `market-observations.jsonl` until 12:00 UTC.
+  It uses only three GET endpoints and relies on the existing feed recorder.
+  `caffeinate` PID 34252 keeps the machine awake while that process runs; closing
+  the lid still requires the laptop's normal supported awake configuration.
+
+## Fixed recorded-market evaluation plan (05:20 UTC)
+
+Keep strategy parameters and 10% position limits unchanged. After each captured
+season is officially closed, evaluate order delays of 0.25, 1, and 3 seconds,
+with full and half displayed liquidity, baskets on/off, and periodic snapshot
+warm-up reset on/off. Report all 24 combinations, including losses; do not choose
+new parameters from these outcomes. Receipt validation must precede outcome use.
+
+These are virtual fills on newly captured market paths. They are not our actual
+account profits, and the published historical seasons are not an untouched
+model holdout. Quote gaps, missing news, official identity, and settlement
+coverage must be reported before interpreting results. Full assumptions are in
+[recorded-market-diagnostic.md](recorded-market-diagnostic.md).
 
 ## Next decisions
 
-1. Diagnose the shared-account conflict and strengthen detection of unknown
-   orders that fill between polls. Preserve the interrupted trial and its raw
+1. Resolve the shared-account conflict before resuming live practice. Detection
+   of unknown orders that fill between polls has been strengthened. Preserve the interrupted trial and its raw
    receipts. Open-position marks are not completed results.
-2. Integrate the reviewed execution change between batches. Keep model and
+2. Finish PR 4 integration between batches. Keep model and
    strategy parameters fixed for its initial live evaluation.
 3. Start each later batch in a new output directory after checking account state,
    version, size, loss trigger, available time, and complete-history readiness.

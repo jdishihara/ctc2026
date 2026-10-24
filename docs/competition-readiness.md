@@ -1,6 +1,6 @@
 # Competition readiness — 2026-10-24
 
-Status recorded at 05:03 UTC (01:03 EDT). One complete small-size live season
+Status recorded at 05:20 UTC (01:20 EDT). One complete small-size live season
 has a verified settlement receipt. The next trial contains mixed activity.
 
 ## What the evidence supports
@@ -39,8 +39,7 @@ decisions. Cleanup added $619.01 to the loss.
 
 Merged fixes enforce complete history, fresh quotes, pending-news checks,
 announcement pauses, and consistent season identity before submissions. The
-captured failed-start replay now produces zero orders or conversions. Main has
-238 passing tests. Details and causal limitations are in
+captured failed-start replay now produces zero orders or conversions. Details and causal limitations are in
 [practice-loss-review.md](practice-loss-review.md).
 
 Three captured advisories differed from the published feed. With complete prior
@@ -69,27 +68,50 @@ establish successful cleanup or exclusive strategy P&L. Inter-round marked profi
 season result. No future outcomes from the active published season are used to
 tune parameters or guide orders.
 
-## Reviewed work awaiting integration
+## Reviewed work in PR 4
 
-- [PR 4](https://github.com/jdishihara/ctc2026/pull/4): bounded practice supervision,
-  reconciliation, and verified settlement accounting; 264 tests passed before
-  batch 01 started.
-- Branch `arjun/snapshot-checkpoint`, commit `c583144`: healthy periodic
-  snapshots preserve completed warm-up. A separate reconnect flag ensures news
-  arriving before a reconnect snapshot cannot skip warm-up. Independent review
-  approved the fix; all 269 tests passed. It is isolated from batch 01 and has not
-  been evaluated for live profitability.
-- Same branch, commit `b6d1111`: per-leg basket retry clocks allow unsent hedge
-  orders to resume promptly after an interrupted submission. Independent review
-  approved the change; all 271 tests passed. The first live basket took about
-  63 seconds to finish and had −$8.73 market-trade cashflow. Faster execution's
-  effect on profitability remains unmeasured.
+[PR 4](https://github.com/jdishihara/ctc2026/pull/4) now contains the following
+independently reviewed changes. The branch includes current main (`bb3a8ff`);
+all **312 Python tests passed** on the combined code. Tests verify specified
+behavior, not profitability.
+
+- Bounded practice supervision, reconciliation, and official settlement receipts.
+- Sticky account-ownership checks for unknown filled and open orders, missing
+  acknowledgements, malformed account state, and reopened exposure. These checks
+  do not lock the server account; another actor can trade between observations.
+- Healthy periodic snapshots preserve completed warm-up; reconnects retain their
+  required warm-up. Integrated commit `b3eb368` (reviewed source `c583144`).
+- Per-leg basket retry clocks resume unsent hedge orders promptly. Integrated
+  commit `afe2880` (reviewed source `b6d1111`). The first actual basket took about
+  63 seconds and had −$8.73 market-trade cashflow.
+- A recorded-market replay and a read-only official-settlement recorder. Neither
+  sends orders or treats virtual profits as actual account returns.
+
+The snapshot and basket changes were not in batch 01. Their live profitability
+has not been demonstrated.
+
+## Why historical profit overstated the first live result
+
+On the completed first season, historical-price replay at the same 10% limits
+earned **+$1,628.94**. Replay of captured live quotes with a 0.25-second order delay,
+baskets, and the old snapshot reset behavior earned **+$181.48**, closer to the
+actual **+$141.16**. The replays differ jointly in executable prices, spread,
+depth, timing, and live session handling; this is not a single-cause estimate.
+
+The updated snapshot-and-basket version earned +$86.32 at a modeled 0.25-second
+delay and **−$21.70 at three seconds** on that same captured path. More trading
+does not automatically improve results. Queue priority, market impact, serialized
+HTTP requests, cancellation races, and conversion delays remain unmodeled.
+
+Full evidence: [recorded-market-diagnostic.md](recorded-market-diagnostic.md).
 
 ## Remaining evaluation
 
 Retain every result from batch 01, including its mixed second trial. Detect
 unknown filled orders as well as open orders, and resolve the account conflict
-before another live batch. Evaluate execution
+before another live batch. The new ownership checks enforce the observed-history
+requirement. A read-only observer now records official completed seasons until
+12:00 UTC for offline evaluation. Evaluate execution
 changes in a later run with their own version and bounds. Three positive
 small-size seasons would be encouraging; they would not establish consistent
 profitability, full-size performance, or performance against unseen competition
