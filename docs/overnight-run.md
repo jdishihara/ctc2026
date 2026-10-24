@@ -17,8 +17,10 @@ goal. Preserve every trial, loss, and cleanup cost.
   `recordings/consistency-20261024/account-observations.jsonl`. It began at
   04:36:29 UTC and exits at 12:00 UTC. Earlier P&L marks are only sampled in the
   trader log; do not describe this archive as covering the entire first trial.
-- Reviewed snapshot/reconnect fix: `c583144` on `arjun/snapshot-checkpoint`,
-  isolated in `.worktrees/snapshot-checkpoint`; 269 tests passed.
+- Reviewed execution fixes: snapshot/reconnect handling `c583144` and per-leg
+  basket retry clocks `b6d1111`, on `arjun/snapshot-checkpoint`, isolated in
+  `.worktrees/snapshot-checkpoint`; all 271 tests passed and both were independently
+  reviewed. Neither change is in the running batch.
 
 ## Next decisions
 

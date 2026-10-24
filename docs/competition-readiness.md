@@ -1,6 +1,6 @@
 # Competition readiness — 2026-10-24
 
-Status recorded at 04:31 UTC (00:31 EDT). Live results below are provisional
+Status recorded at 04:44 UTC (00:44 EDT). Live results below are provisional
 until official settlement receipts are recorded.
 
 ## What the evidence supports
@@ -57,7 +57,7 @@ loss because in-flight fills and cleanup may add costs.
 
 | Trial | Status | Result |
 | --- | --- | --- |
-| 1 | Round 2 in progress | No official settlement yet |
+| 1 | Round 3 in progress | No official settlement yet |
 | 2 | Not started | — |
 | 3 | Not started | — |
 
@@ -77,6 +77,11 @@ tune parameters or guide orders.
   arriving before a reconnect snapshot cannot skip warm-up. Independent review
   approved the fix; all 269 tests passed. It is isolated from batch 01 and has not
   been evaluated for live profitability.
+- Same branch, commit `b6d1111`: per-leg basket retry clocks allow unsent hedge
+  orders to resume promptly after an interrupted submission. Independent review
+  approved the change; all 271 tests passed. The first live basket took about
+  63 seconds to finish and had −$8.73 market-trade cashflow. Faster execution's
+  effect on profitability remains unmeasured.
 
 ## Remaining evaluation
 
