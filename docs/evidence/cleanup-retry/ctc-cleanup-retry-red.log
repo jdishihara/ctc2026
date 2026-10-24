@@ -1,0 +1,333 @@
+FFFFF.FFF.FFFFFF                                                         [100%]
+=================================== FAILURES ===================================
+__________ test_waits_for_fresh_quote_after_original_five_passes[6.0] __________
+
+tmp_path = PosixPath('/private/var/folders/5_/4_9w4ch971l2mm9c6fqtg5400000gn/T/pytest-of-arjunhans/pytest-288/test_waits_for_fresh_quote_aft0')
+arrival = 6.0
+
+    @pytest.mark.parametrize('arrival', [6., 60.5, 61.])
+    def test_waits_for_fresh_quote_after_original_five_passes(tmp_path, arrival):
+        server, journal, ex = setup(tmp_path, [quote(0), quote(arrival)])
+        with patch.object(practice, 'time', VirtualTime(server)):
+            assert ex.place('PORT', 'buy', 10, 101)
+            server.market.available[('PORT', 'sell')] = 0
+            finish(server, journal)
+>       assert journal.latest['cleanup']['state'] == 'flat'
+E       AssertionError: assert 'attention' == 'flat'
+E         
+E         - flat
+E         + attention
+
+tests/test_cleanup_retry_window.py:26: AssertionError
+----------------------------- Captured stdout call -----------------------------
+ORDER {'symbol': 'PORT', 'side': 'buy', 'order_type': 'limit', 'quantity': 10, 'price': 101.0} -> {'order_id': 1, 'status': 'filled', 'created_at': '0.0', 'message': 'offline acknowledgement', 'message_type': 'order'}
+FILL PORT buy 10 @ 100.0 mid 99.50 slip +50 bp (cum +50 bp) id virtual- t 
+PRACTICE STOP: fixture
+FILL PORT buy 10 @ 100.0 id virtual- t 
+_________ test_waits_for_fresh_quote_after_original_five_passes[60.5] __________
+
+tmp_path = PosixPath('/private/var/folders/5_/4_9w4ch971l2mm9c6fqtg5400000gn/T/pytest-of-arjunhans/pytest-288/test_waits_for_fresh_quote_aft1')
+arrival = 60.5
+
+    @pytest.mark.parametrize('arrival', [6., 60.5, 61.])
+    def test_waits_for_fresh_quote_after_original_five_passes(tmp_path, arrival):
+        server, journal, ex = setup(tmp_path, [quote(0), quote(arrival)])
+        with patch.object(practice, 'time', VirtualTime(server)):
+            assert ex.place('PORT', 'buy', 10, 101)
+            server.market.available[('PORT', 'sell')] = 0
+            finish(server, journal)
+>       assert journal.latest['cleanup']['state'] == 'flat'
+E       AssertionError: assert 'attention' == 'flat'
+E         
+E         - flat
+E         + attention
+
+tests/test_cleanup_retry_window.py:26: AssertionError
+----------------------------- Captured stdout call -----------------------------
+ORDER {'symbol': 'PORT', 'side': 'buy', 'order_type': 'limit', 'quantity': 10, 'price': 101.0} -> {'order_id': 1, 'status': 'filled', 'created_at': '0.0', 'message': 'offline acknowledgement', 'message_type': 'order'}
+FILL PORT buy 10 @ 100.0 mid 99.50 slip +50 bp (cum +50 bp) id virtual- t 
+PRACTICE STOP: fixture
+FILL PORT buy 10 @ 100.0 id virtual- t 
+_________ test_waits_for_fresh_quote_after_original_five_passes[61.0] __________
+
+tmp_path = PosixPath('/private/var/folders/5_/4_9w4ch971l2mm9c6fqtg5400000gn/T/pytest-of-arjunhans/pytest-288/test_waits_for_fresh_quote_aft2')
+arrival = 61.0
+
+    @pytest.mark.parametrize('arrival', [6., 60.5, 61.])
+    def test_waits_for_fresh_quote_after_original_five_passes(tmp_path, arrival):
+        server, journal, ex = setup(tmp_path, [quote(0), quote(arrival)])
+        with patch.object(practice, 'time', VirtualTime(server)):
+            assert ex.place('PORT', 'buy', 10, 101)
+            server.market.available[('PORT', 'sell')] = 0
+            finish(server, journal)
+>       assert journal.latest['cleanup']['state'] == 'flat'
+E       AssertionError: assert 'attention' == 'flat'
+E         
+E         - flat
+E         + attention
+
+tests/test_cleanup_retry_window.py:26: AssertionError
+----------------------------- Captured stdout call -----------------------------
+ORDER {'symbol': 'PORT', 'side': 'buy', 'order_type': 'limit', 'quantity': 10, 'price': 101.0} -> {'order_id': 1, 'status': 'filled', 'created_at': '0.0', 'message': 'offline acknowledgement', 'message_type': 'order'}
+FILL PORT buy 10 @ 100.0 mid 99.50 slip +50 bp (cum +50 bp) id virtual- t 
+PRACTICE STOP: fixture
+FILL PORT buy 10 @ 100.0 id virtual- t 
+________ test_quote_after_admission_horizon_does_not_trigger_new_order _________
+
+tmp_path = PosixPath('/private/var/folders/5_/4_9w4ch971l2mm9c6fqtg5400000gn/T/pytest-of-arjunhans/pytest-288/test_quote_after_admission_hor0')
+
+    def test_quote_after_admission_horizon_does_not_trigger_new_order(tmp_path):
+        server, journal, ex = setup(tmp_path, [quote(0), quote(62)])
+        with patch.object(practice, 'time', VirtualTime(server)):
+            assert ex.place('PORT', 'buy', 10, 101)
+            server.market.available[('PORT', 'sell')] = 0
+            finish(server, journal)
+>       assert server.now == 62
+E       assert 5 == 62
+E        +  where 5 = <scripts.replay_practice_supervisor.PracticeReplayServer object at 0x10c5243e0>.now
+
+tests/test_cleanup_retry_window.py:39: AssertionError
+----------------------------- Captured stdout call -----------------------------
+ORDER {'symbol': 'PORT', 'side': 'buy', 'order_type': 'limit', 'quantity': 10, 'price': 101.0} -> {'order_id': 1, 'status': 'filled', 'created_at': '0.0', 'message': 'offline acknowledgement', 'message_type': 'order'}
+FILL PORT buy 10 @ 100.0 mid 99.50 slip +50 bp (cum +50 bp) id virtual- t 
+PRACTICE STOP: fixture
+FILL PORT buy 10 @ 100.0 id virtual- t 
+_______ test_partial_fills_cancel_owned_remainder_and_continue_reducing ________
+
+tmp_path = PosixPath('/private/var/folders/5_/4_9w4ch971l2mm9c6fqtg5400000gn/T/pytest-of-arjunhans/pytest-288/test_partial_fills_cancel_owne0')
+
+    def test_partial_fills_cancel_owned_remainder_and_continue_reducing(tmp_path):
+        server, journal, ex = setup(tmp_path, [quote(0), *[quote(t, size=3) for t in (6, 8, 10, 12)]])
+        with patch.object(practice, 'time', VirtualTime(server)):
+            assert ex.place('PORT', 'buy', 10, 101)
+            server.market.available[('PORT', 'sell')] = 0
+            finish(server, journal)
+>       assert journal.latest['cleanup']['state'] == 'flat'
+E       AssertionError: assert 'attention' == 'flat'
+E         
+E         - flat
+E         + attention
+
+tests/test_cleanup_retry_window.py:51: AssertionError
+----------------------------- Captured stdout call -----------------------------
+ORDER {'symbol': 'PORT', 'side': 'buy', 'order_type': 'limit', 'quantity': 10, 'price': 101.0} -> {'order_id': 1, 'status': 'filled', 'created_at': '0.0', 'message': 'offline acknowledgement', 'message_type': 'order'}
+FILL PORT buy 10 @ 100.0 mid 99.50 slip +50 bp (cum +50 bp) id virtual- t 
+PRACTICE STOP: fixture
+FILL PORT buy 10 @ 100.0 id virtual- t 
+_______ test_extra_orders_wait_past_strict_sixty_second_budget_boundary ________
+
+tmp_path = PosixPath('/private/var/folders/5_/4_9w4ch971l2mm9c6fqtg5400000gn/T/pytest-of-arjunhans/pytest-288/test_extra_orders_wait_past_st0')
+
+    def test_extra_orders_wait_past_strict_sixty_second_budget_boundary(tmp_path):
+        server, journal, ex = setup(tmp_path, [quote(0), quote(6), quote(61)])
+        with patch.object(practice, 'time', VirtualTime(server)):
+            assert ex.place('PORT', 'buy', 10, 101)
+            for _ in range(89):
+                journal.event('request', method='DELETE', response=None)
+            server.market.available[('PORT', 'sell')] = 0
+            finish(server, journal)
+>       assert journal.latest['cleanup']['state'] == 'flat'
+E       AssertionError: assert 'attention' == 'flat'
+E         
+E         - flat
+E         + attention
+
+tests/test_cleanup_retry_window.py:78: AssertionError
+----------------------------- Captured stdout call -----------------------------
+ORDER {'symbol': 'PORT', 'side': 'buy', 'order_type': 'limit', 'quantity': 10, 'price': 101.0} -> {'order_id': 1, 'status': 'filled', 'created_at': '0.0', 'message': 'offline acknowledgement', 'message_type': 'order'}
+FILL PORT buy 10 @ 100.0 mid 99.50 slip +50 bp (cum +50 bp) id virtual- t 
+PRACTICE STOP: fixture
+FILL PORT buy 10 @ 100.0 id virtual- t 
+__________ test_extra_cancellations_defer_without_a_fake_missing_ack ___________
+
+tmp_path = PosixPath('/private/var/folders/5_/4_9w4ch971l2mm9c6fqtg5400000gn/T/pytest-of-arjunhans/pytest-288/test_extra_cancellations_defer0')
+
+    def test_extra_cancellations_defer_without_a_fake_missing_ack(tmp_path):
+        server, journal, ex = setup(tmp_path, [quote(0), quote(61)])
+        original = OfflineCleanupExchange.send
+        cancellations = []
+    
+        def delayed(self, method, path, body=None):
+            if method == 'DELETE':
+                cancellations.append(server.now)
+                if server.now < 61:
+                    return {'status': 'pending'}
+            return original(self, method, path, body)
+    
+        with patch.object(practice, 'time', VirtualTime(server)):
+            assert ex.place('PORT', 'buy', 10, 101)
+            assert ex.place('PORT', 'sell', 5, 150)
+            for _ in range(83):
+                journal.event('request', method='POST', path='/etfs/create', response=None)
+            with patch.object(OfflineCleanupExchange, 'send', delayed):
+                finish(server, journal)
+>       assert cancellations == [0, 1, 2, 3, 4, 61]
+E       assert [0, 1, 2, 3, 4] == [0, 1, 2, 3, 4, 61]
+E         
+E         Right contains one more item: 61
+E         Use -v to get more diff
+
+tests/test_cleanup_retry_window.py:102: AssertionError
+----------------------------- Captured stdout call -----------------------------
+ORDER {'symbol': 'PORT', 'side': 'buy', 'order_type': 'limit', 'quantity': 10, 'price': 101.0} -> {'order_id': 1, 'status': 'filled', 'created_at': '0.0', 'message': 'offline acknowledgement', 'message_type': 'order'}
+FILL PORT buy 10 @ 100.0 mid 99.50 slip +50 bp (cum +50 bp) id virtual- t 
+ORDER {'symbol': 'PORT', 'side': 'sell', 'order_type': 'limit', 'quantity': 5, 'price': 150.0} -> {'order_id': 2, 'status': 'pending', 'created_at': '0.0', 'message': 'offline acknowledgement', 'message_type': 'order'}
+PRACTICE STOP: fixture
+FILL PORT buy 10 @ 100.0 id virtual- t 
+____________ test_lost_ack_during_extra_pass_blocks_further_cleanup ____________
+
+tmp_path = PosixPath('/private/var/folders/5_/4_9w4ch971l2mm9c6fqtg5400000gn/T/pytest-of-arjunhans/pytest-288/test_lost_ack_during_extra_pas0')
+
+    def test_lost_ack_during_extra_pass_blocks_further_cleanup(tmp_path):
+        server, journal, ex = setup(tmp_path, [quote(0), quote(6), quote(7)])
+        original = ServerTransport.send
+    
+        def missing(self, method, path, body=None):
+            response = original(self, method, path, body)
+            return None if method == 'POST' and server.now >= 6 else response
+    
+        with patch.object(practice, 'time', VirtualTime(server)):
+            assert ex.place('PORT', 'buy', 10, 101)
+            server.market.available[('PORT', 'sell')] = 0
+            with patch.object(ServerTransport, 'send', missing):
+                finish(server, journal)
+>       assert journal.ownership_blocks
+E       assert {}
+E        +  where {} = <scripts.replay_practice_supervisor.AuditedJournal object at 0x10c55a750>.ownership_blocks
+
+tests/test_cleanup_retry_window.py:120: AssertionError
+----------------------------- Captured stdout call -----------------------------
+ORDER {'symbol': 'PORT', 'side': 'buy', 'order_type': 'limit', 'quantity': 10, 'price': 101.0} -> {'order_id': 1, 'status': 'filled', 'created_at': '0.0', 'message': 'offline acknowledgement', 'message_type': 'order'}
+FILL PORT buy 10 @ 100.0 mid 99.50 slip +50 bp (cum +50 bp) id virtual- t 
+PRACTICE STOP: fixture
+FILL PORT buy 10 @ 100.0 id virtual- t 
+_______ test_shadow_budget_counts_mutations_once_and_ignores_wall_clock ________
+
+tmp_path = PosixPath('/private/var/folders/5_/4_9w4ch971l2mm9c6fqtg5400000gn/T/pytest-of-arjunhans/pytest-288/test_shadow_budget_counts_muta0')
+
+    def test_shadow_budget_counts_mutations_once_and_ignores_wall_clock(tmp_path):
+        clock = SimpleNamespace(now=0., wall=1000.)
+        virtual = SimpleNamespace(monotonic=lambda: clock.now, time=lambda: clock.wall)
+        with patch.object(practice, 'time', virtual):
+            journal = practice.Journal(tmp_path)
+            for _ in range(30):
+                journal.event('request_attempt', method='POST')
+                journal.event('request', method='POST', response=None)
+                journal.event('cleanup_order', order_id=None)
+                journal.event('cleanup_cancel', response=None)
+            journal.event('request', method='GET')
+>           assert not journal.extra_cleanup_mutation_allowed()
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           AttributeError: 'Journal' object has no attribute 'extra_cleanup_mutation_allowed'
+
+tests/test_cleanup_retry_window.py:154: AttributeError
+__________ test_invalid_or_backward_mutation_clock_fails_closed[nan] ___________
+
+tmp_path = PosixPath('/private/var/folders/5_/4_9w4ch971l2mm9c6fqtg5400000gn/T/pytest-of-arjunhans/pytest-288/test_invalid_or_backward_mutat0')
+invalid = nan
+
+    @pytest.mark.parametrize('invalid', [float('nan'), float('inf'), -1.])
+    def test_invalid_or_backward_mutation_clock_fails_closed(tmp_path, invalid):
+        clock = SimpleNamespace(now=0.)
+        virtual = SimpleNamespace(monotonic=lambda: clock.now, time=lambda: 1000.)
+        with patch.object(practice, 'time', virtual):
+            journal = practice.Journal(tmp_path)
+            journal.event('request', method='POST')
+            clock.now = invalid
+            journal.event('cleanup_cancel', response=None)
+            clock.now = 100
+>           assert not journal.extra_cleanup_mutation_allowed()
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           AttributeError: 'Journal' object has no attribute 'extra_cleanup_mutation_allowed'
+
+tests/test_cleanup_retry_window.py:175: AttributeError
+__________ test_invalid_or_backward_mutation_clock_fails_closed[inf] ___________
+
+tmp_path = PosixPath('/private/var/folders/5_/4_9w4ch971l2mm9c6fqtg5400000gn/T/pytest-of-arjunhans/pytest-288/test_invalid_or_backward_mutat1')
+invalid = inf
+
+    @pytest.mark.parametrize('invalid', [float('nan'), float('inf'), -1.])
+    def test_invalid_or_backward_mutation_clock_fails_closed(tmp_path, invalid):
+        clock = SimpleNamespace(now=0.)
+        virtual = SimpleNamespace(monotonic=lambda: clock.now, time=lambda: 1000.)
+        with patch.object(practice, 'time', virtual):
+            journal = practice.Journal(tmp_path)
+            journal.event('request', method='POST')
+            clock.now = invalid
+            journal.event('cleanup_cancel', response=None)
+            clock.now = 100
+>           assert not journal.extra_cleanup_mutation_allowed()
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           AttributeError: 'Journal' object has no attribute 'extra_cleanup_mutation_allowed'
+
+tests/test_cleanup_retry_window.py:175: AttributeError
+__________ test_invalid_or_backward_mutation_clock_fails_closed[-1.0] __________
+
+tmp_path = PosixPath('/private/var/folders/5_/4_9w4ch971l2mm9c6fqtg5400000gn/T/pytest-of-arjunhans/pytest-288/test_invalid_or_backward_mutat2')
+invalid = -1.0
+
+    @pytest.mark.parametrize('invalid', [float('nan'), float('inf'), -1.])
+    def test_invalid_or_backward_mutation_clock_fails_closed(tmp_path, invalid):
+        clock = SimpleNamespace(now=0.)
+        virtual = SimpleNamespace(monotonic=lambda: clock.now, time=lambda: 1000.)
+        with patch.object(practice, 'time', virtual):
+            journal = practice.Journal(tmp_path)
+            journal.event('request', method='POST')
+            clock.now = invalid
+            journal.event('cleanup_cancel', response=None)
+            clock.now = 100
+>           assert not journal.extra_cleanup_mutation_allowed()
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           AttributeError: 'Journal' object has no attribute 'extra_cleanup_mutation_allowed'
+
+tests/test_cleanup_retry_window.py:175: AttributeError
+________________ test_missing_mutation_accounting_fails_closed _________________
+
+tmp_path = PosixPath('/private/var/folders/5_/4_9w4ch971l2mm9c6fqtg5400000gn/T/pytest-of-arjunhans/pytest-288/test_missing_mutation_accounti0')
+
+    def test_missing_mutation_accounting_fails_closed(tmp_path):
+        journal = practice.Journal.__new__(practice.Journal)
+>       assert not journal.extra_cleanup_mutation_allowed()
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AttributeError: 'Journal' object has no attribute 'extra_cleanup_mutation_allowed'
+
+tests/test_cleanup_retry_window.py:180: AttributeError
+____________ test_cleanup_honors_retry_limit_with_no_executable_bid ____________
+
+tmp_path = PosixPath('/private/var/folders/5_/4_9w4ch971l2mm9c6fqtg5400000gn/T/pytest-of-arjunhans/pytest-288/test_cleanup_honors_retry_limi0')
+
+    def test_cleanup_honors_retry_limit_with_no_executable_bid(tmp_path):
+        server, journal, ex = setup(tmp_path)
+        assert ex.place('PORT', 'buy', 10, 101)
+        server.market.available[('PORT', 'sell')] = 0
+        journal.stop('fixture')
+        with patch.object(practice, 'time', VirtualTime(server)), patch.object(practice, 'CleanupExchange', OfflineCleanupExchange):
+            practice.finish(journal)
+        assert journal.latest['cleanup']['state'] == 'attention'
+        assert journal.latest['cleanup']['reason'] == 'cleanup retry limit'
+>       assert server.now == 62
+E       assert 5 == 62
+E        +  where 5 = <scripts.replay_practice_supervisor.PracticeReplayServer object at 0x10bf139b0>.now
+
+tests/test_practice_replay.py:342: AssertionError
+----------------------------- Captured stdout call -----------------------------
+ORDER {'symbol': 'PORT', 'side': 'buy', 'order_type': 'limit', 'quantity': 10, 'price': 101.0} -> {'order_id': 1, 'status': 'filled', 'created_at': '0.0', 'message': 'offline acknowledgement', 'message_type': 'order'}
+FILL PORT buy 10 @ 100.0 mid 99.50 slip +50 bp (cum +50 bp) id virtual- t 
+PRACTICE STOP: fixture
+FILL PORT buy 10 @ 100.0 id virtual- t 
+=========================== short test summary info ============================
+FAILED tests/test_cleanup_retry_window.py::test_waits_for_fresh_quote_after_original_five_passes[6.0]
+FAILED tests/test_cleanup_retry_window.py::test_waits_for_fresh_quote_after_original_five_passes[60.5]
+FAILED tests/test_cleanup_retry_window.py::test_waits_for_fresh_quote_after_original_five_passes[61.0]
+FAILED tests/test_cleanup_retry_window.py::test_quote_after_admission_horizon_does_not_trigger_new_order
+FAILED tests/test_cleanup_retry_window.py::test_partial_fills_cancel_owned_remainder_and_continue_reducing
+FAILED tests/test_cleanup_retry_window.py::test_extra_orders_wait_past_strict_sixty_second_budget_boundary
+FAILED tests/test_cleanup_retry_window.py::test_extra_cancellations_defer_without_a_fake_missing_ack
+FAILED tests/test_cleanup_retry_window.py::test_lost_ack_during_extra_pass_blocks_further_cleanup
+FAILED tests/test_cleanup_retry_window.py::test_shadow_budget_counts_mutations_once_and_ignores_wall_clock
+FAILED tests/test_cleanup_retry_window.py::test_invalid_or_backward_mutation_clock_fails_closed[nan]
+FAILED tests/test_cleanup_retry_window.py::test_invalid_or_backward_mutation_clock_fails_closed[inf]
+FAILED tests/test_cleanup_retry_window.py::test_invalid_or_backward_mutation_clock_fails_closed[-1.0]
+FAILED tests/test_cleanup_retry_window.py::test_missing_mutation_accounting_fails_closed
+FAILED tests/test_practice_replay.py::test_cleanup_honors_retry_limit_with_no_executable_bid
+14 failed, 2 passed in 0.27s
