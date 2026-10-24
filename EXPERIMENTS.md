@@ -1,3 +1,19 @@
+# Pre-Hurricane check 2026-10-24 10:00-10:15 (Jayden's session, Fable)
+
+Case II runs 2:35-4:10 pm. Exchange at 10:00: `/competitions/current` = Hurricane Season, state ready, fictional
+2026-08-03, account flat, no open orders, preflight 17 pass / 0 fail (warnings: uncommitted Mario edits, the overnight
+bot still running). 633 Hurricane tests pass. Merged Arjun's last branch (final-evaluation-window, docs only); every
+other `arjun/*` branch is either already in main through PRs 8-31 or a rejected experiment (repeat-prefix, repeat-blend,
+cleanup-empty-cancel), none of whose code is in main.
+
+Found: the "shared-account incident" (docs/shared-account-incident.md) was our own `run_live.sh` bot trading full size
+next to Arjun's 10% practice runner on the same key (order IDs match `recordings/bot_live.log`). Resolved in the doc.
+
+Fixed: `replay_feed_log` filtered the recording by fictional year only. The live season is dated 2026 and any same-day
+warm-up season would be too; the replay now keeps only the season after the last seq restart
+(`SEQ_RESET_GAP`, test `test_feed_replay_keeps_only_the_latest_same_year_season`). Checked on the overnight recording:
+one segment per testnet year, 0 messages for 2026 so far.
+
 # Mario Markets live-setup check 2026-10-24 (08:30-08:50, Jayden's session, Fable)
 
 The live site served the Mario case this morning (competition "Mario Kart Series 1", state ready, every symbol halted).

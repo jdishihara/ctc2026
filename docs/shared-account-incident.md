@@ -48,3 +48,21 @@ It must not be interpreted as proof of flatness or exclusive account control.
 Live submissions remain stopped while the conflict is investigated. Unknown
 orders and another trader's positions must not be cancelled or flattened.
 Offline development, review, and feed recording continue.
+
+## Resolved 2026-10-24 10:00 EDT: the other trader was our own full-size bot
+
+The "unowned" orders were placed by this repository's production launcher, `zsh bot/run_live.sh` (restart wrapper
+around `bot/live.py --rate 120 --feed-log recordings/testnet.jsonl`), started on Jayden's Mac at 00:22:53 EDT on
+October 24 and still running at 10:00. Its log, `recordings/bot_live.log`, contains the three orders of the table above
+with the same exchange order IDs:
+
+```
+ORDER {'symbol': 'PORT', 'side': 'sell', ..., 'quantity': 200, 'price': 63.17} -> {'order_id': '6d19d71e-e0bd-47ff-86b0-20a1bbab6971', ...}
+ORDER {'symbol': 'PORT', 'side': 'sell', ..., 'quantity': 180, 'price': 59.89} -> {'order_id': '56012b87-37ee-4a83-abe3-d7b4b001f115', ...}
+ORDER {'symbol': 'PORT', 'side': 'sell', ..., 'quantity': 200, 'price': 58.02} -> {'order_id': 'f7a6c6ac-2196-45bb-a8f9-4e6ad1ad7837', ...}
+```
+
+Two of our own processes (the full-size live bot and the 10% practice supervisor) traded the one team key at the same
+time. No third party was involved, and nothing about the exchange or the account is unexplained. The operational rule
+stands: exactly one trading process on the key. On competition day that is `bot/run_live.sh` alone; `bot/practice.py`
+must not run.

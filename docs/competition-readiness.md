@@ -3,7 +3,8 @@
 Status updated after the final evaluation boundary at 12:00:00.008254 UTC
 (08:00:00.008254 EDT). One completed clean small-size live trial remains
 at +$141.16. Later shared-account activity is mixed and not attributable.
-Live practice remains stopped pending shared-account ownership clarification.
+The shared-account question is resolved: the other trader was our own full-size `bot/run_live.sh`, running
+concurrently with the practice supervisor on the same key (see [shared-account-incident.md](shared-account-incident.md)).
 The overnight offline evaluation and recording are complete.
 
 **Validation limitation:** all 27 complete storm tracks in closed captures
