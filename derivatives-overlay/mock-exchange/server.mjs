@@ -352,10 +352,14 @@ function publishQuote(sym) {
   }
 }
 const newsLog = [];
+// --bare-news: the socket carries only seq, time and the text (no type/round/event/analyst fields), as a live feed might;
+// the overlay must attribute the message to an event from its clock and read the analyst from the text. /__mock/news stays full.
+const BARE_NEWS = process.argv.includes('--bare-news');
 function publishNews(message) {
   const m = { seq: ++newsSeq, time: fmtNaive(clock.fictional), ...message };
   newsLog.push(m);
-  broadcast({ type: 'news', message: m }, 'news');
+  const wire = BARE_NEWS && m.type !== 'snapshot' ? { seq: m.seq, time: m.time, headline: m.headline } : m;
+  broadcast({ type: 'news', message: wire }, 'news');
 }
 
 // ---------- event engine ----------

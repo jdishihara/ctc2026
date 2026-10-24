@@ -103,6 +103,7 @@ Mock options:
 | `--ws-drop S` | Hostile: close every market-data socket every S seconds (code 1001). |
 | `--reject-every N` | Hostile: every Nth order answers `400 {"detail":"Insufficient buying power"}`. |
 | `--switch-after S` | Serve an equity case ("Hurricane Season", chain → 400) for S real seconds, then Derivatives: the live flip with the tab open. |
+| `--bare-news` | The socket carries only `seq`, `time` and the text (no type/round/event/analyst fields): the overlay must attribute news to events from its clock and read the analyst from the text. |
 | `--rate N --real-offsets` | Another clock rate (N market min per real min), with the move 60 real s and the snap 120 real s after the news as the packet words it: the overlay must follow the live rate, not the packet's 52/39. |
 
 `node scripts/drill-autopilot.mjs --fast 4 --mock-args "--rate-limit 8 --halt OIL_0626_C100 --ws-drop 45 --reject-every 9"`
