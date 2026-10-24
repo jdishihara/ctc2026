@@ -1,0 +1,18 @@
+{
+  "audit": "post_run_model_artifact_check",
+  "checked_at_utc": "2026-10-24T06:04:01.253254+00:00",
+  "revision": "e3074b5727f99de95fba8a9a4c488c91617e0b39",
+  "artifacts": {
+    "ctc/analog_library.npz": {
+      "sha256": "22694387c3b612f5c20853feb9143e1bf8b8f5722a845da8ed584ab1b30bdf09",
+      "matches_committed_blob": true,
+      "bytes": 3365303
+    },
+    "ctc/storm_sample.npz": {
+      "sha256": "76da0f456aaadb8baee99920619db79c6f16e928dfab82ad33aade297a4b7c0f",
+      "matches_committed_blob": true,
+      "bytes": 34260
+    }
+  },
+  "limitation": "These NPZ hashes were not recorded in the original baseline or candidate runtime manifests. This retrospective check confirms current files match committed blobs, not their bytes at an unrecorded past instant."
+}
