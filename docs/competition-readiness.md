@@ -68,10 +68,11 @@ establish successful cleanup or exclusive strategy P&L. Inter-round marked profi
 season result. No future outcomes from the active published season are used to
 tune parameters or guide orders.
 
-## Reviewed work in PR 4
+## Reviewed work merged in PR 4
 
-[PR 4](https://github.com/jdishihara/ctc2026/pull/4) now contains the following
-independently reviewed changes. The branch includes current main (`bb3a8ff`);
+[PR 4](https://github.com/jdishihara/ctc2026/pull/4) merged at 05:21 UTC as
+`c9bdd50`. It contains the following independently reviewed changes and includes
+the team's preceding main (`bb3a8ff`);
 all **312 Python tests passed** on the combined code. Tests verify specified
 behavior, not profitability.
 
