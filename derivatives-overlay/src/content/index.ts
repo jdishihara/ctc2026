@@ -9,7 +9,8 @@ import { Ticket } from '../engine/tickets';
 import { defaultUi, Store, UiState } from '../state/store';
 import { Autopilot } from '../ticket/autopilot';
 import { prefillTicket, PrefillResult } from '../ticket/prefill';
-import { findByExactText, isVisible } from '../core/dom-readers';
+import { findOrderPanel } from '../ticket/selectors';
+import { findByExactText, isVisible, textOf } from '../core/dom-readers';
 import { mountApp } from '../ui/App';
 import { Controller, ticketText } from '../ui/controller';
 import css from '../ui/styles.css';
@@ -177,6 +178,10 @@ export async function startOverlay(win: Window & typeof globalThis = window, opt
           })));
         }
         r.positions = readPositions(doc.body ?? doc, hints, compileSymbolRegex(store.cfg.symbolRegex), skip);
+        const panel = findOrderPanel(doc, hints, compileSymbolRegex(store.cfg.symbolRegex), skip);
+        store.s.panelProbe = panel
+          ? { found: true, symbol: panel.symbol, qty: !!panel.qtyInput, price: !!panel.priceInput, buy: !!panel.buy, sell: !!panel.sell, limit: !!panel.limit, submit: panel.submit ? textOf(panel.submit) || '' : null, t: Date.now() }
+          : { found: false, symbol: null, qty: false, price: false, buy: false, sell: false, limit: false, submit: null, t: Date.now() };
       }
       store.handleDom(r);
     } catch (e) {

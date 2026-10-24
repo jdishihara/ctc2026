@@ -3,6 +3,8 @@ import { ticketStillValid } from '../../engine/tickets';
 import { Controller } from '../controller';
 import { DraftInput } from '../DraftInput';
 import { cls, f, money, pct } from '../fmt';
+import { useState } from 'preact/hooks';
+import { readiness, summarize } from '../../state/readiness';
 
 function TargetInput({ c, u, field }: { c: Controller; u: string; field: 'spot' | 'vol' }) {
   const t = c.store.s.targets[u];
@@ -22,6 +24,35 @@ function TargetInput({ c, u, field }: { c: Controller; u: string; field: 'spot' 
       }}
       onEnterUnchanged={() => c.store.acceptSuggestions()}
     />
+  );
+}
+
+const STATUS_ICON: Record<string, string> = { ok: '●', warn: '▲', bad: '✖', wait: '○' };
+
+function Readiness({ c }: { c: Controller }) {
+  const { s, d, cfg } = c.store;
+  const [showAll, setShowAll] = useState(false);
+  const checks = readiness(s, d, cfg, d.now, s.panelProbe);
+  const sum = summarize(checks);
+  const shown = showAll ? checks : checks.filter((x) => x.status !== 'ok');
+  return (
+    <div class={cls('box', 'ready', `ready-${sum.worst}`)}>
+      <div class="sec">
+        <span title="live-readiness checks: symbols, quotes, spot, clock, T, positions, order form, news parse">Ready {sum.ok}/{sum.total}</span>
+        {sum.worst === 'ok' && <span class="tag good">all checks pass</span>}
+        {sum.worst === 'bad' && <span class="tag bad">fix the red lines before trading</span>}
+        <span class="sp" />
+        <button onClick={() => setShowAll(!showAll)}>{showAll ? 'hide ok' : 'show all'}</button>
+      </div>
+      {shown.map((x) => (
+        <div class={cls('row', 'small', `chk-${x.status}`)} title={x.fix ?? ''}>
+          <span class={cls('chk', `chk-${x.status}`)}>{STATUS_ICON[x.status]}</span>
+          <b>{x.label}</b>
+          <span>{x.detail}</span>
+          {x.fix && x.status !== 'ok' && <span class="muted">→ {x.fix}</span>}
+        </div>
+      ))}
+    </div>
   );
 }
 
@@ -197,6 +228,7 @@ export function EdgeTab({ c }: { c: Controller }) {
   const unds = cfg.underlyings.filter((u) => !cfg.focus || cfg.focus === u);
   return (
     <div>
+      <Readiness c={c} />
       <Targets c={c} />
       <Queue c={c} />
       {unds.map((u) => <EdgeTable c={c} u={u} />)}

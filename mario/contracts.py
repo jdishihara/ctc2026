@@ -26,29 +26,44 @@ def _num(text: str, *keys: str) -> int | None:
     return None
 
 
-def guess_role(sym: dict) -> tuple | None:
-    """Best guess of the role of one symbol record ({"symbol", "name", "group", "market_name", ...})."""
-    text = " ".join(str(sym.get(k) or "") for k in ("symbol", "name", "group", "market_name", "message")).upper()
-    text = text.replace("_", " ").replace("-", " ")
+def _classify(text: str, symbol_only: bool) -> tuple | None:
+    """One pass over an upper-cased, de-punctuated text. symbol_only enables the terse rules (S1_1, S1_P2, S1_T2) that are
+    only safe when the text is the bare symbol, not the symbol joined with its name and group."""
     racer = next((r for r in RACERS if r in text), None)
-    series = _num(text, "SERIES", "SER", "S")
+    series = _num(text, "SERIES", "SER", "SWIN", "S")
     race = _num(text, "RACE", "RC", "R")
     # score contracts first. Packet names: "#1 Score", "#2 Score", "Top-2 Total"; a bare "TOP2" is read as the total
-    is_s1 = re.search(r"#\s*1|NO\.?\s*1|NUM\s*1|SCORE\s*1|1ST|FIRST|HIGHEST|TOP\s*1\b", text)
-    is_s2 = re.search(r"#\s*2|NO\.?\s*2|NUM\s*2|SCORE\s*2|2ND|SECOND", text)
-    is_top2 = re.search(r"TOP\s*[- ]?\s*2|TOP\s*TWO|TOTAL|SUM", text)
+    is_top2 = re.search(r"TOP\s*[- ]?\s*2|TOP\s*TWO|TOTAL|SUM|\bT\s*2\b", text)
+    is_s2 = re.search(r"#\s*2|NO\.?\s*2|NUM\s*2|SCORE\s*2|2ND|SECOND|RUNNER|\bP\s*2\b", text)
+    is_s1 = re.search(r"#\s*1|NO\.?\s*1|NUM\s*1|SCORE\s*1|1ST|FIRST|HIGHEST|TOP\s*1\b|\bP\s*1\b|\bTOP$|\bLEADER", text)
+    if symbol_only and series and not racer:
+        if re.search(r"\s1$", text) and not is_top2:
+            is_s1 = is_s1 or True
+        if re.search(r"\s2$", text) and not is_top2:
+            is_s2 = is_s2 or True
     if series and not racer and "WIN" not in text:
-        if is_s1 and not is_top2:
-            return ("s1", series)
-        if is_s2 and not is_top2:
-            return ("s2", series)
         if is_top2:
             return ("top2", series)
+        if is_s2:
+            return ("s2", series)
+        if is_s1:
+            return ("s1", series)
     if racer and race:                     # a race number wins over a series label (symbols often carry both)
         return ("race", race, racer)
     if racer and series:
         return ("swin", series, racer)
     return None
+
+
+def guess_role(sym: dict) -> tuple | None:
+    """Best guess of the role of one symbol record ({"symbol", "name", "group", "market_name", ...}): the bare symbol
+    first (terse exchange codes), then the symbol joined with its descriptive fields."""
+    clean = lambda t: t.upper().replace("_", " ").replace("-", " ")
+    role = _classify(clean(str(sym.get("symbol") or "")), symbol_only=True)
+    if role is not None:
+        return role
+    text = clean(" ".join(str(sym.get(k) or "") for k in ("symbol", "name", "group", "market_name", "message")))
+    return _classify(text, symbol_only=False)
 
 
 def load_roles(symbols: list[dict]) -> tuple[dict[str, tuple], list[str]]:

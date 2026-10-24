@@ -24,6 +24,7 @@ class Params:
     risk_pts: float = 1500.0                   # score contracts: size * sd <= risk_pts
     clip: int = 50                             # never recommend more than this many contracts per action
     min_profit: float = 5.0                    # do not list actions worth less than this (contract points)
+    model_sd_k: float = 1.0                    # margin >= k x sd of the fair across the parameter ensemble (mario/robustness.py); 0 disables
 
 
 @dataclass
@@ -92,8 +93,10 @@ class Engine:
         return max(0, lim - pos) if side == "buy" else max(0, lim + pos)
 
     # ---- the evaluation ----
-    def evaluate(self, fairs: dict, books: dict, positions: dict, n_done: int, tradable: set | None = None) -> dict:
-        ft = self.fair_table(fairs); bd = self.bounds(fairs, n_done)
+    def evaluate(self, fairs: dict, books: dict, positions: dict, n_done: int, tradable: set | None = None,
+                 model_sd: dict | None = None) -> dict:
+        """model_sd: symbol -> sd of the fair across the parameter ensemble (points); widens the edge margin."""
+        ft = self.fair_table(fairs); bd = self.bounds(fairs, n_done); model_sd = model_sd or {}
         rows, actions = [], []
         for sym, role in sorted(self.roles.items(), key=lambda kv: (series_of(kv[1]), kv[1])):
             book = books.get(sym) or {}
@@ -105,13 +108,13 @@ class Engine:
                    "bid": bids[0][0] if bids else None, "bid_qty": bids[0][1] if bids else 0,
                    "ask": asks[0][0] if asks else None, "ask_qty": asks[0][1] if asks else 0,
                    "pos": int(pos.get("qty", 0) or 0), "avg": pos.get("avg"), "lo": bd.get(sym, (None, None))[0], "hi": bd.get(sym, (None, None))[1],
-                   "edge_buy": None, "edge_sell": None, "action": ""}
+                   "edge_buy": None, "edge_sell": None, "action": "", "model_sd": model_sd.get(sym)}
             if fv is not None:
                 if asks: row["edge_buy"] = round(fv - asks[0][0], 2)
                 if bids: row["edge_sell"] = round(bids[0][0] - fv, 2)
                 live = tradable is None or sym in tradable
                 if live:
-                    actions += self._edge_actions(sym, role, fv, sd, bids, asks, positions, n_done)
+                    actions += self._edge_actions(sym, role, fv, sd, bids, asks, positions, n_done, model_sd.get(sym))
             rows.append(row)
         actions += self._arbs(books, positions, bd, tradable)
         actions = [a for a in actions if a.profit >= self.p.min_profit]
@@ -124,7 +127,7 @@ class Engine:
         pnl = self._pnl(ft, positions)
         return {"rows": rows, "actions": actions, "pnl": pnl}
 
-    def _edge_actions(self, sym, role, fv, sd, bids, asks, positions, n_done) -> list[Action]:
+    def _edge_actions(self, sym, role, fv, sd, bids, asks, positions, n_done, msd: float | None = None) -> list[Action]:
         out = []
         if role[0] in BIN_KINDS:
             k = max(0, min(3, n_done - (series_of(role) - 1) * 4))
@@ -133,11 +136,15 @@ class Engine:
         else:
             margin = max(self.p.margin_score_pts, self.p.margin_score_sd * sd)
             max_qty = min(self.p.clip, int(self.p.risk_pts / max(sd, 0.5)))
+        note_sd = ""
+        if msd is not None and self.p.model_sd_k > 0 and self.p.model_sd_k * msd > margin:
+            margin = self.p.model_sd_k * msd            # the parameterisations disagree by more than the margin: demand that much edge
+            note_sd = f", model sd {msd:.1f}"
         for side, levels, limit_px in (("buy", asks, fv - margin), ("sell", bids, fv + margin)):
             qty, worst = _walk(levels, limit_px, side, min(max_qty, self._room(sym, side, positions)))
             if qty > 0:
                 exp = sum((fv - px if side == "buy" else px - fv) * q for px, q in self._taken(levels, qty))
-                out.append(Action("edge", [(sym, side, qty, worst)], round(exp, 1), f"{role_label(role)}: fair {fv:.1f} (sd {sd:.1f}), margin {margin:.1f}"))
+                out.append(Action("edge", [(sym, side, qty, worst)], round(exp, 1), f"{role_label(role)}: fair {fv:.1f} (sd {sd:.1f}), margin {margin:.1f}{note_sd}"))
         return out
 
     @staticmethod
