@@ -1,0 +1,112 @@
+{
+  "candidate_revision": "5832359d4705ac70303d80b7c1b9af2d02a6a25a",
+  "baseline_revision": "cd3eb239bd7bad97b34f10a8f2bb0b2e1c0f5026",
+  "decision": "reject production promotion",
+  "phase_archives": {
+    "baseline": {
+      "regular_files": 640,
+      "verified_against_produced_hashes": true
+    },
+    "candidate": {
+      "regular_files": 640,
+      "verified_against_produced_hashes": true
+    }
+  },
+  "preflight_archive_regular_files": 14,
+  "artifact_count": 19,
+  "files": {
+    "spec.json": {
+      "bytes": 3417,
+      "sha256": "8d08de8cca753d3333f141a0a462ce2f24914ab366cc0cdcf27ed87e0845fc6f"
+    },
+    "baseline-journals.tar.gz": {
+      "bytes": 3277601,
+      "sha256": "8de70b7d70f9017e08cc092fdaaf043ec5df20b3a996e71f58d705202565bd93"
+    },
+    "candidate.stderr.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "candidate-journals.tar.gz": {
+      "bytes": 3313724,
+      "sha256": "1f1943a9e4a7ae8e3faa2d3b03a59976617efd0f49c687fde9c7740f9586c091"
+    },
+    "baseline.stderr.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "preflight.tar.gz": {
+      "bytes": 157180,
+      "sha256": "5f9a789550aff1425f9a9491042e9b3a8b12ebe2553988da14a5010988afafcf"
+    },
+    "candidate.stdout.log": {
+      "bytes": 8915,
+      "sha256": "382585f30ff0db9e2319196f321e1d68024984c8a026adf51402ee49dbb6fca6"
+    },
+    "analysis.json": {
+      "bytes": 34269,
+      "sha256": "36977471f4d9e02b9191f5f930820c5b6417c23f71fbb5522045f78df737870b"
+    },
+    "baseline.stdout.log": {
+      "bytes": 8036,
+      "sha256": "b43362ff8f20ffc0e571ef68dad93ea80ab4a2e04209b35d462e28ce4ab4cdb3"
+    },
+    "analyze.py": {
+      "bytes": 4762,
+      "sha256": "a8d4c2e76b45972fdc244937af843a95958b5ae24f2a91547db5400f09a3d75c"
+    },
+    "candidate/summary.json": {
+      "bytes": 209,
+      "sha256": "1f1f7b0d204f6d655aa3e2eb6ad890ae7ff6f29b6d8fab6fd2f5b954142f80d8"
+    },
+    "candidate/metadata.json": {
+      "bytes": 255772,
+      "sha256": "28a26232a56941f2de0a6bbaad609ab7ef6f228afab3ec22e7c744672f8467c2"
+    },
+    "candidate/results.jsonl": {
+      "bytes": 542088,
+      "sha256": "859df51977b87dafe509bdf8accbe75639e1b3cc70a4ca708fbaab2821db03f4"
+    },
+    "baseline/summary.json": {
+      "bytes": 210,
+      "sha256": "ea0a6653c21ada0b38a0a088315f26682537889106ab5150a7fa90afeb780866"
+    },
+    "baseline/metadata.json": {
+      "bytes": 134827,
+      "sha256": "6314fa6e74eaf690c029b04eb7850d4d4c09bfbde1027826b70e210c73bb97c9"
+    },
+    "baseline/results.jsonl": {
+      "bytes": 541220,
+      "sha256": "1eebc590f7a191be75709f9bc467b05123d96fecc77e3bacea237b4cc2492f97"
+    },
+    "independent-review.tar.gz": {
+      "bytes": 532647,
+      "sha256": "180ab4a44c6aaf6dd5765d1f93da2d96609a63fb4be7a6e65803c37b4bec4b5b"
+    },
+    "mechanics-review.tar.gz": {
+      "bytes": 20732,
+      "sha256": "1b686aa1455ded26f276d8bb19b259cb355c52c0d2a1e1b2adb177b7f4ee5563"
+    },
+    "report-archive-review.json": {
+      "bytes": 2462,
+      "sha256": "006274be069f00cd7582198d0503d04a98ee1cc6593c5480025616692821c93d"
+    }
+  },
+  "independent_review": {
+    "verdict": "approved as negative diagnostic evidence",
+    "paired_scenarios": 80,
+    "representative_reruns": 10,
+    "rerun_files": 80,
+    "forbidden_access_attempts": 0,
+    "archive_regular_files": 89
+  },
+  "mechanics_review": {
+    "paired_scenarios": 4,
+    "archive_regular_files": 5,
+    "new_performance_runs": 0
+  },
+  "report_archive_review": {
+    "scope": "original 17 artifacts before adding mechanics and report audit copies",
+    "verdict": "approved documentation-only PR"
+  }
+}

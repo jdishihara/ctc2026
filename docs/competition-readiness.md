@@ -1,6 +1,6 @@
 # Competition readiness — 2026-10-24
 
-Status updated after the 08:12 UTC capture-245 supervisor evaluation (04:12 EDT). One complete small-size live season
+Status updated after the 08:35 UTC cleanup-ordering comparison (04:35 EDT). One complete small-size live season
 has a verified settlement receipt. The next trial contains mixed activity.
 Live practice remains stopped pending shared-account ownership clarification.
 Market recording and offline evaluations continue.
@@ -32,6 +32,14 @@ before the corrected-runtime freeze, and the receipt precedes the separate
 forward-driver freeze by 1.181 seconds. This is not prospective evidence for
 the correction or an untouched holdout. Full results and timing are in
 [observed-season-245.md](observed-season-245.md).
+
+A separate 80-setting cleanup experiment was rejected after independent
+review. Its newer quotes did not consistently reduce risk: mean cleanup time
+across the twelve loss stops rose from 96.00 to 98.25 seconds, and the worst
+terminal loss increased from $420.64 to $441.76. The current runtime and frozen
+forward evaluations are unchanged. See
+[cleanup-quote-ordering.md](cleanup-quote-ordering.md) for every outcome and
+the safety issue caught before the candidate evaluation.
 
 ## Historical data and evaluation
 
