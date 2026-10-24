@@ -377,10 +377,10 @@ def main():
             or receipt['at'] < frames[-1]['received_at']):
         raise ValueError('finite closed receipt must follow the selected captured frames')
     sources = sorted([*ROOT.glob('ctc/*.py'), *ROOT.glob('ctc/*.json'), *ROOT.glob('ctc/*.npz'),
-        ROOT / 'data/case.json', ROOT / 'bot/live.py', ROOT / 'bot/http_transport.py', Path(__file__),
+        ROOT / 'data/case.json', ROOT / 'bot/live.py', ROOT / 'bot/http_transport.py', ROOT / 'bot/control.py', Path(__file__),
         ROOT / 'scripts/replay_captured_market.py', ROOT / 'scripts/evaluate_observed_season.py',
         ROOT / 'scripts/observe_market_seasons.py', ROOT / 'scripts/experiment_execution_costs.py',
-        ROOT / 'docs/serialized-replay-plan.md'])
+        ROOT / 'docs/serialized-replay-plan.md', ROOT / 'docs/serialized-forward-plan.md'])
     metadata = {'schema_version': 1, 'mode': args.mode, 'competition_id': args.competition_id,
         'year': year, 'official_receipt': receipt, 'coverage': coverage,
         'source_revision': subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=ROOT, text=True).strip(),
