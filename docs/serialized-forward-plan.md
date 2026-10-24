@@ -1,5 +1,10 @@
 # Fixed execution replay on later closing seasons
 
+**Later evidence, 08:53 UTC:** all 15 storm tracks in closed captures 241–245
+exactly match the fitted analog training library. Source-freeze chronology
+does not establish unseen-weather validation. Results below are retained;
+see [training-overlap-audit.md](training-overlap-audit.md) for the limitation.
+
 Declared 2026-10-24 07:17 UTC, before evaluating any official outcome for
 season 244. Effective freeze time is the commit time of this plan and the
 source manifest correction. The original fixed worker continues separately.

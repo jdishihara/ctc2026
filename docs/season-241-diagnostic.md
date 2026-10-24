@@ -1,5 +1,10 @@
 # First completed live season: +$141.16
 
+**Later evidence, 08:53 UTC:** all 15 storm tracks in closed captures 241–245
+exactly match the fitted analog training library. Source-freeze chronology
+does not establish unseen-weather validation. Results below are retained;
+see [training-overlap-audit.md](training-overlap-audit.md) for the limitation.
+
 The first controlled trial settled at 04:51:09 UTC on October 24, 2026, using
 the frozen runtime `59603dd` and 10% of normal per-symbol limits. The receipt
 verified a closed market, all 12 official settlement prices, and no open orders.

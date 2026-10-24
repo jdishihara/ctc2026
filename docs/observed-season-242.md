@@ -1,5 +1,10 @@
 # Second completed recorded-market diagnostic
 
+**Later evidence, 08:53 UTC:** all 15 storm tracks in closed captures 241–245
+exactly match the fitted analog training library. Source-freeze chronology
+does not establish unseen-weather validation. Results below are retained;
+see [training-overlap-audit.md](training-overlap-audit.md) for the limitation.
+
 The read-only observer obtained matching ready-state clocks and all 12 official
 settlement prices for CID `0d7afac2-6acd-4223-aa8a-8c1a067091f0`, fictional
 year 1785, at 2026-10-24 05:40:24 UTC. Evaluation began after that receipt.

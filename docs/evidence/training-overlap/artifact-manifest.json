@@ -1,0 +1,19 @@
+{
+  "artifact_count": 2,
+  "files": {
+    "audit.json": {
+      "bytes": 8717,
+      "sha256": "829798cd51414bd48cf713ade228210d482ba6d05369cd1e25a66fd0aea3d804"
+    },
+    "independent-review.tar.gz": {
+      "bytes": 14624,
+      "sha256": "35676103fcebd6476e2c5def2946924dd83b1601123972044a60aad6745641c8"
+    }
+  },
+  "independent_archive_regular_files": 5,
+  "root_script_sha256": "ae1f26acbbcb635f59ad68f89fbbb687a2d158131bd46c3771791be1ffe23841",
+  "captured_storms": 15,
+  "exact_matching_storms": 15,
+  "scalar_values_compared": 14460,
+  "scope": "closed captures241–245 only; exact fitted-weather overlap; no future-season reads"
+}

@@ -1,5 +1,10 @@
 # Corrected practice supervisor on later closing seasons
 
+**Later evidence, 08:53 UTC:** all 15 storm tracks in closed captures 241–245
+exactly match the fitted analog training library. Source-freeze chronology
+does not establish unseen-weather validation. Results below are retained;
+see [training-overlap-audit.md](training-overlap-audit.md) for the limitation.
+
 Declared 2026-10-24 after source freeze at **08:00:15 UTC**, before any capture
 245 closing receipt or corrected-supervisor performance results. This protocol
 adds an offline evaluation; it does not authorize or start account trading.

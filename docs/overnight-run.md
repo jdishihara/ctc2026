@@ -1,5 +1,14 @@
 # Overnight practice — October 24, 2026
 
+## 08:53 UTC — training-overlap limitation discovered
+
+All 15 complete storm tracks in already-closed captures 241–245 exactly match
+the fitted analog library. These practice paths test execution on familiar
+weather. Their chronological source freezes do not establish unseen-weather
+validation. Actual receipts and paired execution arithmetic remain unchanged.
+The frozen evaluations continue, and no active-season outcomes are read for
+this audit. Evidence and corrections: [training-overlap-audit.md](training-overlap-audit.md).
+
 User goal: keep trading and iterating overnight until the competition starts
 around **08:00 EDT / 12:00 UTC on October 24**. Continue evaluating and fixing
 problems between bounded batches; a batch stop does not finish the overnight
