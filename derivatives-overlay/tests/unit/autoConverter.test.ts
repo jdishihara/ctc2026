@@ -16,6 +16,17 @@ describe('Round 3 converter auto-identification', () => {
     expect(r.id).toBe('variance');
     expect(r.ranked[0].id).toBe('variance');
   });
+  it('does not reinterpret named variance as IV when the old market price is closer to the raw number', () => {
+    const r = identifyConverter({
+      ...base, tolPts: 8, marketIV: { OIL: 0.55, PLANE: 1.21 },
+      text: 'Analyst 1: OIL variance 0.5625, PLANE variance 1.21',
+      samples: [{ underlying: 'OIL', raw: 0.5625 }, { underlying: 'PLANE', raw: 1.21 }],
+    });
+    expect(r.ranked[0].id).toBe('iv');
+    expect(r.ranked.find((c) => c.id === 'variance')!.errPts).toBeGreaterThan(8);
+    expect(r.id).toBeNull();
+    expect(r.reason).toMatch(/message names.*variance.*Pick the converter by hand/i);
+  });
   it('daily move in percent', () => {
     // sigma 0.70 -> 0.70/sqrt(252) = 4.41% per day; 1.0 -> 6.30%
     const r = identifyConverter({ ...base, text: 'Analyst 1: OIL expected daily move 4.41%, PLANE 6.30%', samples: [{ underlying: 'OIL', raw: 4.41, rawStr: '4.41%' }, { underlying: 'PLANE', raw: 6.3, rawStr: '6.30%' }] });

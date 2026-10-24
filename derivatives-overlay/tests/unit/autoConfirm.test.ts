@@ -194,6 +194,20 @@ describe('Round 3: converter auto-identification in the store', () => {
     expect(st.s.auto.converter).toMatchObject({ status: 'chosen', id: 'dailyMovePct' });
     expect(st.s.converter.id).toBe('dailyMovePct');
   });
+  it('keeps round-three targets unconfirmed when named units conflict with the old market IV', () => {
+    const { st, tick } = r3();
+    quoteAll(st, { OIL: 100, PLANE: 40 }, { OIL: 0.55, PLANE: 1.21 }, 18 / 252);
+    tick(100);
+    st.s.converter.id = 'iv';
+    news(st, 2, 'Analyst 1: OIL variance 0.5625, PLANE variance 1.21', { type: 'analyst' });
+    expect(st.s.auto.converter.status).toBe('idle');
+    expect(st.s.auto.converter.reason).toMatch(/message names.*variance/i);
+    expect(st.s.targets.OIL.vol.confirmed).toBe(false);
+    st.setConverter({ id: 'variance' });
+    expect(st.s.auto.converter.status).toBe('manual');
+    expect(st.s.analystInputs[7].OIL[1]?.sigma).toBeCloseTo(0.75, 6);
+    expect(st.s.analystInputs[7].PLANE[1]?.sigma).toBeCloseTo(1.1, 6);
+  });
   it('a hand-picked converter switches auto off until re-run', () => {
     const { st } = r3();
     st.setConverter({ id: 'expiryMovePct' });

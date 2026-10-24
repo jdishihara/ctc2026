@@ -91,6 +91,12 @@ export function identifyConverter(inp: IdentifyInput): IdentifyResult {
     return { id: null, reason: `nothing within ${inp.tolPts} vol pts of the market IV; closest ${fmt(ranked[0])}. Pick the converter by hand.`, ranked };
   }
   const named = within.filter((c) => c.keyword);
+  const mentioned = Object.entries(KEYWORDS).filter(([, pattern]) => pattern.test(text)).map(([id]) => id);
+  // Market IV can still reflect the previous event. A nearby raw number is not
+  // evidence that an explicitly named quantity has different units.
+  if (mentioned.length && !named.length) {
+    return { id: null, reason: `message names ${mentioned.join(', ')}, but no named converter is within ${inp.tolPts} vol pts of the market IV. Pick the converter by hand.`, ranked };
+  }
   if (named.length === 1) return { id: named[0].id, reason: `message names it and it matches the market IV: ${fmt(named[0])}`, ranked };
   if (named.length > 1 && named[1].errPts - named[0].errPts >= inp.tieMarginPts) {
     return { id: named[0].id, reason: `several named, nearest market IV: ${fmt(named[0])} vs ${fmt(named[1])}`, ranked };

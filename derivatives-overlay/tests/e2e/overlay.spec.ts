@@ -60,7 +60,7 @@ test.afterAll(async () => {
   }
 });
 
-test('overlay observes the mock exchange, suggests targets, prefills without submitting', async () => {
+test('manual target approval observes the exchange and prefills without submitting', async () => {
   test.skip(!!skipReason, skipReason ?? '');
   page = await ctx.newPage();
   const errors: string[] = [];
@@ -71,6 +71,16 @@ test('overlay observes the mock exchange, suggests targets, prefills without sub
   const overlay = page.locator('[data-deriv-overlay]');
   await expect(overlay).toHaveCount(1, { timeout: 10_000 });
   await expect(overlay.getByText('DERIVATIVES')).toBeVisible({ timeout: 10_000 });
+
+  // Auto-confirm is on by default; this scenario exercises the manual approval path.
+  // Auto-submit is a separate control and must remain off without arming it.
+  await overlay.getByRole('button', { name: 'Config', exact: true }).click();
+  const autoConfirm = overlay.getByLabel('Auto-confirm parsed targets', { exact: false });
+  await expect(autoConfirm).toBeChecked();
+  await expect(overlay.getByLabel('Auto-submit:', { exact: false })).not.toBeChecked();
+  await autoConfirm.uncheck();
+  await expect(autoConfirm).not.toBeChecked();
+  await expect(overlay.getByText('confirm manual', { exact: true })).toBeVisible();
 
   // 2. capture shows quotes and the clock poll
   await overlay.getByRole('button', { name: 'Capture', exact: true }).click();
