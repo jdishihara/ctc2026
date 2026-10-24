@@ -1,0 +1,47 @@
+{
+  "date_local": "2026-10-23",
+  "timezone": "America/New_York",
+  "base_commit": "4de24eaad7b4d7b91b1fe5ff63bc17b54996c633",
+  "change_under_test": "Mario series-set sell payout bound corrected from 100 to 200",
+  "python": {"before_passed": 186, "regression_red_failed": 3, "regression_red_passed": 3, "after_passed": 192},
+  "derivatives": {
+    "tests_passed": 103,
+    "test_files_passed": 17,
+    "timezone_reruns": {"UTC": 11, "America/New_York": 11},
+    "typecheck": "passed",
+    "build_dev": "passed",
+    "build_production": "passed",
+    "drill_rounds_completed": [1, 2, 3],
+    "drill_events_per_round": 3,
+    "drill_seed": 451,
+    "browser_e2e": "not run"
+  },
+  "systematic_mock": {
+    "season": 451,
+    "speed_multiplier": 25,
+    "rounds_observed": [1, 2, 3],
+    "orders_submitted": 87,
+    "fills": 24,
+    "unique_fill_ids": 24,
+    "control_pause_resume_verified": true,
+    "settlement_pnl_rounded": 10998,
+    "shutdown_warning": "One connection-refused refresh after mock server exit",
+    "other_error_or_rejection_diagnostics": 0
+  },
+  "mario_mock": {
+    "seed": 3,
+    "race_interval_seconds": 6,
+    "races_completed": 8,
+    "symbols_mapped": 46,
+    "unmapped": [],
+    "trades": 1,
+    "filled_contracts": 3,
+    "positions_after_settlement": 0,
+    "actions_after_settlement": 0,
+    "desk_realized_pnl": 261,
+    "exchange_pnl": 261
+  },
+  "remote_orders_submitted": false,
+  "real_exchange_and_browser_compatibility": "not verified in this run",
+  "performance_claim": "Local smoke tests only; no win probability estimated"
+}

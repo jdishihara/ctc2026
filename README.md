@@ -74,10 +74,13 @@ python3 bot/live.py --key BOT_KEY --dry-run          # default url https://corne
 zsh bot/run_live.sh                                  # keeps it running, logs to recordings/bot_live.log (pnl every 10 s, SEASON END lines)
 ```
 The bot runs the same FairValueTrader as the backtest (analog ensemble with the cone likelihood, passive 0.75, warm-up 20 s, max-cross 2%, carry 0.5). On each
-start it rebuilds the season from the recorder's feed file (`--feed-log`, exact state) and falls back to the exchange snapshot. Prices are
+start it rebuilds the season from the recorder's feed file (`--feed-log`). New orders require a complete news sequence from
+the start of the season, complete observed weather, all earlier final reports, and a live news checkpoint. A snapshot can
+fill trajectory gaps for display, but its estimates do not enable trading. Prices are
 rounded to the 0.01 tick (buys down, sells up). On the testnet the fictional year gives the season: season = 2027 - year (verified by matching storm tracks). The
 `SEASON END` log line prints the fictional time of the NEXT season, so the season that just ended is 2026 - that year.
-`bot/preflight.py` checks everything that went wrong on the testnet before a start; `bot/stop.sh` is the kill switch.
+`bot/preflight.py` checks API/account connectivity; the running bot separately checks history and execution readiness.
+`bot/stop.sh` is the kill switch. See the [practice loss review](docs/practice-loss-review.md) for the late-start failure and verified fixes.
 
 ## Competition day runbook (Hurricane Season bot)
 
@@ -100,13 +103,16 @@ tail -f recordings/bot_live.log
 While it runs, one person watches the log. Every 10 s it prints `t= … r<round> pnl <season pnl> SYM:mid/fair/position`.
 What to look for:
 
-- `strategy analog min_edge 0.025 edge_full 0.03 … carry 0.5 … cone_w 1.0 cone_s0 20.0` at start, then `replayed N feed messages of season year Y`: the accepted configuration rebuilt from the recording. Anything else, stop and check the flags and FEED_LOG.
+- `strategy analog min_edge 0.025 edge_full 0.03 … carry 0.5 … cone_w 1.0 cone_s0 20.0` at start, then `replayed N feed messages of season year Y`: check the configuration and recording. A replay count alone does not establish completeness.
+- `history complete: trading eligible`: the history gate passed. Start the recorder and bot **before the first storm**.
+- `TRADING BLOCKED: …`: no new orders or conversions. Missing news/weather requires restarting with a complete current-season recording or observing the next season from its beginning. A reconnect snapshot does not clear missing history. Resting orders are canceled; existing positions remain for explicit operator management.
 - `final phase exact=True entry=0.005 full=0.005`: accepted final-phase settings;
   these require every weather observation and all three final reports.
 - `basket edge=0.01 participation=0.5 max_lot=10`: accepted basket settings;
   missing or invalid order books skip basket entries. The core strategy continues.
-- `snapshot processed: warm-up before trading` and `market (re)opened: warm-up`: no orders for 20 s. Fair values in the
-  first line after a connect can be far from the mids (the model is still catching up); they should be sane by the second line.
+- `snapshot processed: warm-up before trading` and `market (re)opened: warm-up`: no orders for 20 s. Warm-up alone does not establish valid history; the history gate must also pass.
+- Every submission rechecks quote age (at most 5 s), pending news, season identity, announcement pauses, and the stop latch. New news received during a slow HTTP request blocks subsequent orders until processed. An already submitted request can still complete after a stop.
+- `replayed announcement pauses: […]`: restart restored announcement restrictions. Affected symbols wait for the normal fresh-price re-anchor or an explicit operator command.
 - Round opens: the house re-prices by about 7% from the previous close, stays quiet for 30 s, then moves about 3% over the
   next five minutes. That move is where the season's PnL is made or lost; the bot trades it after the warm-up.
 - `HTTP 4xx …` lines: rejections. One or two around a halt are normal; a stream of them means the tick, the limits or the key.
@@ -128,10 +134,10 @@ bot/stop.sh              # kills wrapper and bot, cancels every resting order, p
 bot/stop.sh --flatten    # the same, then closes every position three levels into the book
 ```
 
-Failures seen on the testnet, all fixed, all covered by the preflight or the warm-up: prices not on the 0.01 tick (every order
+Historical failures seen on the testnet include prices not on the 0.01 tick (every order
 rejected); the bot running the nowcast instead of the analog ensemble (-14k in one season); full-size orders in all 12 symbols
 within a second of a round open or a reconnect (-4k to -16k); a crash on every reconnect once an advisory existed; the Mac
-sleeping with positions open.
+sleeping with positions open. Preflight, warm-up, and offline tests do not establish profitability. The October 23 late-start loss exposed additional history and execution failures documented in the loss review.
 
 End-to-end test without the testnet (mock exchange replays season 451 at 25x):
 

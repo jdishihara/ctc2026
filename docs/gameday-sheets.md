@@ -26,7 +26,8 @@ tail -f recordings/bot_live.log
 
 Healthy start lines, in order: `strategy analog min_edge 0.025 ...`, `final phase exact=True ...`,
 `basket edge=0.01 ...`, `announcements: pause named symbols, re-anchor ... 60 s`, `replayed N feed messages`,
-`connected`, `snapshot processed: warm-up before trading`.
+`connected`, followed by `history complete: trading eligible` once complete history is verified.
+Start the recorder and bot before the first storm. A snapshot or a nonzero replay count alone does not authorize trading.
 
 Every 10 s: `t= ... r<round> pnl <season pnl> SYM:mid/fair/position`. Glance at it. Fair within a few percent of mid
 for most symbols is normal; during a storm they diverge, that is the trade.
@@ -34,10 +35,12 @@ for most symbols is normal; during a storm they diverge, that is the trade.
 | You see | It means | Do |
 |---|---|---|
 | `market (re)opened: warm-up` | round open, no orders for 20 s | nothing; watch the first minute |
+| `TRADING BLOCKED: missing news history` / `incomplete weather history` | new orders/conversions blocked; resting orders canceled | restart from a complete current-season recording, or wait for the next season from its beginning; manage existing holdings explicitly |
+| `waiting for a live news checkpoint` / `new-season account refresh` | feed/account not synchronized | wait for synchronization; investigate if it persists |
 | one or two `HTTP 4xx` around a halt | normal | nothing |
 | a stream of `HTTP 4xx` | tick, limits or key | `bot/stop.sh`, read the error, fix, `run_live.sh` |
 | `disconnected ... reconnecting` once | fine | nothing |
-| `disconnected` every few seconds | network | check wifi; the bot rebuilds from the recording on reconnect |
+| `disconnected` every few seconds | network | check wifi; a missing sequence needs a restart with complete recorded history |
 | `ANNOUNCEMENT [SYM]: <headline> -> pausing` | model has not seen it | read docs/announcements.md rule 1; default: do nothing, it re-anchors to the house in 60 s |
 | `announcement wait over: SYM fair anchored to house mid` | resumed on the house's price | nothing |
 | position stuck at the limit with fair far from mid for minutes | the model disagrees with the market | note it; if a human can explain why the model is wrong, `echo "SYM =<mid>" >> recordings/control.txt` |
@@ -99,8 +102,9 @@ that alphabetical order, from the stream. Typo: `undo`, retype. The dashboard re
 After race 1 only: if the humans all finished behind several CPUs, `cpu 0`; if a human won outright and the others were
 top 4, leave it.
 
-Clicker: the action list is best first. Orange rows are riskless (four binaries of one race not summing to 100, top-2
-not equal to #1 + #2, a racer who cannot win still bid above 0): take all of them. Then the model edges in order. Click
+Clicker: the action list is best first. Orange rows show settlement guarantees (race-winner sets sum to 100; series-winner
+sets pay 100 to 200 because every tied winner pays 50; top-2 equals #1 + #2). Multi-leg guarantees require every leg to
+fill at the stated prices. Recheck available size and positions after each fill. Then consider model edges. Click
 **prepare** on a row (or type `prepare N`): the exchange tab's form fills; you click the submit button. Size is already
 inside the position limit and the book. Browser cap is 40 orders a minute, about one every 1.5 s.
 

@@ -8,7 +8,7 @@ unchanged. Reads the news and quotes channels, keeps positions and open orders i
 mid for the operator every 10 s. Start with --dry-run: orders are printed, not sent.
 """
 from __future__ import annotations
-import argparse, asyncio, collections, json, math, sys, time, urllib.error, urllib.request
+import argparse, asyncio, collections, json, math, sys, threading, time, urllib.error, urllib.request
 from http.client import HTTPException
 from pathlib import Path
 from typing import Any
@@ -43,12 +43,14 @@ class LiveExchange:
         self.open_orders: list[dict[str, Any]] = []
         self.market_open = False
         self.state_ready = False  # complete account snapshot required before any new exposure
+        self.submission_guard = None  # LiveSession checks model/feed/quotes at each submission.
         self.t0 = time.monotonic()
         self.actions: collections.deque[float] = collections.deque()
         self.rate_limit = rate_limit
         self.rejected = 0
         self.round = 0
         self.competition_id = None
+        self.season_year = ''
         self.last_positions: Any = None
         self.pnl_now = 0.0
         self.reopened = False
@@ -111,7 +113,7 @@ class LiveExchange:
             # counted in the position without losing its reservation prematurely.
             oo = self.get("/orders/open")
             orders = oo.get("orders", oo) if isinstance(oo, dict) else oo
-            pos = self.get("/positions")
+            pos = self.get("/positions?include_zero=true")
             items = pos.get("positions", pos) if isinstance(pos, dict) else pos
             if not isinstance(items, list) or not isinstance(orders, list):
                 raise ValueError("positions and open orders must be lists")
@@ -127,10 +129,10 @@ class LiveExchange:
                     raise ValueError("invalid open order")
                 if int(o["quantity"]) < int(o.get("filled_quantity", 0)):
                     raise ValueError("invalid remaining order quantity")
-            summary = {"realized": round(sum(p.get("realized_pnl", 0) for p in items)),
-                       "unrealized": round(sum(p.get("unrealized_pnl", 0) for p in items)),
+            summary = {"realized": round(sum(p.get("realized_pnl") or 0 for p in items)),
+                       "unrealized": round(sum(p.get("unrealized_pnl") or 0 for p in items)),
                        "positions": positions.copy(),
-                       "realized_by": {p["symbol"]: round(p.get("realized_pnl", 0)) for p in items},
+                       "realized_by": {p["symbol"]: round(p.get("realized_pnl") or 0) for p in items},
                        "avg_price": {p["symbol"]: p.get("average_price") for p in items}}
             if self.competition_id and cid != self.competition_id:
                 print(f"SEASON END competition {self.competition_id} ({tm.get('fictional_time')}): last positions {json.dumps(self.last_positions)}", flush=True)
@@ -140,6 +142,7 @@ class LiveExchange:
                 self.quotes_valid_after = self.t
             # Publish a complete snapshot only after every required request succeeds.
             self.competition_id = cid
+            self.season_year = str(tm.get('fictional_time') or '')[:4]
             self.position, self.open_orders = positions, orders
             self.last_positions = summary
             self.pnl_now = summary["realized"] + summary["unrealized"]
@@ -198,6 +201,8 @@ class LiveExchange:
     def place(self, symbol: str, side: str, qty: int, price: float | None = None) -> int | None:
         if not self.market_open or not self.state_ready or qty <= 0:
             return None
+        if self.submission_guard is not None and not self.submission_guard((symbol,)):
+            return None
         sign = 1 if side == "buy" else -1
         room = self.limits[symbol] - sign * self.position[symbol] - self.resting(symbol, side)
         qty = min(int(qty), room)
@@ -229,12 +234,22 @@ class LiveExchange:
             status = resp.get("status")
             if status is not None and status not in {"new", "pending", "accepted", "open", "resting", "partial", "partially_filled", "filled"}:
                 raise ValueError("unrecognized order status")
-            if status == "filled" and filled != accepted:
+            status_only_fill = (status in {"filled", "partial", "partially_filled"}
+                                and "filled_quantity" not in resp and "filled" not in resp)
+            if status == "filled" and filled != accepted and not status_only_fill:
                 raise ValueError("filled acknowledgement lacks complete fill quantity")
         except (TypeError, ValueError, OverflowError):
             self.state_ready = False
             print("uncertain order acknowledgement; waiting for account refresh", flush=True)
             return None
+        if status_only_fill:
+            # The testnet returns order_id/status without fill quantities.
+            # Reconcile actual holdings and remaining orders, rather than
+            # guessing the fill. Keep the accepted ID even if refresh fails;
+            # state_ready then prevents another submission until recovery.
+            self.state_ready = False
+            self.refresh()
+            return oid
         self.position[symbol] += sign * filled  # refresh() reconciles later fills
         if filled < accepted:
             self.open_orders.append({**order, "quantity": accepted, "filled_quantity": filled, "order_id": oid})
@@ -286,6 +301,9 @@ class LiveExchange:
         return self._convert(etf, qty, "redeem")
 
     def _convert(self, etf: str, qty: int, action: str) -> bool:
+        symbols = (etf, *self.case['etfs'][etf]['basket'])
+        if self.submission_guard is not None and not self.submission_guard(symbols):
+            return False
         if not self.market_open or not self.state_ready or qty <= 0 or not self._action_ok():
             return False
         if self.dry_run:
@@ -325,13 +343,17 @@ def replay_feed_log(path: str, ex: "LiveExchange", strat, seen_seq: set[int], ta
             if str(m.get("time") or "")[:4] != year:
                 continue
             msgs[m["seq"]] = m
-    last_round = 0
     for seq in sorted(msgs):
         m = msgs[seq]
         strat.model.on_message(m); seen_seq.add(seq)
-        if m.get("type") == "storm_formed":
-            last_round = m["round"]
-    return year, last_round, len(msgs)
+        if m.get('type') == 'announcement':
+            symbols = [s for s in (m.get('symbols') or []) if s in ex.symbols]
+            # Restart loses live price anchors. Re-pause these symbols and use
+            # the normal fresh-price re-anchor/explicit operator control path.
+            strat.announce(symbols, ex.t)
+    if strat.paused:
+        print(f'replayed announcement pauses: {sorted(strat.paused)}', flush=True)
+    return year, strat.model.round, len(msgs)
 
 
 def quote_from_frame(d: dict[str, Any]) -> tuple[str, float, float] | None:
@@ -351,6 +373,7 @@ class MarketInbox:
         self.events = []
         self.sequence = 0
         self.changed = asyncio.Event()
+        self.pending_news = threading.Event()
 
     def put(self, message, received_at):
         self.sequence += 1
@@ -359,6 +382,8 @@ class MarketInbox:
             self.quotes[message.get('symbol')] = event
         else:
             self.events.append(event)
+            if message.get('type') in ('news', 'disconnected'):
+                self.pending_news.set()
         self.changed.set()
 
     def drain(self):
@@ -366,6 +391,7 @@ class MarketInbox:
         self.events.clear()
         self.quotes.clear()
         self.changed.clear()
+        self.pending_news.clear()
         return [(message, received_at) for _, message, received_at in events]
 
 
@@ -381,64 +407,167 @@ async def receive_market_data(ws, inbox, clock):
 
 async def drive_market_data(session, inbox, receiver, interval=.25):
     """One account/strategy owner, with a heartbeat even during a feed outage."""
-    while True:
-        try:
-            await asyncio.wait_for(inbox.changed.wait(), timeout=interval)
-        except TimeoutError:
-            pass
-        await asyncio.to_thread(session.step, inbox.drain())
-        if receiver.done() and not inbox.changed.is_set():
-            await receiver
-            return
+    session.pending_news = inbox.pending_news
+    try:
+        while True:
+            try:
+                await asyncio.wait_for(inbox.changed.wait(), timeout=interval)
+            except TimeoutError:
+                pass
+            await asyncio.to_thread(session.step, inbox.drain())
+            if receiver.done() and not inbox.changed.is_set():
+                await receiver
+                return
+    finally:
+        # Cancelling to_thread does not cancel its HTTP worker. Latch the stop
+        # before asyncio waits for that worker, so it cannot submit another leg.
+        session.stop()
 
 
 class LiveSession:
     def __init__(self, ex, strat, sync, season_year='', last_round=0, seen_seq=None, control=None):
         self.ex, self.strat, self.sync = ex, strat, sync
-        self.season_year, self.last_round = season_year, last_round
+        self.season_year, self.last_round = season_year or getattr(ex, 'season_year', ''), last_round
+        self.retired_years = set()
         self.seen_seq = seen_seq if seen_seq is not None else set()
         self.competition_id = ex.competition_id
+        self.account_year = getattr(ex, 'season_year', '')
         self.last_sync = self.last_log = 0.
         self.control = control      # ControlFile or None: human commands (announcement adjustments) polled with each sync
+        self.stopped = threading.Event()
+        self.pending_news = threading.Event()
+        self.latest_seq = max(self.seen_seq, default=-1)
+        self.news_complete = len(self.seen_seq) == self.latest_seq + 1
+        self.feed_current = False  # Require a live news checkpoint after replay.
+        self.awaiting_competition_id = None
+        self.last_block_reason = None
+        ex.submission_guard = self.submission_allowed
+
+    def stop(self):
+        self.stopped.set()
+
+    def history_block_reason(self):
+        if self.awaiting_competition_id is not None:
+            return 'waiting for the new-season account refresh'
+        account_year = getattr(self.ex, 'season_year', '')
+        if account_year and self.season_year and account_year != self.season_year:
+            return 'waiting for account and news to agree on the season'
+        if not self.news_complete:
+            return 'missing news history; restart from a complete season recording'
+        if not self.strat.model.live_history_ready:
+            return 'incomplete weather history; wait for a new season or replay a complete recording'
+        if not self.feed_current:
+            return 'waiting for a live news checkpoint'
+        return None
+
+    def submission_allowed(self, symbols=()):
+        if (self.stopped.is_set() or self.pending_news.is_set()
+                or self.ex.competition_id != self.competition_id or self.history_block_reason()):
+            return False
+        now = self.ex.t
+        return all(not self.symbol_paused(s) and s in self.ex.quotes
+                   and self.ex.quote_times.get(s, -math.inf) >= self.ex.quotes_valid_after
+                   and 0 <= now - self.ex.quote_times.get(s, -math.inf) <= 5
+                   for s in symbols)
+
+    def symbol_paused(self, symbol):
+        basket = getattr(self.ex, 'case', {}).get('etfs', {}).get(symbol, {}).get('basket', {})
+        return bool(({symbol} | set(basket)) & self.strat.paused)
+
+    def _reset_news(self):
+        self.seen_seq.clear()
+        self.latest_seq = -1
+        self.news_complete = True
+        self.feed_current = False
+
+    def _news_season_changed(self, year=''):
+        """News can roll over before the REST clock/account poll does."""
+        if year and self.season_year and year != self.season_year:
+            self.retired_years.add(self.season_year)
+        self.strat.on_start(self.ex)
+        self.strat.on_round(self.ex)
+        self._reset_news()
+        self.last_round = self.ex.round = 0
+        account_matches = year and year == getattr(self.ex, 'season_year', '')
+        self.awaiting_competition_id = None if account_matches else self.ex.competition_id
+        if not account_matches:
+            self.ex.state_ready = False
+        self.ex.quotes.clear()
+        self.ex.mid.clear()
+        self.ex.quote_times.clear()
+        self.ex.quotes_valid_after = self.ex.t
 
     def _competition_changed(self):
         ex, strat = self.ex, self.strat
         changed = self.competition_id is not None and ex.competition_id != self.competition_id
         self.competition_id = ex.competition_id
+        account_year = getattr(ex, 'season_year', '')
+        previous_account_year, self.account_year = self.account_year, account_year
         if changed:
+            if ((self.awaiting_competition_id is not None
+                 or (account_year and self.season_year == account_year and account_year != previous_account_year))
+                    and (not account_year or self.season_year == account_year)):
+                # Already collecting this season's news: do not discard its
+                # prefix when the account poll finally confirms the rollover.
+                self.awaiting_competition_id = None
+                strat.competition_id = ex.competition_id
+                return True
             print('new competition id: resetting model', flush=True)
+            if self.season_year:
+                self.retired_years.add(self.season_year)
             strat.on_start(ex)
             strat.on_round(ex)
-            self.seen_seq.clear()
+            self._reset_news()
             self.last_round = ex.round = 0
-            self.season_year = ''
+            self.season_year = account_year
+            self.awaiting_competition_id = None
         return changed
 
     def _news(self, m):
         ex, strat = self.ex, self.strat
         year = (m.get('time') or '')[:4]
+        if year in self.retired_years:
+            return
         if year and self.season_year and year != self.season_year:
+            if m.get('type') == 'snapshot' and year != getattr(ex, 'season_year', ''):
+                # A foreign-year snapshot cannot establish a rollover. Wait for
+                # the account clock/current news, without discarding history.
+                self.feed_current = False
+                return
             print(f'new season (year {self.season_year} -> {year}): resetting model', flush=True)
-            strat.on_start(ex)
-            strat.on_round(ex)
-            self.seen_seq.clear()
-            self.last_round = 0
+            self._news_season_changed(year)
         if year:
             self.season_year = year
         seq = m.get('seq')
         if seq is not None:
             if seq in self.seen_seq:
+                if seq == self.latest_seq:
+                    self.feed_current = True
                 return
+            if seq != self.latest_seq + 1:
+                self.news_complete = False
             self.seen_seq.add(seq)
+            self.latest_seq = max(seq, self.latest_seq)
+            self.feed_current = True
         if m.get('type') == 'storm_formed':
             if m['round'] < self.last_round or (m['round'] == 1 and (strat.model.reported_rounds or strat.model.round)):
                 print('new season: resetting model', flush=True)
-                strat.on_start(ex)
-                strat.on_round(ex)
-                self.seen_seq.clear()
+                self._news_season_changed(year)
+                if seq is not None:
+                    self.seen_seq.add(seq)
+                    self.latest_seq = seq
+                    self.news_complete = seq == 0
+                    self.feed_current = True
             self.last_round = ex.round = m['round']
         if m.get('type') == 'snapshot':
+            checkpoint = m.get('last_seq')
+            if checkpoint is not None:
+                if checkpoint > self.latest_seq:
+                    self.news_complete = False
+                if checkpoint >= self.latest_seq:
+                    self.feed_current = True
             strat.model.on_snapshot(m)
+            self.last_round = ex.round = strat.model.round
             strat.fair = strat.compute_fair()
             strat.last_trade_t = -1e9
             print('snapshot processed: warm-up before trading', flush=True)
@@ -482,6 +611,7 @@ class LiveSession:
                 ex.quotes.clear()
                 ex.mid.clear()
                 ex.quote_times.clear()
+                self.feed_current = False
         # Cached quotes cannot stay executable because other symbols/news tick.
         now = ex.t
         for symbol in list(ex.quotes):
@@ -489,9 +619,21 @@ class LiveSession:
                 ex.quotes.pop(symbol, None)
                 ex.mid.pop(symbol, None)
                 ex.quote_times.pop(symbol, None)
-        if events and ex.quotes and len(ex.quotes) >= len(ex.symbols) // 2:
+        blocked = self.history_block_reason()
+        if blocked != self.last_block_reason:
+            print(f'TRADING BLOCKED: {blocked}' if blocked else 'history complete: trading eligible', flush=True)
+            self.last_block_reason = blocked
+        if blocked:
+            # Keep existing holdings for explicit operator management. Remove
+            # resting orders whose rationale can no longer be verified.
+            if ex.open_orders:
+                ex.cancel_all()
+        else:
+            for symbol in sorted({o['symbol'] for o in ex.open_orders if self.symbol_paused(o['symbol'])}):
+                ex.cancel_all(symbol)
+        if not blocked and events and ex.quotes and len(ex.quotes) >= len(ex.symbols) // 2:
             strat.on_quotes(ex)
-        elif strat.basket is not None and strat.basket.targets is not None:
+        elif not blocked and strat.basket is not None and strat.basket.targets is not None:
             # No fresh data is needed to cancel an expired leg. The overlay
             # itself requires fresh quotes before any replacement is priced.
             strat.basket.on_quotes(ex, strat.paused)
