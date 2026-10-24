@@ -1,0 +1,16 @@
+{"status": "error", "rtt_seconds": 0.0, "displayed_depth_fraction": 1.0, "basket_enabled": false, "error": "ValueError: replay ended without complete three-round model history"}
+{"status": "error", "rtt_seconds": 0.0, "displayed_depth_fraction": 1.0, "basket_enabled": true, "error": "ValueError: replay ended without complete three-round model history"}
+{"status": "error", "rtt_seconds": 0.0, "displayed_depth_fraction": 0.5, "basket_enabled": false, "error": "ValueError: replay ended without complete three-round model history"}
+{"status": "error", "rtt_seconds": 0.0, "displayed_depth_fraction": 0.5, "basket_enabled": true, "error": "ValueError: replay ended without complete three-round model history"}
+{"status": "error", "rtt_seconds": 0.05, "displayed_depth_fraction": 1.0, "basket_enabled": false, "error": "ValueError: replay ended without complete three-round model history"}
+{"status": "error", "rtt_seconds": 0.05, "displayed_depth_fraction": 1.0, "basket_enabled": true, "error": "ValueError: replay ended without complete three-round model history"}
+{"status": "error", "rtt_seconds": 0.05, "displayed_depth_fraction": 0.5, "basket_enabled": false, "error": "ValueError: replay ended without complete three-round model history"}
+{"status": "error", "rtt_seconds": 0.05, "displayed_depth_fraction": 0.5, "basket_enabled": true, "error": "ValueError: replay ended without complete three-round model history"}
+{"status": "error", "rtt_seconds": 0.25, "displayed_depth_fraction": 1.0, "basket_enabled": false, "error": "ValueError: replay ended without complete three-round model history"}
+{"status": "error", "rtt_seconds": 0.25, "displayed_depth_fraction": 1.0, "basket_enabled": true, "error": "ValueError: replay ended without complete three-round model history"}
+{"status": "error", "rtt_seconds": 0.25, "displayed_depth_fraction": 0.5, "basket_enabled": false, "error": "ValueError: replay ended without complete three-round model history"}
+{"status": "error", "rtt_seconds": 0.25, "displayed_depth_fraction": 0.5, "basket_enabled": true, "error": "ValueError: replay ended without complete three-round model history"}
+{"status": "error", "rtt_seconds": 1.0, "displayed_depth_fraction": 1.0, "basket_enabled": false, "error": "ValueError: replay ended without complete three-round model history"}
+{"status": "error", "rtt_seconds": 1.0, "displayed_depth_fraction": 1.0, "basket_enabled": true, "error": "ValueError: replay ended without complete three-round model history"}
+{"status": "error", "rtt_seconds": 1.0, "displayed_depth_fraction": 0.5, "basket_enabled": false, "error": "ValueError: replay ended without complete three-round model history"}
+{"status": "error", "rtt_seconds": 1.0, "displayed_depth_fraction": 0.5, "basket_enabled": true, "error": "ValueError: replay ended without complete three-round model history"}

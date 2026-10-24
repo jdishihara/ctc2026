@@ -97,3 +97,13 @@ All evidence, including losses and retry-spacing limits, is in
 [uncertainty-guard-experiment.md](uncertainty-guard-experiment.md). No new live
 trial has started. A separate offline diagnostic is being prepared to measure
 serialized request and account-reconciliation delays.
+
+07:15 UTC update: PR #15 fixes direct-launcher initialization that could erase
+loaded history on its first quote callback. Supervised practice already used
+the correct order. The sequential REST diagnostic then completed all 48 fixed
+scenarios on captures 241–243; one loses $29.72, and timing materially changes
+returns. Independent review checked all rows and reproduced eight scenarios
+exactly. The combined branch passes 536 Python tests. See
+[serialized-client-replay.md](serialized-client-replay.md) for full results,
+both archived versions, and the source-manifest limitation. No new live trial
+has started; the shared-account ownership question remains unresolved.

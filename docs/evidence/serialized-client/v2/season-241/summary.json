@@ -1,0 +1,51 @@
+{
+  "runs": 16,
+  "elapsed_seconds": 19.453627167000377,
+  "errors": 0,
+  "by_rtt": {
+    "0.0": {
+      "scenarios": 4,
+      "errors": 0,
+      "mean_pnl": 96.23750000000007,
+      "worst_pnl": 70.12999999999988,
+      "best_pnl": 131.61000000000058,
+      "negative_scenarios": 0,
+      "zero_order_scenarios": 0,
+      "paired_mean_change_from_zero_rtt": 0.0,
+      "paired_scenarios": 4
+    },
+    "0.05": {
+      "scenarios": 4,
+      "errors": 0,
+      "mean_pnl": 55.91749999999931,
+      "worst_pnl": 33.929999999998756,
+      "best_pnl": 80.40999999999906,
+      "negative_scenarios": 0,
+      "zero_order_scenarios": 0,
+      "paired_mean_change_from_zero_rtt": -40.32000000000076,
+      "paired_scenarios": 4
+    },
+    "0.25": {
+      "scenarios": 4,
+      "errors": 0,
+      "mean_pnl": 112.11499999999978,
+      "worst_pnl": 106.14000000000033,
+      "best_pnl": 118.08999999999924,
+      "negative_scenarios": 0,
+      "zero_order_scenarios": 0,
+      "paired_mean_change_from_zero_rtt": 15.877499999999714,
+      "paired_scenarios": 4
+    },
+    "1.0": {
+      "scenarios": 4,
+      "errors": 0,
+      "mean_pnl": 171.51499999999987,
+      "worst_pnl": 91.25999999999999,
+      "best_pnl": 247.86999999999966,
+      "negative_scenarios": 0,
+      "zero_order_scenarios": 0,
+      "paired_mean_change_from_zero_rtt": 75.2774999999998,
+      "paired_scenarios": 4
+    }
+  }
+}
