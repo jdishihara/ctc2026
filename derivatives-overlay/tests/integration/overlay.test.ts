@@ -95,7 +95,8 @@ beforeAll(async () => {
   await import('../../mock-exchange/public/app.js');
   await sleep(50);
   const cfg = cloneDefaults();
-  h = await startOverlay(window as Window & typeof globalThis, { config: cfg, tickMs: 100 });
+  // autoMs: the tests drive autopilot.step() themselves; the content script's own timer must not race them
+  h = await startOverlay(window as Window & typeof globalThis, { config: cfg, tickMs: 100, autoMs: 3_600_000 });
   await sleep(1500);
 });
 afterAll(() => h?.stop());
@@ -213,14 +214,20 @@ describe('overlay against the mock page', () => {
     await sleep(300);
     expect(h.shadow.textContent).toContain('AUTO ON');
     let r = await h.autopilot.step();
+    const trace: string[] = [`${r.action}:${r.detail}`];
     // the step is gated on real time (submission spacing, quote age) and the page re-rendering after a tab switch:
     // under a loaded test runner the first ticks can come back idle, so retry for up to ~4 s before judging
     for (let i = 0; i < 10 && r.action !== 'submitted' && r.action !== 'refused' && r.action !== 'prefill-failed'; i++) {
       await sleep(400);
       h.store.s.auto.lastSubmitAt = 0;
       r = await h.autopilot.step();
+      trace.push(`${r.action}:${r.detail}`);
     }
-    expect(r.action, r.detail).toBe('submitted');
+    const dbg = () => {
+      const d = h.store.d;
+      return `${trace.join(' >> ')} | phase ${d.phase?.phase} ev ${d.phase?.event?.n} confirmed ${d.targetsConfirmed} plan ${d.plan.length} (${d.plan.slice(0, 3).map((t) => `${t.side} ${t.qty} ${t.symbol}@${t.price}${t.breach.length ? ' BREACH' : ''}${t.withinRateBudget ? '' : ' RATE'}`).join('; ')}) edges OIL ${d.edges.OIL?.filter((e) => e.passes).length}/${d.edges.OIL?.length} quoteAge ${d.quoteAge} rate ${d.rate.used}/${d.rate.limit} targets ${JSON.stringify(h.store.s.targets.OIL)} auto ${JSON.stringify(h.store.s.auto.targets.OIL)}`;
+    };
+    expect(r.action, dbg()).toBe('submitted');
     expect(r.ticket?.underlying).toBe('OIL');
     await sleep(150);
     expect((window as unknown as { __mockSubmitCount: number }).__mockSubmitCount).toBe(submits0 + 1);

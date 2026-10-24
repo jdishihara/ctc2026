@@ -56,6 +56,26 @@ describe('auto-confirm (Round 1: spot and IV in the news)', () => {
     expect(st.s.timeline[1].targets?.OIL.spot).toBe(100);
     expect(st.pickNext('edge')).not.toBeNull();
   });
+  it('a headline that lands just before our clock enters NEWS is confirmed at the phase flip, not at the +60 s move', () => {
+    const { st, tick, at } = setup();
+    at('2026-06-01T09:29:00');
+    quoteAll(st, { OIL: 100, PLANE: 40 }, { OIL: 0.5, PLANE: 0.7 }, 20 / 252);
+    tick(100);
+    at('2026-06-01T09:29:50');
+    tick(100);
+    expect(st.d.phase?.phase).not.toBe('NEWS');
+    // the exchange stamps the message with its event; our interpolated clock is still 2 market seconds short of 09:30
+    news(st, 1, 'Oiler threatens exports. OIL steady at 100.00; implied vol now 65%. PLANE holds at 40.00, IV 70%.', { event: 1 });
+    expect(st.s.targets.OIL.spot).toMatchObject({ value: 100, confirmed: false, event: 1 });
+    expect(st.d.targetsConfirmed).toBe(false);
+    at('2026-06-01T09:30:02', 300);
+    tick(100);
+    expect(st.d.phase).toMatchObject({ phase: 'NEWS', event: { n: 1 } });
+    expect(st.s.targets.OIL.spot).toMatchObject({ value: 100, confirmed: true });
+    expect(st.s.targets.PLANE.vol).toMatchObject({ value: 0.7, confirmed: true });
+    expect(st.d.targetsConfirmed).toBe(true);
+    expect(st.s.auto.targets.OIL.status).toBe('confirmed');
+  });
   it('incomplete news stays amber with the reason; a later message completes it', () => {
     const { st, tick, at } = setup();
     at('2026-06-01T09:29:00');

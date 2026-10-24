@@ -247,6 +247,7 @@ export class Store {
   readonly rate: RateMeter;
   private listeners = new Set<() => void>();
   private recomputeTimer: ReturnType<typeof setTimeout> | null = null;
+  private lastAutoJudgeAt = 0;
   private symbolRe: RegExp;
   version = 0;
   /** persistence hook, set by the content script */
@@ -1011,6 +1012,12 @@ export class Store {
         this.snapshotBaseline(ph.event.n); // loaded mid-event: best effort
       }
     }
+    // while an event's targets are still unconfirmed, re-judge the suggestions about once a second (cheap; returns at once
+    // when nothing changed), so a late phase flip or a late-arriving number never leaves them waiting
+    if (ph?.event && (ph.phase === 'NEWS' || ph.phase === 'UNDERLYING_MOVED') && !d.targetsConfirmed && this.cfg.auto.confirm && now - this.lastAutoJudgeAt > 1000) {
+      this.lastAutoJudgeAt = now;
+      this.autoConfirm(ph.event.n);
+    }
     if (this.s.learnAt && now >= this.s.learnAt.at) {
       const ev = this.s.learnAt.event;
       this.s.learnAt = null;
@@ -1042,6 +1049,9 @@ export class Store {
       this.timelineFor(ev.n);
       for (const u of this.cfg.underlyings) this.s.auto.targets[u] = { status: 'idle', reason: 'waiting for the news', event: ev.n, t: this.nowFn() };
       if (!this.s.ui.pinned) this.s.ui.tab = 'Edge';
+      // the headline often lands a few hundred ms before our interpolated clock enters NEWS: its suggestions are already
+      // here, so judge them now rather than at the +60 s move (Round 1 traded nothing before the move without this)
+      this.autoConfirm(ev.n);
     } else if (ph.phase === 'UNDERLYING_MOVED') {
       for (const u of this.cfg.underlyings) {
         const t = this.s.targets[u];
