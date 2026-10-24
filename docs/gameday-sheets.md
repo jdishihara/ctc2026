@@ -13,7 +13,7 @@ Overall rank = 0.45 x Hurricane rank + 0.35 x Derivatives rank + 0.20 x Mario ra
 Before the open (15 min). Paste in order, in `~/projects/ctc2026`:
 
 ```bash
-caffeinate -i -t 36000 &
+caffeinate -i -t 36000 &                     # idle sleep only; keep the lid OPEN, or: sudo pmset -a disablesleep 1 (undo with 0)
 git pull && git status                       # clean, on main
 echo COMPETITION_KEY > .botkey               # from the captain's Team page; never commit it
 python3 bot/preflight.py                     # must end with 0 failures. WARN on positions/orders -> bot/stop.sh, rerun
