@@ -107,6 +107,12 @@ class Sim:
         return sum(o.qty - o.filled for o in (*self.orders.values(), *self.pending)
                    if o.symbol == symbol and o.side == side)
 
+    def working_orders(self, symbol: str) -> list[dict[str, Any]]:
+        """Outstanding limits, including orders awaiting activation."""
+        return [{'side': o.side, 'remaining': o.qty - o.filled, 'price': o.price}
+                for o in (*self.orders.values(), *self.pending)
+                if o.symbol == symbol and o.filled < o.qty]
+
     def _action_ok(self) -> bool:
         while self.actions and self.actions[0] < self.t - 60:
             self.actions.popleft()
