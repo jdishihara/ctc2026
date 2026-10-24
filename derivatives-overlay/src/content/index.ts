@@ -183,6 +183,16 @@ export async function startOverlay(win: Window & typeof globalThis = window, opt
       this.patchConfig({ auto: { submit: on } });
       if (on) store.setAutoPaused(false);
     },
+    confirmPending() {
+      if (!store.s.auto.pending) return store.toast('nothing proposed right now', 'info');
+      void autopilot.confirmPending().then((r) => {
+        if (r && r.action !== 'submitted') store.toast(`not sent: ${r.detail}`, 'warn');
+      });
+    },
+    skipPending() {
+      if (!store.s.auto.pending) return store.toast('nothing proposed right now', 'info');
+      autopilot.skipPending();
+    },
     toggleAutoPause() {
       store.setAutoPaused(!store.s.auto.paused);
       store.toast(store.s.auto.paused ? 'Auto-submit PAUSED (Alt+P resumes)' : 'Auto-submit resumed', store.s.auto.paused ? 'warn' : 'info');
@@ -354,6 +364,8 @@ export async function startOverlay(win: Window & typeof globalThis = window, opt
         return store.changed(true);
       case 'focusSpot': return focusField('spot');
       case 'focusVol': return focusField('vol');
+      case 'confirmPending': return controller.confirmPending();
+      case 'skipPending': return controller.skipPending();
       case 'autoPause':
         if (!store.cfg.auto.submit) return store.toast('Auto-submit is off (arm it in the header or Config auto.submit)', 'info');
         return controller.toggleAutoPause();

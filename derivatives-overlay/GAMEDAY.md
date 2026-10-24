@@ -18,7 +18,10 @@ the login cookie). Nobody fills forms or clicks Buy. Exactly ONE laptop is armed
    - `submit API … not armed` until step 6
 5. Dry run without arming: when the chain is live, the Edge tab shows fair values, market IV and a ticket queue.
    Press **send** on one tiny ticket if you want to see an order go through (Capture tab → `auto:result`, HTTP 200).
-6. **Arm**: header → **arm auto** (red **AUTO ON**). From now on the overlay trades. `Alt+P` pauses, **disarm** stops.
+6. **Arm**: header → **arm auto** (red **AUTO ON**). With `auto.confirmEach` (the default) the overlay does not send on its own:
+   each order it would have sent appears as a blue **SEND?** row in the header: **Send (Alt+Y)** posts it, **Skip (Alt+X)** drops that
+   contract for the event. The proposal follows the market (price/size refresh, a better ticket replaces it). Set
+   `auto.confirmEach: false` in Config for the fully automatic bot. `Alt+P` pauses, **disarm** stops.
 7. Other laptops: load the same build, open the page, do NOT arm. Watch Risk / Timeline / Capture. The `other orders`
    line goes red on the bot laptop if a second copy is armed or someone clicks by hand.
 

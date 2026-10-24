@@ -1,11 +1,11 @@
 // Overlay hotkeys. Matched on event.code because macOS Option changes event.key.
 
 export type HotkeyAction =
-  | 'nextTicket' | 'nextFlatten' | 'accept' | 'focusOIL' | 'focusPLANE' | 'toggle' | 'focusSpot' | 'focusVol' | 'capture' | 'autoPause' | 'blur';
+  | 'nextTicket' | 'nextFlatten' | 'accept' | 'focusOIL' | 'focusPLANE' | 'toggle' | 'focusSpot' | 'focusVol' | 'capture' | 'autoPause' | 'confirmPending' | 'skipPending' | 'blur';
 
 const ALT_MAP: Record<string, HotkeyAction> = {
   KeyN: 'nextTicket', KeyF: 'nextFlatten', KeyA: 'accept', Digit1: 'focusOIL', Digit2: 'focusPLANE',
-  KeyO: 'toggle', KeyS: 'focusSpot', KeyV: 'focusVol', KeyC: 'capture', KeyP: 'autoPause',
+  KeyO: 'toggle', KeyS: 'focusSpot', KeyV: 'focusVol', KeyC: 'capture', KeyP: 'autoPause', KeyY: 'confirmPending', KeyX: 'skipPending',
 };
 
 export function hotkeyFor(e: Pick<KeyboardEvent, 'code' | 'altKey' | 'ctrlKey' | 'metaKey' | 'shiftKey'>): HotkeyAction | null {

@@ -205,7 +205,7 @@ describe('overlay against the mock page', () => {
   });
 
   it('armed auto-pilot (form path) loads, verifies and clicks the next ticket itself; paused or disarmed it does nothing', async () => {
-    h.controller.patchConfig({ auto: { submitVia: 'form' } });
+    h.controller.patchConfig({ auto: { submitVia: 'form', confirmEach: false } });
     const posts0 = exchange.orderPosts;
     const submits0 = (window as unknown as { __mockSubmitCount: number }).__mockSubmitCount;
     // not armed: a step is a no-op
@@ -259,7 +259,7 @@ describe('overlay against the mock page', () => {
   });
 
   it('armed auto-pilot (API path, the default) posts the next ticket to /api/v1/orders without touching the form', async () => {
-    h.controller.patchConfig({ auto: { submitVia: 'api' } });
+    h.controller.patchConfig({ auto: { submitVia: 'api', confirmEach: true } });
     const posts0 = exchange.orderPosts;
     const submits0 = (window as unknown as { __mockSubmitCount: number }).__mockSubmitCount;
     const logs0 = h.store.s.auto.log.length;
@@ -267,7 +267,31 @@ describe('overlay against the mock page', () => {
     h.store.s.auto.lastSubmitAt = 0;
     h.store.s.recentLoads = []; // the earlier tests loaded every passing ticket; the queue skips recent loads
     h.autopilot['sent'].clear();
+    // confirmEach (the default): the auto-pilot proposes and waits; Skip drops that contract for the event, Send posts it
     let r = await h.autopilot.step();
+    for (let i = 0; i < 10 && !h.store.s.auto.pending; i++) {
+      await sleep(300);
+      h.store.s.auto.lastSubmitAt = 0;
+      r = await h.autopilot.step();
+    }
+    expect(h.store.s.auto.pending, `${r.action}:${r.detail}`).not.toBeNull();
+    expect(exchange.orderPosts).toBe(posts0);
+    const first = h.store.s.auto.pending!.ticket;
+    h.controller.skipPending();
+    expect(h.store.s.auto.pending).toBeNull();
+    h.store.s.auto.lastSubmitAt = 0;
+    r = await h.autopilot.step();
+    expect(h.store.s.auto.pending?.ticket.symbol + ':' + h.store.s.auto.pending?.ticket.side).not.toBe(`${first.symbol}:${first.side}`);
+    const second = h.store.s.auto.pending!.ticket;
+    r = (await h.autopilot.confirmPending())!;
+    expect(r.action, `${r.action}:${r.detail}`).toBe('submitted');
+    expect(r.ticket?.symbol).toBe(second.symbol);
+    expect(exchange.orderPosts).toBe(posts0 + 1);
+    expect(h.store.s.auto.pending).toBeNull();
+    // without confirmEach the same step posts by itself
+    h.controller.patchConfig({ auto: { confirmEach: false } });
+    h.store.s.auto.lastSubmitAt = 0;
+    r = await h.autopilot.step();
     for (let i = 0; i < 10 && r.action !== 'submitted' && r.action !== 'refused'; i++) {
       await sleep(300);
       h.store.s.auto.lastSubmitAt = 0;
@@ -277,10 +301,10 @@ describe('overlay against the mock page', () => {
     const dbg = `${r.action}:${r.detail} | phase ${d.phase?.phase} ev ${d.phase?.event?.n} confirmed ${d.targetsConfirmed} plan ${d.plan.length} edges ${(d.edges.OIL ?? []).filter((e) => e.passes).length}/${(d.edges.OIL ?? []).length} spot ${JSON.stringify(d.spot.OIL)} T ${JSON.stringify(d.T)} quoteAge ${d.quoteAge} rate ${d.rate.used} positions ${JSON.stringify(h.store.s.positions)} recent ${h.store.s.recentLoads.length} targets ${JSON.stringify(h.store.s.targets.OIL)}`;
     expect(r.action, dbg).toBe('submitted');
     expect(r.detail).toContain('HTTP 200');
-    expect(exchange.orderPosts).toBe(posts0 + 1);
+    expect(exchange.orderPosts).toBe(posts0 + 2);
     expect((window as unknown as { __mockSubmitCount: number }).__mockSubmitCount).toBe(submits0);
     const log = h.store.s.auto.log;
-    expect(log).toHaveLength(logs0 + 1);
+    expect(log).toHaveLength(logs0 + 2);
     expect(log[log.length - 1].result).toMatch(/^sent · HTTP 200/);
     expect(h.store.capture.kinds.has('req:POST /api/v1/orders')).toBe(true);
     expect(h.store.d.rate.used).toBeGreaterThanOrEqual(1);
@@ -289,7 +313,7 @@ describe('overlay against the mock page', () => {
     const t = h.store.d.plan.find((x) => x.symbol !== r.ticket?.symbol) ?? h.store.d.plan[0];
     h.controller.sendTicket(t);
     await sleep(100);
-    expect(exchange.orderPosts).toBe(posts0 + 2);
+    expect(exchange.orderPosts).toBe(posts0 + 3);
     expect(h.store.s.loaded?.message).toMatch(/^sent /);
   });
 });

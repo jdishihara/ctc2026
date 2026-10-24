@@ -18,6 +18,9 @@ export interface Controller {
   toggleAutoPause(): void;
   /** a human sends this ticket through the API (same guard as the auto-pilot, armed by the click itself) */
   sendTicket(t: Ticket): void;
+  /** confirmEach: Send (Alt+Y) / Skip (Alt+X) the order the auto-pilot proposes */
+  confirmPending(): void;
+  skipPending(): void;
 }
 
 export function ticketText(t: Ticket): string {

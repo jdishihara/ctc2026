@@ -78,7 +78,7 @@ if (switchAfter) console.log(`case switch picked up by the overlay after ${((Dat
 // --fast N compresses wall time: the mock's clock_rate is N times the packet's, so the overlay's "+60/+120 real s" move/snap
 // offsets (eventOffsetsRealSec, applied when the live rate is off the packet's) must shrink by N to describe the same boundaries
 const deepMerge = (a, b) => { for (const [k, v] of Object.entries(b)) a[k] = v && typeof v === 'object' && !Array.isArray(v) ? deepMerge(a[k] ?? {}, v) : v; return a; };
-const patch = deepMerge(FAST !== 1 ? { eventOffsetsRealSec: { move: 60 / FAST, snap: 120 / FAST } } : {}, CONFIG_PATCH ? JSON.parse(CONFIG_PATCH) : {});
+const patch = deepMerge(deepMerge({ auto: { confirmEach: false } }, FAST !== 1 ? { eventOffsetsRealSec: { move: 60 / FAST, snap: 120 / FAST } } : {}), CONFIG_PATCH ? JSON.parse(CONFIG_PATCH) : {});
 if (Object.keys(patch).length) {
   await ov.getByRole('button', { name: 'Config', exact: true }).click();
   const ta = ov.locator('textarea').first();

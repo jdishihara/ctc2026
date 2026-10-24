@@ -148,6 +148,14 @@ export interface AutoState {
   paused: boolean;
   log: AutoSubmitLog[];
   lastSubmitAt: number;
+  /** auto.confirmEach: the order the auto-pilot wants to send next, waiting for the trader's Send or Skip */
+  pending: PendingOrder | null;
+}
+
+export interface PendingOrder {
+  ticket: Ticket;
+  since: number;
+  mode: 'edge' | 'flatten';
 }
 
 export interface Raw {
@@ -297,7 +305,7 @@ export class Store {
       ws: { open: false, url: null, lastMsgAt: 0, subscribeSeen: null },
       panelProbe: null,
       ui: defaultUi(), toast: null, phaseKey: null, learnAt: null,
-      auto: { targets: {}, converter: { status: 'idle', id: null, reason: '', event: null, ranked: [] }, paused: false, log: [], lastSubmitAt: 0 },
+      auto: { targets: {}, converter: { status: 'idle', id: null, reason: '', event: null, ranked: [] }, paused: false, log: [], lastSubmitAt: 0, pending: null },
     };
     this.d = this.compute();
   }

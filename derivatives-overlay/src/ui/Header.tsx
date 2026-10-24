@@ -29,6 +29,16 @@ export function Header({ c, onDragStart }: { c: Controller; onDragStart: (e: Poi
         <button title="Collapse" onClick={(e) => { e.stopPropagation(); s.ui.collapsed = !s.ui.collapsed; c.saveUi(); c.store.changed(true); }}>{s.ui.collapsed ? '▢' : '—'}</button>
         <button title="Hide (Alt+O)" onClick={(e) => { e.stopPropagation(); if (d.mode === 'capture-only') s.ui.captureOpen = false; else s.ui.hidden = true; c.saveUi(); c.store.changed(true); }}>×</button>
       </div>
+      {s.auto.pending && (
+        <div class="hrow pending" title={s.auto.pending.ticket.reason}>
+          <span class="tag warn">SEND?</span>
+          <span class="pendtxt">{s.auto.pending.ticket.side} {s.auto.pending.ticket.qty} {s.auto.pending.ticket.symbol} @ {s.auto.pending.ticket.price}</span>
+          <span class="small">exp {s.auto.pending.ticket.expectedPnL >= 0 ? '+' : '-'}${Math.abs(s.auto.pending.ticket.expectedPnL).toFixed(0)} · {s.auto.pending.ticket.reason.slice(0, 48)}</span>
+          <span class="sp" />
+          <button class="primary" onClick={(e) => { e.stopPropagation(); c.confirmPending(); }} title="Alt+Y">Send (Alt+Y)</button>
+          <button onClick={(e) => { e.stopPropagation(); c.skipPending(); }} title="Alt+X: not this contract again this event">Skip (Alt+X)</button>
+        </div>
+      )}
       <div class="hrow">
         <span>{ev ? `E${ev.n} · R${ev.round}` : 'no event'}</span>
         <span class={cls('tag', ph?.phase === 'NEWS' && 'warn', ph?.phase === 'SNAPPED' && 'good')}>{ph?.phase ?? '—'}</span>

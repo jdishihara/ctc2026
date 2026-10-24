@@ -63,6 +63,8 @@ export interface AutoConfig {
   /** load, verify and click the exchange's submit button for each ticket (Alt+P pauses) */
   submit: boolean;
   /** our own cap on observed order actions per minute while auto-submitting (packet: 40 from the browser) */
+  /** ask before every order the auto-pilot would send: it proposes, the trader presses Send (Alt+Y) or Skip (Alt+X) */
+  confirmEach: boolean;
   submitRateCap: number;
   /** minimum real ms between two auto submissions */
   submitIntervalMs: number;
@@ -201,7 +203,7 @@ export const DEFAULT_CONFIG: Config = {
   focus: null,
   auto: {
     confirm: true, converter: true, converterTolPts: 8, converterTieMarginPts: 2, converterNamedTolPts: 40,
-    submit: false, submitRateCap: 12, submitIntervalMs: 5000, resubmitAfterMs: 20_000, flattenResubmitMs: 6_000, flattenReserve: 4, flattenIntervalMs: 5000,
+    submit: false, confirmEach: true, submitRateCap: 12, submitIntervalMs: 5000, resubmitAfterMs: 20_000, flattenResubmitMs: 6_000, flattenReserve: 4, flattenIntervalMs: 5000,
     spotBoundPct: 40, volMin: 0.05, volMax: 3.0, switchTabs: true,
     submitVia: 'api', cancelOnSnap: true, cancelOnNews: true, backoffMs: 5000, haltedPauseMs: 30_000,
   },

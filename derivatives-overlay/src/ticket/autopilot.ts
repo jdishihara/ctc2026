@@ -70,7 +70,56 @@ export class Autopilot {
     return (s.manualPositions ?? s.positions)[sym] ?? 0;
   }
 
+  /** tickets the trader skipped (confirmEach), per event: symbol:side:source -> event number */
+  private skipped = new Map<string, number | null>();
+  private eventN(): number | null {
+    return this.deps.store.d.phase?.event?.n ?? null;
+  }
+  private clearPending(): void {
+    const store = this.deps.store;
+    if (store.s.auto.pending) {
+      store.s.auto.pending = null;
+      store.changed(true);
+    }
+  }
+  /** confirmEach: the trader pressed Send on the proposed order */
+  async confirmPending(): Promise<StepResult | null> {
+    const store = this.deps.store;
+    const p = store.s.auto.pending;
+    if (!p) return null;
+    if (this.busy) return { action: 'idle', detail: 'busy; press again' };
+    this.busy = true;
+    try {
+      store.s.auto.pending = null;
+      store.changed(true);
+      const t = p.ticket;
+      const now = this.now();
+      const c = store.d.contracts[t.symbol];
+      const fair = t.source === 'edge' ? store.d.edges[t.underlying]?.find((r) => r.contract.symbol === t.symbol)?.fair ?? null : null;
+      if (!ticketStillValid(t, c, fair, 0)) {
+        store.toast(`${t.side} ${t.qty} ${t.symbol}: the touch moved; not sent (the next proposal follows)`, 'warn');
+        this.last = { action: 'skipped', detail: `${t.side} ${t.qty} ${t.symbol}: the touch moved`, ticket: t };
+        return this.last;
+      }
+      this.last = await this.send(t, now);
+      return this.last;
+    } finally {
+      this.busy = false;
+    }
+  }
+  /** confirmEach: the trader pressed Skip; that contract/side is not proposed again this event */
+  skipPending(): void {
+    const store = this.deps.store;
+    const p = store.s.auto.pending;
+    if (!p) return;
+    this.skipped.set(`${p.ticket.symbol}:${p.ticket.side}:${p.ticket.source}`, this.eventN());
+    store.s.auto.pending = null;
+    store.toast(`skipped ${p.ticket.side} ${p.ticket.qty} ${p.ticket.symbol} for this event`, 'info');
+    store.changed(true);
+  }
+
   private excluded(t: Ticket): boolean {
+    if (this.skipped.size && this.skipped.get(`${t.symbol}:${t.side}:${t.source}`) === this.eventN()) return true;
     const h = this.halted.get(t.symbol);
     if (h != null) {
       if (this.now() < h) return true;
@@ -105,7 +154,10 @@ export class Autopilot {
   private async run(): Promise<StepResult> {
     const store = this.deps.store;
     const mode = this.mode();
-    if (!mode) return { action: 'idle', detail: store.d.autoArmed ? `phase ${store.d.phase?.phase ?? '—'}: nothing to do` : 'auto-submit off or paused' };
+    if (!mode) {
+      this.clearPending();
+      return { action: 'idle', detail: store.d.autoArmed ? `phase ${store.d.phase?.phase ?? '—'}: nothing to do` : 'auto-submit off or paused' };
+    }
     const now = this.now();
     const cancelled = await this.cancelAtBoundary(now);
     if (cancelled) return cancelled;
@@ -129,14 +181,36 @@ export class Autopilot {
       t = store.pickNext('flatten', { quiet: true, exclude: (x) => this.excluded(x) || !x.withinRateBudget });
       if (t) t = { ...t, reason: `${t.reason} · cap breached: reducing risk during the event` };
     }
+    if (!t) this.clearPending();
     if (!t) return { action: 'idle', detail: mode === 'edge' ? (rate >= edgeCap ? `edge budget used (${rate}/${edgeCap}; ${this.cfg.auto.flattenReserve} kept for the flatten)` : 'no ticket clears the edge threshold') : 'flat' };
     const c = store.d.contracts[t.symbol];
     const fair = t.source === 'edge' ? store.d.edges[t.underlying]?.find((r) => r.contract.symbol === t.symbol)?.fair ?? null : null;
     if (!ticketStillValid(t, c, fair, 0)) {
       this.sent.set(`${t.symbol}:${t.side}`, { t: now, pos: this.positionOf(t.symbol) }); // skip it this cycle
+      if (store.s.auto.pending?.ticket.symbol === t.symbol && store.s.auto.pending.ticket.side === t.side) this.clearPending();
       return { action: 'skipped', detail: `${t.side} ${t.qty} ${t.symbol}: the touch moved`, ticket: t };
     }
 
+    // confirmEach: propose instead of sending; the proposal follows the plan (price/qty refresh, a new best ticket replaces it)
+    if (this.cfg.auto.confirmEach) {
+      const p = store.s.auto.pending;
+      if (p && p.ticket.symbol === t.symbol && p.ticket.side === t.side) {
+        if (p.ticket.price !== t.price || p.ticket.qty !== t.qty) {
+          p.ticket = t;
+          store.changed(true);
+        }
+        return { action: 'idle', detail: `awaiting your OK: ${t.side} ${t.qty} ${t.symbol} @ ${t.price} (Alt+Y send, Alt+X skip)`, ticket: t };
+      }
+      store.s.auto.pending = { ticket: t, since: now, mode: t.source === 'flatten' ? 'flatten' : 'edge' };
+      store.changed(true);
+      return { action: 'idle', detail: `asking: ${t.side} ${t.qty} ${t.symbol} @ ${t.price}`, ticket: t };
+    }
+    return this.send(t, now);
+  }
+
+  /** send a ticket the auto-pilot (or, with confirmEach, the trader) decided on: API POST or the page form */
+  private async send(t: Ticket, now: number): Promise<StepResult> {
+    const store = this.deps.store;
     if (this.cfg.auto.submitVia === 'api' && this.deps.api) return this.submitViaApi(t, now);
 
     const r = await this.deps.prefill(t);
