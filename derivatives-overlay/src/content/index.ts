@@ -312,7 +312,7 @@ export async function startOverlay(win: Window & typeof globalThis = window, opt
     }
     return null;
   };
-  const autopilot = new Autopilot({ store, doc, prefill, symbolRe: () => compileSymbolRegex(store.cfg.symbolRegex), skip, findTab, api });
+  const autopilot = new Autopilot({ store, doc, prefill, symbolRe: () => compileSymbolRegex(store.cfg.symbolRegex), skip, findTab, api, onRateLimit: () => poller.noteRateLimit() });
   const autoInterval = setInterval(() => {
     if (!store.cfg.prefillEnabled || !store.d.autoArmed || busy) return;
     busy = true;

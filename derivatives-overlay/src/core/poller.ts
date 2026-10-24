@@ -64,9 +64,19 @@ export class ApiPoller {
     return (this.status.endpoints[key] ??= { lastAt: 0, lastOkAt: 0, status: 0, backoff: 1, inflight: false });
   }
 
+  /** until when the poller yields: after any 429 (ours or an order POST's) it halves its cadence and drops the cheap endpoints */
+  calmUntil = 0;
+  /** the auto-pilot reports an order POST that answered 429: our GETs must make room for the orders */
+  noteRateLimit(now = this.now()) {
+    this.calmUntil = Math.max(this.calmUntil, now + 10_000);
+  }
+  private calm(now: number): boolean {
+    return now < this.calmUntil;
+  }
+
   private due(key: string, everyMs: number, now: number): boolean {
     const e = this.ep(key);
-    return !e.inflight && now - e.lastAt >= everyMs * e.backoff;
+    return !e.inflight && now - e.lastAt >= everyMs * e.backoff * (this.calm(now) ? 2 : 1);
   }
 
   /** One scheduling pass; safe to call directly (tests). */
@@ -76,14 +86,16 @@ export class ApiPoller {
     const now = this.now();
     const jobs: Promise<void>[] = [];
     const deriv = this.deps.isDerivatives();
+    const calm = this.calm(now);
     // on another case's page (Hurricane, Mario) stay quiet: the clock every 5 s and the symbols list only, to notice a case change
-    if (this.due('clock', deriv ? cfg.clockMs : Math.max(cfg.clockMs, 5000), now)) jobs.push(this.fetch('clock', PATHS.clock, now));
-    if (this.due('symbols', cfg.symbolsMs, now)) jobs.push(this.fetch('symbols', PATHS.symbols, now));
+    // while calming down after a 429, only what trading needs: the chain (prices), positions (sizing) and open orders
+    if (!calm && this.due('clock', deriv ? cfg.clockMs : Math.max(cfg.clockMs, 5000), now)) jobs.push(this.fetch('clock', PATHS.clock, now));
+    if (!calm && this.due('symbols', cfg.symbolsMs, now)) jobs.push(this.fetch('symbols', PATHS.symbols, now));
     if (deriv) {
       for (const u of this.deps.underlyings()) if (this.due(`chain:${u}`, cfg.chainMs, now)) jobs.push(this.fetch(`chain:${u}`, PATHS.chain(u), now));
       if (this.due('positions', cfg.positionsMs, now)) jobs.push(this.fetch('positions', PATHS.positions, now));
       if (this.due('orders', cfg.ordersMs, now)) jobs.push(this.fetch('orders', PATHS.openOrders, now));
-      if (this.due('trades', cfg.tradesMs, now)) jobs.push(this.fetch('trades', PATHS.trades(200), now));
+      if (!calm && this.due('trades', cfg.tradesMs, now)) jobs.push(this.fetch('trades', PATHS.trades(200), now));
     }
     await Promise.all(jobs);
   }
@@ -100,6 +112,7 @@ export class ApiPoller {
       e.inflight = false;
     }
     e.status = r.status;
+    if (r.status === 429) this.noteRateLimit(this.now());
     if (r.status === 429 || r.status === 0 || r.status >= 500) {
       // under a 429 storm shed the cheap endpoints first: the chain (prices) and positions (sizing) never slow past x4
       e.backoff = Math.min(e.backoff * 2, /^(chain:|positions$)/.test(key) ? 4 : 16);

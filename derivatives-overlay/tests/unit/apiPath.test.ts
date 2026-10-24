@@ -158,9 +158,28 @@ describe('REST poller and own feed', () => {
     expect(calls).not.toContain('/api/v1/options/OIL/chain');
     now = 104_000;
     mode429 = false;
+    // the 429 (at 102 s) also started a 10 s calm-down: chain/positions at twice their cadence (and backoff x2): due at 106 s
+    await p.tick();
+    expect(calls).toEqual([]);
+    now = 106_000;
     await p.tick();
     expect(calls).toContain('/api/v1/options/OIL/chain');
+    expect(calls).not.toContain('/api/v1/competitions/current'); // no clock/symbols/trades while calming down
+    expect(calls).not.toContain('/api/v1/trades?limit=200');
     expect(p.status.endpoints['chain:OIL'].backoff).toBe(1);
+    calls.length = 0;
+    now = 107_000;
+    await p.tick();
+    expect(calls).toEqual([]); // calm still doubles the 1 s cadence
+    now = 113_000;
+    await p.tick();
+    expect(calls).toContain('/api/v1/competitions/current'); // calm over (102 + 10 s)
+    // the auto-pilot can also report an order POST's 429
+    p.noteRateLimit(now);
+    calls.length = 0;
+    now = 114_500;
+    await p.tick();
+    expect(calls).not.toContain('/api/v1/competitions/current');
   });
 
   it('opens one socket, sends exactly one subscribe frame with all symbols, reopens when the set grows', () => {

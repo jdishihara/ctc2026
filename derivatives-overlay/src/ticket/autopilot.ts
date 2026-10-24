@@ -20,6 +20,8 @@ export interface AutopilotDeps {
   findTab?: (underlying: string) => Element | null;
   /** cookie-authenticated REST client; with auto.submitVia = 'api' tickets are POSTed instead of typed and clicked */
   api?: ExchangeApi;
+  /** an order POST answered 429: the REST poller yields for a while so the orders get through */
+  onRateLimit?: () => void;
   now?: () => number;
 }
 
@@ -202,7 +204,10 @@ export class Autopilot {
     store.markLoaded(t, true, `AUTO: posted ${t.side} ${t.qty} ${t.symbol} @ ${t.price}`);
     const res = await api.post(PATHS.orders, body);
     store.handleBridge('http', { method: 'POST', url, status: res.status, json: res.json, body: res.text, t: res.t });
-    if (res.status === 429) this.backoffUntil = this.now() + this.cfg.auto.backoffMs;
+    if (res.status === 429) {
+      this.backoffUntil = this.now() + this.cfg.auto.backoffMs;
+      this.deps.onRateLimit?.();
+    }
     if (!res.ok) {
       const detail = (res.json && typeof res.json === 'object' && typeof (res.json as { detail?: unknown }).detail === 'string' ? (res.json as { detail: string }).detail : res.text.slice(0, 120)) || `HTTP ${res.status}`;
       // live messages (testnet 2026-10-24): 403 "Trading halted"; 404 "Symbol X not found". Leave that contract alone for a while.
