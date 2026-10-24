@@ -7,9 +7,13 @@ result (four overall places) and click the orders in the exchange UI; the packet
     python3 mario/mock_exchange.py --race-every 45 &  ; python3 mario/desk.py --mock --auto-results   # drill against the mock
     python3 mario/desk.py --mock --tap browser    # exercise the browser tap against the mock page
 
+    python3 mario/desk.py --auto-execute          # the desk also CLICKS: prefill + the UI's submit button (mario/executor.py). OFF by default;
+                                                  # only with the organisers' approval. `stop` / `go` pause and resume it, `orders` lists what it sent.
+
 Commands (terminal prompt or the dashboard box): race P1 P2 P3 P4  (overall places of BIRDO DAISY PEACH YOSHI, in
 that order) | undo | cpu -0.3 (CPU strength prior; see mario/README.md) | map (symbols and roles) | prepare N
-(type action N, leg L, into the Chrome window's order form) | type SYM buy|sell QTY PX (the same by hand) | fill SYM buy|sell QTY PX (mock only: sends the order) | q.
+(type action N, leg L, into the Chrome window's order form) | type SYM buy|sell QTY PX (the same by hand) | fill SYM buy|sell QTY PX (mock only: sends the order) |
+stop | go | orders (auto-execute) | q.
 Every snapshot and every command is appended to recordings/mario_desk.jsonl.
 """
 from __future__ import annotations
@@ -21,6 +25,7 @@ from mario.pricer import Pricer
 from mario.engine import Engine, Params
 from mario.contracts import RACERS, load_roles, role_label
 from mario.tap import HttpTap, BrowserTap, book_levels
+from mario.executor import Executor
 
 REC = Path(__file__).resolve().parents[1] / "recordings" / "mario_desk.jsonl"
 
@@ -36,6 +41,8 @@ class Desk:
         self.status = "starting"; self.log: list[str] = []; self.last_ok = 0.0
         self.tap = None; self.stop = False
         self.auto_seen = 0
+        self.positions: dict = {}
+        self.executor: Executor | None = None      # created on the first snapshot when --auto-execute is on
         REC.parent.mkdir(exist_ok=True)
 
     # ---- state changes ----
@@ -100,9 +107,25 @@ class Desk:
                 sym, side, qty, px = parts[1], parts[2], int(parts[3]), float(parts[4])
                 r = self.tap.post("/api/v1/orders", {"symbol": sym, "side": side, "quantity": qty, "price": px})
                 return f"mock fill: {r}"
+            if parts[0] == "stop":
+                if self.executor is None:
+                    return "auto-execution is not on (--auto-execute)"
+                self.executor.enabled = False; return "AUTO-EXECUTE STOPPED: no orders will be sent until `go`"
+            if parts[0] == "go":
+                if self.executor is None:
+                    return "auto-execution is not on (--auto-execute)"
+                if self.unmapped:
+                    return f"refusing: UNMAPPED symbols {' '.join(self.unmapped)} (fix mario/contracts.json, restart)"
+                self.executor.enabled = True; return "AUTO-EXECUTE RUNNING"
+            if parts[0] == "orders":
+                if self.executor is None:
+                    return "auto-execution is not on (--auto-execute)"
+                hist = (self.executor.history + self.executor.pending)[-20:]
+                return json.dumps(self.executor.summary()) + "\n" + "\n".join(
+                    f"{time.strftime('%H:%M:%S', time.localtime(time.time() - (self.executor.clock() - o.t)))} {o.symbol} {o.side} {o.qty} @ {o.price:.2f} ({o.kind}) {o.outcome}" for o in hist)
             if parts[0] in ("q", "quit"):
                 self.stop = True; return "stopping"
-            return "commands: race P1 P2 P3 P4 | undo | cpu X | map | prepare N [leg] | type SYM buy|sell QTY PX | fill SYM buy QTY PX | q"
+            return "commands: race P1 P2 P3 P4 | undo | cpu X | map | prepare N [leg] | type SYM buy|sell QTY PX | fill SYM buy QTY PX | stop | go | orders | q"
         except Exception as exc:
             return f"error: {exc}"
 
@@ -132,6 +155,8 @@ class Desk:
                 snap = self.tap.snapshot()
                 self.ingest(snap)
                 self.last_ok = time.time(); self.status = "connected"
+                if a.auto_execute:
+                    self.execute()
             except Exception as exc:
                 self.status = f"poll failed: {exc}"
                 if time.time() - self.last_ok > 10:
@@ -144,9 +169,21 @@ class Desk:
             self.roles, self.unmapped = load_roles(syms)
             self.engine = Engine(self.roles, self.params)
             self.say(f"{len(self.roles)} contracts mapped" + (f"; UNMAPPED: {' '.join(self.unmapped)} (fix mario/contracts.json)" if self.unmapped else ""))
-        if self.a.auto_results:
+            if self.a.auto_execute:
+                if self.executor is None:
+                    self.executor = Executor(self.tap.submit, self.tap.book, self.roles, self.say, max_per_min=self.a.max_orders_per_min)
+                    self.say(f"AUTO-EXECUTE armed: up to {self.a.max_orders_per_min} orders/min, {self.a.max_actions_per_poll} actions and {self.a.max_orders_per_poll} orders per poll; `stop` pauses, `go` resumes")
+                else:
+                    self.executor.roles = self.roles
+                if self.unmapped:
+                    self.say("AUTO-EXECUTE will not send while symbols are UNMAPPED")
+        if self.executor is not None:
+            self.executor.verify(snap)
+        if self.a.auto_results:                    # mock only: the mock publishes its results; works with either tap
             try:
-                res = self.tap._get("/mock/results")["results"] if isinstance(self.tap, HttpTap) else []
+                import urllib.request
+                with urllib.request.urlopen(self.a.url + "/mock/results", timeout=2) as r:
+                    res = json.loads(r.read())["results"]
                 while len(self.pricer.races) < len(res):
                     self.say("auto: " + self.command("race " + " ".join(map(str, res[len(self.pricer.races)]))))
             except Exception:
@@ -168,6 +205,17 @@ class Desk:
         with open(REC, "a") as f:
             f.write(json.dumps({"t": snap["t"], "books": snap["books"], "positions": snap.get("positions"), "trades": (snap.get("trades") or [])[:20]}) + "\n")
 
+    def execute(self) -> None:
+        """One auto-execution pass over the latest ranked actions (tap thread only: Playwright objects are thread-bound)."""
+        if self.executor is None or self.result is None:
+            return
+        with self.lock:
+            acts = list(self.result["actions"]); positions = {k: dict(v) for k, v in self.positions.items()}
+        try:
+            self.executor.run(acts, positions, self.unmapped, max_actions=self.a.max_actions_per_poll, max_orders=self.a.max_orders_per_poll)
+        except Exception as exc:
+            self.say(f"auto-execute error: {exc}")
+
     # ---- dashboard ----
     def state(self) -> dict:
         with self.lock:
@@ -178,7 +226,8 @@ class Desk:
                 "n_done": len(self.pricer.races), "racers": RACERS, "skill": [round(float(x), 2) for x in f["skill"]] if f else None,
                 "points": [[int(x) for x in p] for p in f["points"]] if f else None, "rows": rows, "actions": acts[:15],
                 "pnl": r["pnl"] if r else None, "exchange_pnl": r.get("exchange_pnl") if r else None, "log": self.log[-12:],
-                "unmapped": self.unmapped, "prefill": bool(self.a.prefill), "cpu_skill": self.pricer.cpu_skill}
+                "unmapped": self.unmapped, "prefill": bool(self.a.prefill), "cpu_skill": self.pricer.cpu_skill,
+                "auto": self.executor.summary() if self.executor is not None else None}
 
 
 PAGE = r"""<!doctype html><html><head><meta charset="utf-8"><title>Mario desk</title>
@@ -195,14 +244,14 @@ button{background:#2563eb;color:#fff;border:0;border-radius:4px;padding:4px 10px
 <div><div class="box"><h3>Status <span id="status"></span></h3>
 <div>Races: <span id="races"></span></div><div>Skill: <span id="skill"></span></div><div>Points: <span id="points"></span></div>
 <form onsubmit="return send()"><input id="cmd" size="34" placeholder="race 1 2 5 9  (Birdo Daisy Peach Yoshi)"> <button>send</button></form>
-<div class="dim">race P1 P2 P3 P4 · undo · cpu -0.3 · map · prepare N · type SYM buy QTY PX</div></div>
+<div class="dim">race P1 P2 P3 P4 · undo · cpu -0.3 · map · prepare N · type SYM buy QTY PX · stop · go · orders</div></div>
 <div class="box"><h3>Log</h3><pre id="log"></pre></div></div></div>
 <script>
 async function send(){const c=document.getElementById('cmd');const r=await fetch('/cmd',{method:'POST',body:c.value});document.getElementById('log').textContent=(await r.text())+"\n"+document.getElementById('log').textContent;c.value='';return false}
 async function prep(i,l){await fetch('/cmd',{method:'POST',body:'prepare '+i+' '+l})}
 function f(x,d=1){return x==null?'':(+x).toFixed(d)}
 async function tick(){try{const s=await (await fetch('/state.json')).json();
-document.getElementById('status').innerHTML=(s.age>5?'<span class=stale>':'<span>')+s.status+' (data '+(s.age??'-')+' s old)</span>'+(s.unmapped.length?' <span class=stale>UNMAPPED: '+s.unmapped.join(' ')+'</span>':'');
+document.getElementById('status').innerHTML=(s.age>5?'<span class=stale>':'<span>')+s.status+' (data '+(s.age??'-')+' s old)</span>'+(s.unmapped.length?' <span class=stale>UNMAPPED: '+s.unmapped.join(' ')+'</span>':'')+(s.auto?(s.auto.enabled?' <span class=buy>AUTO-EXECUTE ON</span>':' <span class=stale>AUTO-EXECUTE STOPPED</span>')+' <span class=dim>orders '+s.auto.used_min+'/'+s.auto.max_min+' this min, sent '+s.auto.sent+', filled '+s.auto.filled+', skipped '+s.auto.skipped+'</span>':'');
 document.getElementById('races').textContent=s.races.map((r,i)=>'R'+(i+1)+': '+r.join('-')).join('  ')||'none yet';
 document.getElementById('skill').textContent=s.skill?s.racers.map((h,i)=>h+' '+(s.skill[i]>=0?'+':'')+s.skill[i]).join('  ')+'  (CPU prior '+s.cpu_skill+')':'';
 document.getElementById('points').textContent=s.points?s.points.map((p,k)=>'S'+(k+1)+' '+s.racers.map((h,i)=>h.slice(0,2)+p[i]).join(' ')).join(' | '):'';
@@ -250,12 +299,20 @@ def main():
     ap.add_argument("--noise", type=float, default=1.0); ap.add_argument("--skill-sd", type=float, default=1.0)
     ap.add_argument("--clip", type=int, default=50); ap.add_argument("--risk", type=float, default=1500.0); ap.add_argument("--min-profit", type=float, default=5.0)
     ap.add_argument("--no-repl", action="store_true", help="no terminal prompt (commands only from the dashboard)")
+    ap.add_argument("--auto-execute", action="store_true", help="SEND the ranked actions yourself (browser tap: prefill + click the UI's submit button; "
+                    "HTTP tap: POST). Off by default: use only if the organisers approve bot submission. `stop`/`go` at the prompt.")
+    ap.add_argument("--max-orders-per-min", type=int, default=36, help="auto-execute: rolling-minute order cap (the packet allows 40 from the browser)")
+    ap.add_argument("--max-actions-per-poll", type=int, default=3, help="auto-execute: actions sent per poll (arbs first, then by profit)")
+    ap.add_argument("--max-orders-per-poll", type=int, default=8, help="auto-execute: orders sent per poll, so one poll never spends the whole minute's budget")
     a = ap.parse_args()
     if a.mock:
         a.url = "http://127.0.0.1:8790"
     if a.tap is None:
         a.tap = "http" if a.mock else "browser"
     desk = Desk(a)
+    if a.auto_execute:
+        print("\n" + "#" * 96 + f"\n#  AUTO-EXECUTE ON: this desk SENDS orders to {a.url} ({a.tap} tap) without a click.\n"
+              f"#  Cap {a.max_orders_per_min} orders/min, {a.max_actions_per_poll} actions/poll. Type `stop` to pause, `go` to resume, `orders` for the log.\n" + "#" * 96 + "\n", flush=True)
     serve(desk, a.port, a.host)
     desk.say(f"dashboard on http://localhost:{a.port}" + (f" (and http://<this laptop IP>:{a.port} for teammates)" if a.host == "0.0.0.0" else "") + f"  exchange {a.url} via {a.tap} tap")
     threading.Thread(target=desk.run_tap, daemon=True).start()
