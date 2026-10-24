@@ -31,6 +31,7 @@ class FairValueTrader(Strategy):
                  sd_mult: float = 1.0, loss_limit: float | None = None, prior_mode: str = "sample",
                  passive: float = 0.0, warmup: float = 0.0, future_sd: float = 0.0, fair_jump: float = 0.0, max_cross: float = 0.0,
                  carry: float = 1.0, ent_cut: float = 0.0, rebuild_min_edge: float = 0.0, late_cut: float = 0.0,
+                 early_size: float = 1.0, max_spread: float = 0.0,
                  edge_ramp: float = 0.0, final_exact: bool = False, final_edge: float = 0.0,
                  final_edge_full: float = 0.0, price_gate: float = 0.0,
                  price_drift: float = 0.0, basket_edge: float = 0.0,
@@ -59,6 +60,15 @@ class FairValueTrader(Strategy):
         self.ent_cut = ent_cut          # >0: do not add to a position while the pattern posterior's entropy exceeds this (nats)
         self.rebuild_min_edge = rebuild_min_edge   # >0: edge floor for RECON/MAT/GEN (with the exact settlement rules their residual is ~0)
         self.late_cut = late_cut        # >0: do not add to a position once the storm is older than this many seconds (late fills earn nothing)
+        if not math.isfinite(early_size) or not 0 < early_size <= 1:
+            raise ValueError("early_size must be in (0, 1]")
+        self.early_size = early_size    # <1: while a storm is active and the last two official advisories disagree (or fewer
+                                        # than two exist), additions are capped at early_size x the limit; reductions untouched
+                                        # (live 2026-10-24 round 1: advisory 2 'recurve' was reversed by advisory 3 one minute later)
+        if not math.isfinite(max_spread) or max_spread < 0:
+            raise ValueError("max_spread must be finite and nonnegative")
+        self.max_spread = max_spread    # >0: skip a symbol whose displayed spread exceeds this fraction of the mid (a stub or
+                                        # empty book: the touch-priced reduce/exit path would fill far from fair)
         self.max_cross = max_cross      # >0: an aggressive order never pays more than this fraction through the touch
                                         # (live, the house's book empties for a few seconds while it re-prices after a report)
         self.fair_jump = fair_jump      # >0: do not trade a symbol in a cycle where its fair moved by more than this
@@ -357,11 +367,20 @@ class FairValueTrader(Strategy):
                     return
                 self.passive_order.pop(s, None)
                 pos = sim.position[s]
+            if self.max_spread > 0 and ask - bid > self.max_spread * mid:
+                continue                                # stub or empty book: no order can be priced from this touch
             stopped = self.loss_limit is not None and self.cell_pnl.get((s, rnd), 0.0) < -self.loss_limit
             reduce = False
             if abs(edge) >= floor:
                 frac = min(1.0, (abs(edge) - floor) / max(1e-9, self.edge_ramp, self.full_edge_for_phase() - floor))
                 target = int(round(lim * frac)) * (1 if edge > 0 else -1)
+                if self.early_size < 1.0 and self.model.storm_active:
+                    off = getattr(self.model, 'official', [])
+                    if len(off) < 2 or off[-1][1] != off[-2][1]:
+                        cap = int(round(lim * self.early_size))
+                        if target * pos > 0:
+                            cap = max(cap, abs(pos))        # cap additions only; never force a reduction
+                        target = max(-cap, min(cap, target))
                 if self.ent_cut > 0 and self.model.storm_active and ent > self.ent_cut and abs(target) > abs(pos) and target * pos >= 0:
                     continue                                # pattern still ambiguous: do not add
                 if self.late_cut > 0 and self.model.storm_active and self.model.last_obs is not None and self.model.last_obs["age"] > self.late_cut \

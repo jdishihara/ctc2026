@@ -20,7 +20,7 @@ STRATS = {
                                           rebalance_every=a.rebalance_every, edge_ramp=a.edge_ramp,
                                           final_exact=a.final_exact, final_edge=a.final_edge, final_edge_full=a.final_edge_full, final_every=a.final_every,
                                           wind_condition=a.wind_condition,
-                                          sigma=a.sigma, k=a.k, shift=not a.noshift, cone_w=a.cone_w, isl_w=a.isl_w, cone_s0=a.cone_s0, cone_nu=a.cone_nu, vel_w=a.vel_w, vel_sd=a.vel_sd, cone_all=a.cone_all, loss_limit=a.loss_limit or None, prior_mode=a.prior, passive=a.passive, warmup=a.warmup, future_sd=a.future_sd, fair_jump=a.fair_jump, max_cross=a.max_cross, carry=a.carry, ent_cut=a.ent_cut, rebuild_min_edge=a.rebuild_min_edge, late_cut=a.late_cut),
+                                          sigma=a.sigma, k=a.k, shift=not a.noshift, cone_w=a.cone_w, isl_w=a.isl_w, cone_s0=a.cone_s0, cone_nu=a.cone_nu, vel_w=a.vel_w, vel_sd=a.vel_sd, cone_all=a.cone_all, loss_limit=a.loss_limit or None, prior_mode=a.prior, passive=a.passive, warmup=a.warmup, future_sd=a.future_sd, fair_jump=a.fair_jump, max_cross=a.max_cross, carry=a.carry, ent_cut=a.ent_cut, rebuild_min_edge=a.rebuild_min_edge, late_cut=a.late_cut, early_size=a.early_size, max_spread=a.max_spread),
 }
 
 def parse_seasons(spec, n):
@@ -75,6 +75,8 @@ def main():
     ap.add_argument("--max-cross", type=float, default=0.02, help="aggressive orders never pay more than this fraction through the touch (0 = off; 0.02 accepted 2026-10-22)")
     ap.add_argument("--carry", type=float, default=0.5, help="between storms the position limit is carry x the exchange limit (1 = off; 0.5 accepted 2026-10-23 together with the cone)")
     ap.add_argument("--ent-cut", type=float, default=1.2, help="do not add while the pattern posterior entropy exceeds this, nats (0 = off)")
+    ap.add_argument("--early-size", type=float, default=1.0, help="while the last two official advisories disagree, additions are capped at this fraction of the limit (1 = off)")
+    ap.add_argument("--max-spread", type=float, default=0.0, help="skip a symbol whose spread exceeds this fraction of the mid (0 = off)")
     ap.add_argument("--loss-limit", type=float, default=0.0, help="per symbol per round: stop adding after losing this much (0 = off)")
     ap.add_argument("--out", default="out")
     ap.add_argument("--late-cut", type=float, default=0.0, help="do not add to a position once the storm is older than this (s; 0 = off)")

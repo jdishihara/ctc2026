@@ -361,14 +361,52 @@ def replay_feed_log(path: str, ex: "LiveExchange", strat, seen_seq: set[int], ta
     for seq in sorted(msgs):
         m = msgs[seq]
         strat.model.on_message(m); seen_seq.add(seq)
-        if m.get('type') == 'announcement':
-            symbols = [s for s in (m.get('symbols') or []) if s in ex.symbols]
+        symbols = named_symbols(m, ex.symbols)
+        if symbols:
             # Restart loses live price anchors. Re-pause these symbols and use
             # the normal fresh-price re-anchor/explicit operator control path.
             strat.announce(symbols, ex.t)
     if strat.paused:
         print(f'replayed announcement pauses: {sorted(strat.paused)}', flush=True)
     return year, strat.model.round, len(msgs)
+
+
+_COMPANY_KEYS: dict[str, list[str]] | None = None
+
+
+def named_symbols(m: dict, symbols) -> list[str]:
+    """Symbols a live message is about: an announcement's `symbols` field, or for a `news` headline the companies it
+    names (the full name, a distinctive first word such as HavenBridge, or the ticker). Live 2026-10-24: "HavenBridge
+    says claims from Ana are running ahead of plan" arrived as type news with no symbols; HAVEN repriced 32 -> 38 while
+    the model's fair stayed at 31.8."""
+    global _COMPANY_KEYS
+    if m.get('type') == 'announcement':
+        return [s for s in (m.get('symbols') or []) if s in symbols]
+    if m.get('type') != 'news':
+        return []
+    if _COMPANY_KEYS is None:
+        keys: dict[str, list[str]] = {}
+        try:
+            case = json.loads((Path(__file__).resolve().parent.parent / 'data' / 'case.json').read_text())
+            generic = {'cascadia', 'archipelago', 'materials', 'backup', 'isle', 'rebuild', 'meridian'}
+            for group in ('companies', 'etfs'):
+                for sym, info in (case.get(group) or {}).items():
+                    name = str(info.get('name', '')).strip()
+                    ks = [name.lower()] if name else []
+                    first = name.split()[0].lower() if name else ''
+                    if len(first) >= 6 and first not in generic:
+                        ks.append(first)
+                    keys[sym] = ks
+        except Exception:
+            keys = {}
+        _COMPANY_KEYS = keys
+    text = str(m.get('headline') or '').lower()
+    words = set(''.join(ch if ch.isalnum() else ' ' for ch in str(m.get('headline') or '')).split())
+    out = []
+    for sym in symbols:
+        if sym in words or any(k and k in text for k in _COMPANY_KEYS.get(sym, [])):
+            out.append(sym)
+    return out
 
 
 def load_feed_log(p: Path, year: str, tail_bytes: int = 150_000_000) -> tuple[dict[int, dict], int]:
@@ -692,8 +730,8 @@ class LiveSession:
                 if self.history_block_reason() is None:
                     self.reconnect_warmup_pending = False
             return
-        if m.get('type') == 'announcement':
-            syms = [s for s in (m.get('symbols') or []) if s in ex.symbols]
+        syms = named_symbols(m, ex.symbols)
+        if syms:
             wait = strat.announce_wait
             how = (f"re-anchor to the house mid in {wait:.0f} s unless a command arrives first" if wait > 0
                    else "waiting for a command (recordings/control.txt)")
@@ -839,8 +877,9 @@ async def run_exchange(args: argparse.Namespace, ex: LiveExchange) -> None:
                                   final_exact=args.final_exact, final_edge=args.final_edge, final_edge_full=args.final_edge_full,
                                   sigma=args.sigma, k=args.k, passive=args.passive, warmup=args.warmup, max_cross=args.max_cross,
                                   carry=args.carry, ent_cut=args.ent_cut, cone_w=args.cone_w, cone_s0=args.cone_s0, cone_nu=args.cone_nu, isl_w=args.isl_w,
-                                  rebuild_min_edge=getattr(args, 'rebuild_min_edge', 0.0), announce_wait=args.announce_wait)
-    print(f"strategy {'nowcast' if args.nowcast else 'analog'} min_edge {args.min_edge} edge_full {args.edge_full} sd_mult {args.sd_mult} sigma {args.sigma} k {args.k} passive {args.passive} warmup {args.warmup} max_cross {args.max_cross} carry {args.carry} ent_cut {args.ent_cut} cone_w {args.cone_w} cone_s0 {args.cone_s0} cone_nu {args.cone_nu} isl_w {args.isl_w}", flush=True)
+                                  rebuild_min_edge=getattr(args, 'rebuild_min_edge', 0.0), announce_wait=args.announce_wait,
+                                  early_size=getattr(args, 'early_size', 1.0), max_spread=getattr(args, 'max_spread', 0.0))
+    print(f"strategy {'nowcast' if args.nowcast else 'analog'} min_edge {args.min_edge} edge_full {args.edge_full} sd_mult {args.sd_mult} sigma {args.sigma} k {args.k} passive {args.passive} warmup {args.warmup} max_cross {args.max_cross} carry {args.carry} ent_cut {args.ent_cut} cone_w {args.cone_w} cone_s0 {args.cone_s0} cone_nu {args.cone_nu} isl_w {args.isl_w} early_size {getattr(args, 'early_size', 1.0)} max_spread {getattr(args, 'max_spread', 0.0)}", flush=True)
     strat.on_start(ex)
     print(f"final phase exact={strat.final_exact} entry={strat.final_edge} full={strat.final_edge_full}; rebuilder floor {strat.rebuild_min_edge}", flush=True)
     print(f"basket edge={strat.basket_edge} participation={strat.basket_participation} max_lot=10", flush=True)
@@ -923,6 +962,8 @@ def main() -> None:
     ap.add_argument("--cone-nu", type=float, default=0.0, help="Student-t degrees of freedom for the cone likelihood (0 = Gaussian)")
     ap.add_argument("--isl-w", type=float, default=0.0, help="analog likelihood power for the advisory island probabilities (0 = off; rejected, fattens the tail)")
     ap.add_argument("--ent-cut", type=float, default=1.2, help="do not add while the pattern posterior entropy exceeds this, nats (0 = off)")
+    ap.add_argument("--early-size", type=float, default=1.0, help="while the last two official advisories disagree, additions are capped at this fraction of the limit (1 = off)")
+    ap.add_argument("--max-spread", type=float, default=0.0, help="skip a symbol whose spread exceeds this fraction of the mid (0 = off)")
     ap.add_argument("--announce-wait", type=float, default=60.0, help="seconds after a live announcement before a paused symbol's fair is re-anchored to the house mid and trading resumes (0 = wait for a human command)")
     ap.add_argument("--control", default="recordings/control.txt", help="command file polled every --sync seconds: 'HAVEN -6%%', 'PORT =61.5', 'resume GEN', 'pause MAT', 'status' (see bot/control.py)")
     asyncio.run(run(ap.parse_args()))
