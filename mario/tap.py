@@ -24,6 +24,8 @@ JS_POLL = """async (syms) => {
 
 JS_LOGGED_IN = "async () => { const r = await fetch('/api/v1/teams/me', {credentials: 'include'}); return r.status; }"
 
+JS_BOOK = "async (sym) => { const r = await fetch('/api/v1/orderbook/' + sym, {credentials: 'include'}); if (!r.ok) throw new Error('orderbook ' + r.status); return r.json(); }"
+
 
 class HttpTap:
     def __init__(self, url: str, key: str | None = None, timeout: float = 5.0):
@@ -45,6 +47,14 @@ class HttpTap:
             self._get("/api/v1/competitions/current"); return True
         except Exception:
             return False
+
+    def book(self, symbol: str) -> dict:
+        return book_levels(self._get(f"/api/v1/orderbook/{symbol}"))
+
+    def submit(self, symbol: str, side: str, qty: int, price: float) -> str:
+        """Send a limit order (the mock, or an API key if one exists)."""
+        r = self.post("/api/v1/orders", {"symbol": symbol, "side": side, "order_type": "limit", "quantity": int(qty), "price": round(float(price), 2)})
+        return json.dumps(r)[:160]
 
     def snapshot(self, symbols: list[str] | None = None) -> dict:
         syms = self._get("/api/v1/symbols")["symbols"]
@@ -80,7 +90,6 @@ class BrowserTap:
 
     def start(self) -> None:
         import subprocess
-        from playwright.sync_api import sync_playwright
         if not self._cdp_alive():
             args = [self.CHROME, f"--remote-debugging-port={self.port}", f"--user-data-dir={self.profile}", "--no-first-run",
                     "--no-default-browser-check", "--window-size=1500,900", "--new-window"]
@@ -94,10 +103,53 @@ class BrowserTap:
                 time.sleep(0.2)
             else:
                 raise RuntimeError("Chrome did not open its debugging port; is Google Chrome installed in /Applications?")
+            self._wait_for_page()
+        self._connect()
+
+    def _wait_for_page(self, timeout: float = 15.0) -> None:
+        """A freshly launched Chrome re-creates its first window while it starts; attaching during that tears the CDP
+        session down after the first command or two (seen 2026-10-23 headless: 'Target page ... has been closed' right
+        after the first click). Wait until the exchange tab is listed, then give the browser two more seconds."""
+        deadline = time.time() + timeout
+        while time.time() < deadline:
+            try:
+                with urllib.request.urlopen(f"http://127.0.0.1:{self.port}/json/list", timeout=1) as r:
+                    targets = json.loads(r.read())
+                if any(t.get("type") == "page" and str(t.get("url", "")).startswith(self.url) for t in targets):
+                    break
+            except Exception:
+                pass
+            time.sleep(0.3)
+        time.sleep(2.0)
+
+    def _connect(self) -> None:
+        from playwright.sync_api import sync_playwright
         self.pw = sync_playwright().start()
         self.browser = self.pw.chromium.connect_over_cdp(f"http://127.0.0.1:{self.port}")
         self.ctx = self.browser.contexts[0] if self.browser.contexts else self.browser.new_context()
         self._find_page()
+
+    def _reconnect(self) -> None:
+        """The Playwright session died (Chrome restarted its window, the connection dropped): attach again."""
+        try:
+            if self.browser: self.browser.close()
+        except Exception:
+            pass
+        try:
+            if self.pw: self.pw.stop()
+        except Exception:
+            pass
+        self.pw = self.browser = self.ctx = self.page = None
+        if not self._cdp_alive():
+            raise RuntimeError("Chrome's debugging port is gone: restart the desk (it relaunches Chrome)")
+        self._connect()
+
+    def _recover(self) -> None:
+        """After a failed page call: reopen the tab, or re-attach when the whole session is closed."""
+        try:
+            self._find_page()
+        except Exception:
+            self._reconnect()
 
     def _find_page(self) -> None:
         pages = [p for p in self.ctx.pages if p.url.startswith(self.url)]
@@ -111,7 +163,7 @@ class BrowserTap:
             return self.page.evaluate(JS_LOGGED_IN) == 200
         except Exception:
             try:
-                self._find_page()
+                self._recover()
             except Exception:
                 pass
             return False
@@ -120,10 +172,29 @@ class BrowserTap:
         try:
             d = self.page.evaluate(JS_POLL, symbols or [])
         except Exception:
-            self._find_page()                      # the tab was closed or navigated away: reopen it
+            self._recover()                        # the tab was closed or navigated away, or the session dropped
             d = self.page.evaluate(JS_POLL, symbols or [])
         d["t"] = time.time()
         return d
+
+    def book(self, symbol: str) -> dict:
+        return book_levels(self.page.evaluate(JS_BOOK, symbol))
+
+    def submit(self, symbol: str, side: str, qty: int, price: float) -> str:
+        """prefill(), then click the UI's own submit button (its label is like "Buy 20 PORT": side, size, symbol). The
+        button is found by that label, so a form that still shows another symbol or side is never submitted."""
+        import re
+        msg = self.prefill(symbol, side, qty, price)
+        if not msg.startswith("prepared"):
+            raise RuntimeError(msg)
+        pg = self.page
+        label = re.compile(rf"^\s*{side}\b.*\b{re.escape(symbol)}\b", re.I)
+        btn = pg.get_by_role("button", name=label)
+        if btn.count() == 0:
+            raise RuntimeError(f"no submit button labelled '{side} ... {symbol}' in the UI (form not ready?)")
+        text = btn.first.inner_text().strip()
+        btn.first.click()
+        return f"clicked '{text}'"
 
     def prefill(self, symbol: str, side: str, qty: int, price: float) -> str:
         """Select the symbol tab, the side, Limit, and type qty and price. Nothing is submitted."""

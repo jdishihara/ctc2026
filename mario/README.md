@@ -54,6 +54,7 @@ open http://localhost:8787                            # the dashboard, on a seco
 > race 1 2 5 9                                        # after each race: overall places of BIRDO DAISY PEACH YOSHI (alphabetical), from the stream
 > undo | cpu -0.3                                     # typo, or re-centre the CPU strength prior (see the calibration table below)
 > type PORT sell 1 99                                 # checks the form pre-fill on the live UI (nothing is sent until you click); verified on the testnet 2026-10-23
+python3 mario/desk.py --auto-execute                  # the desk clicks too (below); only with the organisers' approval
 ```
 The dashboard refreshes every 0.7 s: actions best first (profit in contract points = PnL at settlement if the fair is
 right; riskless arbs on an orange background), then every contract with bid/ask, fair, sd, edge, hard bounds, position,
@@ -64,6 +65,27 @@ Each action has a "prepare" button (or `prepare N` at the prompt) that selects t
 exchange window and types the quantity and price into its form; the human clicks the submit button. The organisers
 confirmed on 2026-10-23 that this is allowed. `--no-prefill` turns it off. The mock's page carries a copy of the real
 form (same element ids and button names), so `--mock --tap browser` drills the exact prepare-then-click loop.
+
+#### Auto-execution (`--auto-execute`, OFF by default)
+
+```bash
+python3 mario/desk.py --auto-execute                  # the desk also clicks: prefill, then the UI's own submit button (mario/executor.py)
+> stop                                                # pause sending (orders already sent stay); > go resumes; > orders lists what was sent and its outcome
+```
+With it on, the only human input is `race P1 P2 P3 P4` after each race. Each poll the executor takes the ranked actions,
+riskless arbs first, then edges by profit, and for every leg: re-reads the book and re-sizes to what is still there at
+no worse than the listed price (skips the leg if the touch moved past it; an arb with any leg short is skipped whole),
+re-checks the position limit, refuses prices outside [0, 100] (binaries) or [0, 120] (scores), then prefills the form and
+clicks the button whose label is "<side> <size> <symbol>", so a form showing another symbol or side is never submitted.
+Caps: `--max-orders-per-min 36` (rolling minute; the packet allows 40 from the browser), `--max-orders-per-poll 8` and
+`--max-actions-per-poll 3` so one poll never spends the minute's budget. Nothing is sent while any symbol is UNMAPPED.
+Every order is an `ORDER sym side qty @ px (kind) -> ...` log line: `sent`, then from the next polls `filled`, `partial
+n/m`, `open (resting)` or `unconfirmed (no fill seen)`; a leg that fails mid-arb prints `INCOMPLETE ARB`, finish it by hand.
+
+Use it only if the organisers approve bot submission (they approved form pre-fill with a human click on 2026-10-23; ask
+in #questions about the click). Drilled 2026-10-23 against the mock over 4 races with the browser tap and a headless
+Chrome launched by the desk: 85 orders, 0 rejections, 0 session errors. Mock PnL is the mock's marks and means little;
+without race results typed in, the desk loses (that is the one input it cannot see).
 
 Flags: `--interval 1.0` (poll period; 46 book requests per poll, well inside the packet's 600 requests per second per team; the packet also caps the browser at 40 orders per minute, so the clicker has about one order every 1.5 s), `--clip 50` (max
 size per action), `--risk 1500` (score contracts: size x sd <= risk), `--min-profit 5`, `--cpu-skill -0.6`.

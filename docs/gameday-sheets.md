@@ -104,6 +104,12 @@ not equal to #1 + #2, a racer who cannot win still bid above 0): take all of the
 **prepare** on a row (or type `prepare N`): the exchange tab's form fills; you click the submit button. Size is already
 inside the position limit and the book. Browser cap is 40 orders a minute, about one every 1.5 s.
 
+**Auto-execute (if the organisers approve bot submission):** start with `python3 mario/desk.py --auto-execute`. The desk
+then prefills and clicks the submit button itself, arbs first, inside the 40-orders-a-minute cap, and the only human
+step is typing `race P1 P2 P3 P4` after each race. The status line shows AUTO-EXECUTE ON and the orders sent this
+minute; `stop` pauses it, `go` resumes, `orders` lists every order and whether it filled. An `INCOMPLETE ARB` line means
+one leg of a riskless set did not go: send the missing legs by hand. Without approval leave the flag off and click.
+
 Sanity checks the clicker can do without the model: before race 1 every race-winner and series-winner is worth about
 25. Do not pay above about 45 for a race favourite after one win. After two races, a series lead of 6-9 points is about
 85%, 10 or more about 95%. #1 score settles near 48 with sd 7 before the series; maximum possible 60. Top-2 total
