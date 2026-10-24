@@ -54,6 +54,7 @@ def observed_capture(observations, feed, cid, symbols):
     windows, last_at, advertised = {}, -math.inf, -1
     active, rnd, phase = False, None, None
     unusable, disconnects = 0, 0
+    subscriptions = []
     for line in Path(feed).open():
         if not line.endswith('\n'):
             break
@@ -63,7 +64,7 @@ def observed_capture(observations, feed, cid, symbols):
             raise ValueError('finite recorded receive timestamps required')
         if timestamp < last_at:
             raise ValueError('capture receive time moved backwards')
-        last_at = timestamp
+        previous_at, last_at = last_at, timestamp
         if timestamp < info['first_at']:
             continue
         if timestamp > at:
@@ -111,6 +112,10 @@ def observed_capture(observations, feed, cid, symbols):
                 advertised = max(advertised, seq)
                 if message.get('type') == 'damage_report' and message.get('stage') == 'final':
                     finals.add(rnd)
+        if active and kind == 'subscription_ack':
+            subscriptions.append({'at': timestamp, 'round': rnd,
+                'seconds_since_previous_frame': timestamp - previous_at
+                if math.isfinite(previous_at) else None})
         if not active or kind not in ('quote', 'news', 'disconnected'):
             continue
         frames.append(frame)
@@ -155,7 +160,13 @@ def observed_capture(observations, feed, cid, symbols):
         'quote_count_by_round': {r: {s: len(v) for s, v in row.items()}
                                  for r, row in quote_times.items()},
         'observed_quote_gaps': gap_summary, 'round_windows': windows,
-        'unusable_quotes': unusable, 'disconnect_events': disconnects,
+        'unusable_quotes': unusable, 'recorded_disconnect_frames': disconnects,
+        'disconnect_count_known': False,
+        'subscription_acknowledgements': subscriptions,
+        'disconnect_note': ('The recorder may log disconnects only to its text log. '
+            'Subscription acknowledgements may indicate reconnections but do not determine '
+            'disconnect onset or reconstruct missed frames. Only explicit disconnect '
+            'frames are applied to the replay.'),
         'quote_path_completeness_proven': False,
         'gap_note': 'Receive-time gaps include delays in observing round opens/closes; they do not prove missing server events.'}
     return receipt, frames, coverage
