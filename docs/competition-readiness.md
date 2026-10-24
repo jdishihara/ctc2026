@@ -163,10 +163,20 @@ depth, timing, and live session handling; this is not a single-cause estimate.
 
 The updated snapshot-and-basket version earned +$86.32 at a modeled 0.25-second
 delay and **−$21.70 at three seconds** on that same captured path. More trading
-does not automatically improve results. Queue priority, market impact, serialized
-HTTP requests, cancellation races, and conversion delays remain unmodeled.
+does not automatically improve results. That earlier engine does not model
+serialized HTTP requests or cancellation races; queue priority, own market
+impact, and actual conversion execution remain unmodeled.
 
 Full evidence: [recorded-market-diagnostic.md](recorded-market-diagnostic.md).
+
+A separate production-client replay now models serial REST calls, status-only
+acknowledgements, and account reconciliation. Its fixed 48 scenarios on
+captures 241–243 completed after the startup identity correction. One loses
+$29.72 (capture 243, one-second RTT, half depth, baskets enabled), and request
+timing changes returns substantially. Eight independent reruns matched every
+output field. These are reused paths under fixed latency assumptions, not
+new live trials or 48 independent seasons. Full results, original failures,
+and limitations: [serialized-client-replay.md](serialized-client-replay.md).
 
 ## Completed captured markets after the entry correction
 
