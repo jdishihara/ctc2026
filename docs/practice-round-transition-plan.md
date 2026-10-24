@@ -16,8 +16,9 @@ conversion, ownership, freshness, pending-news, cancellation and loss guards.
 Record provenance of an accepted contiguous transition from a complete final-
 reported round to the next round (only 2 or 3). Bind the temporary wait to the
 same model object, competition/year and expected round. Permit waiting only
-while the news prefix and outage history remain complete, all prior final
-reports remain present, and the newly formed storm has no initial observation.
+while account and news identities agree, the news prefix and outage history
+remain complete, final reports are exactly the completed round prefix, and
+the newly formed storm has no initial observation.
 Clear waiting when readiness returns or any bound state changes.
 
 Inspect history at each accepted news event during an attempted unfinished
@@ -39,6 +40,8 @@ prior reports, changed account/model/year, or genuine history corruption.
   weather gap; recovery messages cannot clear a permanent stop.
 - Model/account/year changes cannot inherit a wait; all existing practice and
   live safety tests remain green.
+- Pre-existing account/news identity disagreement or unknown account identity,
+  and extra future-round final reports, cannot qualify for the exception.
 - Independent code review before a new source freeze and fixed comparison.
 
 After the correction, repeat the same captures 241–244 and 16 settings each,
@@ -48,3 +51,10 @@ errors, losses, incomplete cleanup and stops. This is a correctness fix tested
 on reused paths, not a new untouched strategy evaluation. Do not change any
 threshold or choose parameters based on these outcomes. Separately recorded
 future captures remain governed by their existing frozen protocols.
+
+Reuse the already verified 64 reference rows and trace hashes from source
+`505a5ad` in `out/supervised-replay-v1-20261024/reference`. Its source remains
+unchanged. Rerun all 64 baseline settings with the corrected source, require
+exact archive/trace equivalence, then run all 64 supervised settings. Include
+this correction plan in the new source manifest. The reference input, result
+and completion hashes must still pass the existing predecessor checks.
