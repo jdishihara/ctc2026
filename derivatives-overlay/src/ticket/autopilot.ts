@@ -91,7 +91,8 @@ export class Autopilot {
     const mode = this.mode();
     if (!mode) return { action: 'idle', detail: store.d.autoArmed ? `phase ${store.d.phase?.phase ?? '—'}: nothing to do` : 'auto-submit off or paused' };
     const now = this.now();
-    if (now - store.s.auto.lastSubmitAt < this.cfg.auto.submitIntervalMs) return { action: 'idle', detail: 'spacing submissions' };
+    const interval = mode === 'flatten' ? Math.min(this.cfg.auto.submitIntervalMs, this.cfg.auto.flattenIntervalMs ?? this.cfg.auto.submitIntervalMs) : this.cfg.auto.submitIntervalMs;
+    if (now - store.s.auto.lastSubmitAt < interval) return { action: 'idle', detail: 'spacing submissions' };
     const rate = store.rate.count(now);
     if (!(rate < this.cfg.auto.submitRateCap)) return { action: 'idle', detail: `rate budget ${rate}/${this.cfg.auto.submitRateCap}` };
     if (store.d.quoteAge == null || store.d.quoteAge > this.cfg.thresholds.staleQuoteSec) return { action: 'idle', detail: 'quotes stale' };

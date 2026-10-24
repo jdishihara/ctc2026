@@ -99,7 +99,13 @@ was red. Two root causes found and fixed:
    (vs -698 / -843). Gross carried into the next event: Rounds 1-2 116, 128, 138, 225, 64, 192 (vs 288-1,087); Round 3
    still 568, 816, 656, 1,028: with 23-26 edge orders in the first minute and 19-24 in the second, the rolling-minute
    cap leaves only 5-6 orders for the 30 s flatten window. Fourth fix: edge tickets stop at submitRateCap - 12
-   (auto.flattenReserve) so the snap always has 12 orders of budget. Fourth run: below.
+   (auto.flattenReserve) so the snap always has 12 orders of budget. Fourth run (03:49-04:14): **+24,622**, 412 orders
+   (fewer edge orders, same PnL: the marginal edge orders were worth nothing). Flatten orders in the 30 s window still
+   only 4-9 and gross carried 549, 69, 53, 805, 297, 638, 80, 587, 287, 921: the rate cap was not the bottleneck, the
+   flatten pipeline is (one order per 1.5 s spacing on a 0.7 s step, and a contract/side is held 6 s after a send).
+   KEPT (free risk reduction, PnL neutral). Four real-speed runs on the same seed: 19,795 -> 21,604 -> 23,967 -> 24,622.
+   Remaining known gap: a book of 300-900 contracts can be carried into the next event in Round 3; the auto-pilot now
+   works it down during the event when a cap is breached, and the Risk tab's FLATTEN NOW line is the human's cue.
 Also fixed on the way: the integration test raced the content script's own 700 ms auto-pilot timer (now disabled in
 the test harness) and judged one real-time tick (now retries up to 4 s); vitest runs files sequentially.
 
