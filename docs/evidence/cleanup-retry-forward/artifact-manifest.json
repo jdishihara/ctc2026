@@ -1,0 +1,192 @@
+{
+  "created_at": 1792839135.2276878,
+  "capture": 248,
+  "competition_id": "789097b1-a48b-4e68-95b4-5e15b047e149",
+  "source_bindings": {
+    "bot/practice.py": {
+      "sha256": "fda1d10d256a58e4b10fd5afde9400944a0ce150562414b014e23f130a6130b8",
+      "frozen_revision": "27ab7c4b4784c9aabc92e791b0878d387cd4cc49"
+    },
+    "scripts/compare_cleanup_retry_forward.py": {
+      "sha256": "473d9175db0c4066bdd4d31e715309e34c283293ebae4a948c1661b50927d22d",
+      "frozen_revision": "2c441aee5b5f828bc4c4e26461159a958c102067"
+    },
+    "docs/cleanup-retry-forward-plan.md": {
+      "sha256": "7e6a40a863a8dc1830f95712abe75a0f050a71c396aa67a4e2ed1476221d53a5",
+      "frozen_revision": "fd35a1efeaf63f67aec0d06552ad8201a36ef64f"
+    }
+  },
+  "files": {
+    "analyze.py": {
+      "bytes": 7124,
+      "sha256": "6db56e6d7a72b0c770858c33723a1d58713dd1b17ad79bb222b6caca8f56ec75",
+      "source": "/Users/arjunhans/Documents/ctc2026/out/cleanup-retry-forward-20261024/analyze.py"
+    },
+    "analyzer-review.tar.gz": {
+      "bytes": 76887,
+      "sha256": "f0b0e80d64fb2e9350adb06768178ceb6367a6e8e00602b6730b1df1f5888bd0",
+      "source": "/Users/arjunhans/Documents/ctc2026/out/cleanup-retry-forward-analyzer-review-20261024.tar.gz",
+      "regular_files": 932,
+      "all_members_match_directory": "/Users/arjunhans/Documents/ctc2026/out/cleanup-retry-forward-analyzer-review-20261024"
+    },
+    "attempts-through-248.jsonl": {
+      "bytes": 3633,
+      "sha256": "1f5131aac37b553ce5b18534b9d4d05ecbf4b83c55f870dbafd6b35b483b3ab5",
+      "source": "/Users/arjunhans/Documents/ctc2026/out/cleanup-retry-forward-20261024/attempts.jsonl"
+    },
+    "capture-248/248-seal.stderr.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "/Users/arjunhans/Documents/ctc2026/out/cleanup-retry-forward-20261024/248-seal.stderr.log"
+    },
+    "capture-248/248-seal.stdout.json": {
+      "bytes": 4507,
+      "sha256": "d73e2fbfc6396024fd830b3eadb6982a2268d3e4d0ba43eca9861c40ae725e5a",
+      "source": "/Users/arjunhans/Documents/ctc2026/out/cleanup-retry-forward-20261024/248-seal.stdout.json"
+    },
+    "capture-248/analysis.json": {
+      "bytes": 37639,
+      "sha256": "986ed5f54fc76fb6a1632231dbc17d93de9ef28c1dadef77f58ecf28dd887868",
+      "source": "/Users/arjunhans/Documents/ctc2026/out/cleanup-retry-forward-20261024/capture-248/analysis.json"
+    },
+    "capture-248/analysis.stderr.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "/Users/arjunhans/Documents/ctc2026/out/cleanup-retry-forward-20261024/capture-248/analysis.stderr.log"
+    },
+    "capture-248/archive-receipt.json": {
+      "bytes": 404,
+      "sha256": "568e4c90d7c282cd6840e8dc0c3698aa487172fbb27a6b3d20bc1026ec9bf7ee",
+      "source": "/Users/arjunhans/Documents/ctc2026/out/cleanup-retry-248-independent-review-20261024/archive-receipt.json"
+    },
+    "capture-248/baseline/metadata.json": {
+      "bytes": 53105,
+      "sha256": "9734b74ccc4a7618c8f7b79c9ef85f30ef9be5ab25509ef3344c84f52e34ed9c",
+      "source": "/Users/arjunhans/Documents/ctc2026/out/cleanup-retry-forward-20261024/capture-248/baseline/metadata.json"
+    },
+    "capture-248/baseline/results.jsonl": {
+      "bytes": 113184,
+      "sha256": "e0ff34873cb4c26e3e7df798f51a45cf5dd5f1b1284754ae0804f37b4bd67fd1",
+      "source": "/Users/arjunhans/Documents/ctc2026/out/cleanup-retry-forward-20261024/capture-248/baseline/results.jsonl"
+    },
+    "capture-248/baseline/summary.json": {
+      "bytes": 210,
+      "sha256": "78f2327adc4171cf66c28e1116a2e5364a4b1dc7ed2eb21700c4c7beeacd8bb2",
+      "source": "/Users/arjunhans/Documents/ctc2026/out/cleanup-retry-forward-20261024/capture-248/baseline/summary.json"
+    },
+    "capture-248/baseline-journals.tar.gz": {
+      "bytes": 686705,
+      "sha256": "4214d1633e2b4e7c941ab2159bd7e9d60bf7cb95e1babf42ddf5a86108895330",
+      "source": null,
+      "regular_files": 144,
+      "all_members_match_directory": "/Users/arjunhans/Documents/ctc2026/out/cleanup-retry-forward-20261024/capture-248/baseline"
+    },
+    "capture-248/baseline.stderr.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "/Users/arjunhans/Documents/ctc2026/out/cleanup-retry-forward-20261024/capture-248/baseline.stderr.log"
+    },
+    "capture-248/baseline.stdout.log": {
+      "bytes": 1764,
+      "sha256": "2d04b5cb29ffa84c262eec8837631697ebf1d72c66fc969543fb341d3587b423",
+      "source": "/Users/arjunhans/Documents/ctc2026/out/cleanup-retry-forward-20261024/capture-248/baseline.stdout.log"
+    },
+    "capture-248/candidate/metadata.json": {
+      "bytes": 83257,
+      "sha256": "504fcb3e30e29824d2f7e15f464eaa7627ab333c04185348aad93cee559480f4",
+      "source": "/Users/arjunhans/Documents/ctc2026/out/cleanup-retry-forward-20261024/capture-248/candidate/metadata.json"
+    },
+    "capture-248/candidate/results.jsonl": {
+      "bytes": 113360,
+      "sha256": "b1e3b7c6ed902957068bcb6cad724e63dadeecd545221239f5867b5788b33835",
+      "source": "/Users/arjunhans/Documents/ctc2026/out/cleanup-retry-forward-20261024/capture-248/candidate/results.jsonl"
+    },
+    "capture-248/candidate/summary.json": {
+      "bytes": 209,
+      "sha256": "8a65f18e004c9eaa421cd2ed2104a60e1fcb053e480b0d15b084990ca87d6280",
+      "source": "/Users/arjunhans/Documents/ctc2026/out/cleanup-retry-forward-20261024/capture-248/candidate/summary.json"
+    },
+    "capture-248/candidate-journals.tar.gz": {
+      "bytes": 686765,
+      "sha256": "04410e648077d052926992d3fab9b0b2938a840b725f029db712d02e58187aec",
+      "source": null,
+      "regular_files": 144,
+      "all_members_match_directory": "/Users/arjunhans/Documents/ctc2026/out/cleanup-retry-forward-20261024/capture-248/candidate"
+    },
+    "capture-248/candidate.stderr.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "/Users/arjunhans/Documents/ctc2026/out/cleanup-retry-forward-20261024/capture-248/candidate.stderr.log"
+    },
+    "capture-248/candidate.stdout.log": {
+      "bytes": 1939,
+      "sha256": "99cb89cc8dd3dbfdbdae5049be8dd1d6d66dac74b9a1b754dc3835b02aacd9e7",
+      "source": "/Users/arjunhans/Documents/ctc2026/out/cleanup-retry-forward-20261024/capture-248/candidate.stdout.log"
+    },
+    "capture-248/independent-review.tar.gz": {
+      "bytes": 3865088,
+      "sha256": "c2d46e84ea9175806796e6d3a32b765f09b50d939e544ff090a486ab628b1e80",
+      "source": "/Users/arjunhans/Documents/ctc2026/out/cleanup-retry-248-independent-review-20261024/independent-review.tar.gz",
+      "regular_files": 360,
+      "all_members_match_directory": "/Users/arjunhans/Documents/ctc2026/out/cleanup-retry-248-independent-review-20261024"
+    },
+    "capture-248/spec.json": {
+      "bytes": 1061,
+      "sha256": "208fbe3d11c589cc2aedced9fe390609c0020e2f5eb3288eec51b94c277a88b6",
+      "source": "/Users/arjunhans/Documents/ctc2026/out/cleanup-retry-forward-20261024/capture-248/spec.json"
+    },
+    "capture-248/verdict.json": {
+      "bytes": 8102,
+      "sha256": "2271928f55d8623f412061df59cf90efac070dea61b0b67373e07a78f39b1c65",
+      "source": "/Users/arjunhans/Documents/ctc2026/out/cleanup-retry-248-independent-review-20261024/verdict.json"
+    },
+    "ctc-cleanup-retry-forward-correction-focused.log": {
+      "bytes": 99,
+      "sha256": "8ac7ab9b9c337752c370dad85eb7e9567ce6364c83202bd355389116c758ea3d",
+      "source": "/Users/arjunhans/Documents/ctc2026/out/cleanup-retry-forward-20261024/ctc-cleanup-retry-forward-correction-focused.log"
+    },
+    "ctc-cleanup-retry-forward-correction-full.log": {
+      "bytes": 820,
+      "sha256": "f1a3b56f20a435df6ca0bf702aab583efb5b3896a49ffb2cbffd084d80cfdd9b",
+      "source": "/Users/arjunhans/Documents/ctc2026/out/cleanup-retry-forward-20261024/ctc-cleanup-retry-forward-correction-full.log"
+    },
+    "ctc-cleanup-retry-forward-correction-red.log": {
+      "bytes": 33806,
+      "sha256": "6c64782824abc0e1dddebaa8e62aad5c3e3423c536126bf799e8411f13423e70",
+      "source": "/Users/arjunhans/Documents/ctc2026/out/cleanup-retry-forward-20261024/ctc-cleanup-retry-forward-correction-red.log"
+    },
+    "ctc-cleanup-retry-forward-green.log": {
+      "bytes": 820,
+      "sha256": "435bd7668d85544bbc74df3e955b21cd2e7877bf9a97963f657d2ae50f63327b",
+      "source": "/Users/arjunhans/Documents/ctc2026/out/cleanup-retry-forward-20261024/ctc-cleanup-retry-forward-green.log"
+    },
+    "ctc-cleanup-retry-forward-red.log": {
+      "bytes": 1229,
+      "sha256": "d4165340fccedd3caf235088e8da34c4249a9b4d31b710a7cab8fd1747a8dcc9",
+      "source": "/Users/arjunhans/Documents/ctc2026/out/cleanup-retry-forward-20261024/ctc-cleanup-retry-forward-red.log"
+    },
+    "integration-tests.log": {
+      "bytes": 820,
+      "sha256": "45eac9ef080cbed90c26a4bafad753b209372019653d0f2800b6f5f9ebeae7b0",
+      "source": "/tmp/ctc-capture-248-integration-tests.log"
+    },
+    "preflight-final-approved.tar.gz": {
+      "bytes": 307352,
+      "sha256": "e9ab0c1026422fb42155f5957476f6296a0fffc4658a6b6a1c8119e380c6c142",
+      "source": "/Users/arjunhans/Documents/ctc2026/out/cleanup-retry-forward-20261024/preflight-final-approved.tar.gz",
+      "regular_files": 359
+    },
+    "preflight-initial-rejected.tar.gz": {
+      "bytes": 119490,
+      "sha256": "fa281c52dab08a04d6f7a90f4f1a5a996180e3612ee91dcfbc702a86c26c4948",
+      "source": "/Users/arjunhans/Documents/ctc2026/out/cleanup-retry-forward-20261024/preflight-initial-rejected.tar.gz",
+      "regular_files": 134
+    },
+    "seal-input.py": {
+      "bytes": 2669,
+      "sha256": "9166dd4e48bc73bb3185e6d348e2ba8de0b2ca44b6dee2d106f8dfa8bde3067b",
+      "source": "/Users/arjunhans/Documents/ctc2026/out/cleanup-retry-forward-20261024/seal-input.py"
+    }
+  },
+  "scope": "Closed capture 248 only; no live activation; no unfamiliar-weather claim."
+}

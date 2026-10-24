@@ -1,0 +1,18 @@
+{
+  "baseline_root": "/Users/arjunhans/Documents/ctc2026/.worktrees/practice-history",
+  "forward_root": "/Users/arjunhans/Documents/ctc2026/.worktrees/supervised-forward",
+  "captures": [
+    {
+      "capture": 248,
+      "input": "/Users/arjunhans/Documents/ctc2026/out/cleanup-retry-forward-20261024/248.json",
+      "input_sha256": "209a3c8249c35ec7cd9017b9b67009237a8f7c5f6179ad4d2ca394f28fc6a2dd",
+      "archive": "/Users/arjunhans/Documents/ctc2026/recordings/consistency-20261024/supervised-forward/789097b1-a48b-4e68-95b4-5e15b047e149/attempt-01/supervised",
+      "archive_sha256": {
+        "metadata.json": "44e5667df16eab886e5b3e58cb69f93117cd2f303e6485b06680a1631116f693",
+        "results.jsonl": "33905130125afbfd61b35175aabcdde08bbdec0d1a7b35aaa08333098dafadc0",
+        "summary.json": "ba730ae2ed4b582f40d8ec9f23329c601430e62d30fc2e54d89caa83c13ffc33"
+      },
+      "forward_spec": "/Users/arjunhans/Documents/ctc2026/recordings/consistency-20261024/supervised-forward/789097b1-a48b-4e68-95b4-5e15b047e149/attempt-01/spec.json"
+    }
+  ]
+}

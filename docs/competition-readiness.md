@@ -1,12 +1,12 @@
 # Competition readiness — 2026-10-24
 
-Status updated after the 10:34 UTC bounded-cleanup audit (06:34 EDT). One complete small-size live season
+Status updated after the 10:52 UTC capture-248 audits (06:52 EDT). One complete small-size live season
 has a verified settlement receipt. The next trial contains mixed activity.
 Live practice remains stopped pending shared-account ownership clarification.
 Market recording and offline evaluations continue.
 
-**Validation limitation:** all 21 complete storm tracks in closed captures
-241–247 exactly match tracks in the fitted analog training library. Their
+**Validation limitation:** all 24 complete storm tracks in closed captures
+241–248 exactly match tracks in the fitted analog training library. Their
 replays and the +$141.16 actual completed trial therefore do not establish
 performance on unfamiliar weather. Source-freeze dates describe chronology,
 not independence from model training. See
@@ -19,7 +19,7 @@ The historical strategy is profitable on average in the local simulator, but
 losing seasons remain. The earlier live loss exposed execution defects; reviewed
 corrections have been regression-tested. A bounded retry candidate closes the
 five known stranded portfolios in a fixed offline comparison, with final
-independent verification complete. One completed live season was
+independent verification complete and the correction merged in PR 28. One completed live season was
 positive; consistent live profitability has not been established. Neither the historical average nor the test count
 establishes a probability of winning the competition.
 
@@ -94,6 +94,15 @@ each; three cost an additional $0.96 each. These are reused known-training paths
 and the improvement does not establish consistent profitability. The full
 comparison, limits and independent review status are in
 [cleanup-retry-window.md](cleanup-retry-window.md).
+
+Capture 248 passes independent audit: all 16 full-supervisor settings complete
+and settle positive, with mean $897.99, worst $295.45 and primary $985.54.
+The bounded-retry runtime reproduces all sixteen outcomes unchanged; no extra
+cleanup was needed. Its three weather tracks also repeat training. The selected
+interval predates the retry declaration and freeze, although both precede its
+closing receipt. Capture 249 remains pending. Full results and limits are in
+[observed-season-248.md](observed-season-248.md) and
+[cleanup-retry-forward.md](cleanup-retry-forward.md).
 
 ## Historical data and evaluation
 

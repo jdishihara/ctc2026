@@ -1,0 +1,16 @@
+
+==================================== ERRORS ====================================
+_____________ ERROR collecting tests/test_cleanup_retry_forward.py _____________
+ImportError while importing test module '/Users/arjunhans/Documents/ctc2026/.worktrees/cleanup-retry-forward/tests/test_cleanup_retry_forward.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/importlib/__init__.py:88: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests/test_cleanup_retry_forward.py:5: in <module>
+    from scripts.compare_cleanup_retry_forward import forward_grid, validate_forward_receipt
+E   ImportError: cannot import name 'forward_grid' from 'scripts.compare_cleanup_retry_forward' (/Users/arjunhans/Documents/ctc2026/.worktrees/cleanup-retry-forward/scripts/compare_cleanup_retry_forward.py)
+=========================== short test summary info ============================
+ERROR tests/test_cleanup_retry_forward.py
+!!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!
+1 error in 0.04s

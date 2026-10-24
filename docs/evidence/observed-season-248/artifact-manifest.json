@@ -1,0 +1,74 @@
+{
+  "created_at": 1792839135.080085,
+  "capture": 248,
+  "competition_id": "789097b1-a48b-4e68-95b4-5e15b047e149",
+  "source_bindings": {
+    "bot/practice.py": {
+      "sha256": "fda1d10d256a58e4b10fd5afde9400944a0ce150562414b014e23f130a6130b8",
+      "frozen_revision": "27ab7c4b4784c9aabc92e791b0878d387cd4cc49"
+    },
+    "scripts/compare_cleanup_retry_forward.py": {
+      "sha256": "473d9175db0c4066bdd4d31e715309e34c283293ebae4a948c1661b50927d22d",
+      "frozen_revision": "2c441aee5b5f828bc4c4e26461159a958c102067"
+    },
+    "docs/cleanup-retry-forward-plan.md": {
+      "sha256": "7e6a40a863a8dc1830f95712abe75a0f050a71c396aa67a4e2ed1476221d53a5",
+      "frozen_revision": "fd35a1efeaf63f67aec0d06552ad8201a36ef64f"
+    }
+  },
+  "files": {
+    "independent-review.tar.gz": {
+      "bytes": 1696190,
+      "sha256": "e8105c703cb088aff4d7bbc29e7c7fa2d2a4ed828be14193cf2f4fd38ff6efbd",
+      "source": "/Users/arjunhans/Documents/ctc2026/out/capture-248-independent-review-20261024.tar.gz",
+      "regular_files": 203
+    },
+    "packaging-note.json": {
+      "bytes": 322,
+      "sha256": "5337f6b81ee7dbc3d4c00db5447009b7fed875963c942b36d84cb70cf13e2ad9",
+      "source": "/Users/arjunhans/Documents/ctc2026/out/capture-248-independent-review-20261024/packaging-note.json"
+    },
+    "pre-final-receipt.json": {
+      "bytes": 303,
+      "sha256": "ba68cc12949df57037ef69ca482000720d70b46c97dd4551dd6529093400f09e",
+      "source": "/Users/arjunhans/Documents/ctc2026/out/capture-248-independent-review-20261024.pre-final.receipt.json"
+    },
+    "pre-final-review.tar.gz": {
+      "bytes": 1695992,
+      "sha256": "cb630f7dac2298d44901010c6427255b112be9cad52d4441e1866a32f35f73f9",
+      "source": "/Users/arjunhans/Documents/ctc2026/out/capture-248-independent-review-20261024.pre-final.tar.gz",
+      "regular_files": 202
+    },
+    "review-receipt.json": {
+      "bytes": 303,
+      "sha256": "ac642b4f063a04fe8d3232b13ed23e0cbd88036f68bebf9a94f1d9a3a3b7e615",
+      "source": "/Users/arjunhans/Documents/ctc2026/out/capture-248-independent-review-20261024.receipt.json"
+    },
+    "scan-004.observations.jsonl": {
+      "bytes": 262975,
+      "sha256": "0daa9141a10ba4b23df7e5f1d90995ede71f6e62f43577a63b4e7cfea177e0dc",
+      "source": "/Users/arjunhans/Documents/ctc2026/recordings/consistency-20261024/supervised-forward/scans/scan-004.observations.jsonl"
+    },
+    "serialized-ledger-through-248.jsonl": {
+      "bytes": 26231,
+      "sha256": "74cacde4507c5bf1b1d4dfcc18b11a3f2fb248a4bd70e2f819a570827aa8a755",
+      "source": "/Users/arjunhans/Documents/ctc2026/recordings/consistency-20261024/serialized-forward/attempts.jsonl"
+    },
+    "spec.json": {
+      "bytes": 1328,
+      "sha256": "28a7f299a513ee14232861516dbbb08bb57c4657b15069c8fbc9daf1afa71301",
+      "source": "/Users/arjunhans/Documents/ctc2026/recordings/consistency-20261024/supervised-forward/789097b1-a48b-4e68-95b4-5e15b047e149/attempt-01/spec.json"
+    },
+    "supervised-ledger-through-248.jsonl": {
+      "bytes": 40263,
+      "sha256": "eaeea4b1a5ecea5650216b72e53158f6087ccd0989b2fbabcffbe802f49ee7ef",
+      "source": "/Users/arjunhans/Documents/ctc2026/recordings/consistency-20261024/supervised-forward/attempts.jsonl"
+    },
+    "verification.json": {
+      "bytes": 5103,
+      "sha256": "25a5b9ed1965fe2f6c6cccf05c1c6df5575fd676f78d6495f7d7643a2467d745",
+      "source": "/Users/arjunhans/Documents/ctc2026/out/capture-248-independent-review-20261024/verification.json"
+    }
+  },
+  "scope": "Closed capture 248 only; no live activation; no unfamiliar-weather claim."
+}
