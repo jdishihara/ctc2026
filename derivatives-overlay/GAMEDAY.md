@@ -29,6 +29,9 @@ the login cookie). Nobody fills forms or clicks Buy. Exactly ONE laptop is armed
 | next news | cancel-all again, then the next event |
 
 ## The only human inputs
+- The Ready box shows a **schedule** line in amber when the exchange's fictional date is not the packet's: the overlay
+  rebased the three-day layout onto the exchange's dates (day index from the clock's elapsed seconds). Check that the
+  E-number and phase in the header match what the exchange shows; if not, patch Config `schedule` dates.
 - A target line says **needs you: …** (incomplete or insane parse): `Alt+S` / `Alt+V`, type the number, Enter, `Alt+A`.
   Lines that say **auto: waiting for …** are not requests (analysts still arriving). The other underlying keeps trading
   on its own confirmed targets meanwhile.

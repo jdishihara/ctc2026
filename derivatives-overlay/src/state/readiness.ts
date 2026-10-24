@@ -136,6 +136,7 @@ export function readiness(s: Raw, d: Derived, cfg: Config, now: number, panel: P
       : !rateOk
         ? { id: 'clock', label: 'clock', status: 'warn', detail: `${d.clockSrc} rate ${d.clockRate.toFixed(0)}/min, expected ~${rateExp} in R${ph?.event?.round}`, fix: 'Config schedule / fallbackClockRate; check the header countdown against the exchange' }
         : { id: 'clock', label: 'clock', status: 'ok', detail: `${d.clockSrc} · rate ${d.clockRate ? d.clockRate.toFixed(0) : '?'}/min · ${ph ? `${ph.phase}${ph.event ? ` E${ph.event.n}` : ''}` : 'no phase'}` });
+  if (d.scheduleNote) out.push({ id: 'schedule', label: 'schedule', status: 'warn', detail: d.scheduleNote, fix: 'check E-number and phase against the exchange; Config schedule dates if wrong' });
 
   // 7. T
   out.push(!(d.T.days > 0) || d.T.days > 30

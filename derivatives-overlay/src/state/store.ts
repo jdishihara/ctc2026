@@ -14,7 +14,7 @@ import { extractStructured, HeadlineParse, parseHeadline } from '../engine/headl
 import { Breach, capBreaches, contractsBySymbol, flattenOrders, needsFlatten, Portfolio, portfolio } from '../engine/risk';
 import type { PanelProbe } from './readiness';
 import { isOrderAction, RateMeter } from '../engine/rateLimit';
-import { EventSpec, phaseAt, PhaseInfo, realSecondsToNext } from '../engine/schedule';
+import { EventSpec, phaseAt, PhaseInfo, realSecondsToNext, rebaseSchedule } from '../engine/schedule';
 import { straddles, Structure, syntheticForwards } from '../engine/structures';
 import { planTickets, Ticket, ticketsFromArb, ticketsFromFlatten } from '../engine/tickets';
 import { dayStart, fmtDate, hmsToSec, parseNaiveSec, secOfDay, tradingDaysRemaining } from '../engine/tradingTime';
@@ -89,6 +89,8 @@ export interface ClockState {
   receivedAt: number;
   rate: number | null;
   state: string | null;
+  /** GET /competitions/current elapsed_active_seconds: real seconds the clock has run since the case started */
+  elapsedActiveSec?: number | null;
 }
 
 export interface UiState {
@@ -211,6 +213,9 @@ export interface Derived {
   clockStale: boolean;
   clockRate: number;
   replay: boolean;
+  /** the schedule in force: the packet dates, or the same layout rebased onto the exchange's dates */
+  schedule: EventSpec[];
+  scheduleNote: string | null;
   phase: PhaseInfo | null;
   realToNext: number | null;
   round: 1 | 2 | 3 | null;
@@ -263,6 +268,8 @@ export class Store {
   readonly capture = new Capture(5000);
   readonly classifier = new FrameClassifier();
   readonly rate: RateMeter;
+  /** schedule rebased onto an exchange date that is not in Config (see compute) */
+  private rebased: { today: string; schedule: EventSpec[] } | null = null;
   private listeners = new Set<() => void>();
   private recomputeTimer: ReturnType<typeof setTimeout> | null = null;
   private lastAutoJudgeAt = 0;
@@ -485,7 +492,7 @@ export class Store {
         this.s.competitionId = id;
         this.onCompetition?.(id);
       }
-      if (sec != null) this.s.clock = { fictionalSec: sec, receivedAt: now, rate, state: typeof state === 'string' ? state : null };
+      if (sec != null) this.s.clock = { fictionalSec: sec, receivedAt: now, rate, state: typeof state === 'string' ? state : null, elapsedActiveSec: pickNum(j, ['elapsed_active_seconds', 'elapsedActiveSeconds', 'elapsed_seconds']) };
       this.s.lastClockPollAt = now;
       return;
     }
@@ -1354,7 +1361,7 @@ export class Store {
       clockSrc = 'REST';
     } else if (s.domClock && now - s.domClock.t < 5000) {
       const baseDate = c.fictionalSec != null ? dayStart(c.fictionalSec) : parseNaiveSec(`${cfg.schedule[0]?.date ?? '2026-06-01'}T00:00:00`) ?? 0;
-      const ev = cfg.schedule.find((e) => e.date === fmtDate(baseDate));
+      const ev = (this.rebased?.schedule ?? cfg.schedule).find((e) => e.date === fmtDate(baseDate));
       clockRate = c.rate ?? (ev?.round === 3 ? cfg.fallbackClockRate.round3 : cfg.fallbackClockRate.rounds12);
       simNow = baseDate + s.domClock.sec + ((now - s.domClock.t) * clockRate) / 1000;
       clockSrc = 'DOM';
@@ -1362,7 +1369,24 @@ export class Store {
       simNow = c.fictionalSec;
       clockSrc = 'REST';
     }
-    const phase = simNow != null ? phaseAt(simNow, cfg.schedule, { open: cfg.session.open, close: cfg.session.close }) : null;
+    // the exchange's fictional dates need not be the packet's: rebase the layout onto them (cached per date)
+    let schedule = cfg.schedule;
+    let scheduleNote: string | null = null;
+    if (simNow != null && mode === 'derivatives') {
+      const today = fmtDate(simNow);
+      if (!cfg.schedule.some((e) => e.date === today) && today >= '2000-01-01') {
+        if (this.rebased?.today !== today) {
+          const rb = rebaseSchedule(cfg.schedule, simNow, c.elapsedActiveSec ?? null, cfg.fallbackClockRate, { open: cfg.session.open, close: cfg.session.close });
+          this.rebased = rb ? { today, schedule: rb } : null;
+        }
+        if (this.rebased) {
+          schedule = this.rebased.schedule;
+          const ds = [...new Set(schedule.map((e) => e.date))].sort();
+          scheduleNote = `exchange date ${today} is not in the packet schedule: rebased to ${ds[0]}..${ds[ds.length - 1]} (day ${ds.indexOf(today) + 1}${c.elapsedActiveSec != null ? ` from ${Math.round(c.elapsedActiveSec)} s elapsed` : ', elapsed unknown: assumed day 1'})`;
+        }
+      }
+    } else if (this.rebased) this.rebased = null;
+    const phase = simNow != null ? phaseAt(simNow, schedule, { open: cfg.session.open, close: cfg.session.close }) : null;
     const realToNext = phase ? realSecondsToNext(phase, clockRate) : null;
     const round = phase?.event?.round ?? null;
 
@@ -1384,10 +1408,13 @@ export class Store {
       if (simNow == null) return { days: 20, src: 'computed (no clock: 20d)' };
       let t = simNow;
       if (phase?.replay) {
-        const first = parseNaiveSec(`${cfg.schedule[0]?.date ?? '2026-06-01'}T00:00:00`) ?? 0;
+        const first = parseNaiveSec(`${schedule[0]?.date ?? '2026-06-01'}T00:00:00`) ?? 0;
         t = first + secOfDay(simNow);
       }
-      return { days: tradingDaysRemaining(t, cfg.session), src: phase?.replay ? 'computed (replay)' : 'computed' };
+      // the chain's expiry_fictional_time beats the packet's date in Config
+      const chainExpiry = cfg.underlyings.map((u) => s.restChain[u]?.expiry).find((e) => e && parseNaiveSec(e) != null);
+      const session = chainExpiry ? { ...cfg.session, expiry: chainExpiry } : cfg.session;
+      return { days: tradingDaysRemaining(t, session), src: phase?.replay ? 'computed (replay)' : chainExpiry ? 'computed (chain expiry)' : 'computed' };
     };
     const restT = cfg.underlyings.map((u) => restFresh(u)?.tDays ?? null).find((x) => x != null && x > 0) ?? null;
     if (cfg.T_mode === 'manual' && cfg.manualTDays != null) T = { days: cfg.manualTDays, years: cfg.manualTDays / 252, src: 'manual' };
@@ -1514,7 +1541,7 @@ export class Store {
 
     return {
       r,
-      now, mode, modeReason, simNow, clockSrc, clockStale, clockRate, replay: !!phase?.replay, phase, realToNext, round, T,
+      now, mode, modeReason, simNow, clockSrc, clockStale, clockRate, replay: !!phase?.replay, schedule, scheduleNote, phase, realToNext, round, T,
       chains, contracts, spot, marketIV: mIV, effTargets, blends, edges, synths, straddles: strads, arbs,
       portfolio: pf, breaches, flattenNow, plan, flatten, flattenCost: fl.totalSpreadCost, rate, quoteAge, tick, targetsConfirmed, confirmedUnderlyings, positionLimit, perTicketCap,
       autoArmed: cfg.auto.submit && !s.auto.paused && mode === 'derivatives',

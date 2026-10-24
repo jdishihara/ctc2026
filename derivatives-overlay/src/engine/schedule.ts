@@ -1,5 +1,5 @@
 // Event schedule and phase logic. All times are naive exchange time.
-import { dayStart, fmtDate, hmsToSec, parseNaiveSec, secOfDay } from './tradingTime';
+import { dayStart, fmtDate, hmsToSec, isWeekday, parseNaiveSec, secOfDay } from './tradingTime';
 
 export interface EventSpec {
   n: number;
@@ -95,6 +95,48 @@ export function phaseAt(nowSec: number, schedule: EventSpec[] = DEFAULT_SCHEDULE
   const next = ev[i + 1];
   if (next) return { event: e, phase: 'SNAPPED', nextPhase: 'NEWS', simSecondsToNext: hmsToSec(next.news) - tod, replay, simSecondsInPhase: tod - snap };
   return { event: e, phase: 'SNAPPED', nextPhase: isLastDay ? 'ENDED' : 'CLOSED', simSecondsToNext: close - tod, replay, simSecondsInPhase: tod - snap };
+}
+
+/**
+ * Rebase the schedule onto the exchange's own dates. The live exchange runs a case on fictional dates of its choosing
+ * (the testnet's Hurricane ran on 2026-08-03); the packet fixes only the layout: three 6.5 h trading days, ten events.
+ * `elapsedActiveSec` (GET /competitions/current `elapsed_active_seconds`) says how far into the case we are; with the
+ * schedule's own per-day real duration (fictional day length / that day's clock rate) it picks the day index, and every
+ * date is shifted so that today is that day. Returns null when today is already a scheduled date (nothing to do).
+ * Without `elapsedActiveSec` today is taken as day 1 (the case start is when a new date is first seen).
+ */
+export function rebaseSchedule(
+  schedule: EventSpec[], nowSec: number, elapsedActiveSec: number | null, rates: { rounds12: number; round3: number }, opts: PhaseOpts = {},
+): EventSpec[] | null {
+  const dates = [...new Set(schedule.map((e) => e.date))].sort();
+  const today = fmtDate(nowSec);
+  if (!dates.length || dates.includes(today)) return null;
+  const dayLen = hmsToSec(opts.close ?? '16:00') - hmsToSec(opts.open ?? '09:30');
+  const realPerDay = dates.map((d) => {
+    const round = schedule.find((e) => e.date === d)?.round ?? 1;
+    const rate = round === 3 ? rates.round3 : rates.rounds12;
+    return rate > 0 ? dayLen / rate : Infinity;
+  });
+  let idx = 0;
+  if (elapsedActiveSec != null && elapsedActiveSec > 0) {
+    let cum = 0;
+    for (idx = 0; idx < dates.length - 1; idx++) {
+      cum += realPerDay[idx];
+      if (elapsedActiveSec < cum) break;
+    }
+  }
+  // trading days around today (weekends skipped; the exchange's calendar is unknown, so this is re-done if a later date is off)
+  const step = (sec: number, dir: 1 | -1): number => {
+    let d = sec + dir * 86400;
+    while (!isWeekday(d)) d += dir * 86400;
+    return d;
+  };
+  const todaySec = dayStart(nowSec);
+  const newDates: string[] = new Array(dates.length);
+  newDates[idx] = today;
+  for (let i = idx - 1, d = todaySec; i >= 0; i--) { d = step(d, -1); newDates[i] = fmtDate(d); }
+  for (let i = idx + 1, d = todaySec; i < dates.length; i++) { d = step(d, 1); newDates[i] = fmtDate(d); }
+  return schedule.map((e) => ({ ...e, date: newDates[dates.indexOf(e.date)] ?? e.date }));
 }
 
 export function realSecondsToNext(info: PhaseInfo, clockRate: number): number | null {

@@ -249,3 +249,22 @@ describe('exchange position limit', () => {
     expect(st.d.positionLimit).toBe(cloneDefaults().thresholds.positionLimit);
   });
 });
+
+describe('exchange fictional dates', () => {
+  it('a clock date outside the packet schedule rebases the schedule instead of reporting the case closed or ended', () => {
+    let now = 100_000;
+    const st = new Store({ ...cloneDefaults(), mode: 'derivatives' }, () => now);
+    st.handleHttp('GET', '/api/v1/competitions/current', { competition_id: 'c1', name: 'Derivatives', state: 'running', fictional_time: '2026-08-04T10:00:00', elapsed_active_seconds: 500, clock_rate: 52 });
+    st.changed(true);
+    expect(st.d.phase?.event?.n).toBe(4);
+    expect(st.d.phase?.phase).toBe('NEWS');
+    expect(st.d.replay).toBe(false);
+    expect(st.d.scheduleNote).toMatch(/rebased to 2026-08-03\.\.2026-08-05 \(day 2 from 500 s elapsed\)/);
+    // the packet dates still work unchanged
+    now += 1000;
+    st.handleHttp('GET', '/api/v1/competitions/current', { competition_id: 'c1', name: 'Derivatives', state: 'running', fictional_time: '2026-06-02T10:00:00', elapsed_active_seconds: 500, clock_rate: 52 });
+    st.changed(true);
+    expect(st.d.phase?.event?.n).toBe(4);
+    expect(st.d.scheduleNote).toBeNull();
+  });
+});
