@@ -97,14 +97,18 @@ export class Autopilot {
     if (store.d.quoteAge == null || store.d.quoteAge > this.cfg.thresholds.staleQuoteSec) return { action: 'idle', detail: 'quotes stale' };
     if (mode === 'edge' && !store.d.targetsConfirmed) return { action: 'idle', detail: 'targets not confirmed' };
 
-    let t = store.pickNext(mode, { quiet: true, exclude: (x) => this.excluded(x) || !x.withinRateBudget });
+    // keep `flattenReserve` orders of the rolling minute for closing tickets: an edge ticket that leaves no budget to
+    // flatten after the snap is a position carried into the next event
+    const edgeCap = this.cfg.auto.submitRateCap - (this.cfg.auto.flattenReserve ?? 0);
+    const edgeBlocked = (x: Ticket) => x.source !== 'flatten' && rate >= edgeCap;
+    let t = store.pickNext(mode, { quiet: true, exclude: (x) => this.excluded(x) || !x.withinRateBudget || edgeBlocked(x) });
     // during an event with a risk cap breached (a book carried in from the last event), nothing clears the edge filter
     // because every ticket that adds risk is red: work the risk-reducing flatten tickets instead of sitting idle
     if (!t && mode === 'edge' && store.d.breaches.length) {
       t = store.pickNext('flatten', { quiet: true, exclude: (x) => this.excluded(x) || !x.withinRateBudget });
       if (t) t = { ...t, reason: `${t.reason} · cap breached: reducing risk during the event` };
     }
-    if (!t) return { action: 'idle', detail: mode === 'edge' ? 'no ticket clears the edge threshold' : 'flat' };
+    if (!t) return { action: 'idle', detail: mode === 'edge' ? (rate >= edgeCap ? `edge budget used (${rate}/${edgeCap}; ${this.cfg.auto.flattenReserve} kept for the flatten)` : 'no ticket clears the edge threshold') : 'flat' };
     const c = store.d.contracts[t.symbol];
     const fair = t.source === 'edge' ? store.d.edges[t.underlying]?.find((r) => r.contract.symbol === t.symbol)?.fair ?? null : null;
     if (!ticketStillValid(t, c, fair, 0)) {
