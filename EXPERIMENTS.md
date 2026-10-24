@@ -57,6 +57,12 @@ orders, 0 incomplete, 0 errors). Seed 7 is an adverse scenario, not a bug: Birdo
 into race 8 and the desk was short Birdo's series contract at about 40 when Birdo won (a coin flip that settled at 100);
 the three biggest losers are the same contracts in all three seed-7 runs. The margin helped on every seed tried.
 
+### M4 Mario position cap for model edges (REJECTED): --edge-pos-frac 0.5 (model-edge positions at most half the exchange
+limit, arbs unchanged), k=1 on all runs: seed 3 **84,080 -> 46,789**; strong-CPU seed 5 **43,503 -> 37,172**; seed 7
+**-11,502 -> -27,363**. Worse on 3/3 seeds, so the default stays 1.0 (flag kept). Single mock runs are noisy (the
+house's path depends on our fills), but the direction was consistent and the mock's house is the counterparty we can
+measure against.
+
 ### M3 Mario symbol parser (ACCEPTED): 8/37 plausible codes were UNMAPPED (S1_1, S1_2, S1_P1, S1_P2, S1_T2, S1_TOP,
 S1_RUNNERUP, SWIN2_PEACH) and "Second-highest score" read as #1. Fixed with a symbol-only pass; 48-case battery in
 tests/test_mario_contracts.py; 68 Mario tests pass.
