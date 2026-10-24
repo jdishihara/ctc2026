@@ -5,14 +5,23 @@ around **08:00 EDT / 12:00 UTC on October 24**. Continue evaluating and fixing
 problems between bounded batches; a batch stop does not finish the overnight
 goal. Preserve every trial, loss, and cleanup cost.
 
-## Current batch
+## Batch 01 stopped; shared-account conflict under investigation
 
 - Version: `59603dd`; strategy parameters frozen.
 - Output: `recordings/consistency-20261024/batch-01/`.
 - Bounds: 10% position limits, three complete seasons, $250 cumulative net-loss
   trigger, deadline 06:44:57 UTC. The trigger is not a guaranteed maximum loss.
-- Existing recorder and trader are already running. Read their process metadata
-  and current status before starting anything; never duplicate the trading loop.
+- First season completed at **+$141.16**. The second was interrupted after an
+  external 200-share PORT sale appeared. Our journal's first order was a buy of
+  180 shares, reducing that exposure to the intended 20-share limit. This was
+  not a reset of our position limits.
+- The trading process exited after SIGINT. Cleanup briefly observed a flat
+  account, but another unowned order reopened PORT during the final receipt.
+  The second trial is mixed activity and cannot establish our strategy's P&L.
+- The read-only recorder and local status archiver remain running. No local
+  trading Python process remained in the process inventory at 05:00 UTC.
+  Resolve the shared-account conflict before another live batch. Do not cancel
+  unidentified orders or flatten another trader's positions.
 - A local-only status archiver records changed batch status and final receipts to
   `recordings/consistency-20261024/account-observations.jsonl`. It began at
   04:36:29 UTC and exits at 12:00 UTC. Earlier P&L marks are only sampled in the
@@ -20,12 +29,13 @@ goal. Preserve every trial, loss, and cleanup cost.
 - Reviewed execution fixes: snapshot/reconnect handling `c583144` and per-leg
   basket retry clocks `b6d1111`, on `arjun/snapshot-checkpoint`, isolated in
   `.worktrees/snapshot-checkpoint`; all 271 tests passed and both were independently
-  reviewed. Neither change is in the running batch.
+  reviewed. Neither change was in batch 01.
 
 ## Next decisions
 
-1. Finish or diagnose batch 01. Verify every settlement receipt, any stop reason,
-   and account reconciliation. Open-position marks are not completed results.
+1. Diagnose the shared-account conflict and strengthen detection of unknown
+   orders that fill between polls. Preserve the interrupted trial and its raw
+   receipts. Open-position marks are not completed results.
 2. Integrate the reviewed execution change between batches. Keep model and
    strategy parameters fixed for its initial live evaluation.
 3. Start each later batch in a new output directory after checking account state,

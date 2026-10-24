@@ -1,0 +1,268 @@
+{
+  "competition_id": "6650d983-93c3-45d2-96dd-15209dcd8320",
+  "season": 241,
+  "limits_fraction": 0.1,
+  "live_settlement_pnl": 141.16000000000048,
+  "live_order_count": 33,
+  "live_attempt_count": 34,
+  "lowest_observed_cumulative_pnl": -17.59999999999991,
+  "news_count": 865,
+  "news_differences": [
+    {
+      "seq": 17,
+      "type": "advisory",
+      "fields": [
+        "cone",
+        "headline",
+        "hurricane_conditions"
+      ]
+    },
+    {
+      "seq": 51,
+      "type": "advisory",
+      "fields": [
+        "cone",
+        "headline",
+        "hurricane_conditions"
+      ]
+    },
+    {
+      "seq": 88,
+      "type": "advisory",
+      "fields": [
+        "cone",
+        "headline",
+        "hurricane_conditions"
+      ]
+    },
+    {
+      "seq": 124,
+      "type": "advisory",
+      "fields": [
+        "cone"
+      ]
+    },
+    {
+      "seq": 159,
+      "type": "advisory",
+      "fields": [
+        "cone"
+      ]
+    },
+    {
+      "seq": 195,
+      "type": "advisory",
+      "fields": [
+        "cone",
+        "headline",
+        "hurricane_conditions"
+      ]
+    },
+    {
+      "seq": 231,
+      "type": "advisory",
+      "fields": [
+        "cone"
+      ]
+    },
+    {
+      "seq": 265,
+      "type": "advisory",
+      "fields": [
+        "cone"
+      ]
+    },
+    {
+      "seq": 306,
+      "type": "advisory",
+      "fields": [
+        "cone",
+        "headline",
+        "hurricane_conditions"
+      ]
+    },
+    {
+      "seq": 343,
+      "type": "advisory",
+      "fields": [
+        "cone",
+        "headline",
+        "hurricane_conditions"
+      ]
+    },
+    {
+      "seq": 379,
+      "type": "advisory",
+      "fields": [
+        "cone"
+      ]
+    },
+    {
+      "seq": 415,
+      "type": "advisory",
+      "fields": [
+        "cone"
+      ]
+    },
+    {
+      "seq": 451,
+      "type": "advisory",
+      "fields": [
+        "cone"
+      ]
+    },
+    {
+      "seq": 487,
+      "type": "advisory",
+      "fields": [
+        "cone"
+      ]
+    },
+    {
+      "seq": 522,
+      "type": "advisory",
+      "fields": [
+        "cone"
+      ]
+    },
+    {
+      "seq": 559,
+      "type": "advisory",
+      "fields": [
+        "cone"
+      ]
+    },
+    {
+      "seq": 599,
+      "type": "advisory",
+      "fields": [
+        "cone"
+      ]
+    },
+    {
+      "seq": 635,
+      "type": "advisory",
+      "fields": [
+        "cone"
+      ]
+    },
+    {
+      "seq": 671,
+      "type": "advisory",
+      "fields": [
+        "cone",
+        "hurricane_conditions"
+      ]
+    },
+    {
+      "seq": 706,
+      "type": "advisory",
+      "fields": [
+        "cone",
+        "hurricane_conditions"
+      ]
+    },
+    {
+      "seq": 741,
+      "type": "advisory",
+      "fields": [
+        "cone"
+      ]
+    },
+    {
+      "seq": 775,
+      "type": "advisory",
+      "fields": [
+        "cone"
+      ]
+    },
+    {
+      "seq": 809,
+      "type": "advisory",
+      "fields": [
+        "cone"
+      ]
+    },
+    {
+      "seq": 843,
+      "type": "advisory",
+      "fields": [
+        "cone"
+      ]
+    }
+  ],
+  "max_settlement_difference": 0,
+  "replays": [
+    {
+      "news": "published",
+      "basket_enabled": true,
+      "pnl": 1628.9400020072658,
+      "history_gate": false,
+      "fills": 128,
+      "round_pnl": {
+        "1": 681.6124972568837,
+        "2": 1336.6975820336456,
+        "3": 1628.9400020072658
+      },
+      "basket_cycles": 11,
+      "rejected": 0
+    },
+    {
+      "news": "published",
+      "basket_enabled": false,
+      "pnl": 1330.7332585119125,
+      "history_gate": false,
+      "fills": 57,
+      "round_pnl": {
+        "1": 481.9744306018788,
+        "2": 1076.3312589885982,
+        "3": 1330.7332585119125
+      },
+      "basket_cycles": 0,
+      "rejected": 0
+    },
+    {
+      "news": "captured",
+      "basket_enabled": true,
+      "pnl": 1665.726751839544,
+      "history_gate": false,
+      "fills": 139,
+      "round_pnl": {
+        "1": 648.1513159382021,
+        "2": 1314.8117274434499,
+        "3": 1665.726751839544
+      },
+      "basket_cycles": 12,
+      "rejected": 0
+    },
+    {
+      "news": "captured",
+      "basket_enabled": false,
+      "pnl": 1327.2514897003296,
+      "history_gate": false,
+      "fills": 61,
+      "round_pnl": {
+        "1": 448.5132492831981,
+        "2": 1014.1768857545412,
+        "3": 1327.2514897003296
+      },
+      "basket_cycles": 0,
+      "rejected": 0
+    },
+    {
+      "news": "captured",
+      "basket_enabled": false,
+      "pnl": 1327.2514897003296,
+      "history_gate": true,
+      "fills": 61,
+      "round_pnl": {
+        "1": 448.5132492831981,
+        "2": 1014.1768857545412,
+        "3": 1327.2514897003296
+      },
+      "basket_cycles": 0,
+      "rejected": 0
+    }
+  ],
+  "interpretation": "All replays use historical market prices, static ladder liquidity, and 0.25-second order latency. They do not recreate live quotes, queue position, HTTP delays, or periodic snapshot processing. Basket-disabled runs are diagnostic ablations, not a strategy selection."
+}

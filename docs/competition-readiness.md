@@ -1,14 +1,14 @@
 # Competition readiness — 2026-10-24
 
-Status recorded at 04:44 UTC (00:44 EDT). Live results below are provisional
-until official settlement receipts are recorded.
+Status recorded at 05:03 UTC (01:03 EDT). One complete small-size live season
+has a verified settlement receipt. The next trial contains mixed activity.
 
 ## What the evidence supports
 
 The historical strategy is profitable on average in the local simulator, but
 losing seasons remain. The earlier live loss exposed execution defects; those
-defects have been fixed and regression-tested. Complete live-season profitability
-has not yet been established. Neither the historical average nor the test count
+defects have been fixed and regression-tested. One completed live season was
+positive; consistent live profitability has not been established. Neither the historical average nor the test count
 establishes a probability of winning the competition.
 
 ## Historical data and evaluation
@@ -50,20 +50,22 @@ not a counterfactual profit calculation.
 
 ## Controlled live batch
 
-Batch 01 runs the frozen version `59603dd` with 10% of normal per-symbol limits,
+Batch 01 ran the frozen version `59603dd` with 10% of normal per-symbol limits,
 a three-complete-season target, a $250 cumulative net-loss trigger, and a
 three-hour deadline ending 06:44:57 UTC. The trigger is not a guaranteed maximum
 loss because in-flight fills and cleanup may add costs.
 
 | Trial | Status | Result |
 | --- | --- | --- |
-| 1 | Round 3 in progress | No official settlement yet |
-| 2 | Not started | — |
+| 1 | Completed; official settlement verified | +$141.16 |
+| 2 | Interrupted; another trader's orders detected | Mixed account activity; not attributable to this strategy |
 | 3 | Not started | — |
 
 Live status is in `recordings/consistency-20261024/batch-01/status.json`.
 `actions.jsonl` records submissions and settlement receipts; `final-receipt.json`
-is written when the batch exits. Inter-round marked profit is not a completed
+was written when the batch exited. Its clock identity check passed, but the
+receipt contains reopened exposure and an unidentified order; it does not
+establish successful cleanup or exclusive strategy P&L. Inter-round marked profit is not a completed
 season result. No future outcomes from the active published season are used to
 tune parameters or guide orders.
 
@@ -85,11 +87,15 @@ tune parameters or guide orders.
 
 ## Remaining evaluation
 
-Complete and retain every result from batch 01, including losses or failed
-trials. Reconcile settlement and cleanup before another batch. Evaluate execution
+Retain every result from batch 01, including its mixed second trial. Detect
+unknown filled orders as well as open orders, and resolve the account conflict
+before another live batch. Evaluate execution
 changes in a later run with their own version and bounds. Three positive
 small-size seasons would be encouraging; they would not establish consistent
 profitability, full-size performance, or performance against unseen competition
 seasons and other teams.
 
 Operational details: [controlled-practice.md](controlled-practice.md).
+
+Completed-season diagnostic: [season-241-diagnostic.md](season-241-diagnostic.md).
+Shared-account incident: [shared-account-incident.md](shared-account-incident.md).
