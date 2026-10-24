@@ -1,0 +1,17 @@
+{"run": 1, "capture": 246, "setting": [0.0, 1.0, false], "status": "ok", "comparison": "supervised_after_verified_baseline"}
+{"run": 2, "capture": 246, "setting": [0.0, 1.0, true], "status": "ok", "comparison": "supervised_after_verified_baseline"}
+{"run": 3, "capture": 246, "setting": [0.0, 0.5, false], "status": "ok", "comparison": "supervised_after_verified_baseline"}
+{"run": 4, "capture": 246, "setting": [0.0, 0.5, true], "status": "ok", "comparison": "supervised_after_verified_baseline"}
+{"run": 5, "capture": 246, "setting": [0.05, 1.0, false], "status": "ok", "comparison": "supervised_after_verified_baseline"}
+{"run": 6, "capture": 246, "setting": [0.05, 1.0, true], "status": "ok", "comparison": "supervised_after_verified_baseline"}
+{"run": 7, "capture": 246, "setting": [0.05, 0.5, false], "status": "ok", "comparison": "supervised_after_verified_baseline"}
+{"run": 8, "capture": 246, "setting": [0.05, 0.5, true], "status": "ok", "comparison": "supervised_after_verified_baseline"}
+{"run": 9, "capture": 246, "setting": [0.25, 1.0, false], "status": "ok", "comparison": "supervised_after_verified_baseline"}
+{"run": 10, "capture": 246, "setting": [0.25, 1.0, true], "status": "ok", "comparison": "supervised_after_verified_baseline"}
+{"run": 11, "capture": 246, "setting": [0.25, 0.5, false], "status": "ok", "comparison": "supervised_after_verified_baseline"}
+{"run": 12, "capture": 246, "setting": [0.25, 0.5, true], "status": "ok", "comparison": "supervised_after_verified_baseline"}
+{"run": 13, "capture": 246, "setting": [1.0, 1.0, false], "status": "ok", "comparison": "supervised_after_verified_baseline"}
+{"run": 14, "capture": 246, "setting": [1.0, 1.0, true], "status": "ok", "comparison": "supervised_after_verified_baseline"}
+{"run": 15, "capture": 246, "setting": [1.0, 0.5, false], "status": "ok", "comparison": "supervised_after_verified_baseline"}
+{"run": 16, "capture": 246, "setting": [1.0, 0.5, true], "status": "ok", "comparison": "supervised_after_verified_baseline"}
+{"runs": 16, "errors": 0, "mismatches": 0, "changed_sources": [], "finished_at": 1792832482.266651, "results_sha256": "60960b091422ac4cbfcc4e9c88f60d561e6ecf095a215405de11818436e591cb"}

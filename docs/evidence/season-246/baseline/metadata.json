@@ -1,0 +1,430 @@
+{
+  "phase": "baseline",
+  "source_revision": "c5c35a30e0c5f521f12324eec854f405b681b8c0",
+  "source_sha256": {
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/supervised-forward/bot/control.py": "b33ba64f8110eb59ce4a16e8cd987be8365bf0c3db98810f06c58333d4104401",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/supervised-forward/bot/http_transport.py": "5cc2dd41e418b794eac9dde2548fd40abcef605af303057ff633bd11d8b92162",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/supervised-forward/bot/live.py": "bdfe8ecd489cdcd42d7e6687cbb34511d75f6503c55ad195bc22b0451f1be72e",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/supervised-forward/ctc/__init__.py": "e178e73a3b0452a098d1cfa7f909ad65a3463457389018ab626ac281e1b634fe",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/supervised-forward/ctc/accounting.py": "b9cddb93959b277fe9ab7c6089e84dee2c092a2d049c466212878a5531ff0f99",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/supervised-forward/ctc/analog.py": "c606eefeab7cd0b5015b7b46cd831496d995f4b50030784ff2dd8171636938b2",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/supervised-forward/ctc/analog_library.npz": "22694387c3b612f5c20853feb9143e1bf8b8f5722a845da8ed584ab1b30bdf09",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/supervised-forward/ctc/basket.py": "ad08208095eb32a51fe19625b0e0929060a35bc4846ff4f8843e316f87d9a522",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/supervised-forward/ctc/damage_params.json": "c274463749d70b6ae85b6981fb029423c76e6fe5db0224e0d1aec83a70d22415",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/supervised-forward/ctc/history.py": "c9a93c117e4df869a4e8a34b03f0b656ada231bdf41864778d536ce129b91521",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/supervised-forward/ctc/ladder.json": "b70e7a8c5672dc6e4955c39fac62a70709ba29b39f00eead9add3cb4feeba5a4",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/supervised-forward/ctc/ladder.py": "da0c82abb297719dc1ea6d244558703072c881d3bd3b3fa43dc0885ae07f1f25",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/supervised-forward/ctc/price_signal.json": "3d421c258d939b6a0adc5db9f764b416c15be47cc684accc2187e074f11750f8",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/supervised-forward/ctc/price_signal.py": "aeb4b06e402231ac82e3b34ea7d1244346ee9b029036c4ffeb926112513b1fa4",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/supervised-forward/ctc/sim.py": "91da5850c313b94835364dabd7622fb8282382a710cf324c99471d9c29021273",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/supervised-forward/ctc/storm_sample.npz": "76da0f456aaadb8baee99920619db79c6f16e928dfab82ad33aade297a4b7c0f",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/supervised-forward/ctc/strategies.py": "4c667bebeb84dfe11883205656702bb3f66545661f01a0685c1e4c24f6b2680c",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/supervised-forward/ctc/valuation.py": "e19ceef5dc38154d1889065c4a85aae0d99b159267a0503a4c4fc3c7054292cd",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/supervised-forward/ctc/valuation_params.json": "06439094fc54318a8bfd1854fc2765d6ef542d1acad23de1836a4db47bf3b80b",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/supervised-forward/ctc/wind.py": "2e91425031bae6c2d60bb92a2e529cfc1222778820f126a29be836a4ec026f84",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/supervised-forward/data/case.json": "bcd0eb79c5a89b6625c17f2c233a686a04fafc75093e8a57d3c90f3b09972839",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/supervised-forward/docs/serialized-forward-plan.md": "2b9e7bafae7437f2c23e5c510d7cf7aad343df6d57e69331658f8d71562816ec",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/supervised-forward/docs/serialized-replay-plan.md": "8fdf3271d88e02ab132d172d0aaee9034e267a7d51322a7949e0f45182254776",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/supervised-forward/scripts/evaluate_observed_season.py": "f7f9113f5dba6e81bba35e5aed50f72b0df4d2853c4cae4d9565407846861576",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/supervised-forward/scripts/experiment_execution_costs.py": "f947346da806425aa4c5a810ffa9f775f3c13a4bd33fe5fdbe4cf97d45b009d1",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/supervised-forward/scripts/observe_market_seasons.py": "7290d9fa0fb902a1904f49a7927779517e6edcc77aa4f0ded9b57858d9627e96",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/supervised-forward/scripts/replay_captured_market.py": "10741686ba5ebbff2758bc488fb2a34ef61183b2d57ec3d91d895b1981784ef9",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/supervised-forward/scripts/replay_serialized_client.py": "2b976be6688b8df93f8508b38bbf02510d233533ece6a7d32d0bc1dfb6bcdfb3",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/supervised-forward/bot/practice.py": "37432996c01466ceb8c9394ea49908d0ffc0716200ad730f5395d43cc5cb9353",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/supervised-forward/scripts/replay_practice_supervisor.py": "77c9195a286a4ffb1395539879b3f1ee81b20ce8badd3edd25442787a97acd27",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/supervised-forward/scripts/compare_practice_supervisor.py": "afff0aa65676b6cd0294873498aadfb84ea6d04fa9b6eda6291e2405dc03dcc3",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/supervised-forward/docs/supervised-replay-plan.md": "06fda0af47b149a57e14c00ef13fe9636325ae84d0a4d52787b0fbeca2aa4a3e",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/supervised-forward/docs/practice-round-transition-plan.md": "9d249097e928ff8586f61d31df31790cd7d19716877101d6fed2a7b8941f6709",
+    "/Users/arjunhans/Documents/ctc2026/recordings/consistency-20261024/supervised-forward/83fc18b9-e9fd-4634-bc8e-c7a1a77768a7/attempt-01/spec.json": "3c0fbf1cb944baca147d4d31c28cb0c4590f040c2b78905b99a82b610408db38",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/supervised-forward/docs/supervised-forward-plan.md": "0c0551dea53bfbc9e52efcaedb4d2a88f9472957b30a904d4b415d004ef41c1e",
+    "/Users/arjunhans/Documents/ctc2026/recordings/consistency-20261024/supervised-forward/scans/scan-002.observations.jsonl": "ce355c7f99d661ad66e03d3fc29de415f84f44841547b29e9a58ffd1c9902485",
+    "/Users/arjunhans/Documents/ctc2026/recordings/consistency-20261024/supervised-forward/83fc18b9-e9fd-4634-bc8e-c7a1a77768a7/attempt-01/feed.jsonl": "f5215abcb9756823c4916c060127d2bf7e520a4dad5fe88662a89647120f9ae6",
+    "/Users/arjunhans/Documents/ctc2026/recordings/consistency-20261024/serialized-forward/83fc18b9-e9fd-4634-bc8e-c7a1a77768a7/results.jsonl": "46676e0a872eedf5b38d0bcae14f9a1ad9ee1ee4025cd9b5a7a210b1802fde82",
+    "/Users/arjunhans/Documents/ctc2026/recordings/consistency-20261024/serialized-forward/83fc18b9-e9fd-4634-bc8e-c7a1a77768a7/metadata.json": "d28d46d9f2e55d0b23df7c0115a8261b86390e0c58934e6c2427fe6b60b0c86a",
+    "/Users/arjunhans/Documents/ctc2026/recordings/consistency-20261024/serialized-forward/83fc18b9-e9fd-4634-bc8e-c7a1a77768a7/summary.json": "1b635af6174109b61b0a6ecca56985700b4fb129e41d65c358c9d490769ace13"
+  },
+  "spec": {
+    "reference_root": "/Users/arjunhans/Documents/ctc2026/.worktrees/serialized-forward",
+    "reference_revision": "505a5ad2d5a6f81e7c711cb550871ce7aa7f3734",
+    "captures": [
+      {
+        "capture": 246,
+        "mode": "observed",
+        "competition_id": "83fc18b9-e9fd-4634-bc8e-c7a1a77768a7",
+        "observations": "/Users/arjunhans/Documents/ctc2026/recordings/consistency-20261024/supervised-forward/scans/scan-002.observations.jsonl",
+        "observations_bytes": 181390,
+        "observations_sha256": "ce355c7f99d661ad66e03d3fc29de415f84f44841547b29e9a58ffd1c9902485",
+        "feed": "/Users/arjunhans/Documents/ctc2026/recordings/consistency-20261024/supervised-forward/83fc18b9-e9fd-4634-bc8e-c7a1a77768a7/attempt-01/feed.jsonl",
+        "feed_bytes": 42629330,
+        "feed_sha256": "f5215abcb9756823c4916c060127d2bf7e520a4dad5fe88662a89647120f9ae6",
+        "archive_results": "/Users/arjunhans/Documents/ctc2026/recordings/consistency-20261024/serialized-forward/83fc18b9-e9fd-4634-bc8e-c7a1a77768a7/results.jsonl",
+        "archive_results_sha256": "46676e0a872eedf5b38d0bcae14f9a1ad9ee1ee4025cd9b5a7a210b1802fde82",
+        "archive_metadata_sha256": "d28d46d9f2e55d0b23df7c0115a8261b86390e0c58934e6c2427fe6b60b0c86a",
+        "archive_summary_sha256": "1b635af6174109b61b0a6ecca56985700b4fb129e41d65c358c9d490769ace13"
+      }
+    ]
+  },
+  "grid": [
+    [
+      0.0,
+      1.0,
+      false
+    ],
+    [
+      0.0,
+      1.0,
+      true
+    ],
+    [
+      0.0,
+      0.5,
+      false
+    ],
+    [
+      0.0,
+      0.5,
+      true
+    ],
+    [
+      0.05,
+      1.0,
+      false
+    ],
+    [
+      0.05,
+      1.0,
+      true
+    ],
+    [
+      0.05,
+      0.5,
+      false
+    ],
+    [
+      0.05,
+      0.5,
+      true
+    ],
+    [
+      0.25,
+      1.0,
+      false
+    ],
+    [
+      0.25,
+      1.0,
+      true
+    ],
+    [
+      0.25,
+      0.5,
+      false
+    ],
+    [
+      0.25,
+      0.5,
+      true
+    ],
+    [
+      1.0,
+      1.0,
+      false
+    ],
+    [
+      1.0,
+      1.0,
+      true
+    ],
+    [
+      1.0,
+      0.5,
+      false
+    ],
+    [
+      1.0,
+      0.5,
+      true
+    ]
+  ],
+  "fraction": 0.1,
+  "loss_trigger": 250.0,
+  "prior_pnl": 0.0,
+  "captures": [
+    {
+      "capture": 246,
+      "competition_id": "83fc18b9-e9fd-4634-bc8e-c7a1a77768a7",
+      "year": "1781",
+      "coverage": {
+        "news_count": 863,
+        "advertised_last_seq": 862,
+        "quote_count": 21790,
+        "quote_count_by_round": {
+          "1": {
+            "PORT": 807,
+            "ISLE": 652,
+            "AQUA": 670,
+            "GRID": 844,
+            "FERRY": 904,
+            "RECON": 491,
+            "MAT": 372,
+            "GEN": 667,
+            "HAVEN": 839,
+            "REIN": 368,
+            "ARCH": 595,
+            "REBLD": 428
+          },
+          "2": {
+            "PORT": 637,
+            "ISLE": 426,
+            "AQUA": 546,
+            "GRID": 627,
+            "FERRY": 1022,
+            "RECON": 390,
+            "MAT": 351,
+            "GEN": 513,
+            "HAVEN": 868,
+            "REIN": 223,
+            "ARCH": 450,
+            "REBLD": 321
+          },
+          "3": {
+            "PORT": 1126,
+            "ISLE": 534,
+            "AQUA": 528,
+            "GRID": 600,
+            "FERRY": 742,
+            "RECON": 612,
+            "MAT": 538,
+            "GEN": 468,
+            "HAVEN": 1025,
+            "REIN": 298,
+            "ARCH": 792,
+            "REBLD": 472
+          }
+        },
+        "observed_quote_gaps": {
+          "1": {
+            "PORT": {
+              "max_seconds": 121.49788069725037,
+              "over_five_seconds": 27
+            },
+            "ISLE": {
+              "max_seconds": 121.27905488014221,
+              "over_five_seconds": 21
+            },
+            "AQUA": {
+              "max_seconds": 121.27892875671387,
+              "over_five_seconds": 28
+            },
+            "GRID": {
+              "max_seconds": 121.27909994125366,
+              "over_five_seconds": 18
+            },
+            "FERRY": {
+              "max_seconds": 121.27908086776733,
+              "over_five_seconds": 18
+            },
+            "RECON": {
+              "max_seconds": 121.49758696556091,
+              "over_five_seconds": 28
+            },
+            "MAT": {
+              "max_seconds": 121.49776196479797,
+              "over_five_seconds": 41
+            },
+            "GEN": {
+              "max_seconds": 121.49796390533447,
+              "over_five_seconds": 23
+            },
+            "HAVEN": {
+              "max_seconds": 121.49784874916077,
+              "over_five_seconds": 18
+            },
+            "REIN": {
+              "max_seconds": 121.49793696403503,
+              "over_five_seconds": 39
+            },
+            "ARCH": {
+              "max_seconds": 121.4978129863739,
+              "over_five_seconds": 26
+            },
+            "REBLD": {
+              "max_seconds": 121.4979100227356,
+              "over_five_seconds": 33
+            }
+          },
+          "2": {
+            "PORT": {
+              "max_seconds": 30.074100971221924,
+              "over_five_seconds": 24
+            },
+            "ISLE": {
+              "max_seconds": 32.27783703804016,
+              "over_five_seconds": 44
+            },
+            "AQUA": {
+              "max_seconds": 33.41796875,
+              "over_five_seconds": 28
+            },
+            "GRID": {
+              "max_seconds": 29.919962167739868,
+              "over_five_seconds": 25
+            },
+            "FERRY": {
+              "max_seconds": 28.659909963607788,
+              "over_five_seconds": 17
+            },
+            "RECON": {
+              "max_seconds": 28.51641297340393,
+              "over_five_seconds": 34
+            },
+            "MAT": {
+              "max_seconds": 32.5145308971405,
+              "over_five_seconds": 39
+            },
+            "GEN": {
+              "max_seconds": 64.73593997955322,
+              "over_five_seconds": 28
+            },
+            "HAVEN": {
+              "max_seconds": 21.930956840515137,
+              "over_five_seconds": 22
+            },
+            "REIN": {
+              "max_seconds": 41.45770287513733,
+              "over_five_seconds": 51
+            },
+            "ARCH": {
+              "max_seconds": 39.72229790687561,
+              "over_five_seconds": 33
+            },
+            "REBLD": {
+              "max_seconds": 41.7664098739624,
+              "over_five_seconds": 36
+            }
+          },
+          "3": {
+            "PORT": {
+              "max_seconds": 40.693734884262085,
+              "over_five_seconds": 9
+            },
+            "ISLE": {
+              "max_seconds": 24.063810110092163,
+              "over_five_seconds": 36
+            },
+            "AQUA": {
+              "max_seconds": 51.749512910842896,
+              "over_five_seconds": 30
+            },
+            "GRID": {
+              "max_seconds": 31.172417163848877,
+              "over_five_seconds": 25
+            },
+            "FERRY": {
+              "max_seconds": 23.730626106262207,
+              "over_five_seconds": 18
+            },
+            "RECON": {
+              "max_seconds": 25.353317737579346,
+              "over_five_seconds": 27
+            },
+            "MAT": {
+              "max_seconds": 33.9110541343689,
+              "over_five_seconds": 29
+            },
+            "GEN": {
+              "max_seconds": 42.722137212753296,
+              "over_five_seconds": 30
+            },
+            "HAVEN": {
+              "max_seconds": 29.699361085891724,
+              "over_five_seconds": 13
+            },
+            "REIN": {
+              "max_seconds": 28.379119873046875,
+              "over_five_seconds": 44
+            },
+            "ARCH": {
+              "max_seconds": 27.631091117858887,
+              "over_five_seconds": 18
+            },
+            "REBLD": {
+              "max_seconds": 25.67409110069275,
+              "over_five_seconds": 28
+            }
+          }
+        },
+        "round_windows": {
+          "1": {
+            "first_at": 1792829370.028088,
+            "closed_at": 1792830273.329535,
+            "close_source": "news_snapshot"
+          },
+          "2": {
+            "first_at": 1792830451.758143,
+            "closed_at": 1792831234.2899232,
+            "close_source": "news_snapshot"
+          },
+          "3": {
+            "first_at": 1792831411.191596,
+            "closed_at": 1792832193.6772559,
+            "close_source": "news_snapshot"
+          }
+        },
+        "unusable_quotes": 44,
+        "recorded_disconnect_frames": 0,
+        "disconnect_count_known": false,
+        "subscription_acknowledgements": [],
+        "disconnect_note": "The recorder may log disconnects only to its text log. Subscription acknowledgements may indicate reconnections but do not determine disconnect onset or reconstruct missed frames. Only explicit disconnect frames are applied to the replay.",
+        "quote_path_completeness_proven": false,
+        "gap_note": "Receive-time gaps include delays in observing round opens/closes; they do not prove missing server events."
+      },
+      "receipt_sha256": "dd8bb77cdf53d26457baa75631d634de42339ac2f06329e73bfdfd6b76e0d8e3",
+      "frames_sha256": "94e9b08a0044b4392b1cfccee8d225133c7e69cc38e0fa11f6498eb19e4b643e",
+      "archive_sha256": "46676e0a872eedf5b38d0bcae14f9a1ad9ee1ee4025cd9b5a7a210b1802fde82",
+      "receipt_at": 1792832203.4848561,
+      "first_at": 1792829370.028088,
+      "last_at": 1792832193.6772559,
+      "frame_count": 22748
+    }
+  ],
+  "reference_results_sha256": "26b267e0183a447251400d7a28537959d81fcdea235cfd29d8e24561073a9dc6",
+  "baseline_results_sha256": null,
+  "started_at": 1792832396.248988,
+  "forward": true,
+  "driver_revision": "c5c35a30e0c5f521f12324eec854f405b681b8c0",
+  "driver_sha256": "afff0aa65676b6cd0294873498aadfb84ea6d04fa9b6eda6291e2405dc03dcc3",
+  "runtime_revision": "cd3eb239bd7bad97b34f10a8f2bb0b2e1c0f5026",
+  "runtime_sha256": {
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/supervised-forward/bot/control.py": "b33ba64f8110eb59ce4a16e8cd987be8365bf0c3db98810f06c58333d4104401",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/supervised-forward/bot/http_transport.py": "5cc2dd41e418b794eac9dde2548fd40abcef605af303057ff633bd11d8b92162",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/supervised-forward/bot/live.py": "bdfe8ecd489cdcd42d7e6687cbb34511d75f6503c55ad195bc22b0451f1be72e",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/supervised-forward/ctc/__init__.py": "e178e73a3b0452a098d1cfa7f909ad65a3463457389018ab626ac281e1b634fe",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/supervised-forward/ctc/accounting.py": "b9cddb93959b277fe9ab7c6089e84dee2c092a2d049c466212878a5531ff0f99",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/supervised-forward/ctc/analog.py": "c606eefeab7cd0b5015b7b46cd831496d995f4b50030784ff2dd8171636938b2",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/supervised-forward/ctc/analog_library.npz": "22694387c3b612f5c20853feb9143e1bf8b8f5722a845da8ed584ab1b30bdf09",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/supervised-forward/ctc/basket.py": "ad08208095eb32a51fe19625b0e0929060a35bc4846ff4f8843e316f87d9a522",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/supervised-forward/ctc/damage_params.json": "c274463749d70b6ae85b6981fb029423c76e6fe5db0224e0d1aec83a70d22415",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/supervised-forward/ctc/history.py": "c9a93c117e4df869a4e8a34b03f0b656ada231bdf41864778d536ce129b91521",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/supervised-forward/ctc/ladder.json": "b70e7a8c5672dc6e4955c39fac62a70709ba29b39f00eead9add3cb4feeba5a4",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/supervised-forward/ctc/ladder.py": "da0c82abb297719dc1ea6d244558703072c881d3bd3b3fa43dc0885ae07f1f25",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/supervised-forward/ctc/price_signal.json": "3d421c258d939b6a0adc5db9f764b416c15be47cc684accc2187e074f11750f8",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/supervised-forward/ctc/price_signal.py": "aeb4b06e402231ac82e3b34ea7d1244346ee9b029036c4ffeb926112513b1fa4",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/supervised-forward/ctc/sim.py": "91da5850c313b94835364dabd7622fb8282382a710cf324c99471d9c29021273",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/supervised-forward/ctc/storm_sample.npz": "76da0f456aaadb8baee99920619db79c6f16e928dfab82ad33aade297a4b7c0f",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/supervised-forward/ctc/strategies.py": "4c667bebeb84dfe11883205656702bb3f66545661f01a0685c1e4c24f6b2680c",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/supervised-forward/ctc/valuation.py": "e19ceef5dc38154d1889065c4a85aae0d99b159267a0503a4c4fc3c7054292cd",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/supervised-forward/ctc/valuation_params.json": "06439094fc54318a8bfd1854fc2765d6ef542d1acad23de1836a4db47bf3b80b",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/supervised-forward/ctc/wind.py": "2e91425031bae6c2d60bb92a2e529cfc1222778820f126a29be836a4ec026f84",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/supervised-forward/data/case.json": "bcd0eb79c5a89b6625c17f2c233a686a04fafc75093e8a57d3c90f3b09972839",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/supervised-forward/scripts/evaluate_observed_season.py": "f7f9113f5dba6e81bba35e5aed50f72b0df4d2853c4cae4d9565407846861576",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/supervised-forward/scripts/experiment_execution_costs.py": "f947346da806425aa4c5a810ffa9f775f3c13a4bd33fe5fdbe4cf97d45b009d1",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/supervised-forward/scripts/observe_market_seasons.py": "7290d9fa0fb902a1904f49a7927779517e6edcc77aa4f0ded9b57858d9627e96",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/supervised-forward/scripts/replay_captured_market.py": "10741686ba5ebbff2758bc488fb2a34ef61183b2d57ec3d91d895b1981784ef9",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/supervised-forward/scripts/replay_serialized_client.py": "2b976be6688b8df93f8508b38bbf02510d233533ece6a7d32d0bc1dfb6bcdfb3",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/supervised-forward/bot/practice.py": "37432996c01466ceb8c9394ea49908d0ffc0716200ad730f5395d43cc5cb9353",
+    "/Users/arjunhans/Documents/ctc2026/.worktrees/supervised-forward/scripts/replay_practice_supervisor.py": "77c9195a286a4ffb1395539879b3f1ee81b20ce8badd3edd25442787a97acd27"
+  },
+  "forward_plan_sha256": "0c0551dea53bfbc9e52efcaedb4d2a88f9472957b30a904d4b415d004ef41c1e",
+  "forward_plan_revision": "c5c35a30e0c5f521f12324eec854f405b681b8c0"
+}

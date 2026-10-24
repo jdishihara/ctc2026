@@ -1,0 +1,17 @@
+{"runs": 1, "scenario": [0.0, 1.0, false], "status": "ok"}
+{"runs": 2, "scenario": [0.0, 1.0, true], "status": "ok"}
+{"runs": 3, "scenario": [0.0, 0.5, false], "status": "ok"}
+{"runs": 4, "scenario": [0.0, 0.5, true], "status": "ok"}
+{"runs": 5, "scenario": [0.05, 1.0, false], "status": "ok"}
+{"runs": 6, "scenario": [0.05, 1.0, true], "status": "ok"}
+{"runs": 7, "scenario": [0.05, 0.5, false], "status": "ok"}
+{"runs": 8, "scenario": [0.05, 0.5, true], "status": "ok"}
+{"runs": 9, "scenario": [0.25, 1.0, false], "status": "ok"}
+{"runs": 10, "scenario": [0.25, 1.0, true], "status": "ok"}
+{"runs": 11, "scenario": [0.25, 0.5, false], "status": "ok"}
+{"runs": 12, "scenario": [0.25, 0.5, true], "status": "ok"}
+{"runs": 13, "scenario": [1.0, 1.0, false], "status": "ok"}
+{"runs": 14, "scenario": [1.0, 1.0, true], "status": "ok"}
+{"runs": 15, "scenario": [1.0, 0.5, false], "status": "ok"}
+{"runs": 16, "scenario": [1.0, 0.5, true], "status": "ok"}
+{"runs": 16, "elapsed_seconds": 19.006606124996324, "errors": 0, "by_rtt": {"0.0": {"scenarios": 4, "errors": 0, "mean_pnl": 1901.5700000000006, "worst_pnl": 1873.38, "best_pnl": 1937.04, "negative_scenarios": 0, "zero_order_scenarios": 0, "paired_mean_change_from_zero_rtt": 0.0, "paired_scenarios": 4}, "0.05": {"scenarios": 4, "errors": 0, "mean_pnl": 1625.3075000000001, "worst_pnl": 1548.5999999999963, "best_pnl": 1714.430000000004, "negative_scenarios": 0, "zero_order_scenarios": 0, "paired_mean_change_from_zero_rtt": -276.2625000000005, "paired_scenarios": 4}, "0.25": {"scenarios": 4, "errors": 0, "mean_pnl": 1458.7525, "worst_pnl": 1363.7999999999997, "best_pnl": 1546.3000000000002, "negative_scenarios": 0, "zero_order_scenarios": 0, "paired_mean_change_from_zero_rtt": -442.8175000000005, "paired_scenarios": 4}, "1.0": {"scenarios": 4, "errors": 0, "mean_pnl": 1287.8850000000014, "worst_pnl": 1155.0600000000013, "best_pnl": 1381.9600000000014, "negative_scenarios": 0, "zero_order_scenarios": 0, "paired_mean_change_from_zero_rtt": -613.6849999999993, "paired_scenarios": 4}}}

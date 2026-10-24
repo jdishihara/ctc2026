@@ -1,12 +1,12 @@
 # Competition readiness — 2026-10-24
 
-Status updated after the 09:04 UTC cleanup-refresh review (05:04 EDT). One complete small-size live season
+Status updated after the 09:10 UTC capture-246 review (05:10 EDT). One complete small-size live season
 has a verified settlement receipt. The next trial contains mixed activity.
 Live practice remains stopped pending shared-account ownership clarification.
 Market recording and offline evaluations continue.
 
-**Validation limitation:** all 15 complete storm tracks in closed captures
-241–245 exactly match tracks in the fitted analog training library. Their
+**Validation limitation:** all 18 complete storm tracks in closed captures
+241–246 exactly match tracks in the fitted analog training library. Their
 replays and the +$141.16 actual completed trial therefore do not establish
 performance on unfamiliar weather. Source-freeze dates describe chronology,
 not independence from model training. See
@@ -40,6 +40,13 @@ before the corrected-runtime freeze, and the receipt precedes the separate
 forward-driver freeze by 1.181 seconds. This is not prospective evidence for
 the correction or an untouched holdout. Full results and timing are in
 [observed-season-245.md](observed-season-245.md).
+
+Capture 246 also passed independent audit. All 16 supervised settings complete
+all three storms and finish positive, with a primary result of +$1,539.17
+and a range of +$1,439.61 to +$1,937.04. Its entire selected interval follows
+the source freezes, but its three weather tracks exactly match fitted-library
+rows 735–737. These remain offline execution diagnostics on known training
+weather; see [observed-season-246.md](observed-season-246.md).
 
 A separate 80-setting cleanup experiment was rejected after independent
 review. Its newer quotes did not consistently reduce risk: mean cleanup time
