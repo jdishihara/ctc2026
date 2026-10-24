@@ -18,10 +18,12 @@ with at least 21 points (current age at least 40). All four values x, y, radius
 and intensity must be finite numeric values and exactly equal to exactly one
 library row over the entire observed prefix. Only then replace the ordinary
 weights with a one-hot weight on that row. No tolerance or threshold search.
-Zero matches, multiple matches, missing ages, duplicate ages, corrections or
-invalid strength fields retain the ordinary weights. A later divergence
-immediately restores the ordinary forecast. The ordinary weight cache must
-remain current even while recognition is active.
+Zero matches, multiple matches, missing ages, duplicate ages or invalid strength
+fields retain the ordinary weights. Corrections invalidate and recompute the
+cached match; the corrected complete prefix can activate recognition again
+only if it uniquely matches. A later divergence immediately restores the
+ordinary forecast. The ordinary weight cache must remain current even while
+recognition is active.
 
 Matching reads only library columns at or before the newest observed age.
 Historical continuation remains a forecast, as in the existing analog model.
@@ -59,7 +61,8 @@ access are forbidden within this capture comparison.
 Separately inspect only development seasons 451–525 (225 storms) for prefix
 activations and later divergence. Do not read 526–600 or an active season.
 Compare baseline/candidate on all 75 development seasons at one fixed setting:
-10% limits, 0.25-second delay and thin liquidity. This is reused development
+10% limits, 0.25-second delay and thin liquidity (the existing ladder at half
+size with 30-second refill). This is reused development
 data, not an untouched holdout. Report unmatched behavior and any false match.
 Use synthetic shared-prefix/divergent-suffix tests even if no development
 prefixes match. No timing, threshold, or split selection after results.
