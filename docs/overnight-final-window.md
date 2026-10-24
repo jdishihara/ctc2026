@@ -59,9 +59,12 @@ separately. Its final worker ledger records a clean stop at 12:00:00.020745 UTC.
 ## What the results establish
 
 All 27 weather tracks in captures 241–249 exactly match fitted training rows.
-The fitted input archive contains 600 complete seasons; the 27 captured paths
-above each match a path in that training library. Training volume alone does
-not turn these replays into unfamiliar-weather validation.
+The available history archive contains 600 complete seasons. The analog
+library was fitted on the first 450 (1,350 tracks); the next 75 seasons were
+development data, and the final 75 confirmation seasons have already been
+examined. None are an untouched holdout for this report. See the
+[training overlap audit](training-overlap-audit.md). Training volume alone
+does not turn these replays into unfamiliar-weather validation.
 The selected intervals and frozen source dates are recorded in the individual
 reports. Later collection dates do not establish unfamiliar-weather validation.
 Recorded quote gaps and simulated fills also limit transfer to actual execution.

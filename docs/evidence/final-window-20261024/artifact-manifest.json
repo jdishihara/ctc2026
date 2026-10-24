@@ -2,9 +2,9 @@
   "artifact_set": "Final overnight evaluation, 2026-10-24",
   "final_reconciliation": "final-reconciliation.json",
   "evidence_archive": "overnight-evaluation-evidence.tar.gz",
-  "archive_sha256": "6c857946d4976ef5c3298d0abd36cf8e04697ccf252b25cd7337f47532e774b1",
+  "archive_sha256": "30879bba304f29d54f7a271f84203c472f1a1b5caa7d4d9fb8f7f6accc8c53d5",
   "archive_members": 59,
-  "archive_bytes": 188173,
+  "archive_bytes": 188384,
   "observation_boundary": {
     "at_utc": "2026-10-24T12:00:00.008254Z",
     "prefix_bytes": 328628,
@@ -47,6 +47,6 @@
       "scope": "provisional aggregate and fixed-engine artifact reconciliation"
     }
   ],
-  "final_report_sha256": "685646b21ba1af7cbf731c0e7d3861a7b73e4188815266d0d5c2b2ebfbbd1338",
+  "final_report_sha256": "7ca8c67cb8cb6f2071444d9d36bd77a80120e0a8f36cee675d432e41a5adebe",
   "review_status": "Final exact-head review pending"
 }

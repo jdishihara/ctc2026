@@ -283,7 +283,10 @@
   "original_market_replay": {
     "seasons": 7,
     "settings": 168,
-    "worst_setting": null,
+    "positive_settings": 140,
+    "negative_settings": 28,
+    "worst_setting": -799.84,
+    "best_setting": 1848.21,
     "ledger_terminal": {
       "written_at": 1792843200.020745,
       "kind": "worker_stopped"
@@ -292,56 +295,60 @@
       {
         "competition_id": "5edc122c-e97d-4d59-ada5-658c02c3c0da",
         "year": "1784",
-        "positive": null,
+        "positive": 24,
         "worst": 156.65,
         "best": 544.84
       },
       {
         "competition_id": "2cf67e88-9081-4258-aa6a-3648c41925de",
         "year": "1783",
-        "positive": null,
+        "positive": 24,
         "worst": 1031.57,
         "best": 1215.88
       },
       {
         "competition_id": "a7e77935-0ddd-4c77-8ce9-5494a9941962",
         "year": "1782",
-        "positive": null,
+        "positive": 20,
         "worst": -44.04,
         "best": 503.01
       },
       {
         "competition_id": "83fc18b9-e9fd-4634-bc8e-c7a1a77768a7",
         "year": "1781",
-        "positive": null,
+        "positive": 24,
         "worst": 1172.78,
         "best": 1848.21
       },
       {
         "competition_id": "fd1ebff9-0f96-4533-b283-bc0a5c60cd4b",
         "year": "1780",
-        "positive": null,
+        "positive": 0,
         "worst": -799.84,
         "best": -507.47
       },
       {
         "competition_id": "789097b1-a48b-4e68-95b4-5e15b047e149",
         "year": "1779",
-        "positive": null,
+        "positive": 24,
         "worst": 919.12,
         "best": 1050.83
       },
       {
         "competition_id": "7d19a254-8c3b-4c4a-b4f3-32c84a138b79",
         "year": "1778",
-        "positive": null,
+        "positive": 24,
         "worst": 1162.77,
         "best": 1556.01
       }
     ]
   },
   "execution_and_live": {
-    "training_seasons": 600,
+    "available_history_seasons": 600,
+    "fitted_training_seasons": 450,
+    "development_seasons": 75,
+    "confirmation_seasons_examined": 75,
+    "untouched_holdout_seasons": 0,
     "closed_weather_tracks": 27,
     "fitted_tracks_matched": 27,
     "position_fraction": 0.1,
