@@ -7,7 +7,9 @@ import * as storage from '../core/storage';
 import { compileSymbolRegex } from '../engine/chain';
 import { Ticket } from '../engine/tickets';
 import { defaultUi, Store, UiState } from '../state/store';
-import { prefillTicket } from '../ticket/prefill';
+import { Autopilot } from '../ticket/autopilot';
+import { prefillTicket, PrefillResult } from '../ticket/prefill';
+import { findByExactText, isVisible } from '../core/dom-readers';
 import { mountApp } from '../ui/App';
 import { Controller, ticketText } from '../ui/controller';
 import css from '../ui/styles.css';
@@ -18,6 +20,7 @@ export interface OverlayHandle {
   shadow: ShadowRoot;
   controller: Controller;
   readDom: () => void;
+  autopilot: Autopilot;
   stop: () => void;
 }
 
@@ -25,6 +28,8 @@ export interface StartOpts {
   /** skip the async storage load (tests) */
   config?: Config;
   tickMs?: number;
+  /** auto-pilot step period */
+  autoMs?: number;
 }
 
 export async function startOverlay(win: Window & typeof globalThis = window, opts: StartOpts = {}): Promise<OverlayHandle> {
@@ -80,6 +85,15 @@ export async function startOverlay(win: Window & typeof globalThis = window, opt
 
   let uiSaveTimer: ReturnType<typeof setTimeout> | null = null;
   let busy = false;
+  const prefill = (t: Ticket): Promise<PrefillResult> =>
+    prefillTicket(t, {
+      doc, hints: store.cfg.dom, symbolRe: compileSymbolRegex(store.cfg.symbolRegex), skip,
+      visibleUnderlying: (strikes) => store.domChainUnderlying(strikes),
+      strikeOf: (sym) => {
+        const c = store.d.contracts[sym] ?? store.s.metas[sym];
+        return c ? { strike: c.strike, kind: c.kind } : null;
+      },
+    });
   const controller: Controller = {
     store,
     loadNext(kind) {
@@ -94,18 +108,18 @@ export async function startOverlay(win: Window & typeof globalThis = window, opt
       if (busy) return;
       busy = true;
       store.markLoaded(t, null, 'prefilling…');
-      const re = compileSymbolRegex(store.cfg.symbolRegex);
-      prefillTicket(t, {
-        doc, hints: store.cfg.dom, symbolRe: re, skip,
-        visibleUnderlying: (strikes) => store.domChainUnderlying(strikes),
-        strikeOf: (sym) => {
-          const c = store.d.contracts[sym] ?? store.s.metas[sym];
-          return c ? { strike: c.strike, kind: c.kind } : null;
-        },
-      })
+      prefill(t)
         .then((r) => store.markLoaded(t, r.ok, r.message))
         .catch((e) => store.markLoaded(t, false, `prefill error: ${e}`))
         .finally(() => (busy = false));
+    },
+    setAutoSubmit(on: boolean) {
+      this.patchConfig({ auto: { submit: on } });
+      if (on) store.setAutoPaused(false);
+    },
+    toggleAutoPause() {
+      store.setAutoPaused(!store.s.auto.paused);
+      store.toast(store.s.auto.paused ? 'Auto-submit PAUSED (Alt+P resumes)' : 'Auto-submit resumed', store.s.auto.paused ? 'warn' : 'info');
     },
     downloadCapture() {
       const name = store.capture.download(store.s.caseName ?? 'unknown', doc);
@@ -194,6 +208,22 @@ export async function startOverlay(win: Window & typeof globalThis = window, opt
     }
   }, opts.tickMs ?? 200);
 
+  // ---- auto-pilot (off unless Config auto.submit is on) ----
+  const findTab = (u: string): Element | null => {
+    const els = findByExactText(doc.body ?? doc, u, true, skip).filter(isVisible);
+    for (const e of els) {
+      const b = e.closest('button,[role=tab],[role=button],a');
+      if (b && !b.closest('form') && (b.textContent ?? '').replace(/\s+/g, ' ').trim() === u) return b;
+    }
+    return null;
+  };
+  const autopilot = new Autopilot({ store, doc, prefill, symbolRe: () => compileSymbolRegex(store.cfg.symbolRegex), skip, findTab });
+  const autoInterval = setInterval(() => {
+    if (!store.cfg.prefillEnabled || !store.d.autoArmed || busy) return;
+    busy = true;
+    autopilot.step().finally(() => (busy = false));
+  }, opts.autoMs ?? 700);
+
   // ---- hotkeys ----
   const focusField = (field: 'spot' | 'vol') => {
     const u = store.cfg.focus ?? store.s.ui.focusUnd ?? store.cfg.underlyings[0];
@@ -229,6 +259,9 @@ export async function startOverlay(win: Window & typeof globalThis = window, opt
         return store.changed(true);
       case 'focusSpot': return focusField('spot');
       case 'focusVol': return focusField('vol');
+      case 'autoPause':
+        if (!store.cfg.auto.submit) return store.toast('Auto-submit is off (arm it in the header or Config auto.submit)', 'info');
+        return controller.toggleAutoPause();
       case 'capture':
         ui.tab = 'Capture';
         ui.hidden = false;
@@ -247,11 +280,12 @@ export async function startOverlay(win: Window & typeof globalThis = window, opt
   readDom();
 
   return {
-    store, host, shadow, controller, readDom,
+    store, host, shadow, controller, readDom, autopilot,
     stop() {
       win.removeEventListener('message', onMessage);
       clearInterval(domInterval);
       clearInterval(tickInterval);
+      clearInterval(autoInterval);
       mo?.disconnect();
       removeHotkeys();
       host.remove();

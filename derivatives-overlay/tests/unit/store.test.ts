@@ -75,14 +75,13 @@ describe('store: one Round 2 event end to end', () => {
     st.handleWsJson({ type: 'news', message: { type: 'analyst', seq: 4, headline: 'Analyst 3: OIL vol 47.0%, PLANE vol 70.0%' } });
     st.tick();
     const t = st.s.targets.OIL;
-    expect(t.spot).toMatchObject({ value: 104, confirmed: false });
+    // spot from the headline plus all three analysts: auto-confirmed (Config auto.confirm)
+    expect(t.spot).toMatchObject({ value: 104, confirmed: true });
     expect(t.vol.value as number).toBeCloseTo(0.555, 9); // median
     expect(t.volLow as number).toBeCloseTo(0.47, 9);
     expect(t.volHigh as number).toBeCloseTo(0.63, 9);
-    expect(st.d.targetsConfirmed).toBe(false);
-    expect(st.pickNext('edge')).toBeNull(); // refuses until accepted
-    st.acceptSuggestions();
     expect(st.d.targetsConfirmed).toBe(true);
+    expect(st.s.auto.targets.OIL.status).toBe('confirmed');
     expect(st.pickNext('edge')).not.toBeNull();
     // the underlying moves (+60 real s), then the makers snap (+120 real s) to the true vol 55% / 58%
     now += 60_000;

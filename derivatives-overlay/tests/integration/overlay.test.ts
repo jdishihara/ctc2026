@@ -142,10 +142,14 @@ describe('overlay against the mock page', () => {
     const t = h.store.s.targets.OIL;
     expect(t.spot.value).toBeCloseTo(100, 6);
     expect(t.vol.value).toBeCloseTo(0.65, 6);
-    expect(t.vol.confirmed).toBe(false);
-    expect(h.store.d.targetsConfirmed).toBe(false);
-    h.store.acceptSuggestions();
+    // both parses are complete and sane: auto-confirmed without Alt+A
+    expect(t.vol.confirmed).toBe(true);
+    expect(h.store.s.auto.targets.OIL.status).toBe('confirmed');
+    expect(h.store.s.auto.targets.PLANE).toMatchObject({ status: 'confirmed' });
+    expect(h.store.s.targets.PLANE.spot.value).toBeCloseTo(40, 6);
     expect(h.store.d.targetsConfirmed).toBe(true);
+    await sleep(300);
+    expect(h.shadow.textContent).toContain('auto-confirmed: spot 100.00');
     const top = h.store.d.plan[0];
     expect(top.symbol).toMatch(/^OIL_0626_[CP]100$/);
     expect(top.side).toBe('BUY');
@@ -196,5 +200,49 @@ describe('overlay against the mock page', () => {
     h.store.changed(true);
     expect(h.store.d.portfolio.perUnderlying.OIL.delta).toBeGreaterThan(10);
     expect(h.store.d.flatten[0]).toMatchObject({ symbol: 'OIL_0626_C100', side: 'SELL', qty: 40 });
+  });
+
+  it('armed auto-pilot loads, verifies and submits the next ticket itself; paused or disarmed it does nothing', async () => {
+    const posts0 = exchange.orderPosts;
+    const submits0 = (window as unknown as { __mockSubmitCount: number }).__mockSubmitCount;
+    // not armed: a step is a no-op
+    expect((await h.autopilot.step()).action).toBe('idle');
+    expect(exchange.orderPosts).toBe(posts0);
+    h.controller.setAutoSubmit(true);
+    expect(h.store.d.autoArmed).toBe(true);
+    await sleep(300);
+    expect(h.shadow.textContent).toContain('AUTO ON');
+    let r = await h.autopilot.step();
+    for (let i = 0; i < 3 && r.action === 'tab-switched'; i++) {
+      await sleep(400); // the page re-renders the other chain
+      r = await h.autopilot.step();
+    }
+    expect(r.action, r.detail).toBe('submitted');
+    expect(r.ticket?.underlying).toBe('OIL');
+    await sleep(150);
+    expect((window as unknown as { __mockSubmitCount: number }).__mockSubmitCount).toBe(submits0 + 1);
+    expect(exchange.orderPosts).toBe(posts0 + 1);
+    const log = h.store.s.auto.log;
+    expect(log).toHaveLength(1);
+    expect(log[0]).toMatchObject({ symbol: r.ticket?.symbol, side: r.ticket?.side, qty: r.ticket?.qty, price: r.ticket?.price });
+    expect(log[0].result).toMatch(/^sent · HTTP 200/);
+    expect(h.store.capture.kinds.has('auto:submit')).toBe(true);
+    // the same contract/side is not re-sent while the position has not changed
+    h.store.s.auto.lastSubmitAt = 0;
+    const again = await h.autopilot.step();
+    expect(again.action === 'submitted' ? `${again.ticket?.symbol}:${again.ticket?.side}` : 'other').not.toBe(`${r.ticket?.symbol}:${r.ticket?.side}`);
+    // paused: nothing
+    h.controller.toggleAutoPause();
+    expect(h.store.d.autoArmed).toBe(false);
+    await sleep(300);
+    expect(h.shadow.textContent).toContain('AUTO PAUSED');
+    const postsP = exchange.orderPosts;
+    expect((await h.autopilot.step()).action).toBe('idle');
+    expect(exchange.orderPosts).toBe(postsP);
+    h.controller.setAutoSubmit(false);
+    expect(h.store.s.auto.paused).toBe(true); // disarming keeps the pause flag; re-arming clears it
+    h.controller.setAutoSubmit(true);
+    expect(h.store.s.auto.paused).toBe(false);
+    h.controller.setAutoSubmit(false);
   });
 });

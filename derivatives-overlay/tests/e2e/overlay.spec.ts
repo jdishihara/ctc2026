@@ -20,6 +20,15 @@ const stats = async () => (await (await fetch(`${BASE}/__mock/stats`)).json()) a
 
 test.beforeAll(async () => {
   if (!existsSync(join(EXT, 'manifest.json'))) throw new Error('run npm run build:dev first');
+  // wait for a previous spec's mock exchange to release the port
+  for (let i = 0; i < 50; i++) {
+    try {
+      await fetch(`${BASE}/__mock/stats`);
+      await new Promise((r) => setTimeout(r, 200));
+    } catch {
+      break;
+    }
+  }
   server = spawn(process.execPath, [join(ROOT, 'mock-exchange/server.mjs'), '--port', String(PORT), '--fast', '4', '--preroll', '10', '--quiet'], { stdio: 'inherit' });
   for (let i = 0; i < 50; i++) {
     try {
@@ -44,7 +53,11 @@ test.beforeAll(async () => {
 
 test.afterAll(async () => {
   await ctx?.close();
-  server?.kill();
+  if (server) {
+    const gone = new Promise<void>((r) => server.once('exit', () => r()));
+    server.kill();
+    await Promise.race([gone, new Promise((r) => setTimeout(r, 3000))]);
+  }
 });
 
 test('overlay observes the mock exchange, suggests targets, prefills without submitting', async () => {

@@ -11,12 +11,19 @@ export function Header({ c, onDragStart }: { c: Controller; onDragStart: (e: Poi
   const hot = d.realToNext != null && d.realToNext < 15;
   const rate = d.rate;
   const qa = d.quoteAge;
+  const autoOn = cfg.auto.submit;
+  const paused = s.auto.paused;
   return (
     <div class="hdr" onPointerDown={(e) => onDragStart(e as unknown as PointerEvent)}>
       <div class="hrow">
         <span class="title">Δ Overlay</span>
         <span class="tag">{d.mode === 'derivatives' ? 'DERIVATIVES' : 'CAPTURE ONLY'}</span>
         {d.replay && <span class="tag warn">REPLAY</span>}
+        {autoOn && d.mode === 'derivatives' && (
+          <span class={cls('autobadge', paused ? 'paused' : 'live')} title="auto-submit: the overlay clicks the submit button itself. Alt+P pauses.">
+            {paused ? 'AUTO PAUSED' : 'AUTO ON'}
+          </span>
+        )}
         <span class="muted small" title={d.modeReason}>{s.caseName ?? ''}</span>
         <span class="sp" />
         <button title="Collapse" onClick={(e) => { e.stopPropagation(); s.ui.collapsed = !s.ui.collapsed; c.saveUi(); c.store.changed(true); }}>{s.ui.collapsed ? '▢' : '—'}</button>
@@ -33,6 +40,11 @@ export function Header({ c, onDragStart }: { c: Controller; onDragStart: (e: Poi
         <span class="tag" title="time to expiry and its source">T {f(d.T.days, 2)}d · {d.T.src}</span>
         <span class={cls('tag', rate.level === 'amber' && 'warn', rate.level === 'red' && 'bad')} title="observed order actions in the last 60 s">orders {rate.used}/{rate.limit}</span>
         <span class={cls('tag', (qa == null || qa > cfg.thresholds.staleQuoteSec) && 'bad')}>quotes {qa == null ? '—' : `${f(qa, 1)}s`}</span>
+        <span class={cls('tag', cfg.auto.confirm ? 'good' : 'warn')} title="auto-confirm: parsed targets are accepted without Alt+A when complete and sane">confirm {cfg.auto.confirm ? 'auto' : 'manual'}</span>
+        <button class={cls('autobtn', autoOn && 'on')} onPointerDown={(e) => e.stopPropagation()} onClick={(e) => { e.stopPropagation(); c.setAutoSubmit(!autoOn); }}
+          title={autoOn ? 'Disarm: back to Alt+N and clicking by hand' : 'Arm auto-submit: the overlay loads and submits tickets itself (Alt+P pauses)'}>
+          {autoOn ? 'disarm' : 'arm auto'}
+        </button>
         <span class="sp" />
         <select value={cfg.focus ?? ''} onPointerDown={(e) => e.stopPropagation()} onChange={(e) => c.patchConfig({ focus: (e.target as HTMLSelectElement).value || null })} title="focus underlying">
           <option value="">both</option>

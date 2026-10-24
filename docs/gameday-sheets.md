@@ -76,6 +76,16 @@ Each event, by the clock. Times are from the news (`NEWS IN m:ss` in the header)
 
 Order budget: header `orders n/40` per minute, amber at 30, red at 36. The hourglass in the queue means over budget.
 
+**Auto-pilot (built 2026-10-23).** Auto-confirm is on by default: when the news parses completely (spot plus the
+announced IV in Round 1, spot plus all three analysts in Rounds 2 and 3) and the numbers pass the sanity bounds, the
+targets are accepted without `Alt+A`. The reader only acts on a line that says "needs you: ..." under a target. In
+Round 3 the converter is identified from the first analyst message by matching the market IV; the Vol tab says
+"auto-identified" or asks you to pick. **Auto-submit is off by default.** If the organisers confirm a bot may submit,
+press **arm auto** in the header (or Config -> Auto-submit): the overlay then loads, verifies and clicks each ticket
+itself, edge tickets during the event and flatten tickets after the snap, at most 36 orders a minute. The header shows a
+red AUTO ON badge; `Alt+P` pauses and resumes; the Capture tab lists every auto submission with the exchange's answer.
+With it armed the clicker only watches the queue and the Risk tab.
+
 Round 2 (analysts, no IV): the three estimates arrive in the news and fill the Vol tab grid; type any the parser
 missed (Tab between cells, Enter). Event 4: blend = median. From event 5: switch blend to **weighted (learned)**.
 

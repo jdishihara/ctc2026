@@ -50,3 +50,10 @@ textarea.cfg { width: 100%; height: 300px; font-family: ui-monospace, Menlo, mon
 details summary { cursor: pointer; color: #8da2bd; }
 .invalid { opacity: .45; }
 .red { color: #ff7b72; }
+
+.autobadge { display: inline-block; border-radius: 3px; padding: 0 6px; font-size: 10px; font-weight: 800; letter-spacing: 0.5px; }
+.autobadge.live { background: #e5534b; color: #fff; animation: pulse 1.2s infinite; }
+.autobadge.paused { background: #6b4f12; color: #ffd27a; }
+.autobtn { font-size: 10px; } .autobtn.on { background: #7a2e2a; color: #fff; border-color: #a33; }
+.autoreason { font-size: 10px; }
+.autoreason.ok { color: #2bb673; } .autoreason.manual { color: #f0b429; }

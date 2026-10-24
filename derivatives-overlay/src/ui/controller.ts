@@ -12,6 +12,10 @@ export interface Controller {
   patchConfig(patch: Record<string, unknown>): void;
   saveUi(): void;
   copy(text: string): void;
+  /** arm or disarm the auto-pilot (Config auto.submit); arming also clears a pause */
+  setAutoSubmit(on: boolean): void;
+  /** Alt+P */
+  toggleAutoPause(): void;
 }
 
 export function ticketText(t: Ticket): string {
