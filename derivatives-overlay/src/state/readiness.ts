@@ -115,7 +115,8 @@ export function readiness(s: Raw, d: Derived, cfg: Config, now: number, panel: P
   }
 
   // 10. news parse
-  const last = s.news.length ? s.news[s.news.length - 1] : null;
+  // s.news is newest first; prefer the newest feed message over a DOM "latest" line that parsed to nothing
+  const last = s.news.find((n) => n.src === 'WS' && now - n.t < 10 * 60_000) ?? (s.news.length ? s.news[0] : null);
   if (!last) {
     out.push({ id: 'news', label: 'news', status: 'wait', detail: 'none yet (normal before the first event)', fix: 'after the first headline this line shows what was parsed' });
   } else {

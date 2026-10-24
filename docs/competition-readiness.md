@@ -1,6 +1,6 @@
 # Competition readiness — 2026-10-24
 
-Status recorded after the 06:29 UTC season closure (02:29 EDT). One complete small-size live season
+Status updated after the 06:54 UTC research comparison (02:54 EDT). One complete small-size live season
 has a verified settlement receipt. The next trial contains mixed activity.
 Live practice remains stopped pending shared-account ownership clarification.
 Market recording and offline evaluations continue.
@@ -137,6 +137,14 @@ representative results and checked every stored scenario pair. Neither the
 entry correction nor final-report-only research has a new attributable live
 trial. No live size increase or automatic strategy promotion follows from these
 merges.
+
+The subsequent uncertainty-guard experiment repeated 225 development pairs and
+12 pairs on each of captures 241–243. It is **not promoted**: the three-second
+development mean falls by $13.09 without reducing losses, and every scenario
+on captures 242 and 243 earns less. Review fixes and all unfavorable evidence
+are preserved in [uncertainty-guard-experiment.md](uncertainty-guard-experiment.md).
+The research branch, including teammate main `870d31f`, passes 497 Python tests.
+The candidate is offline only; the live strategy and frozen worker are unchanged.
 
 ## Why historical profit overstated the first live result
 

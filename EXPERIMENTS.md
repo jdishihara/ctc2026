@@ -24,7 +24,7 @@ Baseline at 99b530a: 17 Mario tests pass; overlay 131/132 (the autopilot integra
       any order (e.g. `race peach 1 birdo 3 yoshi 5 daisy 7`).
 - [x] D5 Derivatives: Round 3 converter auto-identification across every converter kind with mock analyst data.
 - [x] D4 Derivatives: make the autopilot integration test deterministic.
-- [ ] B1 docs/gameday-sheets.md: per desk, the exact list of human inputs and what each self-check line means.
+- [x] B1 docs/gameday-sheets.md: per desk, the exact list of human inputs and what each self-check line means.
 - [ ] B2 06:45 final report here; everything pushed.
 
 ## Results
@@ -58,6 +58,23 @@ tickets priced at the touch fill only the top level (10-60) per order; (2) no or
 traded only after the +60 s move. Diagnosis of (2)/(3) continues on the real-speed run (the overlay text sampler read
 the host element instead of the shadow root, fixed). Fixes so far: flatten also in the WAITING phase; flatten tickets
 priced max(2% of mid, 5 ticks) through the touch (thresholds.flattenThroughPct / flattenThroughTicks).
+
+### D2 (cont.) Real-speed baseline (02:22-02:49, code at 99b530a, mock seed 1, --fast 1): +19,795 over 10 events, 417
+orders, 0 page errors. Orders by phase (news 0-60 s / move 60-120 s / after snap): Round 1 events 0/22/6, 0/0/3, 0/18/7;
+Rounds 2-3 events 21-27/13-27/4-11. Gross position carried into the next event: 288, 109, 326, 724, 715, 1087, 699,
+263, 457, 1154. Event 2 lost 698 with 3 orders: the carried book had used up the delta/vega caps, so every edge ticket
+was red. Two root causes found and fixed:
+1. **Round 1 never traded before the +60 s move.** The headline lands a few hundred ms before the overlay's interpolated
+   clock enters NEWS; auto-confirm bails out on the phase check, and the NEWS transition then resets the status to
+   "waiting for the news" without re-judging the suggestions already present. Rounds 2-3 were saved only because the
+   later analyst messages re-triggered it. Fix: re-run auto-confirm on the NEWS transition and about once a second while
+   an event's targets are unconfirmed. Regression test added (headline before the phase flip -> confirmed at the flip).
+2. **Flatten could not keep up.** Flatten tickets were priced at the touch and fill one level (10-60) per order; with 36
+   orders a minute and 30 s from snap to the next news, 300-1,100 contracts cannot be closed. Fix: price flatten orders
+   max(2% of mid, 5 ticks) through the touch (one order clears several levels) and keep flattening in the WAITING phase.
+   Re-measured below.
+Also fixed on the way: the integration test raced the content script's own 700 ms auto-pilot timer (now disabled in
+the test harness) and judged one real-time tick (now retries up to 4 s); vitest runs files sequentially.
 
 ### D1 Derivatives live-readiness checklist (ACCEPTED): Edge tab "Ready n/m" with case, feed, contracts per underlying
 (count + strikes), quotes, spot source, clock source + rate vs the round's expected 52/39, T, positions source, order

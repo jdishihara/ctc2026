@@ -1,0 +1,362 @@
+{
+  "mode": "observed",
+  "source_competition_id": "0d7afac2-6acd-4223-aa8a-8c1a067091f0",
+  "year": "1785",
+  "official_receipt": {
+    "at": 1792820424.18974,
+    "kind": "settlement",
+    "source": "read_only_market_observer",
+    "competition_id": "0d7afac2-6acd-4223-aa8a-8c1a067091f0",
+    "year": "1785",
+    "clock": {
+      "competition_id": "0d7afac2-6acd-4223-aa8a-8c1a067091f0",
+      "state": "ready",
+      "fictional_time": "1785-06-01T16:00:00",
+      "elapsed_active_seconds": 2460
+    },
+    "end_clock": {
+      "competition_id": "0d7afac2-6acd-4223-aa8a-8c1a067091f0",
+      "state": "ready",
+      "fictional_time": "1785-06-01T16:00:00",
+      "elapsed_active_seconds": 2460
+    },
+    "prices": {
+      "PORT": 42.65,
+      "ISLE": 57.13,
+      "AQUA": 33.02,
+      "GRID": 30.19,
+      "FERRY": 15.94,
+      "RECON": 57.28,
+      "MAT": 37.43,
+      "GEN": 44.13,
+      "HAVEN": 21.0,
+      "REIN": 88.47,
+      "ARCH": 248.89,
+      "REBLD": 233.55
+    },
+    "coverage": {
+      "first_at": 1792817590.738782,
+      "last_at": 1792820415.9171178,
+      "seq_count": 866,
+      "last_seq": 865,
+      "advertised_last_seq": 865,
+      "contiguous": true,
+      "final_rounds": [
+        1,
+        2,
+        3
+      ],
+      "conflicting_sequences": false
+    }
+  },
+  "coverage": {
+    "news_count": 866,
+    "advertised_last_seq": 865,
+    "quote_count": 14570,
+    "quote_count_by_round": {
+      "1": {
+        "PORT": 591,
+        "ISLE": 411,
+        "AQUA": 427,
+        "GRID": 444,
+        "FERRY": 546,
+        "RECON": 323,
+        "MAT": 312,
+        "GEN": 401,
+        "HAVEN": 564,
+        "REIN": 269,
+        "ARCH": 414,
+        "REBLD": 464
+      },
+      "2": {
+        "PORT": 524,
+        "ISLE": 489,
+        "AQUA": 485,
+        "GRID": 433,
+        "FERRY": 515,
+        "RECON": 276,
+        "MAT": 277,
+        "GEN": 326,
+        "HAVEN": 638,
+        "REIN": 323,
+        "ARCH": 462,
+        "REBLD": 283
+      },
+      "3": {
+        "PORT": 603,
+        "ISLE": 310,
+        "AQUA": 390,
+        "GRID": 518,
+        "FERRY": 530,
+        "RECON": 271,
+        "MAT": 244,
+        "GEN": 291,
+        "HAVEN": 298,
+        "REIN": 327,
+        "ARCH": 290,
+        "REBLD": 236
+      }
+    },
+    "observed_quote_gaps": {
+      "1": {
+        "PORT": {
+          "max_seconds": 121.51317405700684,
+          "over_five_seconds": 25
+        },
+        "ISLE": {
+          "max_seconds": 121.50171709060669,
+          "over_five_seconds": 46
+        },
+        "AQUA": {
+          "max_seconds": 121.50172805786133,
+          "over_five_seconds": 49
+        },
+        "GRID": {
+          "max_seconds": 121.50175094604492,
+          "over_five_seconds": 36
+        },
+        "FERRY": {
+          "max_seconds": 121.50176095962524,
+          "over_five_seconds": 27
+        },
+        "RECON": {
+          "max_seconds": 121.50173997879028,
+          "over_five_seconds": 46
+        },
+        "MAT": {
+          "max_seconds": 121.5016610622406,
+          "over_five_seconds": 39
+        },
+        "GEN": {
+          "max_seconds": 121.5015721321106,
+          "over_five_seconds": 35
+        },
+        "HAVEN": {
+          "max_seconds": 121.50177216529846,
+          "over_five_seconds": 28
+        },
+        "REIN": {
+          "max_seconds": 121.50163912773132,
+          "over_five_seconds": 45
+        },
+        "ARCH": {
+          "max_seconds": 121.50170493125916,
+          "over_five_seconds": 39
+        },
+        "REBLD": {
+          "max_seconds": 121.50167798995972,
+          "over_five_seconds": 40
+        }
+      },
+      "2": {
+        "PORT": {
+          "max_seconds": 23.320235013961792,
+          "over_five_seconds": 37
+        },
+        "ISLE": {
+          "max_seconds": 34.97409200668335,
+          "over_five_seconds": 31
+        },
+        "AQUA": {
+          "max_seconds": 31.729310989379883,
+          "over_five_seconds": 38
+        },
+        "GRID": {
+          "max_seconds": 19.049190044403076,
+          "over_five_seconds": 35
+        },
+        "FERRY": {
+          "max_seconds": 31.129602909088135,
+          "over_five_seconds": 35
+        },
+        "RECON": {
+          "max_seconds": 23.346476078033447,
+          "over_five_seconds": 40
+        },
+        "MAT": {
+          "max_seconds": 29.903558254241943,
+          "over_five_seconds": 47
+        },
+        "GEN": {
+          "max_seconds": 23.34437084197998,
+          "over_five_seconds": 45
+        },
+        "HAVEN": {
+          "max_seconds": 22.79694890975952,
+          "over_five_seconds": 29
+        },
+        "REIN": {
+          "max_seconds": 27.282045125961304,
+          "over_five_seconds": 53
+        },
+        "ARCH": {
+          "max_seconds": 37.48016309738159,
+          "over_five_seconds": 37
+        },
+        "REBLD": {
+          "max_seconds": 34.62710404396057,
+          "over_five_seconds": 46
+        }
+      },
+      "3": {
+        "PORT": {
+          "max_seconds": 25.64918613433838,
+          "over_five_seconds": 25
+        },
+        "ISLE": {
+          "max_seconds": 28.3019859790802,
+          "over_five_seconds": 43
+        },
+        "AQUA": {
+          "max_seconds": 29.198729038238525,
+          "over_five_seconds": 42
+        },
+        "GRID": {
+          "max_seconds": 20.736302852630615,
+          "over_five_seconds": 42
+        },
+        "FERRY": {
+          "max_seconds": 25.090203285217285,
+          "over_five_seconds": 35
+        },
+        "RECON": {
+          "max_seconds": 26.071680068969727,
+          "over_five_seconds": 53
+        },
+        "MAT": {
+          "max_seconds": 57.295528173446655,
+          "over_five_seconds": 48
+        },
+        "GEN": {
+          "max_seconds": 35.16876196861267,
+          "over_five_seconds": 42
+        },
+        "HAVEN": {
+          "max_seconds": 34.674471855163574,
+          "over_five_seconds": 43
+        },
+        "REIN": {
+          "max_seconds": 30.311497926712036,
+          "over_five_seconds": 39
+        },
+        "ARCH": {
+          "max_seconds": 27.340410947799683,
+          "over_five_seconds": 49
+        },
+        "REBLD": {
+          "max_seconds": 39.44921898841858,
+          "over_five_seconds": 47
+        }
+      }
+    },
+    "round_windows": {
+      "1": {
+        "first_at": 1792817590.738782,
+        "closed_at": 1792818494.329058,
+        "close_source": "news_snapshot"
+      },
+      "2": {
+        "first_at": 1792818671.329996,
+        "closed_at": 1792819454.262076,
+        "close_source": "news_snapshot"
+      },
+      "3": {
+        "first_at": 1792819632.875015,
+        "closed_at": 1792820415.9171178,
+        "close_source": "news_snapshot"
+      }
+    },
+    "unusable_quotes": 65,
+    "recorded_disconnect_frames": 0,
+    "disconnect_count_known": false,
+    "subscription_acknowledgements": [
+      {
+        "at": 1792818339.962582,
+        "round": 1,
+        "seconds_since_previous_frame": 3.520155191421509
+      }
+    ],
+    "disconnect_note": "The recorder may log disconnects only to its text log. Subscription acknowledgements may indicate reconnections but do not determine disconnect onset or reconstruct missed frames. Only explicit disconnect frames are applied to the replay.",
+    "quote_path_completeness_proven": false,
+    "gap_note": "Receive-time gaps include delays in observing round opens/closes; they do not prove missing server events."
+  },
+  "parameters": {
+    "analog": true,
+    "min_edge": 0.025,
+    "edge_full": 0.03,
+    "sd_mult": 0.7,
+    "sigma": 15,
+    "k": 100,
+    "passive": 0.75,
+    "warmup": 20,
+    "max_cross": 0.02,
+    "carry": 0.5,
+    "ent_cut": 1.2,
+    "cone_w": 1,
+    "cone_s0": 20,
+    "cone_nu": 0,
+    "isl_w": 0,
+    "final_exact": true,
+    "final_edge": 0.005,
+    "final_edge_full": 0.005,
+    "basket_edge": 0.01,
+    "basket_participation": 0.5,
+    "announce_wait": 60
+  },
+  "fraction": 0.1,
+  "latencies": [
+    0.25,
+    1.0,
+    3.0
+  ],
+  "frame_count": 15531,
+  "first_at": 1792817590.738782,
+  "last_at": 1792820415.9171178,
+  "frames_sha256": "0f3f369fdde5dfcf2cb07a761bd5533147a5c546a6adc4621235c5f70532ed85",
+  "baseline_sha256": "b2390839978fbfbdb1d2758365f7639ff22c4597de327fcd7eefff0edfc4ab44",
+  "source_sha256": {
+    "ctc/analog.py": "c606eefeab7cd0b5015b7b46cd831496d995f4b50030784ff2dd8171636938b2",
+    "ctc/sim.py": "91da5850c313b94835364dabd7622fb8282382a710cf324c99471d9c29021273",
+    "ctc/accounting.py": "b9cddb93959b277fe9ab7c6089e84dee2c092a2d049c466212878a5531ff0f99",
+    "ctc/strategies.py": "4c667bebeb84dfe11883205656702bb3f66545661f01a0685c1e4c24f6b2680c",
+    "ctc/wind.py": "2e91425031bae6c2d60bb92a2e529cfc1222778820f126a29be836a4ec026f84",
+    "ctc/__init__.py": "e178e73a3b0452a098d1cfa7f909ad65a3463457389018ab626ac281e1b634fe",
+    "ctc/price_signal.py": "aeb4b06e402231ac82e3b34ea7d1244346ee9b029036c4ffeb926112513b1fa4",
+    "ctc/valuation.py": "e19ceef5dc38154d1889065c4a85aae0d99b159267a0503a4c4fc3c7054292cd",
+    "ctc/basket.py": "ad08208095eb32a51fe19625b0e0929060a35bc4846ff4f8843e316f87d9a522",
+    "ctc/history.py": "c9a93c117e4df869a4e8a34b03f0b656ada231bdf41864778d536ce129b91521",
+    "ctc/ladder.py": "da0c82abb297719dc1ea6d244558703072c881d3bd3b3fa43dc0885ae07f1f25",
+    "ctc/price_signal.json": "3d421c258d939b6a0adc5db9f764b416c15be47cc684accc2187e074f11750f8",
+    "ctc/valuation_params.json": "06439094fc54318a8bfd1854fc2765d6ef542d1acad23de1836a4db47bf3b80b",
+    "ctc/ladder.json": "b70e7a8c5672dc6e4955c39fac62a70709ba29b39f00eead9add3cb4feeba5a4",
+    "ctc/damage_params.json": "c274463749d70b6ae85b6981fb029423c76e6fe5db0224e0d1aec83a70d22415",
+    "ctc/storm_sample.npz": "76da0f456aaadb8baee99920619db79c6f16e928dfab82ad33aade297a4b7c0f",
+    "ctc/analog_library.npz": "22694387c3b612f5c20853feb9143e1bf8b8f5722a845da8ed584ab1b30bdf09",
+    "data/case.json": "bcd0eb79c5a89b6625c17f2c233a686a04fafc75093e8a57d3c90f3b09972839",
+    "bot/live.py": "885e22c3d4f311081058ea1ea7bae3a4d50b156d8ec456b7534e69229de352e8",
+    "bot/http_transport.py": "5cc2dd41e418b794eac9dde2548fd40abcef605af303057ff633bd11d8b92162",
+    "scripts/experiment_uncertainty_guard.py": "197a83ea460951c515dd6df15e7943a1d3fac6d6289a239918f27c88e9503666",
+    "scripts/experiment_final_reports.py": "0f8ac851ef99c539aa3a6834b9a259658f4545448e4962720cb3fd4f032a5ad6",
+    "scripts/experiment_execution_costs.py": "f947346da806425aa4c5a810ffa9f775f3c13a4bd33fe5fdbe4cf97d45b009d1",
+    "scripts/replay_captured_market.py": "10741686ba5ebbff2758bc488fb2a34ef61183b2d57ec3d91d895b1981784ef9",
+    "scripts/evaluate_observed_season.py": "f7f9113f5dba6e81bba35e5aed50f72b0df4d2853c4cae4d9565407846861576",
+    "docs/uncertainty-guard-plan.md": "b716a9e455d93358927d158e976f3f40799d3b0bb8a6ac03d637f5155c47e0ac"
+  },
+  "limitations": [
+    "Offline virtual fills do not establish actual account profit.",
+    "Development and previously viewed captures are reused data, not untouched holdouts.",
+    "The audit counts accepted passive risk additions, not every forecast error or later fill.",
+    "The candidate also caps fundamental reversals and cancels risk-increasing working orders.",
+    "Basket execution and its model-free hedges are outside this uncertainty gate.",
+    "No parameter selection or live activation occurs in this script."
+  ],
+  "depth_fractions": [
+    1.0,
+    0.5
+  ],
+  "basket_enabled": [
+    false,
+    true
+  ],
+  "reset_warmup_each_snapshot": false
+}

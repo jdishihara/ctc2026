@@ -88,3 +88,12 @@ HEAD while it runs. Current evidence and limitations are in
 
 Readiness evidence: [competition-readiness.md](competition-readiness.md).
 Runner behavior and shutdown: [controlled-practice.md](controlled-practice.md).
+
+06:54 UTC research update: the uncertainty guard failed its fixed profit gates
+and is not promoted. Both frozen versions completed all 522 runs, and their
+results are identical on these inputs. Review corrected old-order cancellation
+and closed-receipt validation gaps; the integrated Python suite passes 497 tests.
+All evidence, including losses and retry-spacing limits, is in
+[uncertainty-guard-experiment.md](uncertainty-guard-experiment.md). No new live
+trial has started. A separate offline diagnostic is being prepared to measure
+serialized request and account-reconciliation delays.
