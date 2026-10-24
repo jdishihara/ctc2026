@@ -31,10 +31,10 @@ ownership requirements, or either currently frozen evaluation checkout.
   declared accounting convention, not a claim about the live exchange's cost-
   basis convention. At every mutation, assert that quantities and aggregate
   cash plus marked/settlement P&L equal the virtual exchange's accounting.
-- `/symbols` exposes no settlement-active prices before the irreversible
-  terminal fence. The strategy must never receive future settlements while
-  trading is possible. The terminal fence remains the last captured frame;
-  report the gap to the official receipt and its existing limitations.
+- `/symbols` exposes settlement-active prices only at or after the recorded
+  official receipt time and the irreversible terminal fence. The strategy must
+  never receive future settlements while trading is possible. Matching closes
+  at the last captured frame; report its gap to the official receipt.
 
 ## Stop and cleanup scheduling
 
@@ -70,7 +70,12 @@ P&L, flat/settled/attention status, remaining positions/orders, and every stop
 or error. Then advance the market without strategy callbacks to the capture's
 terminal fence to value any residual holdings. Keep stopped-run receipt P&L
 separate from residual terminal settlement P&L; do not call an unflattened
-attention result successful cleanup. No next-season rollover is simulated.
+attention result successful cleanup. Outstanding orders can still fill during
+this advance; value the resulting account, not frozen cleanup-receipt holdings.
+No next-season rollover is simulated. After the official receipt, allow at most
+`max(60, 100 * RTT)` further seconds of closed-market polling to obtain normal
+completion. Exhaustion is a diagnostic stop, never a fabricated completion;
+report no-trial, incomplete-trial and completed-trial outcomes distinctly.
 
 ## Fixed comparison
 
@@ -86,10 +91,14 @@ remains 0.25-second RTT, full depth, baskets enabled, starting with zero prior
 practice P&L. No threshold tuning or best-scenario selection follows.
 
 Before interpreting supervised results, require the baseline adapter to reproduce
-the archived direct-client trades, terminal P&L, and server risk metrics on all
-64 original grid settings. Accounting-field decomposition may differ; trade
-behavior must not. A failed equivalence check blocks interpretation and must
-be retained. Preserve all errors, early stops, incomplete cleanup, and losses.
+every archived direct-client output field on all 64 original grid settings.
+Also rerun the frozen reference and compare hashes of ordered requests
+(method, path, body, timing and mutation acknowledgements) and fills. Read
+response accounting decomposition and server/client limit placement are the
+declared differences, so read-response bodies are excluded from trace hashes.
+Accounting-field decomposition may differ; trade behavior must not. A failed
+equivalence check blocks interpretation and must be retained. Preserve all
+errors, early stops, incomplete cleanup, and losses.
 
 ## Required regression checks
 
