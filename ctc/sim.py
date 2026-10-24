@@ -218,6 +218,20 @@ class Sim:
                 still.append(o)
         self.pending = still
 
+    def _advance_pending_before(self, timestamp: float) -> None:
+        """Execute deadlines strictly before the next event or round close.
+
+        Incoming market data wins timestamp ties, and orders due exactly at
+        the close expire. Prices stay at the latest observed quote in between
+        events; no strategy callback is synthesized for an order activation.
+        """
+        while self.pending:
+            due = min(o.exec_t for o in self.pending)
+            if due >= timestamp:
+                break
+            self.t = due
+            self._activate_pending()
+
     def _on_price(self, prices: dict[str, float]) -> None:
         self.mid = prices
         if self.ladder is not None:
@@ -235,6 +249,10 @@ class Sim:
         strategy.on_start(self)
         last_round = 0
         for t, _, kind, payload in self.events:
+            if t >= 3 * ROUND_SECS:
+                break  # terminal frames cannot open a fourth trading round
+            if last_round:
+                self._advance_pending_before(min(t, last_round * ROUND_SECS))
             self.t = t
             rnd = int(t // ROUND_SECS) + 1
             if rnd != last_round:
@@ -244,14 +262,21 @@ class Sim:
                 self.market_open = True
                 self.orders.clear(); self.pending.clear()   # resting orders do not survive the close
                 strategy.on_round(self)
-            self._activate_pending()
             if kind == "price":
                 self._on_price(payload)
+                self._activate_pending()
                 strategy.on_quotes(self)
                 self.pnl_path.append((t, self.pnl()))
             else:
+                self._activate_pending()
                 strategy.on_news(self, payload)
+        if last_round:
+            close = last_round * ROUND_SECS
+            self._advance_pending_before(close)
+            self.t = close
         self.market_open = False
+        self.orders.clear()
+        self.pending.clear()
         self.mid = dict(self.settlement)
         self.round_pnl[3] = self.pnl()
         strategy.on_end(self)
