@@ -227,7 +227,7 @@ export async function startOverlay(win: Window & typeof globalThis = window, opt
     if (!store.cfg.prefillEnabled || !store.d.autoArmed || busy) return;
     busy = true;
     autopilot.step().finally(() => (busy = false));
-  }, opts.autoMs ?? 700);
+  }, opts.autoMs ?? 400);
 
   // ---- hotkeys ----
   const focusField = (field: 'spot' | 'vol') => {
