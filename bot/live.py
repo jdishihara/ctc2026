@@ -696,6 +696,11 @@ async def run(args: argparse.Namespace) -> None:
 
 async def run_exchange(args: argparse.Namespace, ex: LiveExchange) -> None:
     print(f"HTTP connection reuse={ex.http_reuse_enabled}", flush=True)
+    ex.refresh()
+    if not ex.state_ready or not isinstance(ex.competition_id, str) or not ex.competition_id.strip():
+        raise RuntimeError('initial account snapshot is unavailable or missing competition identity')
+    # Initialize against the confirmed identity before ingesting any history.
+    # Otherwise the first quote callback resets the model from None to this CID.
     if args.nowcast:
         strat = S.FairValueTrader(min_edge=args.min_edge, edge_full=args.edge_full, project=True)
     else:   # the analog ensemble, same parameters as scripts/backtest.py --strategy analog
@@ -710,7 +715,6 @@ async def run_exchange(args: argparse.Namespace, ex: LiveExchange) -> None:
     print(f"final phase exact={strat.final_exact} entry={strat.final_edge} full={strat.final_edge_full}", flush=True)
     print(f"basket edge={strat.basket_edge} participation={strat.basket_participation} max_lot=10", flush=True)
     print(f"announcements: pause named symbols, re-anchor to the house mid after {args.announce_wait:.0f} s; commands from {args.control}", flush=True)
-    ex.refresh()
     season_year = ""
     last_round = 0
     seen_seq: set[int] = set()

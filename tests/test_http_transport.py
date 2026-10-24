@@ -37,6 +37,14 @@ def server():
             payload = b'{"detail":"halted"}' if self.path.endswith('/error') else b'{"ok":true}'
             if self.path == '/cases/hurricane.json':
                 payload = b'{"limits":{"PORT":10},"etfs":{}}'
+            elif self.path == '/api/v1/competitions/time':
+                payload = b'{"state":"running","competition_id":"season-1"}'
+            elif self.path == '/api/v1/orders/open':
+                payload = b'{"orders":[]}'
+            elif self.path == '/api/v1/positions?include_zero=true':
+                payload = b'{"positions":[]}'
+            elif self.path == '/api/v1/trades':
+                payload = b'{"trades":[]}'
             if self.path.endswith('/empty'):
                 payload = b''
             status = 403 if self.path.endswith('/error') else 200
@@ -162,7 +170,8 @@ def test_proxy_bypass_uses_urllib_request_host_including_ipv6_and_port(monkeypat
     assert proxy_required(url) == expected
 
 
-def test_strategy_startup_failure_closes_connection(server, monkeypatch):
+@pytest.mark.parametrize('initial_snapshot_available', [False, True])
+def test_startup_failure_closes_connection(server, monkeypatch, initial_snapshot_available):
     url, requests = server
     closed = []
     original_close = LiveExchange.close
@@ -176,11 +185,15 @@ def test_strategy_startup_failure_closes_connection(server, monkeypatch):
 
     monkeypatch.setattr(LiveExchange, 'close', close)
     monkeypatch.setattr(live.S, 'FairValueTrader', fail_strategy)
+    if not initial_snapshot_available:
+        monkeypatch.setattr(LiveExchange, 'refresh', lambda exchange: None)
     args = argparse.Namespace(url=url, key='test', dry_run=True, rate=90,
                               reuse_http=True, nowcast=True, min_edge=.025, edge_full=.03)
-    with pytest.raises(RuntimeError, match='strategy startup failed'):
+    reason = 'strategy startup failed' if initial_snapshot_available else 'initial account snapshot'
+    with pytest.raises(RuntimeError, match=reason):
         asyncio.run(live.run(args))
-    assert len(requests) == 1
+    assert len(requests) == (5 if initial_snapshot_available else 1)
+    assert all(r['method'] == 'GET' for r in requests)
     assert len(closed) == 1
     assert closed[0]._http._connection is None
 
