@@ -297,6 +297,76 @@ class PracticeSession(live.LiveSession):
         super().__init__(*args, **kwargs)
         self.journal = journal
         self.last_settlement_check = 0.
+        self.waiting_for_weather = None
+
+    def _history_identity(self):
+        return (self.strat.model, self.ex.competition_id, self.competition_id,
+                self.ex.season_year, self.season_year)
+
+    def _history_identity_agrees(self):
+        return bool(self.ex.competition_id and self.ex.competition_id == self.competition_id
+                    and self.ex.season_year and self.ex.season_year == self.season_year
+                    and self.awaiting_competition_id is None)
+
+    def _attempted_trial(self, cid=None):
+        trial = self.journal.trials.get(self.ex.competition_id if cid is None else cid)
+        return bool(trial and not trial['completed'] and trial['attempt_count'])
+
+    def _valid_weather_wait(self):
+        model = self.strat.model
+        return (self.waiting_for_weather == (self._history_identity(), model.round)
+                and self._history_identity_agrees()
+                and model.round in (2, 3) and self.news_complete
+                and model.outage_history_complete
+                and set(range(1, model.round)) == model.reported_rounds
+                and model.storm_active and not model.storm_reported and model.last_obs is None)
+
+    def _check_attempted_history(self):
+        model = self.strat.model
+        waiting = self._valid_weather_wait()
+        if self.waiting_for_weather is not None and not waiting:
+            identity, rnd = self.waiting_for_weather
+            recovered = (identity == self._history_identity() and rnd == model.round
+                         and self._history_identity_agrees()
+                         and set(range(1, rnd)) == model.reported_rounds
+                         and self.news_complete and model.live_history_ready)
+            if not recovered and self._attempted_trial(identity[1]):
+                self.journal.stop('history became incomplete after trading began')
+            self.waiting_for_weather = None
+        if self._attempted_trial() and (not self.news_complete
+                or (not model.live_history_ready and not waiting)):
+            self.journal.stop('history became incomplete after trading began')
+
+    def _news(self, message):
+        model, identity = self.strat.model, self._history_identity()
+        previous_round = model.round
+        complete_prior = (self._history_identity_agrees() and self.news_complete
+                          and model.live_history_ready and model.storm_reported
+                          and set(range(1, previous_round + 1)) == model.reported_rounds)
+        seq, previous_seq = message.get('seq'), self.latest_seq
+        seen = seq is not None and seq in self.seen_seq
+        retired = (message.get('time') or '')[:4] in self.retired_years
+        attempted = self._attempted_trial(identity[1])
+        super()._news(message)
+        same_identity = identity == self._history_identity()
+        if attempted and not same_identity:
+            self.journal.stop('history became incomplete after trading began')
+        accepted = (seq is not None and seq in self.seen_seq and (not seen or not same_identity))
+        unsequenced = seq is None and not retired
+        if message.get('type') == 'storm_formed' and (accepted or unsequenced):
+            self.waiting_for_weather = None
+            rnd = message.get('round')
+            valid_transition = (attempted and same_identity and complete_prior
+                and type(seq) is int and seq == previous_seq + 1
+                and type(rnd) is int and rnd in (2, 3) and rnd == previous_round + 1
+                and self.strat.model.round == rnd and self.news_complete)
+            if valid_transition:
+                self.waiting_for_weather = (self._history_identity(), rnd)
+            elif attempted:
+                # Latch at the event boundary: age zero later in this same
+                # batch cannot conceal a duplicate or restarted formation.
+                self.journal.stop('history became incomplete after trading began')
+        self._check_attempted_history()
 
     def submission_allowed(self, symbols=()):
         trial = self.journal.trials.get(self.ex.competition_id)
@@ -304,6 +374,7 @@ class PracticeSession(live.LiveSession):
                 and not trial.get('invalid') and super().submission_allowed(symbols))
 
     def step(self, events):
+        self._check_attempted_history()
         super().step(events)
         ex, journal = self.ex, self.journal
         trial = journal.trials.get(ex.competition_id)
@@ -316,8 +387,7 @@ class PracticeSession(live.LiveSession):
                 self.strat.last_trade_t = -1e9
                 trial = journal.trials[ex.competition_id]
         if trial and not trial['completed']:
-            if trial['attempt_count'] and (not self.news_complete or not self.strat.model.live_history_ready):
-                journal.stop('history became incomplete after trading began')
+            self._check_attempted_history()
             if (self.strat.model.round == 3 and self.strat.model.storm_reported
                     and not ex.market_open and ex.t - self.last_settlement_check >= 5):
                 self.last_settlement_check = ex.t

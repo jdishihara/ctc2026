@@ -5,6 +5,19 @@ around **08:00 EDT / 12:00 UTC on October 24**. Continue evaluating and fixing
 problems between bounded batches; a batch stop does not finish the overnight
 goal. Preserve every trial, loss, and cleanup cost.
 
+## 08:03 UTC: corrected round-transition comparison completed
+
+The reviewed narrow correction preserves valid waiting between a new storm's
+formation and its first observation; submissions remain blocked during that
+wait. All 64 baseline outputs and request/fill traces still match exactly.
+The corrected supervisor has zero history stops, 53 completed trials, 11 loss
+stops and 12 negative terminal outcomes. Primary results for captures 241–244
+are +$52.93, +$1,497.40, +$286.36 and −$261.00. The worst stress outcome is
+−$420.64, and two capture-244 cleanup cases retain positions. All 607 tests
+passed before source freeze `cd3eb23` at 08:00:15 UTC. Independent result audit
+is complete; see [practice-round-transition.md](practice-round-transition.md).
+Live account ownership is still unresolved; no new owned live batch ran.
+
 ## 07:46 UTC: production-supervisor replay completed
 
 The new fixed comparison retains all 64 supervised settings after exact

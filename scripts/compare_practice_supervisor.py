@@ -112,7 +112,8 @@ def main():
     dependencies = source_files(source_root)
     if args.phase != 'reference':
         dependencies += [ROOT / 'bot/practice.py', ROOT / 'scripts/replay_practice_supervisor.py']
-    dependencies += [Path(__file__), ROOT / 'docs/supervised-replay-plan.md', args.spec]
+    dependencies += [Path(__file__), ROOT / 'docs/supervised-replay-plan.md',
+                     ROOT / 'docs/practice-round-transition-plan.md', args.spec]
     source_hashes = {str(p): digest(p) for p in dependencies}
     required = {(capture, rtt, depth, basket) for capture in [241, 242, 243, 244]
                 for rtt, depth, basket in GRID}
