@@ -8,7 +8,7 @@ unchanged. Reads the news and quotes channels, keeps positions and open orders i
 mid for the operator every 10 s. Start with --dry-run: orders are printed, not sent.
 """
 from __future__ import annotations
-import argparse, asyncio, collections, json, math, sys, threading, time, urllib.error, urllib.request
+import argparse, asyncio, collections, json, math, os, sys, threading, time, urllib.error, urllib.request
 from http.client import HTTPException
 from pathlib import Path
 from typing import Any
@@ -340,7 +340,7 @@ class LiveExchange:
         return response is not None
 
 
-MAX_MISSING_NEWS = 3   # a feed reconnect loses 1-2 messages; tolerate up to this many missing seqs per season, more blocks
+MAX_MISSING_NEWS = 6   # a feed reconnect loses 1-2 messages; tolerate this many missing seqs per season in total (three drops), more blocks
 SEQ_RESET_GAP = 100  # a seq this far below the running maximum means a new season started (duplicates and retries never go back this far)
 
 
@@ -354,6 +354,25 @@ def replay_feed_log(path: str, ex: "LiveExchange", strat, seen_seq: set[int], ta
     p = Path(path)
     if not year or not p.exists():
         print(f"feed-log replay skipped: {'no fictional year' if not year else path + ' missing'}", flush=True); return year, 0, 0
+    msgs, segments = load_feed_log(p, year, tail_bytes)
+    if segments:
+        print(f"feed-log replay: {segments} earlier season(s) of year {year} skipped (seq restarted); replaying the latest", flush=True)
+    for seq in sorted(msgs):
+        m = msgs[seq]
+        strat.model.on_message(m); seen_seq.add(seq)
+        if m.get('type') == 'announcement':
+            symbols = [s for s in (m.get('symbols') or []) if s in ex.symbols]
+            # Restart loses live price anchors. Re-pause these symbols and use
+            # the normal fresh-price re-anchor/explicit operator control path.
+            strat.announce(symbols, ex.t)
+    if strat.paused:
+        print(f'replayed announcement pauses: {sorted(strat.paused)}', flush=True)
+    return year, strat.model.round, len(msgs)
+
+
+def load_feed_log(p: Path, year: str, tail_bytes: int = 150_000_000) -> tuple[dict[int, dict], int]:
+    """The recorder's news messages of the latest season of `year`, by seq, and how many earlier same-year seasons
+    (seq restarts) were skipped."""
     msgs: dict[int, dict] = {}
     max_seq = -1; segments = 0
     with p.open("rb") as f:
@@ -380,19 +399,7 @@ def replay_feed_log(path: str, ex: "LiveExchange", strat, seen_seq: set[int], ta
                 msgs.clear(); segments += 1; max_seq = -1
             max_seq = max(max_seq, seq)
             msgs[seq] = m
-    if segments:
-        print(f"feed-log replay: {segments} earlier season(s) of year {year} skipped (seq restarted); replaying the latest", flush=True)
-    for seq in sorted(msgs):
-        m = msgs[seq]
-        strat.model.on_message(m); seen_seq.add(seq)
-        if m.get('type') == 'announcement':
-            symbols = [s for s in (m.get('symbols') or []) if s in ex.symbols]
-            # Restart loses live price anchors. Re-pause these symbols and use
-            # the normal fresh-price re-anchor/explicit operator control path.
-            strat.announce(symbols, ex.t)
-    if strat.paused:
-        print(f'replayed announcement pauses: {sorted(strat.paused)}', flush=True)
-    return year, strat.model.round, len(msgs)
+    return msgs, segments
 
 
 def quote_from_frame(d: dict[str, Any]) -> tuple[str, float, float] | None:
@@ -464,8 +471,11 @@ async def drive_market_data(session, inbox, receiver, interval=.25):
 
 
 class LiveSession:
-    def __init__(self, ex, strat, sync, season_year='', last_round=0, seen_seq=None, control=None):
+    def __init__(self, ex, strat, sync, season_year='', last_round=0, seen_seq=None, control=None, feed_log=None):
         self.ex, self.strat, self.sync = ex, strat, sync
+        self.feed_log = Path(feed_log) if feed_log else None   # the recorder's file: a long feed hole is repaired by a restart that replays it
+        self.hole_since = None; self.last_hole_check = -1e9
+        self.restart = lambda: os._exit(3)                      # the run_live.sh wrapper starts the bot again in 10 s
         self.season_year, self.last_round = season_year or getattr(ex, 'season_year', ''), last_round
         self.retired_years = set()
         self.seen_seq = seen_seq if seen_seq is not None else set()
@@ -588,6 +598,8 @@ class LiveSession:
                 return
             if seq > self.latest_seq + 1:
                 self.missing_seq.update(range(self.latest_seq + 1, seq))
+                print(f'feed hole: seqs {self.latest_seq + 1}-{seq - 1} lost ({len(self.missing_seq)} missing this season, '
+                      f'{MAX_MISSING_NEWS} tolerated)', flush=True)
             self.missing_seq.discard(seq)     # a late or re-sent message fills its hole
             self.seen_seq.add(seq)
             self.latest_seq = max(seq, self.latest_seq)
@@ -639,6 +651,38 @@ class LiveSession:
             strat.announce(syms, ex.t)
         strat.on_news(ex, m)
 
+    def _repair_long_hole_by_restart(self):
+        """More than MAX_MISSING_NEWS lost messages block the rest of the season. The recorder keeps its own
+        connection, so when its file holds every missing message, exit: the wrapper restarts the bot, which replays
+        the complete season from that file (the tested restart path) and is eligible again about a minute later."""
+        ex = self.ex
+        if self.feed_log is None or len(self.missing_seq) <= MAX_MISSING_NEWS:
+            self.hole_since = None
+            return
+        if self.hole_since is None:
+            self.hole_since = ex.t
+        if ex.t - self.hole_since < 10 or ex.t - self.last_hole_check < 15:
+            return                                   # late messages get ten seconds to fill their holes
+        self.last_hole_check = ex.t
+        try:
+            msgs, _ = load_feed_log(self.feed_log, self.season_year)
+        except Exception as exc:
+            print(f'feed log unreadable ({exc}); staying blocked', flush=True)
+            return
+        if not self.missing_seq <= set(msgs):
+            print(f'feed log lacks {len(self.missing_seq - set(msgs))} of the {len(self.missing_seq)} lost messages; staying blocked', flush=True)
+            return
+        print(f'RESTARTING: {len(self.missing_seq)} lost messages (seqs {min(self.missing_seq)}-{max(self.missing_seq)}) are in {self.feed_log}; '
+              f'the wrapper restarts the bot to replay the season', flush=True)
+        try:
+            if ex.open_orders:
+                ex.cancel_all()
+        except Exception as exc:
+            print(f'cancel before restart failed: {exc}', flush=True)
+        self.stop()
+        sys.stdout.flush()
+        self.restart()
+
     def step(self, events):
         ex, strat = self.ex, self.strat
         if ex.t - self.last_sync > self.sync:
@@ -682,6 +726,7 @@ class LiveSession:
                 ex.mid.pop(symbol, None)
                 ex.quote_times.pop(symbol, None)
         blocked = self.history_block_reason()
+        self._repair_long_hole_by_restart()
         if blocked != self.last_block_reason:
             print(f'TRADING BLOCKED: {blocked}' if blocked else 'history complete: trading eligible', flush=True)
             self.last_block_reason = blocked
@@ -751,19 +796,25 @@ async def run_exchange(args: argparse.Namespace, ex: LiveExchange) -> None:
     ws_url = (args.ws or ex.url.replace("https://", "wss://", 1).replace("http://", "ws://", 1)) + "/ws/v1/market-data"
     subscribe = {"action": "subscribe", "symbols": ex.symbols, "channels": ["news", "quotes"]}
     inbox = MarketInbox()
-    session = LiveSession(ex, strat, args.sync, season_year, last_round, seen_seq, control=ControlFile(args.control))
+    session = LiveSession(ex, strat, args.sync, season_year, last_round, seen_seq, control=ControlFile(args.control),
+                          feed_log=args.feed_log)
 
     async def receive_forever():
+        drops = 0
         while True:
             try:
                 async with websockets.connect(ws_url, additional_headers={'X-API-Key': ex.key}) as ws:
                     await ws.send(json.dumps(subscribe))
                     print('connected', flush=True)
+                    drops = 0
                     await receive_market_data(ws, inbox, lambda: ex.t)
             except (OSError, websockets.WebSocketException) as exc:
                 print(f'disconnected ({exc}); reconnecting', flush=True)
             inbox.put({'type': 'disconnected'}, ex.t)
-            await asyncio.sleep(2)
+            drops += 1
+            # Observations arrive every 2 s and a hole of more than 3 is not repaired: reconnect at once after a
+            # single drop (the overnight pattern), and back off only when the server keeps refusing.
+            await asyncio.sleep(0.5 if drops == 1 else 2)
 
     receiver = asyncio.create_task(receive_forever())
     try:

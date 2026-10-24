@@ -16,7 +16,9 @@ Hurricane competition (`/competitions/current` = "Hurricane Season", state ready
 10:00). The live season is dated 2026; the bot's feed-log replay keeps only the season after the last seq restart, so a
 same-year warm-up season cannot pollute the real one (fixed 2026-10-24 10:10).
 
-Before the open (15 min). Paste in order, in `~/projects/ctc2026`:
+Before the open (15 min). One command does all of the steps below in order and refuses to start the bot if preflight
+reports a failure: `zsh scripts/launch_competition.sh` (then `tail -f recordings/bot_live.log`). By hand, paste in
+order, in `~/projects/ctc2026`:
 
 ```bash
 bot/stop.sh                                  # the overnight testnet bot (started 00:22) and its recorders are still running: stop them first
@@ -43,11 +45,12 @@ for most symbols is normal; during a storm they diverge, that is the trade.
 | You see | It means | Do |
 |---|---|---|
 | `market (re)opened: warm-up` | round open, no orders for 20 s | nothing; watch the first minute |
-| `TRADING BLOCKED: missing news history` / `incomplete weather history` (persisting; a few seconds at a round open is normal) | new orders/conversions blocked; resting orders canceled. A reconnect that loses up to 3 messages repairs itself and does not show this | restart from a complete current-season recording (`FEED_LOG=recordings/competition.jsonl zsh bot/run_live.sh`), or wait for the next season from its beginning; manage existing holdings explicitly |
+| `TRADING BLOCKED: missing news history` / `incomplete weather history` (persisting; a few seconds at a round open is normal) | new orders/conversions blocked; resting orders canceled. Reconnects that lose up to 6 messages in a season repair themselves and do not show this | restart from a complete current-season recording (`FEED_LOG=recordings/competition.jsonl zsh bot/run_live.sh`), or wait for the next season from its beginning; manage existing holdings explicitly |
 | `waiting for a live news checkpoint` / `new-season account refresh` | feed/account not synchronized | wait for synchronization; investigate if it persists |
 | one or two `HTTP 4xx` around a halt | normal | nothing |
 | a stream of `HTTP 4xx` | tick, limits or key | `bot/stop.sh`, read the error, fix, `run_live.sh` |
 | `disconnected ... reconnecting` once | fine | nothing |
+| `RESTARTING: N lost messages ... are in recordings/competition.jsonl` then `=== start` | a long feed hole; the bot exits and the wrapper restarts it in 10 s, replaying the season from the recorder's file; eligible again about a minute later | nothing; if `feed log lacks ...` shows instead, both connections lost the messages: restart by hand only if a later recording has them |
 | `disconnected` every few seconds | network | check wifi; a missing sequence needs a restart with complete recorded history |
 | `ANNOUNCEMENT [SYM]: <headline> -> pausing` | model has not seen it | read docs/announcements.md rule 1; default: do nothing, it re-anchors to the house in 60 s |
 | `announcement wait over: SYM fair anchored to house mid` | resumed on the house's price | nothing |

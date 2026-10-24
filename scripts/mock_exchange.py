@@ -102,18 +102,39 @@ class H(BaseHTTPRequestHandler):
 
 
 async def stream(sim: Sim, speed: float, port: int, start_delay: float = 0.0):
-    clients = set()
+    clients = set(); droppable = set()
 
     async def handler(ws):
-        clients.add(ws)
+        if time.time() < STATE.get("outage_until", 0.0):
+            await ws.close(code=1011)          # the server is "down" for a while after a drop (--ws-drop-outage)
+            return
         try:
-            await ws.recv()   # subscribe
+            sub = json.loads(await ws.recv())   # subscribe
+        except Exception:
+            return
+        # The recorder subscribes to trades as well; --ws-drop-every cuts only the trading bot's connection so the
+        # recorder's file stays complete, as on game day when the two connections fail independently.
+        if "trades" not in (sub.get("channels") or []):
+            clients.add(ws); droppable.add(ws)
+        else:
+            clients.add(ws)
+        try:
             await ws.wait_closed()
         finally:
-            clients.discard(ws)
+            clients.discard(ws); droppable.discard(ws)
+
+    async def drop_clients():
+        while True:
+            await asyncio.sleep(STATE["ws_drop_every"])
+            for ws in list(droppable):
+                print("dropping the bot's websocket", flush=True)
+                STATE["outage_until"] = time.time() + STATE.get("ws_drop_outage", 0.0)
+                await ws.close(code=1011)
 
     async with websockets.serve(handler, "localhost", port + 1):
         print(f"ws on ws://localhost:{port + 1}/ws/v1/market-data  (http on {port})", flush=True)
+        if STATE.get("ws_drop_every"):
+            asyncio.create_task(drop_clients())
         if start_delay > 0:
             STATE["open"] = False          # like the live exchange before the open: a bot can connect and wait
             await asyncio.sleep(start_delay)
@@ -150,9 +171,12 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--season", type=int, default=451); ap.add_argument("--speed", type=float, default=20.0); ap.add_argument("--port", type=int, default=8765)
     ap.add_argument("--start-delay", type=float, default=0.0, help="seconds to serve a closed market before the season starts (lets a bot connect first)")
+    ap.add_argument("--ws-drop-every", type=float, default=0.0, help="close every websocket client this often (seconds) to rehearse reconnects")
+    ap.add_argument("--ws-drop-outage", type=float, default=0.0, help="after each drop, refuse new websocket connections for this many seconds")
     ap.add_argument("--drop-seqs", default="", help="comma-separated news seqs never sent (rehearses a feed hole, e.g. 300,301)")
     a = ap.parse_args()
     STATE["drop_seqs"] = {int(x) for x in a.drop_seqs.split(",") if x.strip()}
+    STATE["ws_drop_every"] = a.ws_drop_every; STATE["ws_drop_outage"] = a.ws_drop_outage
     case = json.loads((ROOT / "case.json").read_text()); man = json.loads((ROOT / "history" / "manifest.json").read_text())
     STATE["case"] = case
     sim = Sim(ROOT / "history" / man["seasons"][a.season - 1]["dir"], case)
