@@ -400,3 +400,26 @@ def test_full_season_session_accepts_checkpoints_in_every_round():
     session._news({'type': 'snapshot', 'round': 3, 'phase': 'done',
                    'last_seq': session.latest_seq})
     assert session.history_block_reason() is None
+
+
+def test_feed_replay_keeps_only_the_latest_same_year_season(tmp_path):
+    # The live exchange can run a warm-up season and the real season on the same fictional year; the testnet never
+    # did (one year per season). Only the season after the last seq restart may be replayed.
+    ex, previous = prepared()
+    strat = previous.strat
+    strat.on_start(ex)
+    ex.responses['/competitions/time']['fictional_time'] = '1788-05-26T10:01:00'
+    stale = [{'type': 'storm_formed', 'round': 1, 'seq': 0}, weather(),
+             {'type': 'announcement', 'seq': 2, 'symbols': ['PORT'], 'headline': 'Port closure'}]
+    stale += [{'type': 'storm', 'round': 1, 'seq': s, 'age': 2 * s, 'x': 480.0, 'y': 700.0, 'vx': 0.0, 'vy': -1.8,
+               'radius': 80.0, 'intensity': 1.0} for s in range(3, 300)]
+    current = [{'type': 'storm_formed', 'round': 1, 'seq': 0}, weather(), {**weather(), 'seq': 2, 'age': 4}]
+    path = tmp_path / 'feed.jsonl'
+    lines = [json.dumps({'type': 'news', 'message': {**m, 'time': '1788-05-26T10:00:00'}}) for m in stale + current]
+    path.write_text('\n'.join(lines))
+    seen = set()
+    year, rnd, count = replay_feed_log(str(path), ex, strat, seen)
+    assert (year, rnd, count) == ('1788', 1, 3)
+    assert seen == {0, 1, 2}
+    assert strat.paused == set()          # the stale season's announcement pause is not restored
+    assert len(strat.model.obs) <= 2      # only the current season's two observations

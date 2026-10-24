@@ -340,6 +340,9 @@ class LiveExchange:
         return response is not None
 
 
+SEQ_RESET_GAP = 100  # a seq this far below the running maximum means a new season started (duplicates and retries never go back this far)
+
+
 def replay_feed_log(path: str, ex: "LiveExchange", strat, seen_seq: set[int], tail_bytes: int = 150_000_000) -> tuple[str, int, int]:
     """Feed every recorded news message of the current season (same fictional year as the exchange clock) through the
     model, in seq order. Returns (season year, last round seen, messages replayed)."""
@@ -351,6 +354,7 @@ def replay_feed_log(path: str, ex: "LiveExchange", strat, seen_seq: set[int], ta
     if not year or not p.exists():
         print(f"feed-log replay skipped: {'no fictional year' if not year else path + ' missing'}", flush=True); return year, 0, 0
     msgs: dict[int, dict] = {}
+    max_seq = -1; segments = 0
     with p.open("rb") as f:
         size = f.seek(0, 2); f.seek(max(0, size - tail_bytes))
         if size > tail_bytes:
@@ -367,7 +371,16 @@ def replay_feed_log(path: str, ex: "LiveExchange", strat, seen_seq: set[int], ta
                 continue
             if str(m.get("time") or "")[:4] != year:
                 continue
-            msgs[m["seq"]] = m
+            seq = m["seq"]
+            if seq < max_seq - SEQ_RESET_GAP:
+                # A season starts again from seq 0. On the testnet each season has its own fictional year, but the
+                # live exchange can run several same-year competitions in one day (a warm-up, then the real one):
+                # keep only the most recent season of this year.
+                msgs.clear(); segments += 1; max_seq = -1
+            max_seq = max(max_seq, seq)
+            msgs[seq] = m
+    if segments:
+        print(f"feed-log replay: {segments} earlier season(s) of year {year} skipped (seq restarted); replaying the latest", flush=True)
     for seq in sorted(msgs):
         m = msgs[seq]
         strat.model.on_message(m); seen_seq.add(seq)
