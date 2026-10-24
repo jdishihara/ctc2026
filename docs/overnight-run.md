@@ -54,11 +54,16 @@ coverage must be reported before interpreting results. Full assumptions are in
 
 ## Next decisions
 
-Update at 06:08 UTC: PRs 5–9 are merged. The entry-price correction is reviewed
+Update after the 06:29 UTC close: PRs 5–12 are merged. The entry-price correction is reviewed
 and tested; its recorded-market and 675-run development profit effects are
 mixed. Final-report-only trading was evaluated and is not promoted. No new live
 batch has run, and the shared-account question remains unresolved. The latest
-integrated suite has 378 passing tests. Current evidence and limitations are in
+integrated Python suite has 409 passing tests. Optional HTTP connection reuse
+remains off by default. The fixed worker evaluated the third captured season:
+all 24 simulated outcomes were positive; the 12 using current snapshot behavior
+ranged from $156.65 to $389.27. These are virtual results, not account profit.
+The worker continues from frozen source `49a690e`; do not update its source or
+HEAD while it runs. Current evidence and limitations are in
 [competition-readiness.md](competition-readiness.md).
 
 1. Resolve the shared-account conflict before resuming live practice. Detection
