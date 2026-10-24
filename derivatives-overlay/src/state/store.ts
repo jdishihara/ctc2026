@@ -639,7 +639,7 @@ export class Store {
     if (!parse.analysts.length && [1, 2, 3].includes(aField)) {
       for (const [u, v] of Object.entries(parse.underlyings)) {
         const val = v.iv ?? null;
-        if (val != null) parse.analysts.push({ analyst: aField as AnalystId, underlying: u, value: val, rawValue: val, raw: String(val), hasPct: false, isVol: true });
+        if (val != null) parse.analysts.push({ analyst: aField as AnalystId, underlying: u, value: normalizeVol(val), rawValue: val, raw: String(val), hasPct: false, isVol: true });
       }
       parse.underlyings = {};
     }
