@@ -57,4 +57,5 @@ profit. No live trader was started or reconfigured for this experiment.
 The integrated receipt records the source before the two review fixes. Those
 fixes change proxy selection to use urllib's exact request-host representation
 and extend connection cleanup over strategy initialization. They do not add any
-request retries. All 407 Python tests passed after those fixes.
+request retries. All 407 Python tests passed after those fixes, and all 409
+passed after integrating the independently reviewed loss-attribution diagnostic.
