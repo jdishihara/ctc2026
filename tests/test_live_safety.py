@@ -509,7 +509,6 @@ def test_long_hole_restarts_only_when_the_recorder_has_every_lost_message(tmp_pa
     with patch('bot.live.time.monotonic', return_value=50.), patch.object(ex, 'send', return_value={}):
         session.step([])
     assert restarts == [50.] and session.stopped.is_set()
-    assert (tmp_path / 'control.txt.replay').exists() is False or True   # marker only when a control file is configured
 
 
 def test_short_hole_of_observations_is_explained_but_other_types_are_not():
@@ -542,14 +541,24 @@ def test_hole_is_filled_in_order_from_the_recorder_file(tmp_path):
     assert [o['age'] for o in strat.model.obs] == [0, 2, 4, 6, 8, 10] and strat.model.outage_history_complete
 
 
-def test_control_file_replays_this_run_after_a_self_restart(tmp_path):
-    from bot.control import ControlFile
-    path = tmp_path / 'control.txt'
-    path.write_text('pause MAT\n')
-    assert ControlFile(str(path)).offset == len('pause MAT\n')     # an ordinary start skips earlier commands
-    (tmp_path / 'control.txt.replay').write_text('1')
-    control = ControlFile(str(path))
-    assert control.offset == 0 and not (tmp_path / 'control.txt.replay').exists()
+def test_snapshot_checkpoint_ahead_then_interpolable_observations_stay_eligible():
+    ex, session = prepared()
+    session._news(dict(type='snapshot', round=1, last_seq=3, phase='storm', obs={'age': 0}, track=[], damage=[]))
+    assert session.unexplained_seq == {2, 3} and not session.news_complete
+    session._news(weather(age=6, seq=4))                    # seqs 2-3 = ages 2, 4: observations, interpolated
+    assert not session.unexplained_seq and session.missing_seq == {2, 3} and session.news_complete
+    assert [o['age'] for o in session.strat.model.obs] == [0, 2, 4, 6]
+
+
+def test_stale_message_after_a_same_year_competition_switch_is_ignored():
+    ex, session = prepared()
+    ex.competition_id = 'second-competition'
+    session._competition_changed()
+    session._news(weather(age=300, seq=151))                # a straggler from the first competition
+    assert session.latest_seq == -1 and not session.missing_seq
+    session._news({'type': 'storm_formed', 'round': 1, 'seq': 0})
+    session._news(weather())
+    assert session.latest_seq == 1 and session.history_block_reason() is None
 
 
 def test_same_year_competition_change_keeps_the_year():

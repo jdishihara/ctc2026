@@ -340,6 +340,7 @@ class LiveExchange:
         return response is not None
 
 
+STALE_NEWS_WINDOW = 30  # seconds after a competition switch during which a non-initial seq is a straggler of the old one
 MAX_MISSING_NEWS = 6   # a feed reconnect loses 1-2 messages; tolerate this many missing seqs per season in total (three drops), more blocks
 SEQ_RESET_GAP = 100  # a seq this far below the running maximum means a new season started (duplicates and retries never go back this far)
 
@@ -475,6 +476,7 @@ class LiveSession:
         self.ex, self.strat, self.sync = ex, strat, sync
         self.feed_log = Path(feed_log) if feed_log else None   # the recorder's file: a long feed hole is repaired by a restart that replays it
         self.hole_since = None; self.last_hole_check = -1e9
+        self.switched_at = None          # time of the last competition switch: its predecessor's late news is ignored for a while
         self.restart = lambda: os._exit(3)                      # the run_live.sh wrapper starts the bot again in 10 s
         self.season_year, self.last_round = season_year or getattr(ex, 'season_year', ''), last_round
         self.retired_years = set()
@@ -542,12 +544,14 @@ class LiveSession:
                 filled, _ = load_feed_log(self.feed_log, self.season_year, tail_bytes=8_000_000)
             except Exception as exc:
                 print(f'feed log unreadable ({exc})', flush=True); filled = {}
-        remaining = []
+        remaining = []; last_filled = -1
         for g in gap:
             if g in filled and g > self.latest_seq:
                 self._news(filled[g])          # the recorder kept its connection: apply the lost message in order
+                last_filled = g                # ... and its own hole handling classified every seq below it
             elif g > self.latest_seq:
                 remaining.append(g)
+        remaining = [g for g in remaining if g > last_filled]
         if not remaining:
             print(f'feed hole: seqs {gap[0]}-{gap[-1]} filled from the recorder\'s file', flush=True)
             return
@@ -557,7 +561,9 @@ class LiveSession:
                         and len(remaining) <= MAX_FILL_STEPS - 1
                         and math.isclose(m.get('age', -1) - last['age'], (len(remaining) + 1) * step, abs_tol=1e-9))
         self.missing_seq.update(remaining)
-        if not observations:
+        if observations:
+            self.unexplained_seq.difference_update(remaining)   # a snapshot checkpoint may have listed them first
+        else:
             self.unexplained_seq.update(remaining)
         print(f'feed hole: seqs {remaining[0]}-{remaining[-1]} lost '
               f'({"storm observations, interpolated" if observations else "unknown types: trading blocked until they arrive or a restart replays the recorder"}; '
@@ -610,6 +616,7 @@ class LiveSession:
             self._reset_news()
             self.last_round = ex.round = 0
             self.season_year = account_year
+            self.switched_at = ex.t
             self.awaiting_competition_id = None
         return changed
 
@@ -633,6 +640,13 @@ class LiveSession:
             if seq in self.seen_seq:
                 if seq == self.latest_seq:
                     self.feed_current = True
+                return
+            if (seq > 0 and self.latest_seq == -1 and self.switched_at is not None
+                    and ex.t - self.switched_at < STALE_NEWS_WINDOW):
+                # Right after a competition switch in the same fictional year, a message that is not the new
+                # season's first one is a straggler from the old competition: never let it pull the old season
+                # back in from the recorder's file.
+                print(f'ignoring seq {seq} ({m.get("type")}) from the previous competition', flush=True)
                 return
             if seq > self.latest_seq + 1:
                 self._feed_hole(list(range(self.latest_seq + 1, seq)), m)
@@ -717,11 +731,17 @@ class LiveSession:
         except Exception as exc:
             print(f'cancel before restart failed: {exc}', flush=True)
         if self.control is not None:
-            # The next process re-applies every operator command (pauses, fair adjustments, resumes) in order.
+            # Commands are not re-applied by the next process (an anchor or a resume typed earlier would act in the
+            # wrong context). The watcher re-issues the ones still wanted.
             try:
-                Path(self.control.path + '.replay').write_text('1')
-            except Exception as exc:
-                print(f'could not mark the control file for replay: {exc}', flush=True)
+                with open(self.control.path, 'r', encoding='utf-8', errors='replace') as fh:
+                    fh.seek(self.control.start_offset)
+                    dropped = [l for l in fh.read().splitlines() if l.strip()]
+            except OSError:
+                dropped = []
+            if dropped:
+                print('OPERATOR COMMANDS of this run are NOT re-applied after the restart; re-issue the ones still wanted: '
+                      + ' | '.join(dropped), flush=True)
         self.stop()
         sys.stdout.flush()
         self.restart()
@@ -843,8 +863,9 @@ async def run_exchange(args: argparse.Namespace, ex: LiveExchange) -> None:
                           feed_log=args.feed_log)
 
     async def receive_forever():
-        drops = 0; connected_at = -1e9
+        drops = 0
         while True:
+            connected_at = None
             try:
                 async with websockets.connect(ws_url, additional_headers={'X-API-Key': ex.key}) as ws:
                     await ws.send(json.dumps(subscribe))
@@ -854,8 +875,8 @@ async def run_exchange(args: argparse.Namespace, ex: LiveExchange) -> None:
             except (OSError, websockets.WebSocketException) as exc:
                 print(f'disconnected ({exc}); reconnecting', flush=True)
             inbox.put({'type': 'disconnected'}, ex.t)
-            if time.monotonic() - connected_at > 5:
-                drops = 0                            # it was a healthy connection that dropped, not a refusal
+            if connected_at is not None and time.monotonic() - connected_at > 5:
+                drops = 0                            # a healthy connection dropped, not a refusal or an instant close
             drops += 1
             # Observations arrive every 2 s and a hole of more than 3 is not repaired: reconnect at once after a
             # single drop (the overnight pattern), and back off only when the server keeps refusing.

@@ -98,17 +98,11 @@ class ControlFile:
     def __init__(self, path: str):
         self.path = path
         self.offset = 0
-        marker = path + '.replay'
-        if os.path.exists(marker):                 # the bot restarted itself: re-apply this run's commands in order
-            try:
-                os.remove(marker)
-            except OSError:
-                pass
-            return
         try:
             self.offset = os.path.getsize(path)    # commands already in the file belong to an earlier run
         except OSError:
             pass
+        self.start_offset = self.offset
 
     def poll(self, strat, sim) -> list[str]:
         try:
