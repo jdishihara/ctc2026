@@ -93,8 +93,33 @@ export async function startOverlay(win: Window & typeof globalThis = window, opt
       const worst = Math.max(1, ...Object.values(st.endpoints).map((e) => e.backoff));
       const bad = Object.entries(st.endpoints).filter(([, e]) => e.status && (e.status >= 400 || e.status === 0)).map(([k, e]) => `${k} ${e.status}`);
       store.s.api = { polls: st.polls, errors: st.errors, lastOkAt: st.lastOkAt, backoff: worst, note: bad.join(', ') };
+      if (kind === 'http' && /\/symbols(\?|$)/.test(String(p.url ?? ''))) adoptExchangeUnderlyings();
     },
   });
+  /** The Derivatives chain is first seen live (the testnet shows the earlier case). If GET /symbols lists option underlyings
+   *  that differ from Config, adopt the exchange's names so chain polling, the feed and the tickets work at once; the headline
+   *  aliases keep the old patterns (positionally, when the counts match) plus the new names themselves. */
+  function adoptExchangeUnderlyings() {
+    const ex = store.s.exchange;
+    const got = ex.underlyings.filter((u) => /^[A-Z0-9._-]+$/i.test(u));
+    if (!got.length || got.length > 4) return;
+    const have = [...store.cfg.underlyings].sort();
+    if (got.length === have.length && got.every((u) => have.includes(u))) return;
+    // only when the exchange really has options on them (an equity-only case lists no option underlyings)
+    const hasOptions = Object.values(store.s.metas).some((m) => got.includes(m.underlying));
+    if (!hasOptions) return;
+    const oldAliases = store.cfg.headline.aliases;
+    const oldKeys = store.cfg.underlyings;
+    const aliases: Record<string, string[]> = {};
+    got.forEach((u, i) => {
+      const inherited = got.length === oldKeys.length ? oldAliases[oldKeys[i]] ?? [] : [];
+      const self = `\\b${u.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`;
+      aliases[u] = [...new Set([self, ...inherited])];
+    });
+    controller.patchConfig({ underlyings: got, focus: null, headline: { aliases } });
+    store.toast(`exchange lists underlyings ${got.join(', ')}: Config adopted them (was ${oldKeys.join(', ')}); check headline aliases`, 'warn');
+    store.capture.add({ t: Date.now(), key: 'meta:underlyings-adopted', dir: 'meta', raw: `${oldKeys.join(',')} -> ${got.join(',')}`, highlights: [] });
+  }
   const feed = new OwnFeed({
     url: () => `${win.location.protocol === 'https:' ? 'wss:' : 'ws:'}//${win.location.host}${store.cfg.feed.path}`,
     symbols: () => [...store.cfg.underlyings, ...Object.keys(store.s.metas)],
